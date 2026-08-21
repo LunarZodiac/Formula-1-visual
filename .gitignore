@@ -1,0 +1,50 @@
+# JavaScript dependencies and build output
+**/node_modules/
+**/dist/
+**/build/
+
+# Python environments and caches
+**/.venv/
+**/venv/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Formula 1 data caches and generated replay data
+**/.fastf1-cache/
+**/cache/
+**/computed_data/
+*.arrow
+*.ff1pkl
+
+# Environment variables and local settings
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+~$*
+
+# Operating systems and editors
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+
+# Generated media and diagnostic artifacts
+*.mp4
+chrome-devs-trace.json
+
+# Earlier experimental copies are kept locally, but not versioned.
+F1_v1/F1_v1/Версии/
+
+# Delta is a third-party research reference. Its source, virtual environment,
+# caches and generated assets stay local until we extract an attributed,
+# independently maintained telemetry module.
+F1_v1/Delta-main/

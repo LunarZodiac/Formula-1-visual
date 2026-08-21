@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1: Картографический путеводитель — Сезоны</title>
+  <link href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    :root {
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --bg-panel: rgba(18, 18, 18, 0.92);
+      --accent: #E10600;
+      --accent-glow: rgba(225, 6, 0, 0.4);
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --border-subtle: #2a2a2a;
+      --font-title: 'Racing Sans One', cursive;
+      --font-body: 'Inter', sans-serif;
+    }
+    html, body {
+      height: 100%;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      overflow: hidden;
+    }
+    .app-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 8px 24px;
+      flex-shrink: 0;
+      height: 64px;
+      z-index: 1000;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      font-family: var(--font-title);
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+      color: var(--text-primary);
+    }
+    .logo span {
+      color: var(--accent);
+    }
+    .header-nav {
+      display: flex;
+      gap: 24px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .header-nav a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+    }
+    .header-nav a:hover {
+      color: var(--text-primary);
+    }
+    .header-nav a.active {
+      color: var(--text-primary);
+      border-bottom-color: var(--accent);
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+    .live-badge .dot {
+      width: 8px;
+      height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      animation: pulse-dot 1.5s infinite;
+    }
+    @keyframes pulse-dot {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .header-right .icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      cursor: default;
+      transition: color 0.2s;
+    }
+    .header-right .icon-btn:hover {
+      color: var(--text-primary);
+    }
+    .timeline-container {
+      flex: 1;
+      max-width: 500px;
+      margin: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .timeline-container label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+    .timeline-container input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+      background: #333;
+      height: 4px;
+      border-radius: 2px;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .timeline-container input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    .year-display {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--accent);
+      min-width: 48px;
+      text-align: center;
+      font-family: var(--font-title);
+    }
+    .page-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    .page-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .page-inner h2 {
+      color: var(--accent);
+      font-family: var(--font-title);
+      font-size: 2.5rem;
+      margin-bottom: 24px;
+    }
+    .page-inner p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+    .page-inner .placeholder {
+      background: var(--bg-secondary);
+      border-left: 4px solid var(--accent);
+      padding: 16px 20px;
+      border-radius: 4px;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+    @media (max-width: 1024px) {
+      .header-nav { display: none; }
+    }
+    @media (max-width: 768px) {
+      .header {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 8px 12px;
+        gap: 8px;
+      }
+      .timeline-container {
+        order: 3;
+        flex-basis: 100%;
+        margin: 4px 0;
+        max-width: 100%;
+      }
+      .page-content {
+        padding: 20px;
+      }
+      .page-inner h2 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app-wrapper">
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">F1: <span>Картографический</span> путеводитель</div>
+    </div>
+    <nav class="header-nav">
+      <a href="index.html">Карта</a>
+      <a href="history.html">История</a>
+      <a href="seasons.html" class="active">Сезоны</a>
+      <a href="tracks.html">Трассы</a>
+      <a href="drivers.html">Пилоты</a>
+      <a href="interactive.html">Интерактив</a>
+    </nav>
+    <div class="timeline-container">
+      <label for="yearSlider">Год</label>
+      <input type="range" id="yearSlider" min="1950" max="2026" value="2026" step="1" />
+      <span class="year-display" id="yearDisplay">2026</span>
+    </div>
+    <div class="header-right">
+      <span class="live-badge"><span class="dot"></span>Live</span>
+      <button class="icon-btn" title="Поиск">🔍</button>
+      <button class="icon-btn" title="Профиль">👤</button>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <div class="page-inner">
+      <h2>📅 Сезоны</h2>
+      <p>Детальный разбор каждого сезона: календарь, сетка пилотов, командные показатели, статистика.</p>
+      <p>Будут таблицы и графики по годам, возможность сравнения сезонов.</p>
+      <div class="placeholder">🚧 Страница в разработке. Скоро здесь появится полная аналитика по всем сезонам.</div>
+    </div>
+  </main>
+</div>
+<script>
+  document.getElementById('yearSlider').addEventListener('input', function() {
+    document.getElementById('yearDisplay').textContent = this.value;
+  });
+</script>
+</body>
+</html>

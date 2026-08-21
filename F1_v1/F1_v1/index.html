@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1: Картографический путеводитель</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Основные стили -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Papa Parse для CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Основной скрипт -->
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">F1: <span>Картографический</span> путеводитель</div>
+    </div>
+    <nav class="header-nav">
+      <a href="history.html">История</a>
+      <a href="seasons.html">Сезоны</a>
+      <a href="tracks.html">Трассы</a>
+      <a href="drivers.html">Пилоты</a>
+      <a href="interactive.html">Интерактив</a>
+    </nav>
+    <div class="timeline-container">
+      <label for="yearSlider">Год</label>
+      <input type="range" id="yearSlider" min="1950" max="2026" value="2026" step="1" />
+      <span class="year-display" id="yearDisplay">2026</span>
+    </div>
+    <div class="header-right">
+      <span class="live-badge"><span class="dot"></span>Live</span>
+      <button class="icon-btn" title="Поиск">🔍</button>
+      <button class="icon-btn" title="Профиль">👤</button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="map-wrapper">
+      <div id="map"></div>
+      <div class="map-legend">
+        <span class="legend-item"><span class="legend-icon track"></span> Трековые</span>
+        <span class="legend-item"><span class="legend-icon urban"></span> Городские</span>
+        <span class="legend-item"><span class="legend-icon hybrid"></span> Смешанные</span>
+      </div>
+    </div>
+
+    <!-- Sidebar (Live Hub) -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3>🏆 Сезон 2026</h3>
+        <div id="standingsContent" class="standings-table loading">Загрузка результатов...</div>
+      </div>
+      <div class="sidebar-section">
+        <h3>⏱ Статус</h3>
+        <div class="status-bar">
+          <span>До следующей гонки</span>
+          <span class="countdown accent">02д 04ч 15м</span>
+        </div>
+        <div style="margin-top:6px; font-size:0.75rem; color:var(--text-secondary);">
+          Следующая: Гран-при Великобритании
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <h3>📰 Последние события</h3>
+        <ul class="news-feed" id="newsFeed">
+          <li><span class="time">12:30</span> Обновление болида Ferrari</li>
+          <li><span class="time">10:15</span> Перестановки в Alpine</li>
+          <li><span class="time">08:45</span> Норрис быстрейший на FP2</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <!-- BOTTOM SECTION -->
+  <div class="bottom-section">
+    <div class="bottom-left">
+      <div class="label">История в лицах — Чемпионы</div>
+      <div class="champions-carousel" id="championsCarousel">
+        <!-- Заполняется JS -->
+      </div>
+    </div>
+    <div class="bottom-right">
+      <div class="legendary-label">Легендарный момент</div>
+      <div class="legendary-text" id="legendaryFact">
+        <strong>1976:</strong> Ники Лауда возвращается после аварии в Нюрбургринге.
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
