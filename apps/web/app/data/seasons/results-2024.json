@@ -1,0 +1,43 @@
+{
+  "season": 2024,
+  "retrievedAt": "2026-08-24",
+  "rounds": [
+    {
+      "round": 1,
+      "circuitId": "bahrain",
+      "date": "2024-03-02",
+      "podium": [
+        {
+          "position": 1,
+          "driverId": "max_verstappen",
+          "teamId": "red_bull_racing",
+          "time": "1:31:44.742",
+          "points": 26
+        },
+        {
+          "position": 2,
+          "driverId": "sergio_perez",
+          "teamId": "red_bull_racing",
+          "time": "+22.457",
+          "points": 18
+        },
+        {
+          "position": 3,
+          "driverId": "carlos_sainz",
+          "teamId": "ferrari",
+          "time": "+25.110",
+          "points": 15
+        }
+      ],
+      "fastestLap": {
+        "driverId": "max_verstappen",
+        "lap": 39,
+        "time": "1:32.608"
+      },
+      "sources": [
+        "https://www.formula1.com/en/results/2024/races/1229/bahrain/race-result",
+        "https://www.formula1.com/en/results/2024/races/1229/bahrain/fastest-laps"
+      ]
+    }
+  ]
+}

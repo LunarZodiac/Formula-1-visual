@@ -1,0 +1,46 @@
+{
+  "season": 2024,
+  "retrievedAt": "2026-08-24",
+  "drivers": [
+    { "position": 1, "driverId": "max_verstappen", "teamId": "red_bull_racing", "points": 437 },
+    { "position": 2, "driverId": "lando_norris", "teamId": "mclaren", "points": 374 },
+    { "position": 3, "driverId": "charles_leclerc", "teamId": "ferrari", "points": 356 },
+    { "position": 4, "driverId": "oscar_piastri", "teamId": "mclaren", "points": 292 },
+    { "position": 5, "driverId": "carlos_sainz", "teamId": "ferrari", "points": 290 },
+    { "position": 6, "driverId": "george_russell", "teamId": "mercedes", "points": 245 },
+    { "position": 7, "driverId": "lewis_hamilton", "teamId": "mercedes", "points": 223 },
+    { "position": 8, "driverId": "sergio_perez", "teamId": "red_bull_racing", "points": 152 },
+    { "position": 9, "driverId": "fernando_alonso", "teamId": "aston_martin", "points": 70 },
+    { "position": 10, "driverId": "pierre_gasly", "teamId": "alpine", "points": 42 },
+    { "position": 11, "driverId": "nico_hulkenberg", "teamId": "haas", "points": 41 },
+    { "position": 12, "driverId": "yuki_tsunoda", "teamId": "rb", "points": 30 },
+    { "position": 13, "driverId": "lance_stroll", "teamId": "aston_martin", "points": 24 },
+    { "position": 14, "driverId": "esteban_ocon", "teamId": "alpine", "points": 23 },
+    { "position": 15, "driverId": "kevin_magnussen", "teamId": "haas", "points": 16 },
+    { "position": 16, "driverId": "alexander_albon", "teamId": "williams", "points": 12 },
+    { "position": 17, "driverId": "daniel_ricciardo", "teamId": "rb", "points": 12 },
+    { "position": 18, "driverId": "oliver_bearman", "teamId": "haas", "teamLabel": "Ferrari / Haas", "points": 7 },
+    { "position": 19, "driverId": "franco_colapinto", "teamId": "williams", "points": 5 },
+    { "position": 20, "driverId": "zhou_guanyu", "teamId": "kick_sauber", "points": 4 },
+    { "position": 21, "driverId": "liam_lawson", "teamId": "rb", "points": 4 },
+    { "position": 22, "driverId": "valtteri_bottas", "teamId": "kick_sauber", "points": 0 },
+    { "position": 23, "driverId": "logan_sargeant", "teamId": "williams", "points": 0 },
+    { "position": 24, "driverId": "jack_doohan", "teamId": "alpine", "points": 0 }
+  ],
+  "teams": [
+    { "position": 1, "teamId": "mclaren", "points": 666 },
+    { "position": 2, "teamId": "ferrari", "points": 652 },
+    { "position": 3, "teamId": "red_bull_racing", "points": 589 },
+    { "position": 4, "teamId": "mercedes", "points": 468 },
+    { "position": 5, "teamId": "aston_martin", "points": 94 },
+    { "position": 6, "teamId": "alpine", "points": 65 },
+    { "position": 7, "teamId": "haas", "points": 58 },
+    { "position": 8, "teamId": "rb", "points": 46 },
+    { "position": 9, "teamId": "williams", "points": 17 },
+    { "position": 10, "teamId": "kick_sauber", "points": 4 }
+  ],
+  "sources": [
+    "https://www.formula1.com/en/results/2024/drivers",
+    "https://www.formula1.com/en/results/2024/team"
+  ]
+}
