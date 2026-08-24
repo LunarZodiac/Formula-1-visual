@@ -8,11 +8,24 @@ importers:
 
   .:
     dependencies:
+      adm-zip:
+        specifier: ^0.5.16
+        version: 0.5.18
+      csv-parse:
+        specifier: ^6.1.0
+        version: 6.2.1
       pg:
         specifier: ^8.16.3
         version: 8.23.0
 
 packages:
+
+  adm-zip@0.5.18:
+    resolution: {integrity: sha512-ufJnssQGbxzLNS1Ho9bCtX4rQKCCvoVuDLHoJyc3F9dOGDB4BkWs2Ci0kv53lqocAEQ/Cbi+I2XCsNYGqVYqng==}
+    engines: {node: '>=12.0'}
+
+  csv-parse@6.2.1:
+    resolution: {integrity: sha512-LRLMV+UCyfMokp8Wb411duBf1gaBKJfOfBWU9eHMJ+b+cJYZsNu3AFmjJf3+yPGd59Exz1TsMjaSFyxnYB9+IQ==}
 
   pg-cloudflare@1.4.0:
     resolution: {integrity: sha512-Vo7z/6rrQYxpNRylp4Tlob2elzbh+N/MOQbxFVWCxS7oEx6jF53GTJFxK2WWpKuBRkmiin4Mt+xofFDjx09R0A==}
@@ -73,6 +86,10 @@ packages:
     engines: {node: '>=0.4'}
 
 snapshots:
+
+  adm-zip@0.5.18: {}
+
+  csv-parse@6.2.1: {}
 
   pg-cloudflare@1.4.0:
     optional: true

@@ -4,12 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dump:download": "node download-jolpica-dump.mjs",
+    "dump:preview": "node jolpica-dump-preview.mjs",
     "preview": "node jolpica-preview.mjs",
     "import": "node jolpica-import-postgres.mjs",
     "migrate": "node apply-database-migrations.mjs",
     "verify": "node verify-database.mjs"
   },
   "dependencies": {
+    "adm-zip": "^0.5.16",
+    "csv-parse": "^6.1.0",
     "pg": "^8.16.3"
   }
 }
