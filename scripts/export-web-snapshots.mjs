@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { mkdir, rename, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import pg from 'pg';
@@ -15,16 +15,41 @@ function assertDatabaseEnvironment() {
   }
 }
 
-function readOutputDirectory(argv) {
+function readOptions(argv) {
   const option = argv.find((value) => value.startsWith('--output='));
-  const value = option?.slice('--output='.length) ?? 'apps/web/public/data/f1';
-  return path.resolve(value);
+  const output = option?.slice('--output='.length) ?? 'apps/web/public/data/f1';
+  const inlineSeason = argv.find((value) => value.startsWith('--season='));
+  const seasonIndex = argv.indexOf('--season');
+  const rawSeason = inlineSeason?.slice('--season='.length) ?? argv[seasonIndex + 1];
+  const season = rawSeason === undefined ? null : Number(rawSeason);
+  if (season !== null && (!Number.isInteger(season) || season < 1950)) {
+    throw new Error(`Некорректный сезон для экспорта: ${rawSeason}.`);
+  }
+  return { outputDirectory: path.resolve(output), season };
 }
 
 async function writeJsonAtomic(filePath, value) {
   const temporaryPath = `${filePath}.tmp`;
   await writeFile(temporaryPath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
   await rename(temporaryPath, filePath);
+}
+
+async function publishStagedDirectory(stagingDirectory, outputDirectory) {
+  await mkdir(outputDirectory, { recursive: true });
+  const entries = await readdir(stagingDirectory, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (!entry.isFile() || !entry.name.endsWith('.json')) continue;
+    const sourcePath = path.join(stagingDirectory, entry.name);
+    const targetPath = path.join(outputDirectory, entry.name);
+    const temporaryPath = `${targetPath}.tmp`;
+    try {
+      await copyFile(sourcePath, temporaryPath);
+      await rename(temporaryPath, targetPath);
+    } finally {
+      await rm(temporaryPath, { force: true });
+    }
+  }
 }
 
 function asNumber(value) {
@@ -162,7 +187,8 @@ async function readSeasonSnapshot(client, season) {
 
 async function main() {
   assertDatabaseEnvironment();
-  const outputDirectory = readOutputDirectory(process.argv.slice(2));
+  const { outputDirectory, season: requestedSeason } = readOptions(process.argv.slice(2));
+  const stagingDirectory = `${outputDirectory}.staging-${process.pid}`;
   const client = new Client({ application_name: 'f1-geovisual-atlas-web-exporter' });
   await client.connect();
 
@@ -179,7 +205,8 @@ async function main() {
        ORDER BY s.year DESC`,
     );
 
-    await mkdir(outputDirectory, { recursive: true });
+    await rm(stagingDirectory, { recursive: true, force: true });
+    await mkdir(stagingDirectory, { recursive: true });
     const exportedAt = new Date().toISOString();
     const seasons = seasonsResult.rows.map((row) => ({
       year: Number(row.year),
@@ -187,24 +214,32 @@ async function main() {
       roundsPlanned: row.rounds_planned === null ? null : Number(row.rounds_planned),
       racesAvailable: Number(row.races_available),
     }));
+    const seasonsToExport = requestedSeason === null
+      ? seasons
+      : seasons.filter((season) => season.year === requestedSeason);
+    if (seasonsToExport.length === 0) {
+      throw new Error(`Сезон ${requestedSeason} отсутствует в PostgreSQL.`);
+    }
 
-    for (const [index, season] of seasons.entries()) {
+    for (const [index, season] of seasonsToExport.entries()) {
       const snapshot = await readSeasonSnapshot(client, season.year);
-      await writeJsonAtomic(path.join(outputDirectory, `season-${season.year}.json`), {
+      await writeJsonAtomic(path.join(stagingDirectory, `season-${season.year}.json`), {
         exportedAt,
         ...snapshot,
       });
-      process.stdout.write(`\rЭкспорт сезонов: ${index + 1}/${seasons.length}`);
+      process.stdout.write(`\rЭкспорт сезонов: ${index + 1}/${seasonsToExport.length}`);
     }
 
-    await writeJsonAtomic(path.join(outputDirectory, 'seasons.json'), {
+    await writeJsonAtomic(path.join(stagingDirectory, 'seasons.json'), {
       exportedAt,
       seasons,
     });
+    await publishStagedDirectory(stagingDirectory, outputDirectory);
     process.stdout.write('\n');
     console.log(`Веб-снимки сохранены: ${outputDirectory}`);
   } finally {
     await client.end();
+    await rm(stagingDirectory, { recursive: true, force: true });
   }
 }
 

@@ -9,6 +9,7 @@
     "dump:preview": "node jolpica-dump-preview.mjs",
     "export:web": "node export-web-snapshots.mjs",
     "preview": "node jolpica-preview.mjs",
+    "sync:active": "node sync-active-season.mjs",
     "import": "node jolpica-import-postgres.mjs",
     "migrate": "node apply-database-migrations.mjs",
     "verify": "node verify-database.mjs"

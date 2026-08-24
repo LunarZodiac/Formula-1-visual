@@ -24,9 +24,20 @@ const raceDateFormatter = new Intl.DateTimeFormat('ru-RU', {
   timeZone: 'UTC',
 });
 
+const dataUpdateFormatter = new Intl.DateTimeFormat('ru-RU', {
+  day: 'numeric',
+  month: 'long',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
 function formatRaceDate(date: string) {
   if (!date) return 'Дата уточняется';
   return raceDateFormatter.format(new Date(`${date}T00:00:00Z`));
+}
+
+function formatDataUpdatedAt(date: string) {
+  return dataUpdateFormatter.format(new Date(date));
 }
 
 function makeCircuitMarker(type: Circuit['type']): ImageData {
@@ -684,6 +695,11 @@ export function AtlasExperience() {
             </div>
             {seasonDataStatus === 'loading' && <small className="season-data-note">Обновляем данные сезона…</small>}
             {seasonDataStatus === 'error' && <small className="season-data-note season-data-note--error">Не удалось обновить данные. Показан последний доступный календарь.</small>}
+            {seasonDataStatus === 'ready' && seasonSnapshot && (
+              <small className="season-data-note">
+                Данные обновлены {formatDataUpdatedAt(seasonSnapshot.exportedAt)}
+              </small>
+            )}
           </div>
 
           <ol className="race-list" aria-label={`Этапы сезона ${selectedSeason}`}>
