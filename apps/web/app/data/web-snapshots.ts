@@ -1,4 +1,4 @@
-import type { Circuit } from './season-2024';
+import { season2024, type Circuit } from './season-2024';
 
 export type SeasonIndexItem = {
   year: number;
@@ -45,7 +45,7 @@ export type SeasonSnapshot = {
     round: number;
     name: string;
     date: string | null;
-    status: string;
+    status: 'scheduled' | 'live' | 'completed' | 'cancelled' | 'postponed';
     circuit: {
       id: string;
       name: string;
@@ -63,6 +63,7 @@ export type SeasonSnapshot = {
 };
 
 const countryNames = new Intl.DisplayNames(['ru'], { type: 'region' });
+const localizedCircuits = new Map(season2024.map((circuit) => [circuit.id, circuit]));
 
 const circuitTypes: Record<SeasonSnapshot['calendar'][number]['circuit']['type'], string> = {
   permanent: 'Стационарная трасса',
@@ -72,17 +73,23 @@ const circuitTypes: Record<SeasonSnapshot['calendar'][number]['circuit']['type']
 };
 
 export function snapshotToCircuits(snapshot: SeasonSnapshot): Circuit[] {
-  return snapshot.calendar.map((race) => ({
-    id: race.circuit.id,
-    geometryId: race.circuit.id,
-    order: race.round,
-    raceName: race.name,
-    name: race.circuit.shortName ?? race.circuit.name,
-    officialName: race.circuit.name,
-    city: race.circuit.locality ?? 'Не указано',
-    country: countryNames.of(race.circuit.countryCode) ?? race.circuit.countryCode,
-    date: race.date ?? '',
-    type: circuitTypes[race.circuit.type],
-    coordinates: race.circuit.coordinates,
-  }));
+  return snapshot.calendar.map((race) => {
+    const localized = localizedCircuits.get(race.circuit.id);
+    return {
+      id: race.circuit.id,
+      geometryId: localized?.geometryId ?? race.circuit.id,
+      order: race.round,
+      raceName: race.name,
+      name: localized?.name ?? race.circuit.shortName ?? race.circuit.name,
+      officialName: localized?.officialName ?? race.circuit.name,
+      city: localized?.city ?? race.circuit.locality ?? 'Не указано',
+      country: localized?.country
+        ?? countryNames.of(race.circuit.countryCode)
+        ?? race.circuit.countryCode,
+      date: race.date ?? '',
+      type: localized?.type ?? circuitTypes[race.circuit.type],
+      status: race.status,
+      coordinates: race.circuit.coordinates,
+    };
+  });
 }

@@ -9,6 +9,7 @@ export type Circuit = {
   country: string;
   date: string;
   type: string;
+  status?: 'scheduled' | 'live' | 'completed' | 'cancelled' | 'postponed';
   coordinates: [number, number];
 };
 

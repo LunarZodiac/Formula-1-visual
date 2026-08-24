@@ -17,6 +17,7 @@ type Basemap = 'dark' | 'satellite';
 type MainSection = 'atlas' | 'season';
 
 const fallbackCircuits = season2024;
+const globeOverview = { center: [70, 18] as [number, number], zoom: 1.48 };
 
 const raceDateFormatter = new Intl.DateTimeFormat('ru-RU', {
   day: 'numeric',
@@ -165,6 +166,7 @@ function makeCircuitGeoJson(circuits: Circuit[]): GeoJSON.FeatureCollection<GeoJ
         order: circuit.order,
         name: circuit.name,
         type: circuit.type,
+        status: circuit.status ?? 'completed',
       },
       geometry: { type: 'Point', coordinates: circuit.coordinates },
     })),
@@ -185,9 +187,11 @@ function makeRouteGeoJson(circuits: Circuit[]): GeoJSON.FeatureCollection<GeoJSO
 
 export function AtlasExperience() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const raceListRef = useRef<HTMLOListElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const circuitsRef = useRef<Circuit[]>(fallbackCircuits);
   const selectedSeasonRef = useRef(2024);
+  const nextCircuitIdRef = useRef<string | null>(null);
   const selectedIdRef = useRef(fallbackCircuits[0].id);
   const [selectedId, setSelectedId] = useState(fallbackCircuits[0].id);
   const [selectedSeason, setSelectedSeason] = useState(2024);
@@ -208,6 +212,14 @@ export function AtlasExperience() {
   const routeGeoJson = useMemo(() => makeRouteGeoJson(circuits), [circuits]);
   const seasonMeta = availableSeasons.find((season) => season.year === selectedSeason);
   const seasonIsActive = seasonMeta?.status === 'active';
+  const nextCircuitId = useMemo(
+    () => seasonIsActive
+      ? circuits.find((circuit) => circuit.status === 'live')?.id
+        ?? circuits.find((circuit) => circuit.status === 'scheduled' || circuit.status === 'postponed')?.id
+        ?? null
+      : null,
+    [circuits, seasonIsActive],
+  );
 
   const selectedCircuit = useMemo(
     () => circuits.find((circuit) => circuit.id === selectedId) ?? circuits[0] ?? fallbackCircuits[0],
@@ -276,14 +288,15 @@ export function AtlasExperience() {
       map.fitBounds(getTrackBounds(track), {
         padding: { top: 96, right: 96, bottom: 96, left: 96 },
         maxZoom: 15.3,
-        duration: 2200,
+        duration: 2400,
         essential: true,
       });
     } else {
       map.flyTo({
         center: circuit.coordinates,
-        zoom: 3.4,
-        duration: 1400,
+        zoom: 7.2,
+        duration: 2400,
+        curve: 1.35,
         essential: true,
       });
     }
@@ -291,7 +304,7 @@ export function AtlasExperience() {
 
   const resetGlobe = useCallback(() => {
     mapRef.current?.flyTo({
-      center: [70, 18], zoom: 1.25, duration: 1400, essential: true,
+      ...globeOverview, duration: 1600, curve: 1.2, essential: true,
     });
   }, []);
 
@@ -351,10 +364,15 @@ export function AtlasExperience() {
           : snapshotToCircuits(snapshot);
         if (nextCircuits.length === 0) throw new Error('В календаре нет этапов.');
 
-        const firstCircuit = nextCircuits[0];
+        const firstCircuit = snapshot.season === new Date().getUTCFullYear()
+          ? nextCircuits.find((circuit) => circuit.status === 'live')
+            ?? nextCircuits.find((circuit) => circuit.status === 'scheduled' || circuit.status === 'postponed')
+            ?? nextCircuits[0]
+          : nextCircuits[0];
         setSeasonSnapshot(snapshot);
         setCircuits(nextCircuits);
         circuitsRef.current = nextCircuits;
+        nextCircuitIdRef.current = firstCircuit.status === 'completed' ? null : firstCircuit.id;
         setSelectedId(firstCircuit.id);
         selectedIdRef.current = firstCircuit.id;
         setSeasonDataStatus('ready');
@@ -380,7 +398,18 @@ export function AtlasExperience() {
       map.setFilter('circuit-active-marker', ['==', ['get', 'id'], selectedIdRef.current]);
       map.setFilter('circuit-order', ['==', ['get', 'id'], selectedIdRef.current]);
     }
+    if (map?.getLayer('circuit-next-halo')) {
+      map.setFilter('circuit-next-halo', ['==', ['get', 'id'], nextCircuitIdRef.current ?? '__none__']);
+    }
   }, [circuitGeoJson, mapReady, routeGeoJson]);
+
+  useEffect(() => {
+    const list = raceListRef.current;
+    const selectedButton = list?.querySelector<HTMLButtonElement>(`button[data-circuit-id="${selectedId}"]`);
+    if (!list || !selectedButton) return;
+    const targetTop = selectedButton.offsetTop - (list.clientHeight - selectedButton.offsetHeight) / 2;
+    list.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
+  }, [selectedId]);
 
   useEffect(() => {
     const atlas = document.getElementById('atlas');
@@ -409,8 +438,7 @@ export function AtlasExperience() {
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: mapStyle,
-      center: [70, 18],
-      zoom: 1.25,
+      ...globeOverview,
       minZoom: 0.8,
       maxZoom: 18,
       attributionControl: false,
@@ -488,6 +516,19 @@ export function AtlasExperience() {
       map.addImage('circuit-stationary', makeCircuitMarker('Стационарная трасса'), { pixelRatio: 2 });
       map.addImage('circuit-urban', makeCircuitMarker('Городская трасса'), { pixelRatio: 2 });
       map.addImage('circuit-mixed', makeCircuitMarker('Смешанная трасса'), { pixelRatio: 2 });
+      map.addLayer({
+        id: 'circuit-next-halo', type: 'circle', source: 'circuits',
+        maxzoom: 8.5,
+        filter: ['==', ['get', 'id'], '__none__'],
+        paint: {
+          'circle-radius': 16,
+          'circle-color': '#ff2038',
+          'circle-opacity': 0.16,
+          'circle-stroke-color': '#ff6072',
+          'circle-stroke-width': 1.4,
+          'circle-stroke-opacity': 0.72,
+        },
+      });
       map.addLayer({
         id: 'circuit-markers', type: 'symbol', source: 'circuits',
         maxzoom: 8.5,
@@ -702,12 +743,18 @@ export function AtlasExperience() {
             )}
           </div>
 
-          <ol className="race-list" aria-label={`Этапы сезона ${selectedSeason}`}>
+          <ol ref={raceListRef} className="race-list" aria-label={`Этапы сезона ${selectedSeason}`}>
             {circuits.map((circuit) => (
               <li key={circuit.id}>
                 <button
                   type="button"
-                  className={circuit.id === selectedId ? 'is-selected' : ''}
+                  data-circuit-id={circuit.id}
+                  className={[
+                    circuit.id === selectedId ? 'is-selected' : '',
+                    circuit.id === nextCircuitId ? 'is-next' : '',
+                    seasonIsActive && circuit.status === 'completed' ? 'is-completed' : '',
+                    circuit.status === 'live' ? 'is-live' : '',
+                  ].filter(Boolean).join(' ')}
                   onClick={() => focusCircuit(circuit)}
                   aria-current={circuit.id === selectedId ? 'true' : undefined}
                 >
@@ -716,7 +763,14 @@ export function AtlasExperience() {
                     <strong>{circuit.name}</strong>
                     <small>{circuit.country}</small>
                   </span>
-                  <time dateTime={circuit.date}>{formatRaceDate(circuit.date)}</time>
+                  <span className="race-meta">
+                    <time dateTime={circuit.date}>{formatRaceDate(circuit.date)}</time>
+                    {seasonIsActive && circuit.status === 'completed' && <small>Завершён</small>}
+                    {circuit.id === nextCircuitId && circuit.status !== 'live' && <small>Следующий</small>}
+                    {circuit.status === 'live' && <small>Сейчас</small>}
+                    {circuit.status === 'postponed' && <small>Перенесён</small>}
+                    {circuit.status === 'cancelled' && <small>Отменён</small>}
+                  </span>
                 </button>
               </li>
             ))}

@@ -497,7 +497,7 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 .race-list button {
   position: relative;
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
+  grid-template-columns: 34px minmax(0, 1fr) minmax(66px, auto);
   align-items: center;
   width: 100%;
   padding: 11px 10px;
@@ -526,6 +526,12 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   background: var(--accent);
   box-shadow: 0 0 12px rgba(255, 32, 56, 0.75);
 }
+.race-list button.is-completed:not(.is-selected) { opacity: 0.68; }
+.race-list button.is-next {
+  background: linear-gradient(90deg, rgba(255, 32, 56, 0.1), rgba(255, 255, 255, 0.025));
+  box-shadow: inset 0 0 0 1px rgba(255, 32, 56, 0.16);
+}
+.race-list button.is-live { box-shadow: inset 0 0 0 1px rgba(255, 96, 114, 0.42); }
 .race-number { color: var(--accent); font-size: 10px; font-weight: 900; }
 .race-name strong, .race-name small { display: block; }
 .race-name strong {
@@ -537,6 +543,16 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 .race-name small, .race-list time { color: #687984; font-size: 9px; }
 .race-name small { margin-top: 3px; }
 .race-list time { font-weight: 700; white-space: nowrap; }
+.race-meta { display: grid; justify-items: end; gap: 3px; }
+.race-meta small {
+  color: #758995;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.race-list button.is-next .race-meta small,
+.race-list button.is-live .race-meta small { color: #ff6678; }
 
 .circuit-card {
   margin-top: auto;
