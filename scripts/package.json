@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dump:download": "node download-jolpica-dump.mjs",
+    "dump:import": "node jolpica-dump-import-postgres.mjs",
     "dump:preview": "node jolpica-dump-preview.mjs",
     "preview": "node jolpica-preview.mjs",
     "import": "node jolpica-import-postgres.mjs",

@@ -64,14 +64,27 @@ try {
          WHERE r.season_year = $1`,
         [season],
       ),
-      classifiedDrivers: await scalar(
+      driverStandingRows: await scalar(
         client,
         "SELECT count(*) FROM atlas.driver_standings WHERE season_year = $1",
         [season],
       ),
-      constructorStandings: await scalar(
+      classifiedDrivers: await scalar(
+        client,
+        "SELECT count(DISTINCT driver_id) FROM atlas.driver_standings WHERE season_year = $1",
+        [season],
+      ),
+      constructorStandingRows: await scalar(
         client,
         "SELECT count(*) FROM atlas.constructor_standings WHERE season_year = $1",
+        [season],
+      ),
+      classifiedConstructors: await scalar(
+        client,
+        `SELECT count(DISTINCT ce.constructor_id)
+         FROM atlas.constructor_standings AS cs
+         JOIN atlas.constructor_entries AS ce ON ce.id = cs.constructor_entry_id
+         WHERE cs.season_year = $1`,
         [season],
       ),
       sharedPositions: await scalar(

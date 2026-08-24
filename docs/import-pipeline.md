@@ -40,10 +40,24 @@ API применяется для активного сезона и контр�
 pnpm.cmd --dir scripts install
 pnpm.cmd --dir scripts run dump:download
 pnpm.cmd --dir scripts run dump:preview -- --directory "tmp/jolpica-dump/downloaded/jolpica-YYYY-MM-DD"
+pnpm.cmd --dir scripts run dump:import -- --directory "tmp/jolpica-dump/downloaded/jolpica-YYYY-MM-DD" --through-season 2025
 ```
 
 Архив сохраняется только в `tmp/`, проверяется по опубликованному SHA-256 и не
 попадает в Git.
+
+Последняя команда без `--apply` только нормализует данные и выводит отчёт.
+Историческая запись в PostgreSQL включается явно:
+
+```powershell
+node --env-file=.env.database.local scripts/jolpica-dump-import-postgres.mjs `
+  --directory "tmp/jolpica-dump/downloaded/jolpica-YYYY-MM-DD" `
+  --through-season 2025 `
+  --apply
+```
+
+Активный сезон 2026 намеренно не перезаписывается отложенной выгрузкой и
+продолжает обновляться через API.
 
 Импорт должен быть повторяемым: повторный запуск обновляет записи, а не создаёт
 дубликаты. Для каждого запуска фиксируются источник и время получения.
