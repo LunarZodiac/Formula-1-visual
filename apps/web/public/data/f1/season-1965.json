@@ -1,0 +1,482 @@
+{
+  "exportedAt": "2026-08-24T22:44:41.728Z",
+  "season": 1965,
+  "calendar": [
+    {
+      "id": "1965-01",
+      "round": 1,
+      "name": "South African Grand Prix",
+      "date": "1965-01-01",
+      "status": "completed",
+      "circuit": {
+        "id": "george",
+        "name": "Prince George Circuit",
+        "shortName": null,
+        "locality": "Eastern Cape Province",
+        "countryCode": "ZA",
+        "type": "permanent",
+        "coordinates": [
+          27.8736,
+          -33.0486
+        ]
+      }
+    },
+    {
+      "id": "1965-02",
+      "round": 2,
+      "name": "Monaco Grand Prix",
+      "date": "1965-05-30",
+      "status": "completed",
+      "circuit": {
+        "id": "monaco",
+        "name": "Circuit de Monaco",
+        "shortName": null,
+        "locality": "Monte Carlo",
+        "countryCode": "MC",
+        "type": "permanent",
+        "coordinates": [
+          7.42056,
+          43.7347
+        ]
+      }
+    },
+    {
+      "id": "1965-03",
+      "round": 3,
+      "name": "Belgian Grand Prix",
+      "date": "1965-06-13",
+      "status": "completed",
+      "circuit": {
+        "id": "spa",
+        "name": "Circuit de Spa-Francorchamps",
+        "shortName": null,
+        "locality": "Spa",
+        "countryCode": "BE",
+        "type": "permanent",
+        "coordinates": [
+          5.97139,
+          50.4372
+        ]
+      }
+    },
+    {
+      "id": "1965-04",
+      "round": 4,
+      "name": "French Grand Prix",
+      "date": "1965-06-27",
+      "status": "completed",
+      "circuit": {
+        "id": "charade",
+        "name": "Charade Circuit",
+        "shortName": null,
+        "locality": "Clermont-Ferrand",
+        "countryCode": "FR",
+        "type": "permanent",
+        "coordinates": [
+          3.03889,
+          45.7472
+        ]
+      }
+    },
+    {
+      "id": "1965-05",
+      "round": 5,
+      "name": "British Grand Prix",
+      "date": "1965-07-10",
+      "status": "completed",
+      "circuit": {
+        "id": "silverstone",
+        "name": "Silverstone Circuit",
+        "shortName": null,
+        "locality": "Silverstone",
+        "countryCode": "GB",
+        "type": "permanent",
+        "coordinates": [
+          -1.01694,
+          52.0786
+        ]
+      }
+    },
+    {
+      "id": "1965-06",
+      "round": 6,
+      "name": "Dutch Grand Prix",
+      "date": "1965-07-18",
+      "status": "completed",
+      "circuit": {
+        "id": "zandvoort",
+        "name": "Circuit Park Zandvoort",
+        "shortName": null,
+        "locality": "Zandvoort",
+        "countryCode": "NL",
+        "type": "permanent",
+        "coordinates": [
+          4.54092,
+          52.3888
+        ]
+      }
+    },
+    {
+      "id": "1965-07",
+      "round": 7,
+      "name": "German Grand Prix",
+      "date": "1965-08-01",
+      "status": "completed",
+      "circuit": {
+        "id": "nurburgring",
+        "name": "Nürburgring",
+        "shortName": null,
+        "locality": "Nürburg",
+        "countryCode": "DE",
+        "type": "permanent",
+        "coordinates": [
+          6.9475,
+          50.3356
+        ]
+      }
+    },
+    {
+      "id": "1965-08",
+      "round": 8,
+      "name": "Italian Grand Prix",
+      "date": "1965-09-12",
+      "status": "completed",
+      "circuit": {
+        "id": "monza",
+        "name": "Autodromo Nazionale di Monza",
+        "shortName": null,
+        "locality": "Monza",
+        "countryCode": "IT",
+        "type": "permanent",
+        "coordinates": [
+          9.28111,
+          45.6156
+        ]
+      }
+    },
+    {
+      "id": "1965-09",
+      "round": 9,
+      "name": "United States Grand Prix",
+      "date": "1965-10-03",
+      "status": "completed",
+      "circuit": {
+        "id": "watkins_glen",
+        "name": "Watkins Glen",
+        "shortName": null,
+        "locality": "New York State",
+        "countryCode": "US",
+        "type": "permanent",
+        "coordinates": [
+          -76.9272,
+          42.3369
+        ]
+      }
+    },
+    {
+      "id": "1965-10",
+      "round": 10,
+      "name": "Mexican Grand Prix",
+      "date": "1965-10-24",
+      "status": "completed",
+      "circuit": {
+        "id": "rodriguez",
+        "name": "Autódromo Hermanos Rodríguez",
+        "shortName": null,
+        "locality": "Mexico City",
+        "countryCode": "MX",
+        "type": "permanent",
+        "coordinates": [
+          -99.0907,
+          19.4042
+        ]
+      }
+    }
+  ],
+  "standings": {
+    "drivers": [
+      {
+        "position": 1,
+        "driverId": "clark",
+        "givenName": "Jim",
+        "familyName": "Clark",
+        "code": null,
+        "points": 54,
+        "wins": 6,
+        "constructorId": "lotus-climax",
+        "constructorName": "Lotus-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 2,
+        "driverId": "hill",
+        "givenName": "Graham",
+        "familyName": "Hill",
+        "code": null,
+        "points": 40,
+        "wins": 2,
+        "constructorId": "brm",
+        "constructorName": "BRM",
+        "teamColor": null
+      },
+      {
+        "position": 3,
+        "driverId": "stewart",
+        "givenName": "Jackie",
+        "familyName": "Stewart",
+        "code": null,
+        "points": 33,
+        "wins": 1,
+        "constructorId": "brm",
+        "constructorName": "BRM",
+        "teamColor": null
+      },
+      {
+        "position": 4,
+        "driverId": "gurney",
+        "givenName": "Dan",
+        "familyName": "Gurney",
+        "code": null,
+        "points": 25,
+        "wins": 0,
+        "constructorId": "brabham-climax",
+        "constructorName": "Brabham-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 5,
+        "driverId": "surtees",
+        "givenName": "John",
+        "familyName": "Surtees",
+        "code": null,
+        "points": 17,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 6,
+        "driverId": "bandini",
+        "givenName": "Lorenzo",
+        "familyName": "Bandini",
+        "code": null,
+        "points": 13,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 7,
+        "driverId": "ginther",
+        "givenName": "Richie",
+        "familyName": "Ginther",
+        "code": null,
+        "points": 11,
+        "wins": 1,
+        "constructorId": "honda",
+        "constructorName": "Honda",
+        "teamColor": null
+      },
+      {
+        "position": 8,
+        "driverId": "spence",
+        "givenName": "Mike",
+        "familyName": "Spence",
+        "code": null,
+        "points": 10,
+        "wins": 0,
+        "constructorId": "lotus-climax",
+        "constructorName": "Lotus-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 9,
+        "driverId": "mclaren",
+        "givenName": "Bruce",
+        "familyName": "McLaren",
+        "code": null,
+        "points": 10,
+        "wins": 0,
+        "constructorId": "cooper-climax",
+        "constructorName": "Cooper-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 10,
+        "driverId": "jack_brabham",
+        "givenName": "Jack",
+        "familyName": "Brabham",
+        "code": null,
+        "points": 9,
+        "wins": 0,
+        "constructorId": "brabham-climax",
+        "constructorName": "Brabham-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 11,
+        "driverId": "hulme",
+        "givenName": "Denny",
+        "familyName": "Hulme",
+        "code": null,
+        "points": 5,
+        "wins": 0,
+        "constructorId": "brabham-climax",
+        "constructorName": "Brabham-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 12,
+        "driverId": "siffert",
+        "givenName": "Jo",
+        "familyName": "Siffert",
+        "code": null,
+        "points": 5,
+        "wins": 0,
+        "constructorId": "brabham-brm",
+        "constructorName": "Brabham-BRM",
+        "teamColor": null
+      },
+      {
+        "position": 13,
+        "driverId": "rindt",
+        "givenName": "Jochen",
+        "familyName": "Rindt",
+        "code": null,
+        "points": 4,
+        "wins": 0,
+        "constructorId": "cooper-climax",
+        "constructorName": "Cooper-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 14,
+        "driverId": "rodriguez",
+        "givenName": "Pedro",
+        "familyName": "Rodríguez",
+        "code": null,
+        "points": 2,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 15,
+        "driverId": "bucknum",
+        "givenName": "Ronnie",
+        "familyName": "Bucknum",
+        "code": null,
+        "points": 2,
+        "wins": 0,
+        "constructorId": "honda",
+        "constructorName": "Honda",
+        "teamColor": null
+      },
+      {
+        "position": 16,
+        "driverId": "attwood",
+        "givenName": "Richard",
+        "familyName": "Attwood",
+        "code": null,
+        "points": 2,
+        "wins": 0,
+        "constructorId": "lotus-brm",
+        "constructorName": "Lotus-BRM",
+        "teamColor": null
+      }
+    ],
+    "constructors": [
+      {
+        "position": 1,
+        "constructorId": "lotus-climax",
+        "name": "Lotus-Climax",
+        "engineName": null,
+        "points": 54,
+        "wins": 6,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 2,
+        "constructorId": "brm",
+        "name": "BRM",
+        "engineName": null,
+        "points": 45,
+        "wins": 3,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 3,
+        "constructorId": "brabham-climax",
+        "name": "Brabham-Climax",
+        "engineName": null,
+        "points": 27,
+        "wins": 0,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 4,
+        "constructorId": "ferrari",
+        "name": "Ferrari",
+        "engineName": null,
+        "points": 26,
+        "wins": 0,
+        "teamColor": "#ED1131",
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 5,
+        "constructorId": "cooper-climax",
+        "name": "Cooper-Climax",
+        "engineName": null,
+        "points": 14,
+        "wins": 0,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 6,
+        "constructorId": "honda",
+        "name": "Honda",
+        "engineName": null,
+        "points": 11,
+        "wins": 1,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 7,
+        "constructorId": "brabham-brm",
+        "name": "Brabham-BRM",
+        "engineName": null,
+        "points": 5,
+        "wins": 0,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 8,
+        "constructorId": "lotus-brm",
+        "name": "Lotus-BRM",
+        "engineName": null,
+        "points": 2,
+        "wins": 0,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      }
+    ]
+  }
+}

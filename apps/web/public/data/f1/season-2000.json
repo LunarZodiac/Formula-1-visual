@@ -1,0 +1,626 @@
+{
+  "exportedAt": "2026-08-24T22:44:41.728Z",
+  "season": 2000,
+  "calendar": [
+    {
+      "id": "2000-01",
+      "round": 1,
+      "name": "Australian Grand Prix",
+      "date": "2000-03-12",
+      "status": "completed",
+      "circuit": {
+        "id": "albert_park",
+        "name": "Albert Park Grand Prix Circuit",
+        "shortName": null,
+        "locality": "Melbourne",
+        "countryCode": "AU",
+        "type": "permanent",
+        "coordinates": [
+          144.968,
+          -37.8497
+        ]
+      }
+    },
+    {
+      "id": "2000-02",
+      "round": 2,
+      "name": "Brazilian Grand Prix",
+      "date": "2000-03-26",
+      "status": "completed",
+      "circuit": {
+        "id": "interlagos",
+        "name": "Autódromo José Carlos Pace",
+        "shortName": null,
+        "locality": "São Paulo",
+        "countryCode": "BR",
+        "type": "permanent",
+        "coordinates": [
+          -46.6997,
+          -23.7036
+        ]
+      }
+    },
+    {
+      "id": "2000-03",
+      "round": 3,
+      "name": "San Marino Grand Prix",
+      "date": "2000-04-09",
+      "status": "completed",
+      "circuit": {
+        "id": "imola",
+        "name": "Autodromo Enzo e Dino Ferrari",
+        "shortName": null,
+        "locality": "Imola",
+        "countryCode": "IT",
+        "type": "permanent",
+        "coordinates": [
+          11.7167,
+          44.3439
+        ]
+      }
+    },
+    {
+      "id": "2000-04",
+      "round": 4,
+      "name": "British Grand Prix",
+      "date": "2000-04-23",
+      "status": "completed",
+      "circuit": {
+        "id": "silverstone",
+        "name": "Silverstone Circuit",
+        "shortName": null,
+        "locality": "Silverstone",
+        "countryCode": "GB",
+        "type": "permanent",
+        "coordinates": [
+          -1.01694,
+          52.0786
+        ]
+      }
+    },
+    {
+      "id": "2000-05",
+      "round": 5,
+      "name": "Spanish Grand Prix",
+      "date": "2000-05-07",
+      "status": "completed",
+      "circuit": {
+        "id": "catalunya",
+        "name": "Circuit de Barcelona-Catalunya",
+        "shortName": null,
+        "locality": "Barcelona",
+        "countryCode": "ES",
+        "type": "permanent",
+        "coordinates": [
+          2.26111,
+          41.57
+        ]
+      }
+    },
+    {
+      "id": "2000-06",
+      "round": 6,
+      "name": "European Grand Prix",
+      "date": "2000-05-21",
+      "status": "completed",
+      "circuit": {
+        "id": "nurburgring",
+        "name": "Nürburgring",
+        "shortName": null,
+        "locality": "Nürburg",
+        "countryCode": "DE",
+        "type": "permanent",
+        "coordinates": [
+          6.9475,
+          50.3356
+        ]
+      }
+    },
+    {
+      "id": "2000-07",
+      "round": 7,
+      "name": "Monaco Grand Prix",
+      "date": "2000-06-04",
+      "status": "completed",
+      "circuit": {
+        "id": "monaco",
+        "name": "Circuit de Monaco",
+        "shortName": null,
+        "locality": "Monte Carlo",
+        "countryCode": "MC",
+        "type": "permanent",
+        "coordinates": [
+          7.42056,
+          43.7347
+        ]
+      }
+    },
+    {
+      "id": "2000-08",
+      "round": 8,
+      "name": "Canadian Grand Prix",
+      "date": "2000-06-18",
+      "status": "completed",
+      "circuit": {
+        "id": "villeneuve",
+        "name": "Circuit Gilles Villeneuve",
+        "shortName": null,
+        "locality": "Montreal",
+        "countryCode": "CA",
+        "type": "permanent",
+        "coordinates": [
+          -73.5228,
+          45.5
+        ]
+      }
+    },
+    {
+      "id": "2000-09",
+      "round": 9,
+      "name": "French Grand Prix",
+      "date": "2000-07-02",
+      "status": "completed",
+      "circuit": {
+        "id": "magny_cours",
+        "name": "Circuit de Nevers Magny-Cours",
+        "shortName": null,
+        "locality": "Magny Cours",
+        "countryCode": "FR",
+        "type": "permanent",
+        "coordinates": [
+          3.16361,
+          46.8642
+        ]
+      }
+    },
+    {
+      "id": "2000-10",
+      "round": 10,
+      "name": "Austrian Grand Prix",
+      "date": "2000-07-16",
+      "status": "completed",
+      "circuit": {
+        "id": "red_bull_ring",
+        "name": "Red Bull Ring",
+        "shortName": null,
+        "locality": "Spielberg",
+        "countryCode": "AT",
+        "type": "permanent",
+        "coordinates": [
+          14.7647,
+          47.2197
+        ]
+      }
+    },
+    {
+      "id": "2000-11",
+      "round": 11,
+      "name": "German Grand Prix",
+      "date": "2000-07-30",
+      "status": "completed",
+      "circuit": {
+        "id": "hockenheimring",
+        "name": "Hockenheimring",
+        "shortName": null,
+        "locality": "Hockenheim",
+        "countryCode": "DE",
+        "type": "permanent",
+        "coordinates": [
+          8.56583,
+          49.3278
+        ]
+      }
+    },
+    {
+      "id": "2000-12",
+      "round": 12,
+      "name": "Hungarian Grand Prix",
+      "date": "2000-08-13",
+      "status": "completed",
+      "circuit": {
+        "id": "hungaroring",
+        "name": "Hungaroring",
+        "shortName": null,
+        "locality": "Budapest",
+        "countryCode": "HU",
+        "type": "permanent",
+        "coordinates": [
+          19.2486,
+          47.5789
+        ]
+      }
+    },
+    {
+      "id": "2000-13",
+      "round": 13,
+      "name": "Belgian Grand Prix",
+      "date": "2000-08-27",
+      "status": "completed",
+      "circuit": {
+        "id": "spa",
+        "name": "Circuit de Spa-Francorchamps",
+        "shortName": null,
+        "locality": "Spa",
+        "countryCode": "BE",
+        "type": "permanent",
+        "coordinates": [
+          5.97139,
+          50.4372
+        ]
+      }
+    },
+    {
+      "id": "2000-14",
+      "round": 14,
+      "name": "Italian Grand Prix",
+      "date": "2000-09-10",
+      "status": "completed",
+      "circuit": {
+        "id": "monza",
+        "name": "Autodromo Nazionale di Monza",
+        "shortName": null,
+        "locality": "Monza",
+        "countryCode": "IT",
+        "type": "permanent",
+        "coordinates": [
+          9.28111,
+          45.6156
+        ]
+      }
+    },
+    {
+      "id": "2000-15",
+      "round": 15,
+      "name": "United States Grand Prix",
+      "date": "2000-09-24",
+      "status": "completed",
+      "circuit": {
+        "id": "indianapolis",
+        "name": "Indianapolis Motor Speedway",
+        "shortName": null,
+        "locality": "Indianapolis",
+        "countryCode": "US",
+        "type": "permanent",
+        "coordinates": [
+          -86.2347,
+          39.795
+        ]
+      }
+    },
+    {
+      "id": "2000-16",
+      "round": 16,
+      "name": "Japanese Grand Prix",
+      "date": "2000-10-08",
+      "status": "completed",
+      "circuit": {
+        "id": "suzuka",
+        "name": "Suzuka Circuit",
+        "shortName": null,
+        "locality": "Suzuka",
+        "countryCode": "JP",
+        "type": "permanent",
+        "coordinates": [
+          136.541,
+          34.8431
+        ]
+      }
+    },
+    {
+      "id": "2000-17",
+      "round": 17,
+      "name": "Malaysian Grand Prix",
+      "date": "2000-10-22",
+      "status": "completed",
+      "circuit": {
+        "id": "sepang",
+        "name": "Sepang International Circuit",
+        "shortName": null,
+        "locality": "Kuala Lumpur",
+        "countryCode": "MY",
+        "type": "permanent",
+        "coordinates": [
+          101.738,
+          2.76083
+        ]
+      }
+    }
+  ],
+  "standings": {
+    "drivers": [
+      {
+        "position": 1,
+        "driverId": "michael_schumacher",
+        "givenName": "Michael",
+        "familyName": "Schumacher",
+        "code": "MSC",
+        "points": 108,
+        "wins": 9,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 2,
+        "driverId": "hakkinen",
+        "givenName": "Mika",
+        "familyName": "Häkkinen",
+        "code": null,
+        "points": 89,
+        "wins": 4,
+        "constructorId": "mclaren",
+        "constructorName": "McLaren",
+        "teamColor": "#F47600"
+      },
+      {
+        "position": 3,
+        "driverId": "coulthard",
+        "givenName": "David",
+        "familyName": "Coulthard",
+        "code": "COU",
+        "points": 73,
+        "wins": 3,
+        "constructorId": "mclaren",
+        "constructorName": "McLaren",
+        "teamColor": "#F47600"
+      },
+      {
+        "position": 4,
+        "driverId": "barrichello",
+        "givenName": "Rubens",
+        "familyName": "Barrichello",
+        "code": "BAR",
+        "points": 62,
+        "wins": 1,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 5,
+        "driverId": "ralf_schumacher",
+        "givenName": "Ralf",
+        "familyName": "Schumacher",
+        "code": "SCH",
+        "points": 24,
+        "wins": 0,
+        "constructorId": "williams",
+        "constructorName": "Williams",
+        "teamColor": "#1868DB"
+      },
+      {
+        "position": 6,
+        "driverId": "fisichella",
+        "givenName": "Giancarlo",
+        "familyName": "Fisichella",
+        "code": "FIS",
+        "points": 18,
+        "wins": 0,
+        "constructorId": "benetton",
+        "constructorName": "Benetton",
+        "teamColor": null
+      },
+      {
+        "position": 7,
+        "driverId": "villeneuve",
+        "givenName": "Jacques",
+        "familyName": "Villeneuve",
+        "code": "VIL",
+        "points": 17,
+        "wins": 0,
+        "constructorId": "bar",
+        "constructorName": "BAR",
+        "teamColor": null
+      },
+      {
+        "position": 8,
+        "driverId": "button",
+        "givenName": "Jenson",
+        "familyName": "Button",
+        "code": "BUT",
+        "points": 12,
+        "wins": 0,
+        "constructorId": "williams",
+        "constructorName": "Williams",
+        "teamColor": "#1868DB"
+      },
+      {
+        "position": 9,
+        "driverId": "frentzen",
+        "givenName": "Heinz-Harald",
+        "familyName": "Frentzen",
+        "code": null,
+        "points": 11,
+        "wins": 0,
+        "constructorId": "jordan",
+        "constructorName": "Jordan",
+        "teamColor": null
+      },
+      {
+        "position": 10,
+        "driverId": "trulli",
+        "givenName": "Jarno",
+        "familyName": "Trulli",
+        "code": "TRU",
+        "points": 6,
+        "wins": 0,
+        "constructorId": "jordan",
+        "constructorName": "Jordan",
+        "teamColor": null
+      },
+      {
+        "position": 11,
+        "driverId": "salo",
+        "givenName": "Mika",
+        "familyName": "Salo",
+        "code": null,
+        "points": 6,
+        "wins": 0,
+        "constructorId": "sauber",
+        "constructorName": "Sauber",
+        "teamColor": "#01C00E"
+      },
+      {
+        "position": 12,
+        "driverId": "verstappen",
+        "givenName": "Jos",
+        "familyName": "Verstappen",
+        "code": null,
+        "points": 5,
+        "wins": 0,
+        "constructorId": "arrows",
+        "constructorName": "Arrows",
+        "teamColor": null
+      },
+      {
+        "position": 13,
+        "driverId": "irvine",
+        "givenName": "Eddie",
+        "familyName": "Irvine",
+        "code": null,
+        "points": 4,
+        "wins": 0,
+        "constructorId": "jaguar",
+        "constructorName": "Jaguar",
+        "teamColor": null
+      },
+      {
+        "position": 14,
+        "driverId": "zonta",
+        "givenName": "Ricardo",
+        "familyName": "Zonta",
+        "code": "ZON",
+        "points": 3,
+        "wins": 0,
+        "constructorId": "bar",
+        "constructorName": "BAR",
+        "teamColor": null
+      },
+      {
+        "position": 15,
+        "driverId": "wurz",
+        "givenName": "Alexander",
+        "familyName": "Wurz",
+        "code": "WUR",
+        "points": 2,
+        "wins": 0,
+        "constructorId": "benetton",
+        "constructorName": "Benetton",
+        "teamColor": null
+      },
+      {
+        "position": 16,
+        "driverId": "rosa",
+        "givenName": "Pedro",
+        "familyName": "de la Rosa",
+        "code": "DLR",
+        "points": 2,
+        "wins": 0,
+        "constructorId": "arrows",
+        "constructorName": "Arrows",
+        "teamColor": null
+      }
+    ],
+    "constructors": [
+      {
+        "position": 1,
+        "constructorId": "ferrari",
+        "name": "Ferrari",
+        "engineName": null,
+        "points": 170,
+        "wins": 10,
+        "teamColor": "#ED1131",
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 2,
+        "constructorId": "mclaren",
+        "name": "McLaren",
+        "engineName": null,
+        "points": 162,
+        "wins": 7,
+        "teamColor": "#F47600",
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 3,
+        "constructorId": "williams",
+        "name": "Williams",
+        "engineName": null,
+        "points": 36,
+        "wins": 0,
+        "teamColor": "#1868DB",
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 4,
+        "constructorId": "benetton",
+        "name": "Benetton",
+        "engineName": null,
+        "points": 20,
+        "wins": 0,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 5,
+        "constructorId": "bar",
+        "name": "BAR",
+        "engineName": null,
+        "points": 20,
+        "wins": 0,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 6,
+        "constructorId": "jordan",
+        "name": "Jordan",
+        "engineName": null,
+        "points": 17,
+        "wins": 0,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 7,
+        "constructorId": "arrows",
+        "name": "Arrows",
+        "engineName": null,
+        "points": 7,
+        "wins": 0,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 8,
+        "constructorId": "sauber",
+        "name": "Sauber",
+        "engineName": null,
+        "points": 6,
+        "wins": 0,
+        "teamColor": "#01C00E",
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 9,
+        "constructorId": "jaguar",
+        "name": "Jaguar",
+        "engineName": null,
+        "points": 4,
+        "wins": 0,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      }
+    ]
+  }
+}

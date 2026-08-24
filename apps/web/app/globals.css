@@ -415,6 +415,14 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   white-space: nowrap;
   text-transform: uppercase;
 }
+.season-data-note {
+  display: block;
+  margin-top: 12px;
+  color: #7f929e;
+  font-size: 9px;
+  line-height: 1.45;
+}
+.season-data-note--error { color: #ff8996; }
 
 .basemap-control {
   display: flex;
@@ -716,6 +724,14 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   box-shadow: inset 3px 0 0 var(--team-color, transparent);
 }
 .standings-panel li:last-child { border-bottom: 0; }
+.standings-panel li.standings-empty {
+  display: flex;
+  min-height: 78px;
+  color: #748792;
+  font-size: 10px;
+  line-height: 1.5;
+  box-shadow: none;
+}
 .standings-panel--teams li {
   grid-template-columns: 34px minmax(0, 1fr) 92px auto;
 }

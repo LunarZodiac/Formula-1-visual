@@ -1,0 +1,455 @@
+{
+  "exportedAt": "2026-08-24T22:44:41.728Z",
+  "season": 1959,
+  "calendar": [
+    {
+      "id": "1959-01",
+      "round": 1,
+      "name": "Monaco Grand Prix",
+      "date": "1959-05-10",
+      "status": "completed",
+      "circuit": {
+        "id": "monaco",
+        "name": "Circuit de Monaco",
+        "shortName": null,
+        "locality": "Monte Carlo",
+        "countryCode": "MC",
+        "type": "permanent",
+        "coordinates": [
+          7.42056,
+          43.7347
+        ]
+      }
+    },
+    {
+      "id": "1959-02",
+      "round": 2,
+      "name": "Indianapolis 500",
+      "date": "1959-05-30",
+      "status": "completed",
+      "circuit": {
+        "id": "indianapolis",
+        "name": "Indianapolis Motor Speedway",
+        "shortName": null,
+        "locality": "Indianapolis",
+        "countryCode": "US",
+        "type": "permanent",
+        "coordinates": [
+          -86.2347,
+          39.795
+        ]
+      }
+    },
+    {
+      "id": "1959-03",
+      "round": 3,
+      "name": "Dutch Grand Prix",
+      "date": "1959-05-31",
+      "status": "completed",
+      "circuit": {
+        "id": "zandvoort",
+        "name": "Circuit Park Zandvoort",
+        "shortName": null,
+        "locality": "Zandvoort",
+        "countryCode": "NL",
+        "type": "permanent",
+        "coordinates": [
+          4.54092,
+          52.3888
+        ]
+      }
+    },
+    {
+      "id": "1959-04",
+      "round": 4,
+      "name": "French Grand Prix",
+      "date": "1959-07-05",
+      "status": "completed",
+      "circuit": {
+        "id": "reims",
+        "name": "Reims-Gueux",
+        "shortName": null,
+        "locality": "Reims",
+        "countryCode": "FR",
+        "type": "permanent",
+        "coordinates": [
+          3.93083,
+          49.2542
+        ]
+      }
+    },
+    {
+      "id": "1959-05",
+      "round": 5,
+      "name": "British Grand Prix",
+      "date": "1959-07-18",
+      "status": "completed",
+      "circuit": {
+        "id": "aintree",
+        "name": "Aintree",
+        "shortName": null,
+        "locality": "Liverpool",
+        "countryCode": "GB",
+        "type": "permanent",
+        "coordinates": [
+          -2.94056,
+          53.4769
+        ]
+      }
+    },
+    {
+      "id": "1959-06",
+      "round": 6,
+      "name": "German Grand Prix",
+      "date": "1959-08-02",
+      "status": "completed",
+      "circuit": {
+        "id": "avus",
+        "name": "AVUS",
+        "shortName": null,
+        "locality": "Berlin",
+        "countryCode": "DE",
+        "type": "permanent",
+        "coordinates": [
+          13.2514,
+          52.4806
+        ]
+      }
+    },
+    {
+      "id": "1959-07",
+      "round": 7,
+      "name": "Portuguese Grand Prix",
+      "date": "1959-08-23",
+      "status": "completed",
+      "circuit": {
+        "id": "monsanto",
+        "name": "Monsanto Park Circuit",
+        "shortName": null,
+        "locality": "Lisbon",
+        "countryCode": "PT",
+        "type": "permanent",
+        "coordinates": [
+          -9.20306,
+          38.7197
+        ]
+      }
+    },
+    {
+      "id": "1959-08",
+      "round": 8,
+      "name": "Italian Grand Prix",
+      "date": "1959-09-13",
+      "status": "completed",
+      "circuit": {
+        "id": "monza",
+        "name": "Autodromo Nazionale di Monza",
+        "shortName": null,
+        "locality": "Monza",
+        "countryCode": "IT",
+        "type": "permanent",
+        "coordinates": [
+          9.28111,
+          45.6156
+        ]
+      }
+    },
+    {
+      "id": "1959-09",
+      "round": 9,
+      "name": "United States Grand Prix",
+      "date": "1959-12-12",
+      "status": "completed",
+      "circuit": {
+        "id": "sebring",
+        "name": "Sebring International Raceway",
+        "shortName": null,
+        "locality": "Florida",
+        "countryCode": "US",
+        "type": "permanent",
+        "coordinates": [
+          -81.3483,
+          27.4547
+        ]
+      }
+    }
+  ],
+  "standings": {
+    "drivers": [
+      {
+        "position": 1,
+        "driverId": "jack_brabham",
+        "givenName": "Jack",
+        "familyName": "Brabham",
+        "code": null,
+        "points": 31,
+        "wins": 2,
+        "constructorId": "cooper-climax",
+        "constructorName": "Cooper-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 2,
+        "driverId": "brooks",
+        "givenName": "Tony",
+        "familyName": "Brooks",
+        "code": null,
+        "points": 27,
+        "wins": 2,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 3,
+        "driverId": "moss",
+        "givenName": "Stirling",
+        "familyName": "Moss",
+        "code": null,
+        "points": 25.5,
+        "wins": 2,
+        "constructorId": "cooper-climax",
+        "constructorName": "Cooper-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 4,
+        "driverId": "phil_hill",
+        "givenName": "Phil",
+        "familyName": "Hill",
+        "code": null,
+        "points": 20,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 5,
+        "driverId": "trintignant",
+        "givenName": "Maurice",
+        "familyName": "Trintignant",
+        "code": null,
+        "points": 19,
+        "wins": 0,
+        "constructorId": "cooper-climax",
+        "constructorName": "Cooper-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 6,
+        "driverId": "mclaren",
+        "givenName": "Bruce",
+        "familyName": "McLaren",
+        "code": null,
+        "points": 16.5,
+        "wins": 1,
+        "constructorId": "cooper-climax",
+        "constructorName": "Cooper-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 7,
+        "driverId": "gurney",
+        "givenName": "Dan",
+        "familyName": "Gurney",
+        "code": null,
+        "points": 13,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 8,
+        "driverId": "bonnier",
+        "givenName": "Jo",
+        "familyName": "Bonnier",
+        "code": null,
+        "points": 10,
+        "wins": 1,
+        "constructorId": "brm",
+        "constructorName": "BRM",
+        "teamColor": null
+      },
+      {
+        "position": 9,
+        "driverId": "gregory",
+        "givenName": "Masten",
+        "familyName": "Gregory",
+        "code": null,
+        "points": 10,
+        "wins": 0,
+        "constructorId": "cooper-climax",
+        "constructorName": "Cooper-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 10,
+        "driverId": "ward",
+        "givenName": "Rodger",
+        "familyName": "Ward",
+        "code": null,
+        "points": 8,
+        "wins": 1,
+        "constructorId": "kurtis_kraft",
+        "constructorName": "Kurtis Kraft",
+        "teamColor": null
+      },
+      {
+        "position": 11,
+        "driverId": "rathmann",
+        "givenName": "Jim",
+        "familyName": "Rathmann",
+        "code": null,
+        "points": 6,
+        "wins": 0,
+        "constructorId": "watson",
+        "constructorName": "Watson",
+        "teamColor": null
+      },
+      {
+        "position": 12,
+        "driverId": "thomson",
+        "givenName": "Johnny",
+        "familyName": "Thomson",
+        "code": null,
+        "points": 5,
+        "wins": 0,
+        "constructorId": "lesovsky",
+        "constructorName": "Lesovsky",
+        "teamColor": null
+      },
+      {
+        "position": 13,
+        "driverId": "schell",
+        "givenName": "Harry",
+        "familyName": "Schell",
+        "code": null,
+        "points": 5,
+        "wins": 0,
+        "constructorId": "cooper-climax",
+        "constructorName": "Cooper-Climax",
+        "teamColor": null
+      },
+      {
+        "position": 14,
+        "driverId": "ireland",
+        "givenName": "Innes",
+        "familyName": "Ireland",
+        "code": null,
+        "points": 5,
+        "wins": 0,
+        "constructorId": "team_lotus",
+        "constructorName": "Team Lotus",
+        "teamColor": null
+      },
+      {
+        "position": 15,
+        "driverId": "gendebien",
+        "givenName": "Olivier",
+        "familyName": "Gendebien",
+        "code": null,
+        "points": 3,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 16,
+        "driverId": "bettenhausen",
+        "givenName": "Tony",
+        "familyName": "Bettenhausen",
+        "code": null,
+        "points": 3,
+        "wins": 0,
+        "constructorId": "epperly",
+        "constructorName": "Epperly",
+        "teamColor": null
+      },
+      {
+        "position": 17,
+        "driverId": "allison",
+        "givenName": "Cliff",
+        "familyName": "Allison",
+        "code": null,
+        "points": 2,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 18,
+        "driverId": "behra",
+        "givenName": "Jean",
+        "familyName": "Behra",
+        "code": null,
+        "points": 2,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 19,
+        "driverId": "goldsmith",
+        "givenName": "Paul",
+        "familyName": "Goldsmith",
+        "code": null,
+        "points": 2,
+        "wins": 0,
+        "constructorId": "epperly",
+        "constructorName": "Epperly",
+        "teamColor": null
+      }
+    ],
+    "constructors": [
+      {
+        "position": 1,
+        "constructorId": "cooper-climax",
+        "name": "Cooper-Climax",
+        "engineName": null,
+        "points": 40,
+        "wins": 5,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 2,
+        "constructorId": "ferrari",
+        "name": "Ferrari",
+        "engineName": null,
+        "points": 32,
+        "wins": 2,
+        "teamColor": "#ED1131",
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 3,
+        "constructorId": "brm",
+        "name": "BRM",
+        "engineName": null,
+        "points": 18,
+        "wins": 1,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      },
+      {
+        "position": 4,
+        "constructorId": "team_lotus",
+        "name": "Team Lotus",
+        "engineName": null,
+        "points": 5,
+        "wins": 0,
+        "teamColor": null,
+        "carModel": null,
+        "carImageUrl": null
+      }
+    ]
+  }
+}

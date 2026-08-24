@@ -1,0 +1,408 @@
+{
+  "exportedAt": "2026-08-24T22:44:41.728Z",
+  "season": 1950,
+  "calendar": [
+    {
+      "id": "1950-01",
+      "round": 1,
+      "name": "British Grand Prix",
+      "date": "1950-05-13",
+      "status": "completed",
+      "circuit": {
+        "id": "silverstone",
+        "name": "Silverstone Circuit",
+        "shortName": null,
+        "locality": "Silverstone",
+        "countryCode": "GB",
+        "type": "permanent",
+        "coordinates": [
+          -1.01694,
+          52.0786
+        ]
+      }
+    },
+    {
+      "id": "1950-02",
+      "round": 2,
+      "name": "Monaco Grand Prix",
+      "date": "1950-05-21",
+      "status": "completed",
+      "circuit": {
+        "id": "monaco",
+        "name": "Circuit de Monaco",
+        "shortName": null,
+        "locality": "Monte Carlo",
+        "countryCode": "MC",
+        "type": "permanent",
+        "coordinates": [
+          7.42056,
+          43.7347
+        ]
+      }
+    },
+    {
+      "id": "1950-03",
+      "round": 3,
+      "name": "Indianapolis 500",
+      "date": "1950-05-30",
+      "status": "completed",
+      "circuit": {
+        "id": "indianapolis",
+        "name": "Indianapolis Motor Speedway",
+        "shortName": null,
+        "locality": "Indianapolis",
+        "countryCode": "US",
+        "type": "permanent",
+        "coordinates": [
+          -86.2347,
+          39.795
+        ]
+      }
+    },
+    {
+      "id": "1950-04",
+      "round": 4,
+      "name": "Swiss Grand Prix",
+      "date": "1950-06-04",
+      "status": "completed",
+      "circuit": {
+        "id": "bremgarten",
+        "name": "Circuit Bremgarten",
+        "shortName": null,
+        "locality": "Bern",
+        "countryCode": "CH",
+        "type": "permanent",
+        "coordinates": [
+          7.40194,
+          46.9589
+        ]
+      }
+    },
+    {
+      "id": "1950-05",
+      "round": 5,
+      "name": "Belgian Grand Prix",
+      "date": "1950-06-18",
+      "status": "completed",
+      "circuit": {
+        "id": "spa",
+        "name": "Circuit de Spa-Francorchamps",
+        "shortName": null,
+        "locality": "Spa",
+        "countryCode": "BE",
+        "type": "permanent",
+        "coordinates": [
+          5.97139,
+          50.4372
+        ]
+      }
+    },
+    {
+      "id": "1950-06",
+      "round": 6,
+      "name": "French Grand Prix",
+      "date": "1950-07-02",
+      "status": "completed",
+      "circuit": {
+        "id": "reims",
+        "name": "Reims-Gueux",
+        "shortName": null,
+        "locality": "Reims",
+        "countryCode": "FR",
+        "type": "permanent",
+        "coordinates": [
+          3.93083,
+          49.2542
+        ]
+      }
+    },
+    {
+      "id": "1950-07",
+      "round": 7,
+      "name": "Italian Grand Prix",
+      "date": "1950-09-03",
+      "status": "completed",
+      "circuit": {
+        "id": "monza",
+        "name": "Autodromo Nazionale di Monza",
+        "shortName": null,
+        "locality": "Monza",
+        "countryCode": "IT",
+        "type": "permanent",
+        "coordinates": [
+          9.28111,
+          45.6156
+        ]
+      }
+    }
+  ],
+  "standings": {
+    "drivers": [
+      {
+        "position": 1,
+        "driverId": "farina",
+        "givenName": "Nino",
+        "familyName": "Farina",
+        "code": null,
+        "points": 30,
+        "wins": 3,
+        "constructorId": "alfa",
+        "constructorName": "Alfa Romeo",
+        "teamColor": null
+      },
+      {
+        "position": 2,
+        "driverId": "fangio",
+        "givenName": "Juan",
+        "familyName": "Fangio",
+        "code": null,
+        "points": 27,
+        "wins": 3,
+        "constructorId": "alfa",
+        "constructorName": "Alfa Romeo",
+        "teamColor": null
+      },
+      {
+        "position": 3,
+        "driverId": "fagioli",
+        "givenName": "Luigi",
+        "familyName": "Fagioli",
+        "code": null,
+        "points": 24,
+        "wins": 0,
+        "constructorId": "alfa",
+        "constructorName": "Alfa Romeo",
+        "teamColor": null
+      },
+      {
+        "position": 4,
+        "driverId": "rosier",
+        "givenName": "Louis",
+        "familyName": "Rosier",
+        "code": null,
+        "points": 13,
+        "wins": 0,
+        "constructorId": "lago",
+        "constructorName": "Talbot-Lago",
+        "teamColor": null
+      },
+      {
+        "position": 5,
+        "driverId": "ascari",
+        "givenName": "Alberto",
+        "familyName": "Ascari",
+        "code": null,
+        "points": 11,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 6,
+        "driverId": "parsons",
+        "givenName": "Johnnie",
+        "familyName": "Parsons",
+        "code": null,
+        "points": 9,
+        "wins": 1,
+        "constructorId": "kurtis_kraft",
+        "constructorName": "Kurtis Kraft",
+        "teamColor": null
+      },
+      {
+        "position": 7,
+        "driverId": "holland",
+        "givenName": "Bill",
+        "familyName": "Holland",
+        "code": null,
+        "points": 6,
+        "wins": 0,
+        "constructorId": "deidt",
+        "constructorName": "Deidt",
+        "teamColor": null
+      },
+      {
+        "position": 8,
+        "driverId": "bira",
+        "givenName": "Prince",
+        "familyName": "Bira",
+        "code": null,
+        "points": 5,
+        "wins": 0,
+        "constructorId": "maserati",
+        "constructorName": "Maserati",
+        "teamColor": null
+      },
+      {
+        "position": 9,
+        "driverId": "whitehead",
+        "givenName": "Peter",
+        "familyName": "Whitehead",
+        "code": null,
+        "points": 4,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 10,
+        "driverId": "chiron",
+        "givenName": "Louis",
+        "familyName": "Chiron",
+        "code": null,
+        "points": 4,
+        "wins": 0,
+        "constructorId": "maserati",
+        "constructorName": "Maserati",
+        "teamColor": null
+      },
+      {
+        "position": 11,
+        "driverId": "reg_parnell",
+        "givenName": "Reg",
+        "familyName": "Parnell",
+        "code": null,
+        "points": 4,
+        "wins": 0,
+        "constructorId": "maserati",
+        "constructorName": "Maserati",
+        "teamColor": null
+      },
+      {
+        "position": 12,
+        "driverId": "rose",
+        "givenName": "Mauri",
+        "familyName": "Rose",
+        "code": null,
+        "points": 4,
+        "wins": 0,
+        "constructorId": "deidt",
+        "constructorName": "Deidt",
+        "teamColor": null
+      },
+      {
+        "position": 13,
+        "driverId": "serafini",
+        "givenName": "Dorino",
+        "familyName": "Serafini",
+        "code": null,
+        "points": 3,
+        "wins": 0,
+        "constructorId": "ferrari",
+        "constructorName": "Ferrari",
+        "teamColor": "#ED1131"
+      },
+      {
+        "position": 14,
+        "driverId": "cabantous",
+        "givenName": "Yves",
+        "familyName": "Cabantous",
+        "code": null,
+        "points": 3,
+        "wins": 0,
+        "constructorId": "lago",
+        "constructorName": "Talbot-Lago",
+        "teamColor": null
+      },
+      {
+        "position": 15,
+        "driverId": "sommer",
+        "givenName": "Raymond",
+        "familyName": "Sommer",
+        "code": null,
+        "points": 3,
+        "wins": 0,
+        "constructorId": "lago",
+        "constructorName": "Talbot-Lago",
+        "teamColor": null
+      },
+      {
+        "position": 16,
+        "driverId": "manzon",
+        "givenName": "Robert",
+        "familyName": "Manzon",
+        "code": null,
+        "points": 3,
+        "wins": 0,
+        "constructorId": "simca",
+        "constructorName": "Simca",
+        "teamColor": null
+      },
+      {
+        "position": 17,
+        "driverId": "green",
+        "givenName": "Cecil",
+        "familyName": "Green",
+        "code": null,
+        "points": 3,
+        "wins": 0,
+        "constructorId": "kurtis_kraft",
+        "constructorName": "Kurtis Kraft",
+        "teamColor": null
+      },
+      {
+        "position": 18,
+        "driverId": "etancelin",
+        "givenName": "Philippe",
+        "familyName": "Étancelin",
+        "code": null,
+        "points": 3,
+        "wins": 0,
+        "constructorId": "lago",
+        "constructorName": "Talbot-Lago",
+        "teamColor": null
+      },
+      {
+        "position": 19,
+        "driverId": "bonetto",
+        "givenName": "Felice",
+        "familyName": "Bonetto",
+        "code": null,
+        "points": 2,
+        "wins": 0,
+        "constructorId": "milano",
+        "constructorName": "Milano",
+        "teamColor": null
+      },
+      {
+        "position": 20,
+        "driverId": "chaboud",
+        "givenName": "Eugène",
+        "familyName": "Chaboud",
+        "code": null,
+        "points": 1,
+        "wins": 0,
+        "constructorId": "lago",
+        "constructorName": "Talbot-Lago",
+        "teamColor": null
+      },
+      {
+        "position": 21,
+        "driverId": "bettenhausen",
+        "givenName": "Tony",
+        "familyName": "Bettenhausen",
+        "code": null,
+        "points": 1,
+        "wins": 0,
+        "constructorId": "kurtis_kraft",
+        "constructorName": "Kurtis Kraft",
+        "teamColor": null
+      },
+      {
+        "position": 22,
+        "driverId": "chitwood",
+        "givenName": "Joie",
+        "familyName": "Chitwood",
+        "code": null,
+        "points": 1,
+        "wins": 0,
+        "constructorId": "kurtis_kraft",
+        "constructorName": "Kurtis Kraft",
+        "teamColor": null
+      }
+    ],
+    "constructors": []
+  }
+}

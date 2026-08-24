@@ -7,11 +7,16 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { season2024, type Circuit } from '../data/season-2024';
 import { getTrackData, trackGeometries } from '../data/track-geometries';
 import { season2024Summary } from '../data/season-summary';
+import {
+  snapshotToCircuits,
+  type SeasonIndexItem,
+  type SeasonSnapshot,
+} from '../data/web-snapshots';
 
 type Basemap = 'dark' | 'satellite';
 type MainSection = 'atlas' | 'season';
 
-const circuits = season2024;
+const fallbackCircuits = season2024;
 
 const raceDateFormatter = new Intl.DateTimeFormat('ru-RU', {
   day: 'numeric',
@@ -20,6 +25,7 @@ const raceDateFormatter = new Intl.DateTimeFormat('ru-RU', {
 });
 
 function formatRaceDate(date: string) {
+  if (!date) return 'Дата уточняется';
   return raceDateFormatter.format(new Date(`${date}T00:00:00Z`));
 }
 
@@ -138,52 +144,116 @@ function makeGraticule(): GeoJSON.FeatureCollection<GeoJSON.LineString> {
   return { type: 'FeatureCollection', features };
 }
 
-const circuitGeoJson: GeoJSON.FeatureCollection<GeoJSON.Point> = {
-  type: 'FeatureCollection',
-  features: circuits.map((circuit) => ({
-    type: 'Feature',
-    properties: {
-      id: circuit.id,
-      order: circuit.order,
-      name: circuit.name,
-      type: circuit.type,
-    },
-    geometry: { type: 'Point', coordinates: circuit.coordinates },
-  })),
-};
+function makeCircuitGeoJson(circuits: Circuit[]): GeoJSON.FeatureCollection<GeoJSON.Point> {
+  return {
+    type: 'FeatureCollection',
+    features: circuits.map((circuit) => ({
+      type: 'Feature',
+      properties: {
+        id: circuit.id,
+        order: circuit.order,
+        name: circuit.name,
+        type: circuit.type,
+      },
+      geometry: { type: 'Point', coordinates: circuit.coordinates },
+    })),
+  };
+}
 
-const routeGeoJson: GeoJSON.FeatureCollection<GeoJSON.LineString> = {
-  type: 'FeatureCollection',
-  features: [{
-    type: 'Feature', properties: {},
-    geometry: {
-      type: 'LineString',
-      coordinates: circuits.map((circuit) => circuit.coordinates),
-    },
-  }],
-};
+function makeRouteGeoJson(circuits: Circuit[]): GeoJSON.FeatureCollection<GeoJSON.LineString> {
+  if (circuits.length < 2) return { type: 'FeatureCollection', features: [] };
+  return {
+    type: 'FeatureCollection',
+    features: [{
+      type: 'Feature',
+      properties: {},
+      geometry: { type: 'LineString', coordinates: circuits.map((circuit) => circuit.coordinates) },
+    }],
+  };
+}
 
 export function AtlasExperience() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
-  const selectedIdRef = useRef(circuits[0].id);
-  const [selectedId, setSelectedId] = useState(circuits[0].id);
+  const circuitsRef = useRef<Circuit[]>(fallbackCircuits);
+  const selectedSeasonRef = useRef(2024);
+  const selectedIdRef = useRef(fallbackCircuits[0].id);
+  const [selectedId, setSelectedId] = useState(fallbackCircuits[0].id);
+  const [selectedSeason, setSelectedSeason] = useState(2024);
+  const [availableSeasons, setAvailableSeasons] = useState<SeasonIndexItem[]>([{
+    year: 2024,
+    status: 'completed',
+    roundsPlanned: 24,
+    racesAvailable: 24,
+  }]);
+  const [seasonSnapshot, setSeasonSnapshot] = useState<SeasonSnapshot | null>(null);
+  const [circuits, setCircuits] = useState<Circuit[]>(fallbackCircuits);
+  const [seasonDataStatus, setSeasonDataStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [basemap, setBasemap] = useState<Basemap>('dark');
   const [mapReady, setMapReady] = useState(false);
   const [activeSection, setActiveSection] = useState<MainSection>('atlas');
 
+  const circuitGeoJson = useMemo(() => makeCircuitGeoJson(circuits), [circuits]);
+  const routeGeoJson = useMemo(() => makeRouteGeoJson(circuits), [circuits]);
+  const seasonMeta = availableSeasons.find((season) => season.year === selectedSeason);
+  const seasonIsActive = seasonMeta?.status === 'active';
+
   const selectedCircuit = useMemo(
-    () => circuits.find((circuit) => circuit.id === selectedId) ?? circuits[0],
-    [selectedId],
+    () => circuits.find((circuit) => circuit.id === selectedId) ?? circuits[0] ?? fallbackCircuits[0],
+    [circuits, selectedId],
   );
+
+  const driverStandings = useMemo(() => {
+    if (selectedSeason === 2024) {
+      return season2024Summary.drivers.map((standing) => ({
+        position: standing.position,
+        id: standing.driverId,
+        code: standing.driver.code,
+        name: standing.driver.nameRu,
+        teamName: standing.teamLabel ?? standing.team.name,
+        teamColor: standing.team.color2024,
+        points: standing.points,
+      }));
+    }
+    return (seasonSnapshot?.standings.drivers ?? []).map((standing) => ({
+      position: standing.position,
+      id: standing.driverId,
+      code: standing.code ?? standing.familyName.slice(0, 3).toUpperCase(),
+      name: `${standing.givenName} ${standing.familyName}`,
+      teamName: standing.constructorName ?? 'Команда не указана',
+      teamColor: standing.teamColor ?? '#5b7890',
+      points: standing.points,
+    }));
+  }, [seasonSnapshot, selectedSeason]);
+
+  const constructorStandings = useMemo(() => {
+    if (selectedSeason === 2024) {
+      return season2024Summary.teams.map((standing) => ({
+        position: standing.position,
+        id: standing.teamId,
+        name: standing.team.name,
+        officialName: standing.team.officialName2024,
+        teamColor: standing.team.color2024,
+        points: standing.points,
+      }));
+    }
+    return (seasonSnapshot?.standings.constructors ?? []).map((standing) => ({
+      position: standing.position,
+      id: standing.constructorId,
+      name: standing.name,
+      officialName: standing.engineName ?? standing.name,
+      teamColor: standing.teamColor ?? '#5b7890',
+      points: standing.points,
+    }));
+  }, [seasonSnapshot, selectedSeason]);
 
   const focusCircuit = useCallback((circuit: Circuit) => {
     setSelectedId(circuit.id);
     selectedIdRef.current = circuit.id;
     const map = mapRef.current;
-    const track = trackGeometries[circuit.id];
+    const track = selectedSeasonRef.current === 2024 ? trackGeometries[circuit.id] : undefined;
     const trackSource = map?.getSource('selected-track') as maplibregl.GeoJSONSource | undefined;
-    trackSource?.setData(getTrackData(circuit.id));
+    trackSource?.setData(getTrackData(track ? circuit.id : ''));
 
     if (!map) return;
     if (map.getLayer('circuit-active-marker')) {
@@ -239,6 +309,67 @@ export function AtlasExperience() {
       'atmosphere-blend': 0.9,
     });
   }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/data/f1/seasons.json', { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json() as Promise<{ seasons: SeasonIndexItem[] }>;
+      })
+      .then((data) => {
+        if (data.seasons.length > 0) setAvailableSeasons(data.seasons);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        console.warn('Не удалось загрузить индекс сезонов, используется сезон 2024.', error);
+      });
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(`/data/f1/season-${selectedSeason}.json`, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json() as Promise<SeasonSnapshot>;
+      })
+      .then((snapshot) => {
+        const nextCircuits = selectedSeason === 2024
+          ? fallbackCircuits
+          : snapshotToCircuits(snapshot);
+        if (nextCircuits.length === 0) throw new Error('В календаре нет этапов.');
+
+        const firstCircuit = nextCircuits[0];
+        setSeasonSnapshot(snapshot);
+        setCircuits(nextCircuits);
+        circuitsRef.current = nextCircuits;
+        setSelectedId(firstCircuit.id);
+        selectedIdRef.current = firstCircuit.id;
+        setSeasonDataStatus('ready');
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        console.error(`Не удалось загрузить сезон ${selectedSeason}.`, error);
+        setSeasonDataStatus('error');
+      });
+    return () => controller.abort();
+  }, [selectedSeason]);
+
+  useEffect(() => {
+    if (!mapReady) return;
+    const map = mapRef.current;
+    const circuitSource = map?.getSource('circuits') as maplibregl.GeoJSONSource | undefined;
+    const routeSource = map?.getSource('season-route') as maplibregl.GeoJSONSource | undefined;
+    const trackSource = map?.getSource('selected-track') as maplibregl.GeoJSONSource | undefined;
+    circuitSource?.setData(circuitGeoJson);
+    routeSource?.setData(routeGeoJson);
+    trackSource?.setData(getTrackData(selectedSeasonRef.current === 2024 ? selectedIdRef.current : ''));
+    if (map?.getLayer('circuit-active-marker')) {
+      map.setFilter('circuit-active-marker', ['==', ['get', 'id'], selectedIdRef.current]);
+      map.setFilter('circuit-order', ['==', ['get', 'id'], selectedIdRef.current]);
+    }
+  }, [circuitGeoJson, mapReady, routeGeoJson]);
 
   useEffect(() => {
     const atlas = document.getElementById('atlas');
@@ -299,7 +430,7 @@ export function AtlasExperience() {
         },
       });
 
-      map.addSource('season-route', { type: 'geojson', data: routeGeoJson });
+      map.addSource('season-route', { type: 'geojson', data: makeRouteGeoJson(fallbackCircuits) });
       map.addLayer({
         id: 'season-route-glow', type: 'line', source: 'season-route',
         maxzoom: 8.5,
@@ -342,7 +473,7 @@ export function AtlasExperience() {
         },
       });
 
-      map.addSource('circuits', { type: 'geojson', data: circuitGeoJson });
+      map.addSource('circuits', { type: 'geojson', data: makeCircuitGeoJson(fallbackCircuits) });
       map.addImage('circuit-stationary', makeCircuitMarker('Стационарная трасса'), { pixelRatio: 2 });
       map.addImage('circuit-urban', makeCircuitMarker('Городская трасса'), { pixelRatio: 2 });
       map.addImage('circuit-mixed', makeCircuitMarker('Смешанная трасса'), { pixelRatio: 2 });
@@ -416,7 +547,7 @@ export function AtlasExperience() {
       });
       map.on('click', 'circuits-hit', (event) => {
         const id = event.features?.[0]?.properties?.id as string | undefined;
-        const circuit = circuits.find((item) => item.id === id);
+        const circuit = circuitsRef.current.find((item) => item.id === id);
         if (circuit) focusCircuit(circuit);
       });
       setMapReady(true);
@@ -462,9 +593,18 @@ export function AtlasExperience() {
 
         <div className="season-control" aria-label="Выбранный сезон">
           <span>Сезон</span>
-          <select defaultValue="2024" aria-label="Сезон">
-            <option value="2024">2024</option>
-            <option disabled>Другие сезоны — скоро</option>
+          <select
+            value={selectedSeason}
+            aria-label="Сезон"
+            onChange={(event) => {
+              selectedSeasonRef.current = Number(event.target.value);
+              setSeasonDataStatus('loading');
+              setSelectedSeason(selectedSeasonRef.current);
+            }}
+          >
+            {availableSeasons.map((season) => (
+              <option key={season.year} value={season.year}>{season.year}</option>
+            ))}
           </select>
         </div>
       </header>
@@ -484,9 +624,9 @@ export function AtlasExperience() {
           </a>
         </div>
         <div className="intro-meta" aria-hidden="true">
-          <span>24 этапа</span>
-          <span>5 континентов</span>
-          <span>Сезон 2024</span>
+          <span>{circuits.length} этапов</span>
+          <span>{new Set(circuits.map((circuit) => circuit.country)).size} стран</span>
+          <span>Сезон {selectedSeason}</span>
         </div>
       </section>
 
@@ -531,20 +671,22 @@ export function AtlasExperience() {
 
           <div className="map-caption">
             <span className="live-dot" aria-hidden="true" />
-            Полный маршрут · 24 этапа сезона 2024
+            Полный маршрут · {circuits.length} этапов сезона {selectedSeason}
           </div>
         </div>
 
         <aside className="race-panel">
           <div className="panel-intro">
-            <span className="eyebrow">Сезон 2024</span>
+            <span className="eyebrow">Сезон {selectedSeason}</span>
             <div className="panel-title-row">
               <h2>Календарный маршрут</h2>
-              <span>24 этапа</span>
+              <span>{circuits.length} этапов</span>
             </div>
+            {seasonDataStatus === 'loading' && <small className="season-data-note">Обновляем данные сезона…</small>}
+            {seasonDataStatus === 'error' && <small className="season-data-note season-data-note--error">Не удалось обновить данные. Показан последний доступный календарь.</small>}
           </div>
 
-          <ol className="race-list" aria-label="Этапы сезона 2024">
+          <ol className="race-list" aria-label={`Этапы сезона ${selectedSeason}`}>
             {circuits.map((circuit) => (
               <li key={circuit.id}>
                 <button
@@ -576,7 +718,7 @@ export function AtlasExperience() {
               <div><dt>Страна</dt><dd>{selectedCircuit.country}</dd></div>
               <div><dt>Дата</dt><dd>{formatRaceDate(selectedCircuit.date)}</dd></div>
             </dl>
-            {selectedCircuit.id === 'bahrain' ? (
+            {selectedCircuit.id === 'bahrain' && selectedSeason === 2024 ? (
               <a href="/circuits/bahrain">
                 Открыть страницу трассы
                 <span aria-hidden="true">↗</span>
@@ -594,7 +736,7 @@ export function AtlasExperience() {
       <section className="season-overview" id="season" aria-labelledby="season-title">
         <div className="season-overview-heading">
           <div>
-            <span className="eyebrow">Итоги сезона 2024</span>
+            <span className="eyebrow">{seasonIsActive ? 'Текущий сезон' : 'Итоги сезона'} {selectedSeason}</span>
             <h2 id="season-title">Чемпионат в&nbsp;цифрах</h2>
           </div>
           <p>
@@ -603,61 +745,63 @@ export function AtlasExperience() {
           </p>
         </div>
 
-        <div className="season-stat-strip" aria-label="Основные показатели сезона 2024">
-          <div><strong>24</strong><span>этапа</span></div>
-          <div><strong>21</strong><span>страна</span></div>
-          <div><strong>5</strong><span>континентов</span></div>
-          <div><strong>10</strong><span>команд</span></div>
+        <div className="season-stat-strip" aria-label={`Основные показатели сезона ${selectedSeason}`}>
+          <div><strong>{circuits.length}</strong><span>этапов</span></div>
+          <div><strong>{new Set(circuits.map((circuit) => circuit.country)).size}</strong><span>стран</span></div>
+          <div><strong>{driverStandings.length}</strong><span>пилотов</span></div>
+          <div><strong>{constructorStandings.length}</strong><span>команд</span></div>
         </div>
 
         <div className="standings-grid">
           <article className="standings-panel">
             <div className="standings-title">
               <span>Личный зачёт</span>
-              <small>24 пилота</small>
+              <small>{driverStandings.length} пилотов</small>
             </div>
             <ol>
-              {season2024Summary.drivers.map((standing) => (
+              {driverStandings.map((standing) => (
                 <li
-                  key={standing.driverId}
+                  key={standing.id}
                   className={`standing-rank standing-rank--${standing.position <= 3 ? standing.position : 'regular'}`}
-                  style={{ '--team-color': standing.team.color2024 } as CSSProperties}
+                  style={{ '--team-color': standing.teamColor } as CSSProperties}
                 >
                   <span className="standing-position">{String(standing.position).padStart(2, '0')}</span>
                   {standing.position <= 3 && <span className="standing-trophy" aria-label={`${standing.position} место`}>🏆</span>}
-                  <span className="driver-code">{standing.driver.code}</span>
+                  <span className="driver-code">{standing.code}</span>
                   <span className="standing-name">
-                    <strong>{standing.driver.nameRu}</strong>
-                    <small>{standing.teamLabel ?? standing.team.name}</small>
+                    <strong>{standing.name}</strong>
+                    <small>{standing.teamName}</small>
                   </span>
                   <span className="standing-points"><strong>{standing.points}</strong><small>очков</small></span>
                 </li>
               ))}
+              {driverStandings.length === 0 && <li className="standings-empty">Данные личного зачёта пока отсутствуют.</li>}
             </ol>
           </article>
 
           <article className="standings-panel standings-panel--teams">
             <div className="standings-title">
               <span>Кубок конструкторов</span>
-              <small>10 команд</small>
+              <small>{constructorStandings.length} команд</small>
             </div>
             <ol>
-              {season2024Summary.teams.map((standing) => (
+              {constructorStandings.map((standing) => (
                 <li
-                  key={standing.teamId}
+                  key={standing.id}
                   className={`standing-rank standing-rank--${standing.position <= 3 ? standing.position : 'regular'}`}
-                  style={{ '--team-color': standing.team.color2024 } as CSSProperties}
+                  style={{ '--team-color': standing.teamColor } as CSSProperties}
                 >
                   <span className="standing-position">{String(standing.position).padStart(2, '0')}</span>
                   {standing.position <= 3 && <span className="standing-trophy" aria-label={`${standing.position} место`}>🏆</span>}
                   <span className="standing-name">
-                    <strong>{standing.team.name}</strong>
-                    <small>{standing.team.officialName2024}</small>
+                    <strong>{standing.name}</strong>
+                    <small>{standing.officialName}</small>
                   </span>
                   <span className="team-car-mark" aria-hidden="true"><i /><i /></span>
                   <span className="standing-points"><strong>{standing.points}</strong><small>очков</small></span>
                 </li>
               ))}
+              {constructorStandings.length === 0 && <li className="standings-empty">Кубок конструкторов в этом сезоне ещё не проводился.</li>}
             </ol>
           </article>
         </div>
