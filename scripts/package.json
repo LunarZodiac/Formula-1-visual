@@ -1,0 +1,15 @@
+{
+  "name": "f1-geovisual-atlas-data-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "node jolpica-preview.mjs",
+    "import": "node jolpica-import-postgres.mjs",
+    "migrate": "node apply-database-migrations.mjs",
+    "verify": "node verify-database.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}

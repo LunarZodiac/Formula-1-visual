@@ -56,11 +56,12 @@ WHERE ST_DWithin(
 `database/migrations/001_initial_postgis_schema.sql`. Она рассчитана на
 PostgreSQL с установленным расширением PostGIS.
 
-Запуск в пустой локальной базе:
+Для уже настроенного проекта миграции запускаются последовательно через скрипт:
 
 ```powershell
-psql -d f1_atlas -f database/migrations/001_initial_postgis_schema.sql
+node --env-file=.env.database.local scripts/apply-database-migrations.mjs --apply
 ```
 
-Подключение приложения будет добавлено отдельным этапом. Пароли и строки
+Если первая миграция ранее была выполнена вручную через pgAdmin, скрипт распознаёт
+существующую схему и регистрирует её как начальную точку. Пароли и строки
 подключения нельзя сохранять в Git.

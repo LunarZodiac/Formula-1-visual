@@ -71,3 +71,23 @@ node scripts/jolpica-preview.mjs --season 2024
 
 Скрипт соблюдает пагинацию API, делает запросы последовательно и повторяет
 только временные ошибки (`429` и `5xx`). Он не создаёт и не изменяет файлы.
+
+## Тестовая запись в PostgreSQL
+
+Параметры локальной базы хранятся только в `.env.database.local`, который
+игнорируется Git. Образец находится в `.env.example`.
+
+```powershell
+Copy-Item .env.example .env.database.local
+pnpm.cmd --dir scripts install
+node --env-file=.env.database.local scripts/jolpica-import-postgres.mjs --season 1950 --apply
+```
+
+Импорт выполняется одной транзакцией и использует параметризованные запросы.
+Флаг `--apply` обязателен, чтобы случайный запуск не изменил базу.
+
+Проверка фактически записанных строк:
+
+```powershell
+node --env-file=.env.database.local scripts/verify-database.mjs --season 1950
+```

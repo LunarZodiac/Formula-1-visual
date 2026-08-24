@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 
+import { pathToFileURL } from "node:url";
+
 const API_BASE_URL = "https://api.jolpi.ca/ergast/f1";
 const USER_AGENT = "F1-Geovisual-Atlas/0.1 data-preview";
 const PAGE_LIMIT = 100;
 const REQUEST_INTERVAL_MS = 320;
 const MAX_RETRIES = 3;
 
-function readSeason(argv) {
+export function readSeason(argv) {
   const inline = argv.find((argument) => argument.startsWith("--season="));
   const separateIndex = argv.indexOf("--season");
   const rawValue = inline?.split("=")[1] ?? argv[separateIndex + 1];
@@ -165,7 +167,7 @@ function validateSchedule(season, races) {
   return warnings;
 }
 
-async function loadSeasonPreview(season) {
+export async function loadSeasonData(season) {
   const endpointPages = {};
   const endpoints = [
     ["schedule", `${season}/races.json`],
@@ -200,6 +202,32 @@ async function loadSeasonPreview(season) {
     "ConstructorStandings",
   );
 
+  const data = {
+    schedule,
+    drivers,
+    constructors,
+    results,
+    qualifying,
+    sprints,
+    driverStandings,
+    constructorStandings,
+  };
+
+  return { data, report: buildSeasonReport(season, data) };
+}
+
+export function buildSeasonReport(season, data) {
+  const {
+    schedule,
+    drivers,
+    constructors,
+    results,
+    qualifying,
+    sprints,
+    driverStandings,
+    constructorStandings,
+  } = data;
+
   return {
     season,
     mode: "preview-only",
@@ -224,13 +252,18 @@ async function loadSeasonPreview(season) {
   };
 }
 
-try {
-  const season = readSeason(process.argv.slice(2));
-  console.log(`Jolpica: предварительная проверка сезона ${season}`);
-  const report = await loadSeasonPreview(season);
-  console.log("\nОтчёт (данные не записывались):");
-  console.log(JSON.stringify(report, null, 2));
-} catch (error) {
-  console.error(`\nОшибка: ${error instanceof Error ? error.message : String(error)}`);
-  process.exitCode = 1;
+const isCommandLine =
+  process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (isCommandLine) {
+  try {
+    const season = readSeason(process.argv.slice(2));
+    console.log(`Jolpica: предварительная проверка сезона ${season}`);
+    const { report } = await loadSeasonData(season);
+    console.log("\nОтчёт (данные не записывались):");
+    console.log(JSON.stringify(report, null, 2));
+  } catch (error) {
+    console.error(`\nОшибка: ${error instanceof Error ? error.message : String(error)}`);
+    process.exitCode = 1;
+  }
 }
