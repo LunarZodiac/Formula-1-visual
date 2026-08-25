@@ -344,6 +344,7 @@ export function AtlasExperience() {
   const [activeSection, setActiveSection] = useState<MainSection>('atlas');
   const [resultView, setResultView] = useState<ResultView>('race');
   const [seasonMenuOpen, setSeasonMenuOpen] = useState(false);
+  const [mapLegendOpen, setMapLegendOpen] = useState(false);
 
   const orderedCircuits = useMemo(() => [...circuits].sort((left, right) => left.order - right.order), [circuits]);
   const circuitGeoJson = useMemo(() => makeCircuitGeoJson(orderedCircuits), [orderedCircuits]);
@@ -976,6 +977,30 @@ export function AtlasExperience() {
               </button>
             </div>
           </div>
+
+          <aside
+            id="atlas-map-legend"
+            className={`atlas-map-legend${mapLegendOpen ? ' is-open' : ''}`}
+            aria-label="Условные обозначения типов трасс"
+          >
+            <div className="atlas-map-legend__content">
+              <strong>Типы трасс</strong>
+              <span><i className="atlas-legend-marker atlas-legend-marker--stationary" />Стационарная</span>
+              <span><i className="atlas-legend-marker atlas-legend-marker--urban" />Городская</span>
+              <span><i className="atlas-legend-marker atlas-legend-marker--mixed" />Смешанная</span>
+            </div>
+            <button
+              type="button"
+              className="atlas-map-legend__toggle"
+              aria-controls="atlas-map-legend"
+              aria-expanded={mapLegendOpen}
+              aria-label={mapLegendOpen ? 'Скрыть условные обозначения' : 'Показать условные обозначения'}
+              onClick={() => setMapLegendOpen((open) => !open)}
+            >
+              <i aria-hidden="true" />
+              <span>Условные обозначения</span>
+            </button>
+          </aside>
 
           <button className="reset-view" type="button" onClick={resetGlobe}>
             <span aria-hidden="true">◎</span> Весь маршрут

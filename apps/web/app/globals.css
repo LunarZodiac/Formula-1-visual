@@ -254,6 +254,7 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 }
 
 .season-menu-trigger {
+  position: relative;
   min-width: 92px;
   padding: 9px 30px 9px 12px;
   border: 1px solid var(--line);
@@ -266,10 +267,18 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 }
 .season-menu-trigger > span {
   position: absolute;
+  top: 50%;
   right: 12px;
-  color: #a8bac4;
-  font-size: 15px;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid #a8bac4;
+  border-bottom: 2px solid #a8bac4;
+  color: transparent;
+  font-size: 0;
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform 180ms ease;
 }
+.season-menu-trigger[aria-expanded='true'] > span { transform: translateY(-20%) rotate(225deg); }
 .season-control { position: relative; }
 .season-menu {
   position: absolute;
@@ -676,6 +685,109 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   padding-right: 8px;
   border-right: 1px solid var(--line);
 }
+
+.atlas-map-legend {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  z-index: 7;
+  display: flex;
+  width: 190px;
+  min-height: 178px;
+  border: 1px solid rgba(111, 139, 154, 0.32);
+  border-left: 0;
+  border-radius: 0 5px 5px 0;
+  background: rgba(5, 16, 24, 0.94);
+  box-shadow: 12px 18px 36px rgba(0, 0, 0, 0.34);
+  transform: translateX(-100%);
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  backdrop-filter: blur(10px);
+}
+.atlas-map-legend.is-open { transform: translateX(0); }
+.atlas-map-legend__content {
+  display: grid;
+  flex: 1;
+  align-content: start;
+  gap: 15px;
+  padding: 18px 17px;
+}
+.atlas-map-legend__content strong {
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--line);
+  color: #f1f5f7;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.atlas-map-legend__content span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #9eb0ba;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.atlas-legend-marker {
+  display: block;
+  width: 13px;
+  height: 13px;
+  flex: 0 0 13px;
+  border: 2px solid #f7fbff;
+  background: #ff2038;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.62);
+}
+.atlas-legend-marker--stationary { border-radius: 50%; }
+.atlas-legend-marker--urban { border-radius: 3px; }
+.atlas-legend-marker--mixed {
+  border-radius: 1px;
+  transform: rotate(45deg) scale(0.86);
+}
+.atlas-map-legend__toggle {
+  position: absolute;
+  top: -1px;
+  right: -38px;
+  display: flex;
+  width: 38px;
+  height: 178px;
+  padding: 0;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+  border: 1px solid rgba(111, 139, 154, 0.38);
+  border-left: 0;
+  border-radius: 0 5px 5px 0;
+  color: #b8c6cd;
+  background: rgba(8, 23, 34, 0.96);
+  cursor: pointer;
+}
+.atlas-map-legend__toggle:hover,
+.atlas-map-legend__toggle:focus-visible { color: #fff; background: #102938; }
+.atlas-map-legend__toggle > span {
+  position: absolute;
+  top: 39px;
+  bottom: 8px;
+  left: 11px;
+  writing-mode: vertical-rl;
+  color: currentColor;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.atlas-map-legend__toggle > i {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 180ms ease;
+}
+.atlas-map-legend.is-open .atlas-map-legend__toggle > i { transform: rotate(225deg); }
 .circuit-card dl div:last-child { border-right: 0; }
 .circuit-card dt {
   color: #677884;
@@ -1606,6 +1718,15 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
     border-bottom: 1px solid var(--line);
   }
   .map-panel > .map-canvas { inset: 0 10px; width: calc(100% - 20px); }
+  .atlas-map-legend {
+    top: 16px;
+    width: 174px;
+    min-height: 158px;
+  }
+  .atlas-map-legend__content { gap: 12px; padding: 14px; }
+  .atlas-map-legend__toggle { right: -34px; width: 34px; height: 158px; }
+  .atlas-map-legend__toggle > span { top: 36px; left: 9px; font-size: 7px; }
+  .atlas-map-legend__toggle > i { top: 13px; left: 12px; }
   .intro-hero {
     min-height: calc(100svh - 64px);
     padding: 94px 20px 74px;
