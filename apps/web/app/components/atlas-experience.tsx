@@ -4,12 +4,14 @@ import * as maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import driverCatalog from '../data/catalogs/drivers.json';
 import { season2024, type Circuit } from '../data/season-2024';
 import { getTrackData, trackGeometries } from '../data/track-geometries';
 import { season2024Summary } from '../data/season-summary';
 import {
   snapshotToCircuits,
   type SeasonIndexItem,
+  type SnapshotRaceResult,
   type SeasonSnapshot,
 } from '../data/web-snapshots';
 
@@ -17,7 +19,7 @@ type Basemap = 'dark' | 'satellite';
 type MainSection = 'atlas' | 'season';
 
 const fallbackCircuits = season2024;
-const globeOverview = { center: [70, 18] as [number, number], zoom: 1.48 };
+const globeOverview = { center: [70, 18] as [number, number], zoom: 1.92 };
 
 const raceDateFormatter = new Intl.DateTimeFormat('ru-RU', {
   day: 'numeric',
@@ -32,6 +34,19 @@ const dataUpdateFormatter = new Intl.DateTimeFormat('ru-RU', {
   minute: '2-digit',
 });
 
+function normalizeDriverName(name: string) {
+  return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('en-US');
+}
+
+const localizedDriverNames = new Map(
+  driverCatalog.map((driver) => [normalizeDriverName(driver.nameEn), driver.nameRu]),
+);
+
+function formatDriverName(driver: Pick<SnapshotRaceResult, 'givenName' | 'familyName'>) {
+  const originalName = `${driver.givenName} ${driver.familyName}`;
+  return localizedDriverNames.get(normalizeDriverName(originalName)) ?? originalName;
+}
+
 function formatRaceDate(date: string) {
   if (!date) return 'Дата уточняется';
   return raceDateFormatter.format(new Date(`${date}T00:00:00Z`));
@@ -39,6 +54,27 @@ function formatRaceDate(date: string) {
 
 function formatDataUpdatedAt(date: string) {
   return dataUpdateFormatter.format(new Date(date));
+}
+
+function formatMilliseconds(milliseconds: number, showHours = false) {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const millis = milliseconds % 1000;
+  if (showHours || hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
+  }
+  return `${minutes}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
+}
+
+function formatResultTime(result: SnapshotRaceResult) {
+  if (result.position === 1 && result.elapsedMs !== null) {
+    return formatMilliseconds(result.elapsedMs, true);
+  }
+  if (result.gapText) return result.gapText;
+  if (result.gapMs !== null) return `+${(result.gapMs / 1000).toFixed(3)}`;
+  return result.status ?? '—';
 }
 
 function makeCircuitMarker(type: Circuit['type']): ImageData {
@@ -190,17 +226,15 @@ export function AtlasExperience() {
   const raceListRef = useRef<HTMLOListElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const circuitsRef = useRef<Circuit[]>(fallbackCircuits);
-  const selectedSeasonRef = useRef(2024);
+  const selectedSeasonRef = useRef(2026);
   const nextCircuitIdRef = useRef<string | null>(null);
   const selectedIdRef = useRef(fallbackCircuits[0].id);
   const [selectedId, setSelectedId] = useState(fallbackCircuits[0].id);
-  const [selectedSeason, setSelectedSeason] = useState(2024);
-  const [availableSeasons, setAvailableSeasons] = useState<SeasonIndexItem[]>([{
-    year: 2024,
-    status: 'completed',
-    roundsPlanned: 24,
-    racesAvailable: 24,
-  }]);
+  const [selectedSeason, setSelectedSeason] = useState(2026);
+  const [availableSeasons, setAvailableSeasons] = useState<SeasonIndexItem[]>([
+    { year: 2026, status: 'active', roundsPlanned: 23, racesAvailable: 23 },
+    { year: 2024, status: 'completed', roundsPlanned: 24, racesAvailable: 24 },
+  ]);
   const [seasonSnapshot, setSeasonSnapshot] = useState<SeasonSnapshot | null>(null);
   const [circuits, setCircuits] = useState<Circuit[]>(fallbackCircuits);
   const [seasonDataStatus, setSeasonDataStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -242,7 +276,7 @@ export function AtlasExperience() {
       position: standing.position,
       id: standing.driverId,
       code: standing.code ?? standing.familyName.slice(0, 3).toUpperCase(),
-      name: `${standing.givenName} ${standing.familyName}`,
+      name: formatDriverName(standing),
       teamName: standing.constructorName ?? 'Команда не указана',
       teamColor: standing.teamColor ?? '#5b7890',
       points: standing.points,
@@ -269,6 +303,13 @@ export function AtlasExperience() {
       points: standing.points,
     }));
   }, [seasonSnapshot, selectedSeason]);
+
+  const selectedRaceResults = useMemo(
+    () => seasonSnapshot?.raceResults?.[String(selectedCircuit.order)] ?? [],
+    [seasonSnapshot, selectedCircuit.order],
+  );
+  const selectedPodium = selectedRaceResults.filter((result) => result.position <= 3);
+  const selectedFastestLap = selectedRaceResults.find((result) => result.fastestLapRank === 1);
 
   const focusCircuit = useCallback((circuit: Circuit) => {
     setSelectedId(circuit.id);
@@ -405,11 +446,22 @@ export function AtlasExperience() {
 
   useEffect(() => {
     const list = raceListRef.current;
-    const selectedButton = list?.querySelector<HTMLButtonElement>(`button[data-circuit-id="${selectedId}"]`);
-    if (!list || !selectedButton) return;
-    const targetTop = selectedButton.offsetTop - (list.clientHeight - selectedButton.offsetHeight) / 2;
-    list.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
-  }, [selectedId]);
+    if (!list) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const selectedButton = list.querySelector<HTMLButtonElement>(`button[data-circuit-id="${selectedId}"]`);
+      if (!selectedButton) return;
+      const listBounds = list.getBoundingClientRect();
+      const buttonBounds = selectedButton.getBoundingClientRect();
+      const targetTop = list.scrollTop
+        + buttonBounds.top - listBounds.top
+        - (list.clientHeight - buttonBounds.height) / 2;
+      const maxScrollTop = Math.max(0, list.scrollHeight - list.clientHeight);
+      list.scrollTo({ top: Math.min(maxScrollTop, Math.max(0, targetTop)), behavior: 'auto' });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [circuits.length, seasonDataStatus, selectedId]);
 
   useEffect(() => {
     const atlas = document.getElementById('atlas');
@@ -491,7 +543,7 @@ export function AtlasExperience() {
 
       map.addSource('selected-track', {
         type: 'geojson',
-        data: getTrackData(selectedIdRef.current),
+        data: getTrackData(''),
       });
       map.addLayer({
         id: 'selected-track-glow', type: 'line', source: 'selected-track',
@@ -788,6 +840,75 @@ export function AtlasExperience() {
               <div><dt>Страна</dt><dd>{selectedCircuit.country}</dd></div>
               <div><dt>Дата</dt><dd>{formatRaceDate(selectedCircuit.date)}</dd></div>
             </dl>
+            {selectedRaceResults.length > 0 ? (
+              <section className="race-result-summary" aria-label="Результаты выбранной гонки">
+                <div className="race-result-heading">
+                  <span>Подиум</span>
+                  <small>Гонка</small>
+                </div>
+                <ol className="atlas-podium-list">
+                  {selectedPodium.map((result) => (
+                    <li
+                      key={result.driverId}
+                      className={`atlas-podium-place atlas-podium-place--${result.position}`}
+                      style={{ '--team-color': result.teamColor ?? '#5b7890' } as CSSProperties}
+                    >
+                      <span>{result.position}</span>
+                      <strong>{result.code ?? result.familyName.slice(0, 3).toUpperCase()}</strong>
+                      <span className="atlas-podium-driver">
+                        <b>{formatDriverName(result)}</b>
+                        <small>{result.constructorName ?? 'Команда не указана'}</small>
+                      </span>
+                      <span className="atlas-podium-time">
+                        <b>{formatResultTime(result)}</b>
+                        <small>{result.points} очков</small>
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+                {selectedFastestLap && (
+                  <div className="fastest-lap-row">
+                    <span>Быстрый круг</span>
+                    <strong>{formatDriverName(selectedFastestLap)}</strong>
+                    <span>
+                      {selectedFastestLap.fastestLapMs !== null
+                        ? formatMilliseconds(selectedFastestLap.fastestLapMs)
+                        : 'Время уточняется'}
+                      {selectedFastestLap.fastestLapNumber !== null
+                        ? ` · круг ${selectedFastestLap.fastestLapNumber}`
+                        : ''}
+                    </span>
+                  </div>
+                )}
+                <details className="full-race-results">
+                  <summary>
+                    Полный протокол
+                    <span>{selectedRaceResults.length} пилотов</span>
+                  </summary>
+                  <ol>
+                    {selectedRaceResults.map((result) => (
+                      <li key={result.driverId}>
+                        <span>{String(result.position).padStart(2, '0')}</span>
+                        <span>
+                          <strong>{formatDriverName(result)}</strong>
+                          <small>{result.constructorName ?? result.status ?? '—'}</small>
+                        </span>
+                        <span>
+                          <strong>{formatResultTime(result)}</strong>
+                          <small>{result.points} очков</small>
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </details>
+              </section>
+            ) : (
+              <p className="race-result-empty">
+                {selectedCircuit.status === 'scheduled' || selectedCircuit.status === 'postponed'
+                  ? 'Этап ещё не состоялся — результаты появятся после гонки.'
+                  : 'Результаты этого этапа пока подготавливаются.'}
+              </p>
+            )}
             {selectedCircuit.id === 'bahrain' && selectedSeason === 2024 ? (
               <a href="/circuits/bahrain">
                 Открыть страницу трассы

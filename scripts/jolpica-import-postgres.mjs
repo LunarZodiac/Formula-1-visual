@@ -26,6 +26,17 @@ function numberOrNull(value) {
   return Number.isFinite(number) ? number : null;
 }
 
+function durationMillisOrNull(value) {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  const parts = value.trim().split(':');
+  if (parts.length < 2 || parts.length > 3) return null;
+  const seconds = Number(parts.pop());
+  const minutes = Number(parts.pop());
+  const hours = parts.length === 1 ? Number(parts[0]) : 0;
+  if (![seconds, minutes, hours].every(Number.isFinite)) return null;
+  return Math.round(((hours * 60 + minutes) * 60 + seconds) * 1000);
+}
+
 function raceId(season, round) {
   return `${season}-${String(round).padStart(2, "0")}`;
 }
@@ -277,7 +288,8 @@ async function importSessions(client, season, races, type, childName, entryIds) 
           position > 1 ? row.Time?.time ?? null : null,
           numberOrNull(row.FastestLap?.rank),
           numberOrNull(row.FastestLap?.lap),
-          numberOrNull(row.FastestLap?.Time?.millis),
+          numberOrNull(row.FastestLap?.Time?.millis)
+            ?? durationMillisOrNull(row.FastestLap?.Time?.time),
           JSON.stringify(details),
         ],
       );

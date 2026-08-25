@@ -37,6 +37,27 @@ export type SnapshotConstructorStanding = {
   carImageUrl: string | null;
 };
 
+export type SnapshotRaceResult = {
+  position: number;
+  positionText: string;
+  driverId: string;
+  givenName: string;
+  familyName: string;
+  code: string | null;
+  constructorId: string | null;
+  constructorName: string | null;
+  teamColor: string | null;
+  points: number;
+  laps: number | null;
+  status: string | null;
+  elapsedMs: number | null;
+  gapMs: number | null;
+  gapText: string | null;
+  fastestLapRank: number | null;
+  fastestLapNumber: number | null;
+  fastestLapMs: number | null;
+};
+
 export type SeasonSnapshot = {
   exportedAt: string;
   season: number;
@@ -60,6 +81,7 @@ export type SeasonSnapshot = {
     drivers: SnapshotDriverStanding[];
     constructors: SnapshotConstructorStanding[];
   };
+  raceResults?: Record<string, SnapshotRaceResult[]>;
 };
 
 const countryNames = new Intl.DisplayNames(['ru'], { type: 'region' });

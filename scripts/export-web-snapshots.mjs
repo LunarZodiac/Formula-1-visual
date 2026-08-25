@@ -138,6 +138,71 @@ async function readSeasonSnapshot(client, season) {
        ORDER BY cs.position`,
       [season],
     );
+  const raceResult = await client.query(
+    `SELECT
+       r.round,
+       sr.position_order,
+       sr.position_text,
+       sr.points,
+       sr.laps,
+       sr.status,
+       sr.elapsed_ms,
+       sr.gap_ms,
+       sr.gap_text,
+       sr.fastest_lap_rank,
+       sr.fastest_lap_number,
+       sr.fastest_lap_ms,
+       d.id AS driver_id,
+       d.given_name,
+       d.family_name,
+       d.abbreviation,
+       ce.constructor_id,
+       ce.display_name AS constructor_name,
+       ce.team_colour
+     FROM atlas.session_results AS sr
+     JOIN atlas.sessions AS s ON s.id = sr.session_id
+     JOIN atlas.races AS r ON r.id = s.race_id
+     JOIN atlas.drivers AS d ON d.id = sr.driver_id
+     LEFT JOIN atlas.constructor_entries AS ce ON ce.id = sr.constructor_entry_id
+     WHERE r.season_year = $1 AND s.session_type = 'race'
+     ORDER BY r.round, sr.position_order`,
+    [season],
+  );
+
+  const raceResults = {};
+  for (const row of raceResult.rows) {
+    const round = String(row.round);
+    raceResults[round] ??= [];
+    raceResults[round].push({
+      position: Number(row.position_order),
+      positionText: row.position_text,
+      driverId: row.driver_id,
+      givenName: row.given_name,
+      familyName: row.family_name,
+      code: row.abbreviation?.trim() ?? null,
+      constructorId: row.constructor_id,
+      constructorName: row.constructor_name,
+      teamColor: row.team_colour,
+      points: asNumber(row.points) ?? 0,
+      laps: row.laps === null ? null : Number(row.laps),
+      status: row.status,
+      elapsedMs: asNumber(row.elapsed_ms),
+      gapMs: asNumber(row.gap_ms),
+      gapText: row.gap_text,
+      fastestLapRank: row.fastest_lap_rank === null ? null : Number(row.fastest_lap_rank),
+      fastestLapNumber: row.fastest_lap_number === null ? null : Number(row.fastest_lap_number),
+      fastestLapMs: row.fastest_lap_ms === null ? null : Number(row.fastest_lap_ms),
+    });
+  }
+  for (const results of Object.values(raceResults)) {
+    const winner = results.find((result) => result.position === 1);
+    if (winner?.elapsedMs === null || winner?.elapsedMs === undefined) continue;
+    for (const result of results) {
+      if (result.position > 1 && result.gapMs === null && result.elapsedMs !== null) {
+        result.gapMs = Math.max(0, result.elapsedMs - winner.elapsedMs);
+      }
+    }
+  }
 
   return {
     season,
@@ -182,6 +247,7 @@ async function readSeasonSnapshot(client, season) {
         carImageUrl: row.car_image_url,
       })),
     },
+    raceResults,
   };
 }
 

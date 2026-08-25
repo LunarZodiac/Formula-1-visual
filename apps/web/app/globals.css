@@ -242,12 +242,15 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 .atlas-stage {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(350px, 27vw);
-  min-height: calc(100svh - 74px);
+  height: calc(100svh - 74px);
+  min-height: 0;
+  overflow: hidden;
 }
 
 .map-panel {
   position: relative;
-  min-height: calc(100svh - 74px);
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
   border-right: 1px solid var(--line);
   background: #02070d;
@@ -384,8 +387,10 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   z-index: 6;
   display: flex;
   flex-direction: column;
-  min-height: calc(100svh - 74px);
-  padding: 30px 26px 24px;
+  height: 100%;
+  min-height: 0;
+  padding: 24px 22px 20px;
+  overflow: hidden;
   background:
     linear-gradient(180deg, rgba(15, 28, 39, 0.96), rgba(5, 12, 19, 0.98)),
     var(--panel);
@@ -485,8 +490,10 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 
 .race-list {
   display: grid;
+  flex: 0 1 250px;
   gap: 2px;
-  max-height: 300px;
+  min-height: 128px;
+  max-height: 250px;
   margin: 14px -8px;
   padding: 0 8px;
   overflow-y: auto;
@@ -555,14 +562,19 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 .race-list button.is-live .race-meta small { color: #ff6678; }
 
 .circuit-card {
-  margin-top: auto;
-  padding: 20px;
+  flex: 1 1 360px;
+  min-height: 0;
+  margin-top: 10px;
+  padding: 17px;
+  overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   background:
     linear-gradient(135deg, rgba(255, 32, 56, 0.1), transparent 42%),
     rgba(255, 255, 255, 0.035);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  scrollbar-width: thin;
 }
 .card-topline {
   display: flex;
@@ -612,6 +624,92 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.race-result-summary {
+  margin: 0 0 14px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+}
+.race-result-heading,
+.full-race-results summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #dce6eb;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.race-result-heading small,
+.full-race-results summary span { color: #70828d; font-size: 8px; }
+.atlas-podium-list { display: grid; gap: 4px; margin: 10px 0 0; padding: 0; list-style: none; }
+.atlas-podium-place {
+  display: grid;
+  grid-template-columns: 20px 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  min-height: 50px;
+  padding: 7px 9px;
+  border-left: 2px solid var(--team-color);
+  background: rgba(255, 255, 255, 0.026);
+}
+.atlas-podium-place > span:first-child { color: var(--medal-color, #7f919b); font-size: 11px; font-weight: 900; }
+.atlas-podium-place > strong { color: #ecf3f6; font-family: var(--display); font-size: 17px; font-style: italic; }
+.atlas-podium-place--1 { --medal-color: #f2c94c; }
+.atlas-podium-place--2 { --medal-color: #c4cbd2; }
+.atlas-podium-place--3 { --medal-color: #c78450; }
+.atlas-podium-driver,
+.atlas-podium-time { display: grid; gap: 3px; min-width: 0; }
+.atlas-podium-driver b,
+.atlas-podium-time b { overflow: hidden; color: #e6eef2; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.atlas-podium-driver small,
+.atlas-podium-time small { color: #6d808b; font-size: 8px; }
+.atlas-podium-time { justify-items: end; }
+.fastest-lap-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 7px;
+  margin-top: 8px;
+  padding: 7px;
+  border: 1px solid rgba(177, 92, 255, 0.22);
+  color: #84949e;
+  background: rgba(177, 92, 255, 0.055);
+  font-size: 9px;
+}
+.fastest-lap-row strong { overflow: hidden; color: #d9c3f0; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.full-race-results { margin-top: 9px; border-top: 1px solid var(--line); }
+.full-race-results summary { padding: 10px 0 4px; cursor: pointer; }
+.full-race-results ol {
+  max-height: 210px;
+  margin: 5px 0 0;
+  padding: 0 4px 0 0;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  scrollbar-width: thin;
+}
+.full-race-results li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  color: #748691;
+  font-size: 8px;
+}
+.full-race-results li > span { display: grid; gap: 2px; min-width: 0; }
+.full-race-results li > span:last-child { justify-items: end; }
+.full-race-results li strong { overflow: hidden; color: #dfe8ed; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.full-race-results li small { color: #687b86; font-size: 8px; }
+.race-result-empty {
+  margin: 0 0 14px !important;
+  padding: 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.11);
+  color: #748691 !important;
+  line-height: 1.5;
 }
 .circuit-card > button,
 .circuit-card > a {
@@ -1391,8 +1489,14 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   .atlas-shell { overflow: visible; }
   .topbar { min-height: 64px; padding: 0 16px; }
   .brand small, .season-control > span { display: none; }
-  .atlas-stage { display: block; min-height: auto; }
+  .atlas-stage {
+    display: block;
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+  }
   .map-panel {
+    height: auto;
     min-height: 64svh;
     border-right: 0;
     border-bottom: 1px solid var(--line);
@@ -1419,9 +1523,9 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   }
   .reset-view { bottom: 38px; left: 18px; }
   .map-caption { right: 12px; bottom: 10px; max-width: 180px; text-align: right; }
-  .race-panel { min-height: auto; padding: 26px 18px 30px; }
-  .race-list { max-height: none; }
-  .circuit-card { margin-top: 22px; }
+  .race-panel { height: auto; min-height: auto; padding: 26px 18px 30px; overflow: visible; }
+  .race-list { flex: none; min-height: 0; max-height: none; }
+  .circuit-card { flex: none; max-height: none; margin-top: 22px; overflow: visible; }
   .season-overview { padding: 42px 20px 58px; }
   .season-stat-strip { grid-template-columns: repeat(2, 1fr); margin-top: 36px; }
   .standings-grid { grid-template-columns: 1fr; }
