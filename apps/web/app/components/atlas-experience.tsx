@@ -2,7 +2,15 @@
 
 import * as maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
+} from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import driverCatalog from '../data/catalogs/drivers.json';
 import { season2024, type Circuit } from '../data/season-2024';
@@ -11,15 +19,43 @@ import { season2024Summary } from '../data/season-summary';
 import {
   snapshotToCircuits,
   type SeasonIndexItem,
-  type SnapshotRaceResult,
+  type SnapshotSessionResult,
   type SeasonSnapshot,
 } from '../data/web-snapshots';
 
 type Basemap = 'dark' | 'satellite';
 type MainSection = 'atlas' | 'season';
+type ResultView = 'sprintQualifying' | 'sprint' | 'qualifying' | 'race';
 
 const fallbackCircuits = season2024;
-const globeOverview = { center: [70, 18] as [number, number], zoom: 1.92 };
+const globeOverview = { center: [70, 18] as [number, number], zoom: 2.08 };
+
+const teamColorFallbacks = new Map<string, string>([
+  ['mclaren', '#ff8000'],
+  ['ferrari', '#e8002d'],
+  ['red bull', '#3671c6'],
+  ['red bull racing', '#3671c6'],
+  ['mercedes', '#27f4d2'],
+  ['aston martin', '#229971'],
+  ['alpine', '#ff87bc'],
+  ['alpine f1 team', '#ff87bc'],
+  ['haas', '#b6babd'],
+  ['haas f1 team', '#b6babd'],
+  ['racing bulls', '#6692ff'],
+  ['rb', '#6692ff'],
+  ['williams', '#64c4ff'],
+  ['audi', '#f50537'],
+  ['cadillac', '#d4af37'],
+  ['sauber', '#52e252'],
+  ['kick sauber', '#52e252'],
+]);
+
+const historicalDriverNames = new Map<string, string>([
+  ['giuseppe farina', 'Джузеппе Фарина'],
+  ['juan manuel fangio', 'Хуан Мануэль Фанхио'],
+  ['james hunt', 'Джеймс Хант'],
+  ['carlos reutemann', 'Карлос Ройтеман'],
+]);
 
 const raceDateFormatter = new Intl.DateTimeFormat('ru-RU', {
   day: 'numeric',
@@ -38,13 +74,52 @@ function normalizeDriverName(name: string) {
   return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('en-US');
 }
 
+function getTeamColor(teamColor: string | null | undefined, constructorId?: string | null, constructorName?: string | null) {
+  if (teamColor) return teamColor;
+  const keys = [constructorId?.replaceAll('_', ' '), constructorName]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => value.toLocaleLowerCase('en-US'));
+  for (const key of keys) {
+    const exact = teamColorFallbacks.get(key);
+    if (exact) return exact;
+    const partial = [...teamColorFallbacks].find(([name]) => key.includes(name) || name.includes(key));
+    if (partial) return partial[1];
+  }
+  return '#5b7890';
+}
+
+function transliterateDriverName(name: string) {
+  const normalized = normalizeDriverName(name);
+  const knownName = historicalDriverNames.get(normalized);
+  if (knownName) return knownName;
+
+  const pairs: Array<[RegExp, string]> = [
+    [/sch/g, 'ш'], [/sh/g, 'ш'], [/ch/g, 'ч'], [/zh/g, 'ж'], [/kh/g, 'х'],
+    [/ph/g, 'ф'], [/th/g, 'т'], [/qu/g, 'кв'], [/ck/g, 'к'], [/ya/g, 'я'],
+    [/yu/g, 'ю'], [/yo/g, 'ё'], [/ye/g, 'е'], [/j/g, 'дж'], [/c(?=[eiy])/g, 'с'],
+    [/c/g, 'к'], [/x/g, 'кс'], [/w/g, 'у'],
+  ];
+  let value = normalized;
+  for (const [pattern, replacement] of pairs) value = value.replace(pattern, replacement);
+  const letters: Record<string, string> = {
+    a: 'а', b: 'б', d: 'д', e: 'е', f: 'ф', g: 'г', h: 'х', i: 'и',
+    k: 'к', l: 'л', m: 'м', n: 'н', o: 'о', p: 'п', q: 'к', r: 'р',
+    s: 'с', t: 'т', u: 'у', v: 'в', y: 'и', z: 'з',
+  };
+  return value
+    .split(' ')
+    .map((part) => part.replace(/[a-z]/g, (letter) => letters[letter] ?? letter))
+    .map((part) => part ? `${part[0].toLocaleUpperCase('ru-RU')}${part.slice(1)}` : part)
+    .join(' ');
+}
+
 const localizedDriverNames = new Map(
   driverCatalog.map((driver) => [normalizeDriverName(driver.nameEn), driver.nameRu]),
 );
 
-function formatDriverName(driver: Pick<SnapshotRaceResult, 'givenName' | 'familyName'>) {
+function formatDriverName(driver: Pick<SnapshotSessionResult, 'givenName' | 'familyName'>) {
   const originalName = `${driver.givenName} ${driver.familyName}`;
-  return localizedDriverNames.get(normalizeDriverName(originalName)) ?? originalName;
+  return localizedDriverNames.get(normalizeDriverName(originalName)) ?? transliterateDriverName(originalName);
 }
 
 function formatRaceDate(date: string) {
@@ -68,7 +143,7 @@ function formatMilliseconds(milliseconds: number, showHours = false) {
   return `${minutes}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
 }
 
-function formatResultTime(result: SnapshotRaceResult) {
+function formatResultTime(result: SnapshotSessionResult) {
   if (result.position === 1 && result.elapsedMs !== null) {
     return formatMilliseconds(result.elapsedMs, true);
   }
@@ -76,6 +151,23 @@ function formatResultTime(result: SnapshotRaceResult) {
   if (result.gapMs !== null) return `+${(result.gapMs / 1000).toFixed(3)}`;
   return result.status ?? '—';
 }
+
+function formatSessionTime(result: SnapshotSessionResult, view: ResultView) {
+  if (view === 'sprintQualifying') {
+    return result.details.sq3 ?? result.details.sq2 ?? result.details.sq1 ?? 'Время не указано';
+  }
+  if (view === 'qualifying') {
+    return result.details.q3 ?? result.details.q2 ?? result.details.q1 ?? 'Время не указано';
+  }
+  return formatResultTime(result);
+}
+
+const resultViewLabels: Record<ResultView, string> = {
+  sprintQualifying: 'Спринт-квалификация',
+  sprint: 'Спринт',
+  qualifying: 'Квалификация',
+  race: 'Гонка',
+};
 
 function makeCircuitMarker(type: Circuit['type']): ImageData {
   const size = 48;
@@ -224,6 +316,8 @@ function makeRouteGeoJson(circuits: Circuit[]): GeoJSON.FeatureCollection<GeoJSO
 export function AtlasExperience() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const raceListRef = useRef<HTMLOListElement>(null);
+  const seasonMenuRef = useRef<HTMLDivElement>(null);
+  const seasonMenuScrollRef = useRef(0);
   const mapRef = useRef<MapLibreMap | null>(null);
   const circuitsRef = useRef<Circuit[]>(fallbackCircuits);
   const selectedSeasonRef = useRef(2026);
@@ -241,9 +335,12 @@ export function AtlasExperience() {
   const [basemap, setBasemap] = useState<Basemap>('dark');
   const [mapReady, setMapReady] = useState(false);
   const [activeSection, setActiveSection] = useState<MainSection>('atlas');
+  const [resultView, setResultView] = useState<ResultView>('race');
+  const [seasonMenuOpen, setSeasonMenuOpen] = useState(false);
 
-  const circuitGeoJson = useMemo(() => makeCircuitGeoJson(circuits), [circuits]);
-  const routeGeoJson = useMemo(() => makeRouteGeoJson(circuits), [circuits]);
+  const orderedCircuits = useMemo(() => [...circuits].sort((left, right) => left.order - right.order), [circuits]);
+  const circuitGeoJson = useMemo(() => makeCircuitGeoJson(orderedCircuits), [orderedCircuits]);
+  const routeGeoJson = useMemo(() => makeRouteGeoJson(orderedCircuits), [orderedCircuits]);
   const seasonMeta = availableSeasons.find((season) => season.year === selectedSeason);
   const seasonIsActive = seasonMeta?.status === 'active';
   const nextCircuitId = useMemo(
@@ -278,7 +375,7 @@ export function AtlasExperience() {
       code: standing.code ?? standing.familyName.slice(0, 3).toUpperCase(),
       name: formatDriverName(standing),
       teamName: standing.constructorName ?? 'Команда не указана',
-      teamColor: standing.teamColor ?? '#5b7890',
+      teamColor: getTeamColor(standing.teamColor, standing.constructorId, standing.constructorName),
       points: standing.points,
     }));
   }, [seasonSnapshot, selectedSeason]);
@@ -299,7 +396,7 @@ export function AtlasExperience() {
       id: standing.constructorId,
       name: standing.name,
       officialName: standing.engineName ?? standing.name,
-      teamColor: standing.teamColor ?? '#5b7890',
+      teamColor: getTeamColor(standing.teamColor, standing.constructorId, standing.name),
       points: standing.points,
     }));
   }, [seasonSnapshot, selectedSeason]);
@@ -308,8 +405,44 @@ export function AtlasExperience() {
     () => seasonSnapshot?.raceResults?.[String(selectedCircuit.order)] ?? [],
     [seasonSnapshot, selectedCircuit.order],
   );
-  const selectedPodium = selectedRaceResults.filter((result) => result.position <= 3);
-  const selectedFastestLap = selectedRaceResults.find((result) => result.fastestLapRank === 1);
+  const selectedQualifyingResults = useMemo(
+    () => seasonSnapshot?.qualifyingResults?.[String(selectedCircuit.order)] ?? [],
+    [seasonSnapshot, selectedCircuit.order],
+  );
+  const selectedSprintQualifyingResults = useMemo(
+    () => seasonSnapshot?.sprintQualifyingResults?.[String(selectedCircuit.order)] ?? [],
+    [seasonSnapshot, selectedCircuit.order],
+  );
+  const selectedSprintResults = useMemo(
+    () => seasonSnapshot?.sprintResults?.[String(selectedCircuit.order)] ?? [],
+    [seasonSnapshot, selectedCircuit.order],
+  );
+  const availableResultViews = useMemo(() => [
+    ...(selectedSprintQualifyingResults.length > 0 ? ['sprintQualifying' as const] : []),
+    ...(selectedSprintResults.length > 0 ? ['sprint' as const] : []),
+    ...(selectedQualifyingResults.length > 0 ? ['qualifying' as const] : []),
+    ...(selectedRaceResults.length > 0 ? ['race' as const] : []),
+  ], [selectedQualifyingResults.length, selectedRaceResults.length, selectedSprintQualifyingResults.length, selectedSprintResults.length]);
+  const activeResultView = availableResultViews.includes(resultView)
+    ? resultView
+    : availableResultViews[0] ?? 'race';
+  const selectedSessionResults = activeResultView === 'sprintQualifying'
+    ? selectedSprintQualifyingResults
+    : activeResultView === 'qualifying'
+    ? selectedQualifyingResults
+    : activeResultView === 'sprint'
+      ? selectedSprintResults
+      : selectedRaceResults;
+  const selectedTopThree = selectedSessionResults.filter((result) => result.position <= 3);
+  const selectedFastestLap = activeResultView === 'qualifying' || activeResultView === 'sprintQualifying'
+    ? undefined
+    : selectedSessionResults.find((result) => result.fastestLapRank === 1);
+
+  const scrollToSection = useCallback((event: ReactMouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    event.preventDefault();
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   const focusCircuit = useCallback((circuit: Circuit) => {
     setSelectedId(circuit.id);
@@ -374,6 +507,28 @@ export function AtlasExperience() {
       'atmosphere-blend': 0.9,
     });
   }, []);
+
+  useEffect(() => {
+    if (window.location.hash === '#atlas' || window.location.hash === '#season') {
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!seasonMenuOpen) return;
+    const closeMenu = (event: MouseEvent) => {
+      if (!seasonMenuRef.current?.contains(event.target as Node)) setSeasonMenuOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSeasonMenuOpen(false);
+    };
+    document.addEventListener('mousedown', closeMenu);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('mousedown', closeMenu);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [seasonMenuOpen]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -679,7 +834,10 @@ export function AtlasExperience() {
             className={activeSection === 'atlas' ? 'is-active' : ''}
             href="#atlas"
             aria-current={activeSection === 'atlas' ? 'page' : undefined}
-            onClick={() => setActiveSection('atlas')}
+            onClick={(event) => {
+              setActiveSection('atlas');
+              scrollToSection(event, 'atlas');
+            }}
           >
             Атлас
           </a>
@@ -687,7 +845,10 @@ export function AtlasExperience() {
             className={activeSection === 'season' ? 'is-active' : ''}
             href="#season"
             aria-current={activeSection === 'season' ? 'page' : undefined}
-            onClick={() => setActiveSection('season')}
+            onClick={(event) => {
+              setActiveSection('season');
+              scrollToSection(event, 'season');
+            }}
           >
             Сезон
           </a>
@@ -695,21 +856,46 @@ export function AtlasExperience() {
           <a href="#project">О проекте</a>
         </nav>
 
-        <div className="season-control" aria-label="Выбранный сезон">
+        <div ref={seasonMenuRef} className="season-control" aria-label="Выбранный сезон">
           <span>Сезон</span>
-          <select
-            value={selectedSeason}
+          <button
+            type="button"
+            className="season-menu-trigger"
             aria-label="Сезон"
-            onChange={(event) => {
-              selectedSeasonRef.current = Number(event.target.value);
-              setSeasonDataStatus('loading');
-              setSelectedSeason(selectedSeasonRef.current);
+            aria-haspopup="listbox"
+            aria-expanded={seasonMenuOpen}
+            onClick={() => {
+              seasonMenuScrollRef.current = window.scrollY;
+              setSeasonMenuOpen((open) => !open);
             }}
           >
-            {availableSeasons.map((season) => (
-              <option key={season.year} value={season.year}>{season.year}</option>
-            ))}
-          </select>
+            {selectedSeason}
+            <span aria-hidden="true">⌄</span>
+          </button>
+          {seasonMenuOpen && (
+            <div className="season-menu" role="listbox" aria-label="Выберите сезон">
+              {availableSeasons.map((season) => (
+                <button
+                  key={season.year}
+                  type="button"
+                  role="option"
+                  aria-selected={season.year === selectedSeason}
+                  className={season.year === selectedSeason ? 'is-selected' : ''}
+                  onClick={() => {
+                    const scrollPosition = seasonMenuScrollRef.current;
+                    selectedSeasonRef.current = season.year;
+                    setSeasonDataStatus('loading');
+                    setSelectedSeason(season.year);
+                    setSeasonMenuOpen(false);
+                    window.requestAnimationFrame(() => window.scrollTo({ top: scrollPosition, behavior: 'auto' }));
+                    window.setTimeout(() => window.scrollTo({ top: scrollPosition, behavior: 'auto' }), 80);
+                  }}
+                >
+                  {season.year}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </header>
 
@@ -722,7 +908,7 @@ export function AtlasExperience() {
             Исследуйте географию чемпионата, маршруты сезонов и&nbsp;историю трасс
             через&nbsp;интерактивную карту.
           </p>
-          <a className="intro-action" href="#atlas">
+          <a className="intro-action" href="#atlas" onClick={(event) => scrollToSection(event, 'atlas')}>
             Открыть атлас
             <span aria-hidden="true">↓</span>
           </a>
@@ -732,6 +918,14 @@ export function AtlasExperience() {
           <span>{new Set(circuits.map((circuit) => circuit.country)).size} стран</span>
           <span>Сезон {selectedSeason}</span>
         </div>
+        <a
+          className="hero-scroll-cue"
+          href="#atlas"
+          aria-label="Прокрутить к интерактивному атласу"
+          onClick={(event) => scrollToSection(event, 'atlas')}
+        >
+          <span aria-hidden="true" />
+        </a>
       </section>
 
       <section className="atlas-stage" id="atlas">
@@ -796,7 +990,7 @@ export function AtlasExperience() {
           </div>
 
           <ol ref={raceListRef} className="race-list" aria-label={`Этапы сезона ${selectedSeason}`}>
-            {circuits.map((circuit) => (
+            {orderedCircuits.map((circuit) => (
               <li key={circuit.id}>
                 <button
                   type="button"
@@ -840,18 +1034,34 @@ export function AtlasExperience() {
               <div><dt>Страна</dt><dd>{selectedCircuit.country}</dd></div>
               <div><dt>Дата</dt><dd>{formatRaceDate(selectedCircuit.date)}</dd></div>
             </dl>
-            {selectedRaceResults.length > 0 ? (
-              <section className="race-result-summary" aria-label="Результаты выбранной гонки">
+            {availableResultViews.length > 0 ? (
+              <section className="race-result-summary" aria-label="Результаты выбранного этапа">
+                <div className="result-view-tabs" role="tablist" aria-label="Тип сессии">
+                  {availableResultViews.map((view) => (
+                    <button
+                      key={view}
+                      type="button"
+                      role="tab"
+                      aria-selected={activeResultView === view}
+                      className={activeResultView === view ? 'is-active' : ''}
+                      onClick={() => setResultView(view)}
+                    >
+                      {resultViewLabels[view]}
+                    </button>
+                  ))}
+                </div>
                 <div className="race-result-heading">
-                  <span>Подиум</span>
-                  <small>Гонка</small>
+                  <span>{activeResultView === 'qualifying' || activeResultView === 'sprintQualifying' ? 'Топ-3' : 'Подиум'}</span>
+                  <small>{resultViewLabels[activeResultView]}</small>
                 </div>
                 <ol className="atlas-podium-list">
-                  {selectedPodium.map((result) => (
+                  {selectedTopThree.map((result) => (
                     <li
                       key={result.driverId}
                       className={`atlas-podium-place atlas-podium-place--${result.position}`}
-                      style={{ '--team-color': result.teamColor ?? '#5b7890' } as CSSProperties}
+                      style={{
+                        '--team-color': getTeamColor(result.teamColor, result.constructorId, result.constructorName),
+                      } as CSSProperties}
                     >
                       <span>{result.position}</span>
                       <strong>{result.code ?? result.familyName.slice(0, 3).toUpperCase()}</strong>
@@ -860,8 +1070,8 @@ export function AtlasExperience() {
                         <small>{result.constructorName ?? 'Команда не указана'}</small>
                       </span>
                       <span className="atlas-podium-time">
-                        <b>{formatResultTime(result)}</b>
-                        <small>{result.points} очков</small>
+                        <b>{formatSessionTime(result, activeResultView)}</b>
+                        <small>{activeResultView === 'qualifying' || activeResultView === 'sprintQualifying' ? 'лучшее время' : `${result.points} очков`}</small>
                       </span>
                     </li>
                   ))}
@@ -880,27 +1090,6 @@ export function AtlasExperience() {
                     </span>
                   </div>
                 )}
-                <details className="full-race-results">
-                  <summary>
-                    Полный протокол
-                    <span>{selectedRaceResults.length} пилотов</span>
-                  </summary>
-                  <ol>
-                    {selectedRaceResults.map((result) => (
-                      <li key={result.driverId}>
-                        <span>{String(result.position).padStart(2, '0')}</span>
-                        <span>
-                          <strong>{formatDriverName(result)}</strong>
-                          <small>{result.constructorName ?? result.status ?? '—'}</small>
-                        </span>
-                        <span>
-                          <strong>{formatResultTime(result)}</strong>
-                          <small>{result.points} очков</small>
-                        </span>
-                      </li>
-                    ))}
-                  </ol>
-                </details>
               </section>
             ) : (
               <p className="race-result-empty">
@@ -911,7 +1100,7 @@ export function AtlasExperience() {
             )}
             {selectedCircuit.id === 'bahrain' && selectedSeason === 2024 ? (
               <a href="/circuits/bahrain">
-                Открыть страницу трассы
+                Результаты и схема этапа
                 <span aria-hidden="true">↗</span>
               </a>
             ) : (

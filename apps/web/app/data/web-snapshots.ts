@@ -37,7 +37,7 @@ export type SnapshotConstructorStanding = {
   carImageUrl: string | null;
 };
 
-export type SnapshotRaceResult = {
+export type SnapshotSessionResult = {
   position: number;
   positionText: string;
   driverId: string;
@@ -56,7 +56,17 @@ export type SnapshotRaceResult = {
   fastestLapRank: number | null;
   fastestLapNumber: number | null;
   fastestLapMs: number | null;
+  details: {
+    q1?: string | null;
+    q2?: string | null;
+    q3?: string | null;
+    sq1?: string | null;
+    sq2?: string | null;
+    sq3?: string | null;
+  };
 };
+
+export type SnapshotRaceResult = SnapshotSessionResult;
 
 export type SeasonSnapshot = {
   exportedAt: string;
@@ -82,6 +92,9 @@ export type SeasonSnapshot = {
     constructors: SnapshotConstructorStanding[];
   };
   raceResults?: Record<string, SnapshotRaceResult[]>;
+  qualifyingResults?: Record<string, SnapshotSessionResult[]>;
+  sprintQualifyingResults?: Record<string, SnapshotSessionResult[]>;
+  sprintResults?: Record<string, SnapshotSessionResult[]>;
 };
 
 const countryNames = new Intl.DisplayNames(['ru'], { type: 'region' });

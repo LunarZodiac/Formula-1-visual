@@ -138,9 +138,10 @@ async function readSeasonSnapshot(client, season) {
        ORDER BY cs.position`,
       [season],
     );
-  const raceResult = await client.query(
+  const sessionResult = await client.query(
     `SELECT
        r.round,
+       s.session_type,
        sr.position_order,
        sr.position_text,
        sr.points,
@@ -152,6 +153,7 @@ async function readSeasonSnapshot(client, season) {
        sr.fastest_lap_rank,
        sr.fastest_lap_number,
        sr.fastest_lap_ms,
+       sr.details,
        d.id AS driver_id,
        d.given_name,
        d.family_name,
@@ -164,16 +166,23 @@ async function readSeasonSnapshot(client, season) {
      JOIN atlas.races AS r ON r.id = s.race_id
      JOIN atlas.drivers AS d ON d.id = sr.driver_id
      LEFT JOIN atlas.constructor_entries AS ce ON ce.id = sr.constructor_entry_id
-     WHERE r.season_year = $1 AND s.session_type = 'race'
-     ORDER BY r.round, sr.position_order`,
+     WHERE r.season_year = $1
+       AND s.session_type IN ('race', 'qualifying', 'sprint_shootout', 'sprint')
+     ORDER BY r.round, s.session_type, sr.position_order`,
     [season],
   );
 
-  const raceResults = {};
-  for (const row of raceResult.rows) {
+  const resultsByType = {
+    race: {},
+    qualifying: {},
+    sprint_shootout: {},
+    sprint: {},
+  };
+  for (const row of sessionResult.rows) {
     const round = String(row.round);
-    raceResults[round] ??= [];
-    raceResults[round].push({
+    const resultGroup = resultsByType[row.session_type];
+    resultGroup[round] ??= [];
+    resultGroup[round].push({
       position: Number(row.position_order),
       positionText: row.position_text,
       driverId: row.driver_id,
@@ -192,14 +201,17 @@ async function readSeasonSnapshot(client, season) {
       fastestLapRank: row.fastest_lap_rank === null ? null : Number(row.fastest_lap_rank),
       fastestLapNumber: row.fastest_lap_number === null ? null : Number(row.fastest_lap_number),
       fastestLapMs: row.fastest_lap_ms === null ? null : Number(row.fastest_lap_ms),
+      details: row.details ?? {},
     });
   }
-  for (const results of Object.values(raceResults)) {
-    const winner = results.find((result) => result.position === 1);
-    if (winner?.elapsedMs === null || winner?.elapsedMs === undefined) continue;
-    for (const result of results) {
-      if (result.position > 1 && result.gapMs === null && result.elapsedMs !== null) {
-        result.gapMs = Math.max(0, result.elapsedMs - winner.elapsedMs);
+  for (const sessionType of ['race', 'sprint']) {
+    for (const results of Object.values(resultsByType[sessionType])) {
+      const winner = results.find((result) => result.position === 1);
+      if (winner?.elapsedMs === null || winner?.elapsedMs === undefined) continue;
+      for (const result of results) {
+        if (result.position > 1 && result.gapMs === null && result.elapsedMs !== null) {
+          result.gapMs = Math.max(0, result.elapsedMs - winner.elapsedMs);
+        }
       }
     }
   }
@@ -247,7 +259,10 @@ async function readSeasonSnapshot(client, season) {
         carImageUrl: row.car_image_url,
       })),
     },
-    raceResults,
+    raceResults: resultsByType.race,
+    qualifyingResults: resultsByType.qualifying,
+    sprintQualifyingResults: resultsByType.sprint_shootout,
+    sprintResults: resultsByType.sprint,
   };
 }
 

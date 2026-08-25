@@ -60,6 +60,7 @@ const travelPoints: GeoJSON.FeatureCollection<GeoJSON.Point> = {
 
 const detailStyle: maplibregl.StyleSpecification = {
   version: 8,
+  glyphs: 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
   sources: {
     carto: {
       type: 'raster',
@@ -79,6 +80,11 @@ const detailStyle: maplibregl.StyleSpecification = {
       tileSize: 256,
       maxzoom: 19,
       attribution: 'Sources: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+    },
+    streets: {
+      type: 'vector',
+      url: 'https://tiles.openfreemap.org/planet',
+      attribution: '&copy; OpenStreetMap contributors &copy; OpenFreeMap',
     },
     terrainSource: {
       type: 'raster-dem',
@@ -104,6 +110,69 @@ const detailStyle: maplibregl.StyleSpecification = {
         'raster-saturation': -0.12,
         'raster-contrast': 0.1,
         'raster-brightness-max': 0.82,
+      },
+    },
+    {
+      id: 'context-buildings', type: 'fill', source: 'streets', 'source-layer': 'building', minzoom: 13,
+      paint: {
+        'fill-color': '#53616a',
+        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 13, 0.08, 17, 0.22],
+        'fill-outline-color': 'rgba(164, 184, 194, 0.2)',
+      },
+    },
+    {
+      id: 'context-roads-casing', type: 'line', source: 'streets', 'source-layer': 'transportation', minzoom: 10,
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: {
+        'line-color': '#02070d',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1.2, 17, 7],
+        'line-opacity': 0.72,
+      },
+    },
+    {
+      id: 'context-roads', type: 'line', source: 'streets', 'source-layer': 'transportation', minzoom: 10,
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: {
+        'line-color': [
+          'match', ['get', 'class'],
+          ['motorway', 'trunk', 'primary'], '#8798a2',
+          ['secondary', 'tertiary'], '#657781',
+          '#44545d',
+        ],
+        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 0.55, 17, 3.2],
+        'line-opacity': ['interpolate', ['linear'], ['zoom'], 10, 0.22, 15, 0.48],
+      },
+    },
+    {
+      id: 'context-road-labels', type: 'symbol', source: 'streets', 'source-layer': 'transportation_name', minzoom: 12,
+      layout: {
+        'symbol-placement': 'line',
+        'text-field': ['coalesce', ['get', 'name:ru'], ['get', 'name:latin'], ['get', 'name:en'], ['get', 'name']],
+        'text-font': ['Noto Sans Regular'],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 12, 9, 17, 12],
+        'text-letter-spacing': 0.04,
+        'text-max-angle': 35,
+      },
+      paint: {
+        'text-color': '#aebbc2',
+        'text-halo-color': 'rgba(2, 7, 13, 0.92)',
+        'text-halo-width': 1.4,
+        'text-opacity': 0.82,
+      },
+    },
+    {
+      id: 'context-place-labels', type: 'symbol', source: 'streets', 'source-layer': 'place', minzoom: 8, maxzoom: 16,
+      layout: {
+        'text-field': ['coalesce', ['get', 'name:ru'], ['get', 'name:latin'], ['get', 'name:en'], ['get', 'name']],
+        'text-font': ['Noto Sans Medium'],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 8, 10, 14, 14],
+        'text-max-width': 9,
+      },
+      paint: {
+        'text-color': '#c7d3d9',
+        'text-halo-color': 'rgba(2, 7, 13, 0.94)',
+        'text-halo-width': 1.6,
+        'text-opacity': 0.82,
       },
     },
     {
