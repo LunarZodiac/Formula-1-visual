@@ -522,6 +522,14 @@ export function AtlasExperience() {
   }, []);
 
   useEffect(() => {
+    const seasonFromUrl = Number(new URLSearchParams(window.location.search).get('season'));
+    if (seasonFromUrl >= 1950 && seasonFromUrl <= 2026 && seasonFromUrl !== selectedSeasonRef.current) {
+      queueMicrotask(() => {
+        selectedSeasonRef.current = seasonFromUrl;
+        setSeasonDataStatus('loading');
+        setSelectedSeason(seasonFromUrl);
+      });
+    }
     if (window.location.hash === '#atlas' || window.location.hash === '#season') {
       window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
     }
@@ -909,6 +917,9 @@ export function AtlasExperience() {
                     setSeasonDataStatus('loading');
                     setSelectedSeason(season.year);
                     setSeasonMenuOpen(false);
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('season', String(season.year));
+                    window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
                     window.requestAnimationFrame(() => window.scrollTo({ top: scrollPosition, behavior: 'auto' }));
                     window.setTimeout(() => window.scrollTo({ top: scrollPosition, behavior: 'auto' }), 80);
                   }}
@@ -1145,7 +1156,7 @@ export function AtlasExperience() {
               </p>
             )}
             {selectedCircuit.id === 'bahrain' && selectedSeason === 2024 ? (
-              <a href="/circuits/bahrain">
+              <a href={`/circuits/bahrain?season=${selectedSeason}`}>
                 Результаты и схема этапа
                 <span aria-hidden="true">↗</span>
               </a>

@@ -3,9 +3,10 @@
 import * as maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { BahrainModelViewer } from './bahrain-model-viewer';
+import driverCatalog from '../data/catalogs/drivers.json';
 import {
   bahrainDrsDetectionAnchors,
   bahrainDrsDetectionLabels,
@@ -18,12 +19,84 @@ import {
   bahrainTurnLabels,
 } from '../data/bahrain-track-details';
 import { trackGeometries } from '../data/track-geometries';
-import { bahrain2024Result } from '../data/race-results';
+import type { SeasonSnapshot, SnapshotSessionResult } from '../data/web-snapshots';
 
 type DetailMode = 'track' | 'travel' | 'model';
 type DetailBasemap = 'dark' | 'satellite';
+type ResultView = 'sprintQualifying' | 'sprint' | 'qualifying' | 'race';
 
 const bahrainTrack = trackGeometries.bahrain;
+const bahrainSeasonOptions = [
+  2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015,
+  2014, 2013, 2012, 2010, 2009, 2008, 2007, 2006, 2005, 2004,
+];
+
+const resultViewLabels: Record<ResultView, string> = {
+  sprintQualifying: 'Спринт-квалификация',
+  sprint: 'Спринт',
+  qualifying: 'Квалификация',
+  race: 'Гонка',
+};
+
+const localizedDriverNames = new Map(
+  driverCatalog.map((driver) => [driver.nameEn.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(), driver.nameRu]),
+);
+
+function normalizeDriverName(name: string) {
+  return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+function transliterateDriverName(name: string) {
+  const pairs: Array<[RegExp, string]> = [
+    [/sch/g, 'ш'], [/sh/g, 'ш'], [/ch/g, 'ч'], [/zh/g, 'ж'], [/kh/g, 'х'],
+    [/ph/g, 'ф'], [/th/g, 'т'], [/qu/g, 'кв'], [/ck/g, 'к'], [/ya/g, 'я'],
+    [/yu/g, 'ю'], [/yo/g, 'ё'], [/ye/g, 'е'], [/j/g, 'дж'], [/c(?=[eiy])/g, 'с'],
+    [/c/g, 'к'], [/x/g, 'кс'], [/w/g, 'у'],
+  ];
+  const letters: Record<string, string> = {
+    a: 'а', b: 'б', d: 'д', e: 'е', f: 'ф', g: 'г', h: 'х', i: 'и',
+    k: 'к', l: 'л', m: 'м', n: 'н', o: 'о', p: 'п', q: 'к', r: 'р',
+    s: 'с', t: 'т', u: 'у', v: 'в', y: 'и', z: 'з',
+  };
+  let value = normalizeDriverName(name);
+  for (const [pattern, replacement] of pairs) value = value.replace(pattern, replacement);
+  return value
+    .split(' ')
+    .map((part) => part.replace(/[a-z]/g, (letter) => letters[letter] ?? letter))
+    .map((part) => part ? `${part[0].toLocaleUpperCase('ru-RU')}${part.slice(1)}` : part)
+    .join(' ');
+}
+
+function localizeDriverName(result: Pick<SnapshotSessionResult, 'givenName' | 'familyName'>) {
+  const original = `${result.givenName} ${result.familyName}`;
+  return localizedDriverNames.get(normalizeDriverName(original)) ?? transliterateDriverName(original);
+}
+
+function formatMilliseconds(milliseconds: number, showHours = false) {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const millis = milliseconds % 1000;
+  if (showHours || hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
+  }
+  return `${minutes}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
+}
+
+function formatResultValue(result: SnapshotSessionResult, view: ResultView) {
+  if (view === 'qualifying') return result.details.q3 ?? result.details.q2 ?? result.details.q1 ?? '—';
+  if (view === 'sprintQualifying') return result.details.sq3 ?? result.details.sq2 ?? result.details.sq1 ?? '—';
+  if (result.position === 1 && result.elapsedMs !== null) return formatMilliseconds(result.elapsedMs, true);
+  if (result.gapText) return result.gapText;
+  if (result.gapMs !== null) return `+${(result.gapMs / 1000).toFixed(3)}`;
+  return result.status ?? '—';
+}
+
+function teamInitials(name: string | null) {
+  if (!name) return 'F1';
+  return name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+}
 
 const travelPoints: GeoJSON.FeatureCollection<GeoJSON.Point> = {
   type: 'FeatureCollection',
@@ -206,6 +279,79 @@ export function BahrainCircuitExperience() {
   const [mode, setMode] = useState<DetailMode>('track');
   const [basemap, setBasemap] = useState<DetailBasemap>('satellite');
   const [ready, setReady] = useState(false);
+  const [resultSeason, setResultSeason] = useState(2024);
+  const [resultView, setResultView] = useState<ResultView>('race');
+  const [seasonSnapshot, setSeasonSnapshot] = useState<SeasonSnapshot | null>(null);
+  const [resultStatus, setResultStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+
+  const bahrainRound = useMemo(
+    () => seasonSnapshot?.calendar.find((race) => race.circuit.id === 'bahrain'),
+    [seasonSnapshot],
+  );
+  const resultSessions = useMemo(() => {
+    if (!seasonSnapshot || !bahrainRound) return [] as Array<{ id: ResultView; results: SnapshotSessionResult[] }>;
+    const round = String(bahrainRound.round);
+    return [
+      { id: 'sprintQualifying' as const, results: seasonSnapshot.sprintQualifyingResults?.[round] ?? [] },
+      { id: 'sprint' as const, results: seasonSnapshot.sprintResults?.[round] ?? [] },
+      { id: 'qualifying' as const, results: seasonSnapshot.qualifyingResults?.[round] ?? [] },
+      { id: 'race' as const, results: seasonSnapshot.raceResults?.[round] ?? [] },
+    ].filter((session) => session.results.length > 0);
+  }, [bahrainRound, seasonSnapshot]);
+  const activeSession = resultSessions.find((session) => session.id === resultView) ?? resultSessions.at(-1);
+  const activeResults = activeSession?.results ?? [];
+  const podiumResults = activeResults.slice(0, 3);
+  const remainingResults = activeResults.slice(3);
+  const fastestLap = activeResults.find((result) => result.fastestLapRank === 1);
+
+  useEffect(() => {
+    const seasonFromUrl = Number(new URLSearchParams(window.location.search).get('season'));
+    if (bahrainSeasonOptions.includes(seasonFromUrl)) {
+      queueMicrotask(() => {
+        setResultStatus('loading');
+        setResultSeason(seasonFromUrl);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(`/data/f1/season-${resultSeason}.json`, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Не удалось загрузить сезон ${resultSeason}`);
+        return response.json() as Promise<SeasonSnapshot>;
+      })
+      .then((snapshot) => {
+        const race = snapshot.calendar.find((item) => item.circuit.id === 'bahrain');
+        if (!race) throw new Error(`В сезоне ${resultSeason} отсутствует этап Бахрейна`);
+        const round = String(race.round);
+        const nextView: ResultView = snapshot.raceResults?.[round]?.length
+          ? 'race'
+          : snapshot.qualifyingResults?.[round]?.length
+            ? 'qualifying'
+            : snapshot.sprintResults?.[round]?.length
+              ? 'sprint'
+              : 'sprintQualifying';
+        setSeasonSnapshot(snapshot);
+        setResultView(nextView);
+        setResultStatus('ready');
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        console.error(error);
+        setSeasonSnapshot(null);
+        setResultStatus('error');
+      });
+    return () => controller.abort();
+  }, [resultSeason]);
+
+  const changeResultSeason = useCallback((season: number) => {
+    setResultStatus('loading');
+    setResultSeason(season);
+    const url = new URL(window.location.href);
+    url.searchParams.set('season', String(season));
+    window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+  }, []);
 
   const focusTrack = useCallback((duration = 1000) => {
     const map = mapRef.current;
@@ -600,8 +746,8 @@ export function BahrainCircuitExperience() {
           <span className="brand-mark" aria-hidden="true">F1</span>
           <span><strong>Geovisual Atlas</strong><small>География скорости</small></span>
         </Link>
-        <Link className="back-to-atlas" href="/">← Вернуться к глобусу</Link>
-        <span className="track-stage-index">Этап 01 · 2024</span>
+        <Link className="back-to-atlas" href={`/?season=${resultSeason}#atlas`}>← Вернуться к глобусу</Link>
+        <span className="track-stage-index">Бахрейн · {resultSeason}</span>
       </header>
 
       <section className="track-hero">
@@ -648,7 +794,7 @@ export function BahrainCircuitExperience() {
           <span className="eyebrow">Сахир · Бахрейн</span>
           <p className="track-kicker">Bahrain International Circuit</p>
           <h1>Бахрейн</h1>
-          <p className="track-lead">Пустынная трасса, открывающая сезон 2024. Первый пилотный объект подробного картографического атласа.</p>
+          <p className="track-lead">Пустынная трасса с выраженным перепадом высот и несколькими зонами DRS. Первый подробный объект картографического атласа.</p>
           <dl className="track-metrics">
             <div><dt>Длина</dt><dd>5,412 км</dd></div>
             <div><dt>Круги</dt><dd>57</dd></div>
@@ -662,28 +808,109 @@ export function BahrainCircuitExperience() {
         </aside>
       </section>
 
-      <section className="track-content">
-        <article className="podium-panel">
+      <section
+        className={`race-results-section${resultStatus === 'loading' && seasonSnapshot ? ' is-updating' : ''}`}
+        aria-labelledby="race-results-title"
+        aria-busy={resultStatus === 'loading'}
+      >
+        <div className="race-results-heading">
           <div className="section-heading">
-            <span className="eyebrow">Результат этапа</span>
-            <h2>Подиум 2024</h2>
+            <span className="eyebrow">Результаты этапа</span>
+            <h2 id="race-results-title">Бахрейн · {resultSeason}</h2>
           </div>
-          <ol className="podium-list">
-            {bahrain2024Result.podium.map((result) => (
-              <li key={result.position}>
-                <span className="podium-place">P{result.position}</span>
-                <span><strong>{result.driver.nameRu}</strong><small>{result.team.name}</small></span>
-                <span className="podium-result"><time>{result.time}</time><small>{result.points} очков</small></span>
-              </li>
-            ))}
-          </ol>
-          <div className="fastest-lap">
-            <span className="fastest-lap-mark" aria-hidden="true">◉</span>
-            <span><small>Быстрый круг</small><strong>{bahrain2024Result.fastestLap.driver.nameRu}</strong></span>
-            <span><small>Круг {bahrain2024Result.fastestLap.lap}</small><strong>{bahrain2024Result.fastestLap.time}</strong></span>
-          </div>
-        </article>
+          <label className="result-season-select">
+            <span>Сезон</span>
+            <select value={resultSeason} onChange={(event) => changeResultSeason(Number(event.target.value))}>
+              {bahrainSeasonOptions.map((season) => <option key={season} value={season}>{season}</option>)}
+            </select>
+          </label>
+        </div>
 
+        {resultSessions.length > 0 && (
+          <div className="result-session-tabs" role="tablist" aria-label="Сессия этапа">
+            {resultSessions.map((session) => (
+              <button
+                key={session.id}
+                type="button"
+                role="tab"
+                aria-selected={activeSession?.id === session.id}
+                className={activeSession?.id === session.id ? 'is-active' : ''}
+                onClick={() => setResultView(session.id)}
+              >
+                {resultViewLabels[session.id]}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {resultStatus === 'loading' && !seasonSnapshot && <div className="race-results-status">Загружаем результаты сезона…</div>}
+        {resultStatus === 'loading' && seasonSnapshot && <div className="race-results-update">Обновляем результаты…</div>}
+        {resultStatus === 'error' && <div className="race-results-status is-error">Для этого сезона результаты Бахрейна пока недоступны.</div>}
+        {resultStatus === 'ready' && activeResults.length === 0 && <div className="race-results-status">Результаты этой сессии отсутствуют.</div>}
+
+        {activeResults.length > 0 && (
+          <div className="race-results-grid">
+            <div className="race-podium-column">
+              <h3>{activeSession?.id === 'race' || activeSession?.id === 'sprint' ? 'Подиум' : 'Топ-3'}</h3>
+              <ol className="podium-visual" aria-label="Первые три позиции">
+                {[podiumResults[1], podiumResults[0], podiumResults[2]].filter(Boolean).map((result) => (
+                  <li
+                    key={result.position}
+                    className={`is-place-${result.position}`}
+                    style={{ '--team-color': result.teamColor ?? '#5b7890' } as CSSProperties}
+                  >
+                    <div className="podium-driver-portrait" aria-label={`Место для фотографии: ${localizeDriverName(result)}`}>
+                      <span className="driver-silhouette" aria-hidden="true" />
+                      <strong>{result.code ?? result.positionText}</strong>
+                    </div>
+                    <div className="podium-driver-name">
+                      <strong>{localizeDriverName(result)}</strong>
+                      <small><i className="result-team-mark">{teamInitials(result.constructorName)}</i>{result.constructorName ?? 'Команда не указана'}</small>
+                    </div>
+                    <div className="podium-step"><b>{result.position}</b></div>
+                    <time>{formatResultValue(result, activeSession?.id ?? 'race')}</time>
+                    {(activeSession?.id === 'race' || activeSession?.id === 'sprint') && <small>{result.points} очков</small>}
+                  </li>
+                ))}
+              </ol>
+
+              {fastestLap && (activeSession?.id === 'race' || activeSession?.id === 'sprint') && (
+                <div className="race-fastest-lap" style={{ '--team-color': fastestLap.teamColor ?? '#5b7890' } as CSSProperties}>
+                  <span className="fastest-lap-mark" aria-hidden="true">◉</span>
+                  <span><small>Быстрый круг</small><strong>{localizeDriverName(fastestLap)}</strong></span>
+                  <span className="race-fastest-team"><i className="result-team-mark">{teamInitials(fastestLap.constructorName)}</i>{fastestLap.constructorName}</span>
+                  <span><small>Круг {fastestLap.fastestLapNumber ?? '—'}</small><strong>{fastestLap.fastestLapMs !== null ? formatMilliseconds(fastestLap.fastestLapMs) : '—'}</strong></span>
+                </div>
+              )}
+            </div>
+
+            <div className="race-classification">
+              <div className="race-classification__heading">
+                <h3>Остальные позиции</h3>
+                <span>{activeResults.length} участников</span>
+              </div>
+              <ol start={4}>
+                {remainingResults.map((result) => (
+                  <li key={`${result.position}-${result.driverId}`} style={{ '--team-color': result.teamColor ?? '#5b7890' } as CSSProperties}>
+                    <b>{result.positionText}</b>
+                    <span className="classification-code">{result.code ?? '—'}</span>
+                    <span className="classification-driver">
+                      <strong>{localizeDriverName(result)}</strong>
+                      <small><i className="result-team-mark">{teamInitials(result.constructorName)}</i>{result.constructorName ?? 'Команда не указана'}</small>
+                    </span>
+                    <span className="classification-result">
+                      <time>{formatResultValue(result, activeSession?.id ?? 'race')}</time>
+                      {(activeSession?.id === 'race' || activeSession?.id === 'sprint') && <small>{result.points} очков</small>}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="track-content track-content--travel">
         <article className="travel-panel">
           <div className="section-heading">
             <span className="eyebrow">Для поездки</span>
