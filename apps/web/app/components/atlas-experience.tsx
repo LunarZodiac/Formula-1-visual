@@ -30,6 +30,12 @@ type ResultView = 'sprintQualifying' | 'sprint' | 'qualifying' | 'race';
 const fallbackCircuits = season2024;
 const globeOverview = { center: [70, 18] as [number, number], zoom: 2.08 };
 
+function getOverviewZoom() {
+  if (window.innerWidth <= 480) return 1.48;
+  if (window.innerWidth <= 720) return 1.68;
+  return globeOverview.zoom;
+}
+
 const teamColorFallbacks = new Map<string, string>([
   ['mclaren', '#ff8000'],
   ['ferrari', '#e8002d'],
@@ -318,6 +324,7 @@ export function AtlasExperience() {
   const raceListRef = useRef<HTMLOListElement>(null);
   const seasonMenuRef = useRef<HTMLDivElement>(null);
   const seasonMenuScrollRef = useRef(0);
+  const sectionNavigationLockRef = useRef(0);
   const mapRef = useRef<MapLibreMap | null>(null);
   const circuitsRef = useRef<Circuit[]>(fallbackCircuits);
   const selectedSeasonRef = useRef(2026);
@@ -440,6 +447,7 @@ export function AtlasExperience() {
 
   const scrollToSection = useCallback((event: ReactMouseEvent<HTMLAnchorElement>, sectionId: string) => {
     event.preventDefault();
+    sectionNavigationLockRef.current = Date.now() + 900;
     window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
@@ -478,7 +486,11 @@ export function AtlasExperience() {
 
   const resetGlobe = useCallback(() => {
     mapRef.current?.flyTo({
-      ...globeOverview, duration: 1600, curve: 1.2, essential: true,
+      center: globeOverview.center,
+      zoom: getOverviewZoom(),
+      duration: 1600,
+      curve: 1.2,
+      essential: true,
     });
   }, []);
 
@@ -625,7 +637,8 @@ export function AtlasExperience() {
     if (!atlas || !season) return;
 
     const updateActiveSection = () => {
-      const seasonBoundary = season.offsetTop - 148;
+      if (Date.now() < sectionNavigationLockRef.current) return;
+      const seasonBoundary = season.offsetTop - Math.min(240, window.innerHeight * 0.28);
       setActiveSection(window.scrollY >= seasonBoundary ? 'season' : 'atlas');
     };
 
@@ -645,7 +658,8 @@ export function AtlasExperience() {
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: mapStyle,
-      ...globeOverview,
+      center: globeOverview.center,
+      zoom: getOverviewZoom(),
       minZoom: 0.8,
       maxZoom: 18,
       attributionControl: false,
@@ -656,6 +670,12 @@ export function AtlasExperience() {
 
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-left');
     map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+
+    const updateResponsiveOverview = () => {
+      map.resize();
+      if (map.getZoom() < 4) map.easeTo({ zoom: getOverviewZoom(), duration: 300 });
+    };
+    window.addEventListener('resize', updateResponsiveOverview);
 
     map.on('style.load', () => {
       map.setProjection({ type: 'globe' });
@@ -813,6 +833,7 @@ export function AtlasExperience() {
     });
 
     return () => {
+      window.removeEventListener('resize', updateResponsiveOverview);
       map.remove();
       mapRef.current = null;
     };

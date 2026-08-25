@@ -113,16 +113,18 @@ const detailStyle: maplibregl.StyleSpecification = {
       },
     },
     {
-      id: 'context-buildings', type: 'fill', source: 'streets', 'source-layer': 'building', minzoom: 13,
+      id: 'context-buildings-3d', type: 'fill-extrusion', source: 'streets', 'source-layer': 'building', minzoom: 14,
       paint: {
-        'fill-color': '#53616a',
-        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 13, 0.08, 17, 0.22],
-        'fill-outline-color': 'rgba(164, 184, 194, 0.2)',
+        'fill-extrusion-color': '#61727c',
+        'fill-extrusion-height': ['coalesce', ['get', 'render_height'], ['get', 'height'], 6],
+        'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], ['get', 'min_height'], 0],
+        'fill-extrusion-opacity': ['interpolate', ['linear'], ['zoom'], 14, 0.16, 17, 0.42],
+        'fill-extrusion-vertical-gradient': true,
       },
     },
     {
       id: 'context-roads-casing', type: 'line', source: 'streets', 'source-layer': 'transportation', minzoom: 10,
-      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      layout: { visibility: 'none', 'line-cap': 'round', 'line-join': 'round' },
       paint: {
         'line-color': '#02070d',
         'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1.2, 17, 7],
@@ -131,7 +133,7 @@ const detailStyle: maplibregl.StyleSpecification = {
     },
     {
       id: 'context-roads', type: 'line', source: 'streets', 'source-layer': 'transportation', minzoom: 10,
-      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      layout: { visibility: 'none', 'line-cap': 'round', 'line-join': 'round' },
       paint: {
         'line-color': [
           'match', ['get', 'class'],
@@ -154,10 +156,10 @@ const detailStyle: maplibregl.StyleSpecification = {
         'text-max-angle': 35,
       },
       paint: {
-        'text-color': '#aebbc2',
+        'text-color': '#f4f8fa',
         'text-halo-color': 'rgba(2, 7, 13, 0.92)',
         'text-halo-width': 1.4,
-        'text-opacity': 0.82,
+        'text-opacity': 0.96,
       },
     },
     {
@@ -169,10 +171,10 @@ const detailStyle: maplibregl.StyleSpecification = {
         'text-max-width': 9,
       },
       paint: {
-        'text-color': '#c7d3d9',
+        'text-color': '#f4f8fa',
         'text-halo-color': 'rgba(2, 7, 13, 0.94)',
         'text-halo-width': 1.6,
-        'text-opacity': 0.82,
+        'text-opacity': 0.96,
       },
     },
     {
@@ -266,6 +268,11 @@ export function BahrainCircuitExperience() {
     if (!map) return;
     map.setLayoutProperty('base', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
     map.setLayoutProperty('satellite-base', 'visibility', nextBasemap === 'satellite' ? 'visible' : 'none');
+    map.setLayoutProperty('context-roads-casing', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
+    map.setLayoutProperty('context-roads', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
+    map.setPaintProperty('context-road-labels', 'text-color', nextBasemap === 'dark' ? '#e3edf2' : '#ffffff');
+    map.setPaintProperty('context-place-labels', 'text-color', nextBasemap === 'dark' ? '#edf5f8' : '#ffffff');
+    map.setPaintProperty('context-buildings-3d', 'fill-extrusion-color', nextBasemap === 'dark' ? '#61727c' : '#b8a991');
   }, []);
 
   useEffect(() => {
