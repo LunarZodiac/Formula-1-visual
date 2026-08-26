@@ -5,8 +5,8 @@
 ## Покрытие
 
 - уникальных трасс в сезонных снимках 1950–2026: 78
-- подключённых проверенных геометрий: 40
-- недостающих геометрий: 38
+- подключённых проверенных геометрий: 43
+- недостающих геометрий: 35
 - календарь 2026 года: покрыт полностью, включая Madring
 
 `apps/web/app/data/track-geometry-registry.ts` является единой таблицей связи
@@ -27,10 +27,18 @@
 | `jerez` | Circuito de Jerez | 1986–1997 |
 | `phoenix` | Phoenix street circuit | 1989–1991 |
 | `donington` | Donington Park | 1993 |
-| `okayama` | Okayama International Circuit | 1994–1995 |
 | `valencia` | Valencia Street Circuit | 2008–2012 |
-| `yeongam` | Korean International Circuit | 2010–2013 |
-| `buddh` | Buddh International Circuit | 2011–2013 |
+
+## Добавлено из OpenStreetMap
+
+| ID | Трасса | Геометрия | Проверка длины |
+|---|---|---|---:|
+| `buddh` | Buddh International Circuit | `in-2011` | 5 136 м |
+| `yeongam` | Korean International Circuit | `kr-2010` | 5 596 м |
+| `okayama` | Okayama International Circuit | `jp-1990` | 3 700 м |
+
+Источник: OpenStreetMap contributors, лицензия ODbL 1.0. Контуры импортируются
+воспроизводимым скриптом `scripts/import-osm-track-geometries.mjs`
 
 ## Очередь 2 — классические трассы
 

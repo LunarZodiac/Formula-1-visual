@@ -458,7 +458,7 @@ export function AtlasExperience() {
     setSelectedId(circuit.id);
     selectedIdRef.current = circuit.id;
     const map = mapRef.current;
-    const track = selectedSeasonRef.current === 2024 ? trackGeometries[circuit.id] : undefined;
+    const track = trackGeometries[circuit.id];
     const trackSource = map?.getSource('selected-track') as maplibregl.GeoJSONSource | undefined;
     trackSource?.setData(getTrackData(track ? circuit.id : ''));
 
@@ -611,7 +611,7 @@ export function AtlasExperience() {
     const trackSource = map?.getSource('selected-track') as maplibregl.GeoJSONSource | undefined;
     circuitSource?.setData(circuitGeoJson);
     routeSource?.setData(routeGeoJson);
-    trackSource?.setData(getTrackData(selectedSeasonRef.current === 2024 ? selectedIdRef.current : ''));
+    trackSource?.setData(getTrackData(selectedIdRef.current));
     if (map?.getLayer('circuit-active-marker')) {
       map.setFilter('circuit-active-marker', ['==', ['get', 'id'], selectedIdRef.current]);
       map.setFilter('circuit-order', ['==', ['get', 'id'], selectedIdRef.current]);

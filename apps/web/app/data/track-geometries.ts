@@ -1,4 +1,5 @@
 import circuitsGeoJson from './circuits.json';
+import openStreetMapCircuitsGeoJson from './circuits-openstreetmap.json';
 import { season2024 } from './season-2024';
 import { circuitGeometryRegistry } from './track-geometry-registry';
 
@@ -12,9 +13,10 @@ type TrackFeature = GeoJSON.Feature<
   }
 >;
 
-const sourceFeatures = (
-  circuitsGeoJson as GeoJSON.FeatureCollection<GeoJSON.LineString>
-).features as TrackFeature[];
+const sourceFeatures = [
+  ...(circuitsGeoJson as GeoJSON.FeatureCollection<GeoJSON.LineString>).features,
+  ...(openStreetMapCircuitsGeoJson as GeoJSON.FeatureCollection<GeoJSON.LineString>).features,
+] as TrackFeature[];
 
 const sourceByGeometryId = new Map(
   sourceFeatures.map((feature) => [feature.properties.id, feature]),
