@@ -1,16 +1,17 @@
 import type { Metadata } from 'next';
-import { BahrainCircuitExperience } from '../../components/bahrain-circuit-experience';
+import { CircuitExperience } from '../../components/bahrain-circuit-experience';
+import { bahrainCircuitPage } from '../../data/circuit-page-data';
 
 export const metadata: Metadata = {
-  title: 'Бахрейн — Bahrain International Circuit | F1 Geovisual Atlas',
-  description: 'Картографическая страница трассы Бахрейна: контур, характеристики, результаты и ориентиры для поездки.',
+  title: `${bahrainCircuitPage.nameRu} — ${bahrainCircuitPage.officialName} | F1 Geovisual Atlas`,
+  description: bahrainCircuitPage.summary.description,
   openGraph: {
-    title: 'Бахрейн — Bahrain International Circuit',
-    description: 'Интерактивная карта трассы и география поездки на этап Formula 1.',
+    title: `${bahrainCircuitPage.nameRu} — ${bahrainCircuitPage.officialName}`,
+    description: bahrainCircuitPage.summary.description,
     images: [],
   },
 };
 
 export default function BahrainCircuitPage() {
-  return <BahrainCircuitExperience />;
+  return <CircuitExperience pageData={bahrainCircuitPage} />;
 }

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { BahrainModelViewer } from './bahrain-model-viewer';
+import type { CircuitPageData } from '../data/circuit-page-data';
 import driverCatalog from '../data/catalogs/drivers.json';
 import {
   bahrainDrsDetectionAnchors,
@@ -24,12 +25,6 @@ import type { SeasonSnapshot, SnapshotSessionResult } from '../data/web-snapshot
 type DetailMode = 'track' | 'travel' | 'model';
 type DetailBasemap = 'dark' | 'satellite';
 type ResultView = 'sprintQualifying' | 'sprint' | 'qualifying' | 'race';
-
-const bahrainTrack = trackGeometries.bahrain;
-const bahrainSeasonOptions = [
-  2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015,
-  2014, 2013, 2012, 2010, 2009, 2008, 2007, 2006, 2005, 2004,
-];
 
 const resultViewLabels: Record<ResultView, string> = {
   sprintQualifying: 'Спринт-квалификация',
@@ -98,38 +93,21 @@ function teamInitials(name: string | null) {
   return name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
 }
 
-const travelPoints: GeoJSON.FeatureCollection<GeoJSON.Point> = {
-  type: 'FeatureCollection',
-  features: [
-    {
+function makeTravelPoints(pageData: CircuitPageData): GeoJSON.FeatureCollection<GeoJSON.Point> {
+  return {
+    type: 'FeatureCollection',
+    features: pageData.travel.points.map((point) => ({
       type: 'Feature',
       properties: {
-        name: 'Bahrain International Circuit',
-        kind: 'Трасса',
-        description: 'Сахир · точка проведения Гран-при Бахрейна',
+        id: point.id,
+        name: point.name,
+        kind: point.kindRu,
+        description: point.descriptionRu,
       },
-      geometry: { type: 'Point', coordinates: [50.5106, 26.0325] },
-    },
-    {
-      type: 'Feature',
-      properties: {
-        name: 'Манама',
-        kind: 'Город',
-        description: 'Главный городской ориентир для поездки на этап',
-      },
-      geometry: { type: 'Point', coordinates: [50.5861, 26.2235] },
-    },
-    {
-      type: 'Feature',
-      properties: {
-        name: 'Аэропорт BAH',
-        kind: 'Транспорт',
-        description: 'Международный аэропорт Бахрейна',
-      },
-      geometry: { type: 'Point', coordinates: [50.6336, 26.2708] },
-    },
-  ],
-};
+      geometry: { type: 'Point', coordinates: point.coordinates },
+    })),
+  };
+}
 
 const detailStyle: maplibregl.StyleSpecification = {
   version: 8,
@@ -264,29 +242,32 @@ const detailStyle: maplibregl.StyleSpecification = {
   ],
 };
 
-function trackBounds() {
-  if (!bahrainTrack) return undefined;
-  const [first, ...coordinates] = bahrainTrack.geometry.coordinates;
+function trackBounds(track: GeoJSON.Feature<GeoJSON.LineString> | undefined) {
+  if (!track) return undefined;
+  const [first, ...coordinates] = track.geometry.coordinates;
   return coordinates.reduce(
     (bounds, coordinate) => bounds.extend(coordinate),
     new maplibregl.LngLatBounds(first, first),
   );
 }
 
-export function BahrainCircuitExperience() {
+export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
+  const circuitTrack = trackGeometries[pageData.geometryId];
+  const travelPoints = useMemo(() => makeTravelPoints(pageData), [pageData]);
+  const circuitSeasonOptions = pageData.results.seasons;
   const [mode, setMode] = useState<DetailMode>('track');
   const [basemap, setBasemap] = useState<DetailBasemap>('satellite');
   const [ready, setReady] = useState(false);
-  const [resultSeason, setResultSeason] = useState(2024);
+  const [resultSeason, setResultSeason] = useState(pageData.results.defaultSeason);
   const [resultView, setResultView] = useState<ResultView>('race');
   const [seasonSnapshot, setSeasonSnapshot] = useState<SeasonSnapshot | null>(null);
   const [resultStatus, setResultStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
   const bahrainRound = useMemo(
-    () => seasonSnapshot?.calendar.find((race) => race.circuit.id === 'bahrain'),
-    [seasonSnapshot],
+    () => seasonSnapshot?.calendar.find((race) => race.circuit.id === pageData.id),
+    [pageData.id, seasonSnapshot],
   );
   const resultSessions = useMemo(() => {
     if (!seasonSnapshot || !bahrainRound) return [] as Array<{ id: ResultView; results: SnapshotSessionResult[] }>;
@@ -306,13 +287,13 @@ export function BahrainCircuitExperience() {
 
   useEffect(() => {
     const seasonFromUrl = Number(new URLSearchParams(window.location.search).get('season'));
-    if (bahrainSeasonOptions.includes(seasonFromUrl)) {
+    if (circuitSeasonOptions.includes(seasonFromUrl)) {
       queueMicrotask(() => {
         setResultStatus('loading');
         setResultSeason(seasonFromUrl);
       });
     }
-  }, []);
+  }, [circuitSeasonOptions]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -322,8 +303,8 @@ export function BahrainCircuitExperience() {
         return response.json() as Promise<SeasonSnapshot>;
       })
       .then((snapshot) => {
-        const race = snapshot.calendar.find((item) => item.circuit.id === 'bahrain');
-        if (!race) throw new Error(`В сезоне ${resultSeason} отсутствует этап Бахрейна`);
+        const race = snapshot.calendar.find((item) => item.circuit.id === pageData.id);
+        if (!race) throw new Error(`В сезоне ${resultSeason} отсутствует этап ${pageData.nameRu}`);
         const round = String(race.round);
         const nextView: ResultView = snapshot.raceResults?.[round]?.length
           ? 'race'
@@ -343,7 +324,7 @@ export function BahrainCircuitExperience() {
         setResultStatus('error');
       });
     return () => controller.abort();
-  }, [resultSeason]);
+  }, [pageData.id, pageData.nameRu, resultSeason]);
 
   const changeResultSeason = useCallback((season: number) => {
     setResultStatus('loading');
@@ -355,18 +336,23 @@ export function BahrainCircuitExperience() {
 
   const focusTrack = useCallback((duration = 1000) => {
     const map = mapRef.current;
-    const bounds = trackBounds();
+    const bounds = trackBounds(circuitTrack);
     if (!map || !bounds) return;
 
     map.fitBounds(bounds, {
-      padding: { top: 92, right: 92, bottom: 92, left: 92 },
-      maxZoom: 15.3,
-      pitch: 52,
-      bearing: -18,
+      padding: {
+        top: pageData.map.trackCamera.padding,
+        right: pageData.map.trackCamera.padding,
+        bottom: pageData.map.trackCamera.padding,
+        left: pageData.map.trackCamera.padding,
+      },
+      maxZoom: pageData.map.trackCamera.maxZoom,
+      pitch: pageData.map.trackCamera.pitch,
+      bearing: pageData.map.trackCamera.bearing,
       duration,
       essential: true,
     });
-  }, []);
+  }, [circuitTrack, pageData.map.trackCamera]);
 
   const showMode = useCallback((nextMode: DetailMode) => {
     setMode(nextMode);
@@ -386,8 +372,10 @@ export function BahrainCircuitExperience() {
         'turn-label-leaders', 'turn-points', 'turn-labels',
         'track-info-points', 'track-info-labels',
       ]
-        .forEach((layerId) => map.setLayoutProperty(layerId, 'visibility', trackVisibility));
-      map.setLayoutProperty('terrain-hillshade', 'visibility', trackVisibility);
+        .forEach((layerId) => {
+          if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', trackVisibility);
+        });
+      if (map.getLayer('terrain-hillshade')) map.setLayoutProperty('terrain-hillshade', 'visibility', trackVisibility);
     }
 
     if (nextMode === 'track') {
@@ -395,9 +383,9 @@ export function BahrainCircuitExperience() {
       focusTrack(1200);
     } else if (nextMode === 'travel') {
       map.setTerrain(null);
-      map.fitBounds([[50.48, 25.99], [50.67, 26.3]], {
+      map.fitBounds(pageData.map.travelBounds, {
         padding: { top: 76, right: 76, bottom: 76, left: 76 },
-        maxZoom: 10.8,
+        maxZoom: pageData.map.travelZoom,
         pitch: 0,
         bearing: 0,
         duration: 1200,
@@ -406,7 +394,7 @@ export function BahrainCircuitExperience() {
     } else {
       map.setTerrain(null);
     }
-  }, [focusTrack]);
+  }, [focusTrack, pageData.map.travelBounds, pageData.map.travelZoom]);
 
   const selectBasemap = useCallback((nextBasemap: DetailBasemap) => {
     setBasemap(nextBasemap);
@@ -426,10 +414,10 @@ export function BahrainCircuitExperience() {
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: detailStyle,
-      center: [50.5106, 26.0325],
+      center: pageData.location.coordinates,
       zoom: 13,
-      pitch: 52,
-      bearing: -18,
+      pitch: pageData.map.trackCamera.pitch,
+      bearing: pageData.map.trackCamera.bearing,
       minZoom: 7,
       maxZoom: 18,
       maxPitch: 75,
@@ -441,11 +429,23 @@ export function BahrainCircuitExperience() {
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-left');
     map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
 
+    const collapseAttribution = () => {
+      const attribution = containerRef.current?.querySelector<HTMLElement>('.maplibregl-ctrl-attrib');
+      const toggle = attribution?.querySelector<HTMLButtonElement>('.maplibregl-ctrl-attrib-button');
+      attribution?.classList.remove('maplibregl-compact-show');
+      toggle?.setAttribute('aria-expanded', 'false');
+    };
+    window.requestAnimationFrame(collapseAttribution);
+
     map.on('load', () => {
+      collapseAttribution();
       map.setTerrain({ source: 'terrainSource', exaggeration: 1 });
+      if (!pageData.features.buildings3d && map.getLayer('context-buildings-3d')) {
+        map.setLayoutProperty('context-buildings-3d', 'visibility', 'none');
+      }
       map.addSource('track', {
         type: 'geojson',
-        data: { type: 'FeatureCollection', features: bahrainTrack ? [bahrainTrack] : [] },
+        data: { type: 'FeatureCollection', features: circuitTrack ? [circuitTrack] : [] },
       });
       map.addLayer({
         id: 'track-glow', type: 'line', source: 'track',
@@ -457,6 +457,7 @@ export function BahrainCircuitExperience() {
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: { 'line-color': '#02070d', 'line-width': 6.2, 'line-opacity': 0.98 },
       });
+      if (pageData.features.technicalOverlay) {
       map.addSource('track-sectors', { type: 'geojson', data: bahrainTrackSectors });
       map.addLayer({
         id: 'sector-lines', type: 'line', source: 'track-sectors',
@@ -649,6 +650,7 @@ export function BahrainCircuitExperience() {
           'text-halo-width': 1.5,
         },
       });
+      }
       map.addSource('travel', { type: 'geojson', data: travelPoints });
       map.addLayer({
         id: 'travel-points', type: 'circle', source: 'travel',
@@ -700,34 +702,40 @@ export function BahrainCircuitExperience() {
           .setDOMContent(popupContent)
           .addTo(map);
       });
-      map.on('mouseenter', 'turn-points', () => {
-        map.getCanvas().style.cursor = 'pointer';
-      });
-      map.on('mouseleave', 'turn-points', () => {
-        map.getCanvas().style.cursor = '';
-      });
-      map.on('click', 'turn-points', (event) => {
-        const feature = event.features?.[0];
-        if (!feature || feature.geometry.type !== 'Point') return;
+      if (pageData.features.technicalOverlay) {
+        map.on('mouseenter', 'turn-points', () => {
+          map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'turn-points', () => {
+          map.getCanvas().style.cursor = '';
+        });
+        map.on('click', 'turn-points', (event) => {
+          const feature = event.features?.[0];
+          if (!feature || feature.geometry.type !== 'Point') return;
 
-        const popupContent = document.createElement('div');
-        const kind = document.createElement('span');
-        const title = document.createElement('strong');
-        const description = document.createElement('p');
-        kind.textContent = 'Элемент трассы';
-        title.textContent = String(feature.properties?.title ?? 'Поворот');
-        description.textContent = String(feature.properties?.description ?? '');
-        popupContent.className = 'poi-popup-content';
-        popupContent.append(kind, title, description);
+          const popupContent = document.createElement('div');
+          const kind = document.createElement('span');
+          const title = document.createElement('strong');
+          const description = document.createElement('p');
+          kind.textContent = 'Элемент трассы';
+          title.textContent = String(feature.properties?.title ?? 'Поворот');
+          description.textContent = String(feature.properties?.description ?? '');
+          popupContent.className = 'poi-popup-content';
+          popupContent.append(kind, title, description);
 
-        new maplibregl.Popup({ offset: 13, className: 'atlas-poi-popup' })
-          .setLngLat(feature.geometry.coordinates as [number, number])
-          .setDOMContent(popupContent)
-          .addTo(map);
-      });
-      const bounds = trackBounds();
+          new maplibregl.Popup({ offset: 13, className: 'atlas-poi-popup' })
+            .setLngLat(feature.geometry.coordinates as [number, number])
+            .setDOMContent(popupContent)
+            .addTo(map);
+        });
+      }
+      const bounds = trackBounds(circuitTrack);
       if (bounds) map.fitBounds(bounds, {
-        padding: 92, maxZoom: 15.3, pitch: 52, bearing: -18, duration: 0,
+        padding: pageData.map.trackCamera.padding,
+        maxZoom: pageData.map.trackCamera.maxZoom,
+        pitch: pageData.map.trackCamera.pitch,
+        bearing: pageData.map.trackCamera.bearing,
+        duration: 0,
       });
       setReady(true);
     });
@@ -737,7 +745,7 @@ export function BahrainCircuitExperience() {
       map.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [circuitTrack, pageData, travelPoints]);
 
   return (
     <main className="track-page">
@@ -747,20 +755,25 @@ export function BahrainCircuitExperience() {
           <span><strong>Geovisual Atlas</strong><small>География скорости</small></span>
         </Link>
         <Link className="back-to-atlas" href={`/?season=${resultSeason}#atlas`}>← Вернуться к глобусу</Link>
-        <span className="track-stage-index">Бахрейн · {resultSeason}</span>
+        <span className="track-stage-index">{pageData.nameRu} · {resultSeason}</span>
       </header>
 
       <section className="track-hero">
         <div className="track-map-wrap">
-          <div ref={containerRef} className="track-map" aria-label="Карта Bahrain International Circuit" />
-          {mode === 'model' && <BahrainModelViewer />}
+          <div ref={containerRef} className="track-map" aria-label={`Карта ${pageData.officialName}`} />
+          {mode === 'model' && pageData.features.local3dModel && pageData.id === 'bahrain' && <BahrainModelViewer />}
           <div className="track-map-shade" aria-hidden="true" />
-          <div className="detail-mode" role="group" aria-label="Режим карты">
+          <div
+            className="detail-mode"
+            role="group"
+            aria-label="Режим карты"
+            style={{ gridTemplateColumns: `repeat(${1 + Number(pageData.features.travelMode) + Number(pageData.features.local3dModel)}, 1fr)` }}
+          >
             <button type="button" className={mode === 'track' ? 'is-active' : ''} onClick={() => showMode('track')} disabled={!ready}>Трасса</button>
-            <button type="button" className={mode === 'travel' ? 'is-active' : ''} onClick={() => showMode('travel')} disabled={!ready}>Поездка</button>
-            <button type="button" className={mode === 'model' ? 'is-active' : ''} onClick={() => showMode('model')} disabled={!ready}>3D</button>
+            {pageData.features.travelMode && <button type="button" className={mode === 'travel' ? 'is-active' : ''} onClick={() => showMode('travel')} disabled={!ready}>Поездка</button>}
+            {pageData.features.local3dModel && <button type="button" className={mode === 'model' ? 'is-active' : ''} onClick={() => showMode('model')} disabled={!ready}>3D</button>}
           </div>
-          {mode === 'track' && (
+          {mode === 'track' && pageData.features.technicalOverlay && (
             <div className="track-basemap-control" role="group" aria-label="Подложка карты трассы">
               <button type="button" className={basemap === 'dark' ? 'is-active' : ''} onClick={() => selectBasemap('dark')}>Карта</button>
               <button type="button" className={basemap === 'satellite' ? 'is-active' : ''} onClick={() => selectBasemap('satellite')}>Спутник</button>
@@ -791,19 +804,18 @@ export function BahrainCircuitExperience() {
         </div>
 
         <aside className="track-summary">
-          <span className="eyebrow">Сахир · Бахрейн</span>
-          <p className="track-kicker">Bahrain International Circuit</p>
-          <h1>Бахрейн</h1>
-          <p className="track-lead">Пустынная трасса с выраженным перепадом высот и несколькими зонами DRS. Первый подробный объект картографического атласа.</p>
+          <span className="eyebrow">{pageData.location.cityRu} · {pageData.location.countryRu}</span>
+          <p className="track-kicker">{pageData.officialName}</p>
+          <h1>{pageData.nameRu}</h1>
+          <p className="track-lead">{pageData.summary.description}</p>
           <dl className="track-metrics">
-            <div><dt>Длина</dt><dd>5,412 км</dd></div>
-            <div><dt>Круги</dt><dd>57</dd></div>
-            <div><dt>Повороты</dt><dd>15</dd></div>
-            <div><dt>Дебют</dt><dd>2004</dd></div>
+            {pageData.summary.metrics.map((metric) => (
+              <div key={metric.label}><dt>{metric.label}</dt><dd>{metric.value}</dd></div>
+            ))}
           </dl>
           <div className="track-note">
             <span>Тип трассы</span>
-            <strong>Стационарная</strong>
+            <strong>{pageData.summary.typeRu}</strong>
           </div>
         </aside>
       </section>
@@ -816,12 +828,12 @@ export function BahrainCircuitExperience() {
         <div className="race-results-heading">
           <div className="section-heading">
             <span className="eyebrow">Результаты этапа</span>
-            <h2 id="race-results-title">Бахрейн · {resultSeason}</h2>
+            <h2 id="race-results-title">{pageData.nameRu} · {resultSeason}</h2>
           </div>
           <label className="result-season-select">
             <span>Сезон</span>
             <select value={resultSeason} onChange={(event) => changeResultSeason(Number(event.target.value))}>
-              {bahrainSeasonOptions.map((season) => <option key={season} value={season}>{season}</option>)}
+              {circuitSeasonOptions.map((season) => <option key={season} value={season}>{season}</option>)}
             </select>
           </label>
         </div>
@@ -916,11 +928,11 @@ export function BahrainCircuitExperience() {
             <span className="eyebrow">Для поездки</span>
             <h2>География этапа</h2>
           </div>
-          <p>Режим «Поездка» связывает трассу с Манамой и международным аэропортом. Далее сюда добавятся проверенные категории мест без перегрузки основной карты.</p>
+          <p>{pageData.travel.intro}</p>
           <ul className="travel-categories">
-            <li><span>01</span>Транспорт</li>
-            <li><span>02</span>Размещение</li>
-            <li><span>03</span>Достопримечательности</li>
+            {pageData.travel.categories.map((category, index) => (
+              <li key={category.id}><span>{String(index + 1).padStart(2, '0')}</span>{category.label}</li>
+            ))}
           </ul>
         </article>
       </section>

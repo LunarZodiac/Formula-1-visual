@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "bahrain",
+  "slug": "bahrain",
+  "geometryId": "bahrain",
+  "nameRu": "Бахрейн",
+  "officialName": "Bahrain International Circuit",
+  "location": {
+    "cityRu": "Сахир",
+    "countryRu": "Бахрейн",
+    "coordinates": [50.5106, 26.0325]
+  },
+  "summary": {
+    "description": "Пустынная трасса с выраженным перепадом высот и несколькими зонами DRS. Первый подробный объект картографического атласа.",
+    "typeRu": "Стационарная",
+    "metrics": [
+      { "label": "Длина", "value": "5,412 км" },
+      { "label": "Круги", "value": "57" },
+      { "label": "Повороты", "value": "15" },
+      { "label": "Дебют", "value": "2004" }
+    ]
+  },
+  "map": {
+    "trackCamera": {
+      "maxZoom": 15.3,
+      "pitch": 52,
+      "bearing": -18,
+      "padding": 92
+    },
+    "travelBounds": [[50.48, 25.99], [50.67, 26.3]],
+    "travelZoom": 10.8
+  },
+  "results": {
+    "seasons": [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2010, 2009, 2008, 2007, 2006, 2005, 2004],
+    "defaultSeason": 2024
+  },
+  "features": {
+    "technicalOverlay": true,
+    "travelMode": true,
+    "local3dModel": true,
+    "buildings3d": true
+  },
+  "travel": {
+    "intro": "Режим «Поездка» связывает трассу с Манамой и международным аэропортом. Далее сюда добавятся проверенные категории мест без перегрузки основной карты.",
+    "categories": [
+      { "id": "transport", "label": "Транспорт" },
+      { "id": "accommodation", "label": "Размещение" },
+      { "id": "attractions", "label": "Достопримечательности" }
+    ],
+    "points": [
+      {
+        "id": "circuit",
+        "name": "Bahrain International Circuit",
+        "kindRu": "Трасса",
+        "descriptionRu": "Сахир · точка проведения Гран-при Бахрейна",
+        "coordinates": [50.5106, 26.0325]
+      },
+      {
+        "id": "manama",
+        "name": "Манама",
+        "kindRu": "Город",
+        "descriptionRu": "Главный городской ориентир для поездки на этап",
+        "coordinates": [50.5861, 26.2235]
+      },
+      {
+        "id": "bah-airport",
+        "name": "Аэропорт BAH",
+        "kindRu": "Транспорт",
+        "descriptionRu": "Международный аэропорт Бахрейна",
+        "coordinates": [50.6336, 26.2708]
+      }
+    ]
+  }
+}
