@@ -1,0 +1,49 @@
+/**
+ * Связывает идентификаторы трасс из сезонных снимков с проверенными
+ * геометриями в circuits.json. Новые и исторические конфигурации добавляются
+ * сюда только после проверки направления движения и периода использования.
+ */
+export const circuitGeometryRegistry = {
+  yas_marina: 'ae-2009',
+  galvez: 'ar-1952',
+  red_bull_ring: 'at-1969',
+  albert_park: 'au-1953',
+  baku: 'az-2016',
+  spa: 'be-1925',
+  bahrain: 'bh-2002',
+  interlagos: 'br-1940',
+  jacarepagua: 'br-1977',
+  villeneuve: 'ca-1978',
+  shanghai: 'cn-2004',
+  nurburgring: 'de-1927',
+  hockenheimring: 'de-1932',
+  catalunya: 'es-1991',
+  madring: 'es-2026',
+  magny_cours: 'fr-1960',
+  ricard: 'fr-1969',
+  silverstone: 'gb-1948',
+  hungaroring: 'hu-1986',
+  mugello: 'it-1914',
+  monza: 'it-1922',
+  imola: 'it-1953',
+  suzuka: 'jp-1962',
+  monaco: 'mc-1929',
+  rodriguez: 'mx-1962',
+  sepang: 'my-1999',
+  zandvoort: 'nl-1948',
+  estoril: 'pt-1972',
+  portimao: 'pt-2008',
+  losail: 'qa-2004',
+  sochi: 'ru-2014',
+  jeddah: 'sa-2021',
+  marina_bay: 'sg-2008',
+  istanbul: 'tr-2005',
+  indianapolis: 'us-1909',
+  watkins_glen: 'us-1956',
+  americas: 'us-2012',
+  miami: 'us-2022',
+  vegas: 'us-2023',
+  kyalami: 'za-1961',
+} as const;
+
+export type RegisteredCircuitId = keyof typeof circuitGeometryRegistry;

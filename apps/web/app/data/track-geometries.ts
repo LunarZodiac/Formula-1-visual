@@ -1,5 +1,6 @@
 import circuitsGeoJson from './circuits.json';
 import { season2024 } from './season-2024';
+import { circuitGeometryRegistry } from './track-geometry-registry';
 
 type TrackFeature = GeoJSON.Feature<
   GeoJSON.LineString,
@@ -22,19 +23,19 @@ const sourceByGeometryId = new Map(
 export const trackGeometries: Partial<
   Record<string, TrackFeature>
 > = Object.fromEntries(
-  season2024.flatMap((circuit) => {
-    const sourceFeature = sourceByGeometryId.get(circuit.geometryId);
+  Object.entries(circuitGeometryRegistry).flatMap(([circuitId, geometryId]) => {
+    const sourceFeature = sourceByGeometryId.get(geometryId);
 
     if (!sourceFeature) return [];
 
     return [[
-      circuit.id,
+      circuitId,
       {
         ...sourceFeature,
         properties: {
           ...sourceFeature.properties,
-          circuitId: circuit.id,
-          geometryId: circuit.geometryId,
+          circuitId,
+          geometryId,
         },
       },
     ]];
@@ -42,8 +43,10 @@ export const trackGeometries: Partial<
 );
 
 export const missingSeason2024TrackIds = season2024
-  .filter((circuit) => !sourceByGeometryId.has(circuit.geometryId))
+  .filter((circuit) => !trackGeometries[circuit.id])
   .map((circuit) => circuit.id);
+
+export const registeredTrackIds = Object.keys(trackGeometries);
 
 export function getTrackData(
   circuitId: string,
