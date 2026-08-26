@@ -63,8 +63,8 @@ export const bahrainTurnLabels: GeoJSON.FeatureCollection<GeoJSON.Point, TrackPo
       label: String(index + 1),
       title: `Поворот ${index + 1}`,
       description: index === 9
-        ? 'Технически сложный левый поворот на спуске.'
-        : `Поворот №${index + 1} конфигурации Гран-при.`,
+        ? 'Технически сложный левый поворот на спуске'
+        : `Поворот №${index + 1} конфигурации Гран-при`,
     },
     geometry: { type: 'Point' as const, coordinates },
   })),
@@ -95,8 +95,8 @@ export const bahrainTrackPoints: GeoJSON.FeatureCollection<
         label: String(index + 1),
         title: `Поворот ${index + 1}`,
         description: index === 9
-          ? 'Технически сложный левый поворот на спуске.'
-          : `Поворот №${index + 1} конфигурации Гран-при.`,
+          ? 'Технически сложный левый поворот на спуске'
+          : `Поворот №${index + 1} конфигурации Гран-при`,
       },
       geometry: { type: 'Point' as const, coordinates },
     })),
@@ -104,7 +104,7 @@ export const bahrainTrackPoints: GeoJSON.FeatureCollection<
       type: 'Feature',
       properties: {
         kind: 'start', label: '', title: 'Старт и финиш',
-        description: 'Стартовая и контрольная линия Bahrain International Circuit.',
+        description: 'Стартовая и контрольная линия Bahrain International Circuit',
       },
       geometry: { type: 'Point', coordinates: [50.50962, 26.03178] },
     },
@@ -112,7 +112,7 @@ export const bahrainTrackPoints: GeoJSON.FeatureCollection<
       type: 'Feature',
       properties: {
         kind: 'sector', label: 'S1', title: 'Граница секторов 1–2',
-        description: 'Первая контрольная граница круга — в районе пятого поворота.',
+        description: 'Первая контрольная граница круга — в районе пятого поворота',
       },
       geometry: { type: 'Point', coordinates: [50.516635, 26.033878] },
     },
@@ -120,7 +120,7 @@ export const bahrainTrackPoints: GeoJSON.FeatureCollection<
       type: 'Feature',
       properties: {
         kind: 'sector', label: 'S2', title: 'Граница секторов 2–3',
-        description: 'Вторая контрольная граница круга — перед тринадцатым поворотом.',
+        description: 'Вторая контрольная граница круга — перед тринадцатым поворотом',
       },
       geometry: { type: 'Point', coordinates: [50.517405, 26.029862] },
     },
@@ -231,4 +231,16 @@ export const bahrainDrsDetectionLabels: GeoJSON.FeatureCollection<GeoJSON.Point>
       geometry: { type: 'Point', coordinates: [50.51405, 26.02635] },
     },
   ],
+};
+
+export const bahrainTechnicalData = {
+  trackSectors: bahrainTrackSectors,
+  turnLabels: bahrainTurnLabels,
+  turnLabelLeaders: bahrainTurnLabelLeaders,
+  trackPoints: bahrainTrackPoints,
+  startFinishLeader: bahrainStartFinishLeader,
+  drsZones: bahrainDrsZones,
+  drsDetectionLeaders: bahrainDrsDetectionLeaders,
+  drsDetectionAnchors: bahrainDrsDetectionAnchors,
+  drsDetectionLabels: bahrainDrsDetectionLabels,
 };

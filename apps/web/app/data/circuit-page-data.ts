@@ -1,4 +1,5 @@
 import bahrainPageJson from './circuit-pages/bahrain.json';
+import spaPageJson from './circuit-pages/spa.json';
 
 export type CircuitPageData = {
   schemaVersion: 1;
@@ -51,7 +52,9 @@ export type CircuitPageData = {
 };
 
 export const bahrainCircuitPage = bahrainPageJson as CircuitPageData;
+export const spaCircuitPage = spaPageJson as CircuitPageData;
 
 export const circuitPageCatalog = new Map<string, CircuitPageData>([
   [bahrainCircuitPage.slug, bahrainCircuitPage],
+  [spaCircuitPage.slug, spaCircuitPage],
 ]);

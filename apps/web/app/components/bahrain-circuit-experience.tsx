@@ -8,17 +8,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { BahrainModelViewer } from './bahrain-model-viewer';
 import type { CircuitPageData } from '../data/circuit-page-data';
 import driverCatalog from '../data/catalogs/drivers.json';
-import {
-  bahrainDrsDetectionAnchors,
-  bahrainDrsDetectionLabels,
-  bahrainDrsDetectionLeaders,
-  bahrainDrsZones,
-  bahrainStartFinishLeader,
-  bahrainTrackPoints,
-  bahrainTrackSectors,
-  bahrainTurnLabelLeaders,
-  bahrainTurnLabels,
-} from '../data/bahrain-track-details';
+import { circuitTechnicalData } from '../data/circuit-track-details';
 import { trackGeometries } from '../data/track-geometries';
 import type { SeasonSnapshot, SnapshotSessionResult } from '../data/web-snapshots';
 
@@ -255,6 +245,8 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const circuitTrack = trackGeometries[pageData.geometryId];
+  const technicalData = circuitTechnicalData[pageData.id as keyof typeof circuitTechnicalData];
+  const hasTechnicalOverlay = pageData.features.technicalOverlay && Boolean(technicalData);
   const travelPoints = useMemo(() => makeTravelPoints(pageData), [pageData]);
   const circuitSeasonOptions = pageData.results.seasons;
   const [mode, setMode] = useState<DetailMode>('track');
@@ -365,7 +357,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
       map.setLayoutProperty('travel-points', 'visibility', travelVisibility);
       map.setLayoutProperty('travel-labels', 'visibility', travelVisibility);
       [
-        'track-glow', 'track-line', 'sector-lines', 'drs-glow', 'drs-lines',
+        'track-glow', 'track-line', 'track-basic-line', 'sector-lines', 'drs-glow', 'drs-lines',
         'drs-detection-leader-casing', 'drs-detection-leaders',
         'drs-detection-points', 'drs-detection-labels',
         'start-finish-leader', 'start-finish-marker',
@@ -457,8 +449,15 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: { 'line-color': '#02070d', 'line-width': 6.2, 'line-opacity': 0.98 },
       });
-      if (pageData.features.technicalOverlay) {
-      map.addSource('track-sectors', { type: 'geojson', data: bahrainTrackSectors });
+      if (!hasTechnicalOverlay) {
+        map.addLayer({
+          id: 'track-basic-line', type: 'line', source: 'track',
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+          paint: { 'line-color': '#ff2038', 'line-width': 2.8, 'line-opacity': 0.96 },
+        });
+      }
+      if (hasTechnicalOverlay && technicalData) {
+      map.addSource('track-sectors', { type: 'geojson', data: technicalData.trackSectors });
       map.addLayer({
         id: 'sector-lines', type: 'line', source: 'track-sectors',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
@@ -474,7 +473,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'line-opacity': 0.98,
         },
       });
-      map.addSource('drs-zones', { type: 'geojson', data: bahrainDrsZones });
+      map.addSource('drs-zones', { type: 'geojson', data: technicalData.drsZones });
       map.addLayer({
         id: 'drs-glow', type: 'line', source: 'drs-zones',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
@@ -491,7 +490,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'line-opacity': 0.92, 'line-dasharray': [1.15, 2.35],
         },
       });
-      map.addSource('drs-detection-leaders', { type: 'geojson', data: bahrainDrsDetectionLeaders });
+      map.addSource('drs-detection-leaders', { type: 'geojson', data: technicalData.drsDetectionLeaders });
       map.addLayer({
         id: 'drs-detection-leader-casing', type: 'line', source: 'drs-detection-leaders',
         layout: { 'line-cap': 'round' },
@@ -508,8 +507,8 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'line-opacity': 1,
         },
       });
-      map.addSource('drs-detection-anchors', { type: 'geojson', data: bahrainDrsDetectionAnchors });
-      map.addSource('drs-detection-labels', { type: 'geojson', data: bahrainDrsDetectionLabels });
+      map.addSource('drs-detection-anchors', { type: 'geojson', data: technicalData.drsDetectionAnchors });
+      map.addSource('drs-detection-labels', { type: 'geojson', data: technicalData.drsDetectionLabels });
       map.addLayer({
         id: 'drs-detection-points', type: 'circle', source: 'drs-detection-anchors',
         paint: {
@@ -551,7 +550,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'text-color': '#06100b',
         },
       });
-      map.addSource('turn-label-leaders', { type: 'geojson', data: bahrainTurnLabelLeaders });
+      map.addSource('turn-label-leaders', { type: 'geojson', data: technicalData.turnLabelLeaders });
       map.addLayer({
         id: 'turn-label-leaders', type: 'line', source: 'turn-label-leaders',
         paint: {
@@ -560,7 +559,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'line-opacity': 0.58,
         },
       });
-      map.addSource('turn-labels', { type: 'geojson', data: bahrainTurnLabels });
+      map.addSource('turn-labels', { type: 'geojson', data: technicalData.turnLabels });
       map.addLayer({
         id: 'turn-points', type: 'circle', source: 'turn-labels',
         paint: {
@@ -579,7 +578,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         },
         paint: { 'text-color': '#f6f9fa' },
       });
-      map.addSource('track-points', { type: 'geojson', data: bahrainTrackPoints });
+      map.addSource('track-points', { type: 'geojson', data: technicalData.trackPoints });
       const checkerCanvas = document.createElement('canvas');
       checkerCanvas.width = 32;
       checkerCanvas.height = 32;
@@ -606,7 +605,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         const checkerImage = checkerContext.getImageData(0, 0, 32, 32);
         map.addImage('finish-checker', checkerImage, { pixelRatio: 2 });
       }
-      map.addSource('start-finish-leader', { type: 'geojson', data: bahrainStartFinishLeader });
+      map.addSource('start-finish-leader', { type: 'geojson', data: technicalData.startFinishLeader });
       map.addLayer({
         id: 'start-finish-leader', type: 'line', source: 'start-finish-leader',
         paint: { 'line-color': '#a7b4bc', 'line-width': 0.9, 'line-opacity': 0.72 },
@@ -702,7 +701,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           .setDOMContent(popupContent)
           .addTo(map);
       });
-      if (pageData.features.technicalOverlay) {
+      if (hasTechnicalOverlay) {
         map.on('mouseenter', 'turn-points', () => {
           map.getCanvas().style.cursor = 'pointer';
         });
@@ -745,14 +744,14 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
       map.remove();
       mapRef.current = null;
     };
-  }, [circuitTrack, pageData, travelPoints]);
+  }, [circuitTrack, hasTechnicalOverlay, pageData, technicalData, travelPoints]);
 
   return (
     <main className="track-page">
       <header className="track-topbar">
-        <Link className="brand" href="/" aria-label="Вернуться в F1 Geovisual Atlas">
+        <Link className="brand" href="/" aria-label="Вернуться на главную страницу «География скорости»">
           <span className="brand-mark" aria-hidden="true">F1</span>
-          <span><strong>Geovisual Atlas</strong><small>География скорости</small></span>
+          <span><strong>География скорости</strong><small>Скорость • География • История</small></span>
         </Link>
         <Link className="back-to-atlas" href={`/?season=${resultSeason}#atlas`}>← Вернуться к глобусу</Link>
         <span className="track-stage-index">{pageData.nameRu} · {resultSeason}</span>
@@ -773,7 +772,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
             {pageData.features.travelMode && <button type="button" className={mode === 'travel' ? 'is-active' : ''} onClick={() => showMode('travel')} disabled={!ready}>Поездка</button>}
             {pageData.features.local3dModel && <button type="button" className={mode === 'model' ? 'is-active' : ''} onClick={() => showMode('model')} disabled={!ready}>3D</button>}
           </div>
-          {mode === 'track' && pageData.features.technicalOverlay && (
+          {mode === 'track' && (
             <div className="track-basemap-control" role="group" aria-label="Подложка карты трассы">
               <button type="button" className={basemap === 'dark' ? 'is-active' : ''} onClick={() => selectBasemap('dark')}>Карта</button>
               <button type="button" className={basemap === 'satellite' ? 'is-active' : ''} onClick={() => selectBasemap('satellite')}>Спутник</button>
@@ -781,10 +780,12 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           )}
           {mode === 'track' && (
             <div className="track-map-legend" aria-label="Условные обозначения схемы трассы">
-              <span><i className="legend-turn" />Повороты</span>
-              <span><i className="legend-sectors"><b /><b /><b /></i>Секторы 1–3</span>
-              <span><i className="legend-drs" />DRS</span>
-              <span><i className="legend-drs-detection" />Детекция DRS</span>
+              {hasTechnicalOverlay ? <>
+                <span><i className="legend-turn" />Повороты</span>
+                <span><i className="legend-sectors"><b /><b /><b /></i>Секторы 1–3</span>
+                <span><i className="legend-drs" />DRS</span>
+                <span><i className="legend-drs-detection" />Детекция DRS</span>
+              </> : <span><i className="legend-turn" />Контур трассы</span>}
             </div>
           )}
           {mode === 'track' && (
@@ -806,7 +807,9 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         <aside className="track-summary">
           <span className="eyebrow">{pageData.location.cityRu} · {pageData.location.countryRu}</span>
           <p className="track-kicker">{pageData.officialName}</p>
-          <h1>{pageData.nameRu}</h1>
+          <h1 className={pageData.nameRu.length > 18 ? 'is-very-long' : pageData.nameRu.length > 10 ? 'is-long' : undefined}>
+            {pageData.nameRu}
+          </h1>
           <p className="track-lead">{pageData.summary.description}</p>
           <dl className="track-metrics">
             {pageData.summary.metrics.map((metric) => (
@@ -857,8 +860,8 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
 
         {resultStatus === 'loading' && !seasonSnapshot && <div className="race-results-status">Загружаем результаты сезона…</div>}
         {resultStatus === 'loading' && seasonSnapshot && <div className="race-results-update">Обновляем результаты…</div>}
-        {resultStatus === 'error' && <div className="race-results-status is-error">Для этого сезона результаты Бахрейна пока недоступны.</div>}
-        {resultStatus === 'ready' && activeResults.length === 0 && <div className="race-results-status">Результаты этой сессии отсутствуют.</div>}
+        {resultStatus === 'error' && <div className="race-results-status is-error">Для этого сезона результаты пока недоступны</div>}
+        {resultStatus === 'ready' && activeResults.length === 0 && <div className="race-results-status">Результаты этой сессии отсутствуют</div>}
 
         {activeResults.length > 0 && (
           <div className="race-results-grid">
@@ -922,7 +925,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         )}
       </section>
 
-      <section className="track-content track-content--travel">
+      {pageData.features.travelMode && <section className="track-content track-content--travel">
         <article className="travel-panel">
           <div className="section-heading">
             <span className="eyebrow">Для поездки</span>
@@ -935,7 +938,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
             ))}
           </ul>
         </article>
-      </section>
+      </section>}
     </main>
   );
 }

@@ -13,6 +13,7 @@ import {
 } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import driverCatalog from '../data/catalogs/drivers.json';
+import { circuitPageCatalog } from '../data/circuit-page-data';
 import { season2024, type Circuit } from '../data/season-2024';
 import { getTrackData, trackGeometries } from '../data/track-geometries';
 import { season2024Summary } from '../data/season-summary';
@@ -851,11 +852,11 @@ export function AtlasExperience() {
   return (
     <main className="atlas-shell">
       <header className="topbar" id="top">
-        <a className="brand" href="#top" aria-label="F1 Geovisual Atlas — главная">
+        <a className="brand" href="#top" aria-label="Formula 1 — География скорости, главная">
           <span className="brand-mark" aria-hidden="true">F1</span>
           <span>
-            <strong>Geovisual Atlas</strong>
-            <small>География скорости</small>
+            <strong>География скорости</strong>
+            <small>Скорость • География • История</small>
           </span>
         </a>
 
@@ -936,10 +937,14 @@ export function AtlasExperience() {
         <div className="intro-hero-shade" aria-hidden="true" />
         <div className="intro-copy">
           <span className="eyebrow">Интерактивный атлас Formula 1</span>
-          <h1 id="intro-title">Мир как гоночная трасса</h1>
+          <h1 id="intro-title">
+            <span>Мир,</span>
+            <span>где скорость</span>
+            <span>становится искусством</span>
+          </h1>
           <p>
-            Исследуйте географию чемпионата, маршруты сезонов и&nbsp;историю трасс
-            через&nbsp;интерактивную карту.
+            Исследуйте мир Formula 1 — легендарные трассы, города, страны
+            и&nbsp;историю чемпионата на&nbsp;интерактивной карте
           </p>
           <a className="intro-action" href="#atlas" onClick={(event) => scrollToSection(event, 'atlas')}>
             Открыть атлас
@@ -1151,12 +1156,12 @@ export function AtlasExperience() {
             ) : (
               <p className="race-result-empty">
                 {selectedCircuit.status === 'scheduled' || selectedCircuit.status === 'postponed'
-                  ? 'Этап ещё не состоялся — результаты появятся после гонки.'
-                  : 'Результаты этого этапа пока подготавливаются.'}
+                  ? 'Этап ещё не состоялся — результаты появятся после гонки'
+                  : 'Результаты этого этапа пока подготавливаются'}
               </p>
             )}
-            {selectedCircuit.id === 'bahrain' && selectedSeason === 2024 ? (
-              <a href={`/circuits/bahrain?season=${selectedSeason}`}>
+            {circuitPageCatalog.has(selectedCircuit.id) ? (
+              <a href={`/circuits/${circuitPageCatalog.get(selectedCircuit.id)?.slug}?season=${selectedSeason}`}>
                 Результаты и схема этапа
                 <span aria-hidden="true">↗</span>
               </a>
@@ -1178,7 +1183,7 @@ export function AtlasExperience() {
           </div>
           <p>
             Календарь показывает географию чемпионата, а&nbsp;этот раздел фиксирует
-            спортивный итог сезона: лидеров личного и&nbsp;командного зачётов.
+            спортивный итог сезона: лидеров личного и&nbsp;командного зачётов
           </p>
         </div>
 
@@ -1212,7 +1217,7 @@ export function AtlasExperience() {
                   <span className="standing-points"><strong>{standing.points}</strong><small>очков</small></span>
                 </li>
               ))}
-              {driverStandings.length === 0 && <li className="standings-empty">Данные личного зачёта пока отсутствуют.</li>}
+              {driverStandings.length === 0 && <li className="standings-empty">Данные личного зачёта пока отсутствуют</li>}
             </ol>
           </article>
 
@@ -1238,7 +1243,7 @@ export function AtlasExperience() {
                   <span className="standing-points"><strong>{standing.points}</strong><small>очков</small></span>
                 </li>
               ))}
-              {constructorStandings.length === 0 && <li className="standings-empty">Кубок конструкторов в этом сезоне ещё не проводился.</li>}
+              {constructorStandings.length === 0 && <li className="standings-empty">Кубок конструкторов в этом сезоне ещё не проводился</li>}
             </ol>
           </article>
         </div>
