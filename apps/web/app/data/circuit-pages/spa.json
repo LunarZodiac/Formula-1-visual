@@ -88,6 +88,8 @@
       }
     ],
     "planner": {
+      "sourceNote": "Точки и районы поступают из PostgreSQL/PostGIS и OpenStreetMap, затем проходят редакционную проверку перед публикацией",
+      "routeNote": "Маршруты появятся на карте только после проверки геометрии, сезонной схемы движения и статуса published",
       "useful": [
         { "label": "Прибытие", "value": "Через Вервье", "detail": "В дни этапа схему трансфера определяют организатор и полиция" },
         { "label": "Размещение", "value": "Шесть районов", "detail": "Выбор района задаёт ритм всей поездки" },
@@ -109,6 +111,7 @@
           "title": "В Арденны через Вервье",
           "description": "В 2026 году поезд доставлял до Вервье-Центрального, откуда в дни Гран-при работал специальный трансфер. Точная линия не показывается: сезонный маршрут определяли организатор и полиция",
           "markerIds": ["brussels", "liege", "verviers", "circuit"],
+          "mapFeatureIds": ["osm-way-370594935", "osm-node-5307127700", "osm-node-26446051", "osm-way-234804574"],
           "image": "https://upload.wikimedia.org/wikipedia/commons/6/62/Spa-Francorchamps_overview.jpg"
         },
         {
@@ -118,6 +121,7 @@
           "title": "Выберите характер поездки",
           "description": "Франкоршам — ради близости к трассе, Мальмеди — ради удобства, Ставло — ради истории, а Спа — ради городской жизни после заездов",
           "markerIds": ["spa", "stavelot", "malmedy", "circuit"],
+          "mapFeatureIds": ["spa-stay-spa", "spa-stay-stavelot", "spa-stay-malmedy", "spa-stay-francorchamps"],
           "image": "https://www.carnetdescapades.com/wp-content/uploads/2023/06/ville-spa-wallonie-1080x810.jpg"
         },
         {
@@ -127,6 +131,7 @@
           "title": "За пределами автодрома",
           "description": "После квалификации можно отправиться к аббатству Ставло и водопаду Коо, а полный свободный день посвятить Высоким Фенам и замку Рейнхардштайн",
           "markerIds": ["stavelot", "coo", "botrange", "circuit"],
+          "mapFeatureIds": ["osm-way-1418726543", "osm-node-5771053254", "osm-node-1955780257", "osm-way-105586318"],
           "image": "https://heritage-voyager-production-contentbucket-xwndfune.s3.amazonaws.com/images/sites/spa-towns-of-europe/spa-belgium-thermes-modern-large-1920w.webp"
         }
       ],
@@ -164,7 +169,7 @@
   "history": [
     { "year": "1921", "title": "Первые соревнования", "description": "Автогонка не состоялась из-за одной заявки, но по дорожному кольцу прошла мотогонка", "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/D%C3%A9part_du_Grand_Prix_d%27Europe_1925_%C3%A0_Spa,_Antonio_Ascari_devant_Campari.jpg", "imageAlt": "Старт Гран-при в Спа в 1925 году", "credit": "Le Miroir des sports, автор неизвестен", "license": "Public domain", "sourceUrl": "https://commons.wikimedia.org/wiki/File:D%C3%A9part_du_Grand_Prix_d%27Europe_1925_%C3%A0_Spa,_Antonio_Ascari_devant_Campari.jpg" },
     { "year": "1939", "title": "Рождение Raidillon", "description": "Спрямление у старой таможни сформировало знаменитый подъём с уклоном до 17%", "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Start_Grand_Prix_Belgie_(1939).jpg", "imageAlt": "Старт Гран-при Бельгии 1939 года", "credit": "Magazine Auto, автор неизвестен", "license": "Public domain", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Start_Grand_Prix_Belgie_(1939).jpg" },
-    { "year": "1950", "title": "Дебют чемпионата мира", "description": "Спа вошёл в первый сезон Формулы-1; гонку выиграл Хуан-Мануэль Фанхио", "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Spa_1950.jpg", "imageAlt": "Схема конфигурации Спа 1950 года", "credit": "Jiří Žemlička", "license": "Public domain", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spa_1950.jpg" },
+    { "year": "1950", "title": "Дебют чемпионата мира", "description": "Спа вошёл в первый сезон Формулы-1; гонку выиграл Хуан-Мануэль Фанхио", "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Grand_prix_vers_1950.jpg", "imageAlt": "Гоночные автомобили эпохи первого чемпионата мира около 1950 года", "credit": "Chantal Buldorini Detaille / Fonds photographie Georges Detaille", "license": "CC BY-SA 4.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Grand_prix_vers_1950.jpg" },
     { "year": "1979", "title": "Новая конфигурация", "description": "Кольцо сократили до 6,947 км; современная версия позднее достигла длины 7,004 км", "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/1989_Belgian_GP_race_start_08.jpg", "imageAlt": "Старт Гран-при Бельгии 1989 года на укороченной конфигурации", "credit": "madagascarica", "license": "CC BY 2.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:1989_Belgian_GP_race_start_08.jpg" }
   ]
 }

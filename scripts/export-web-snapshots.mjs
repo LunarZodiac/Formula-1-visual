@@ -96,7 +96,11 @@ async function writeJsonAtomic(filePath, value) {
 
 function withoutExportMetadata(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
-  const { exportedAt: _exportedAt, ...semanticValue } = value;
+  const {
+    exportedAt: _exportedAt,
+    sourceChangedAt: _sourceChangedAt,
+    ...semanticValue
+  } = value;
   return semanticValue;
 }
 
@@ -112,18 +116,62 @@ function semanticJson(value) {
   return JSON.stringify(canonicalize(value));
 }
 
-async function publishJsonIfChanged(filePath, semanticValue, exportedAt, checkOnly) {
+async function readJsonIfPresent(filePath) {
   let existingValue = null;
   try {
     existingValue = JSON.parse(await readFile(filePath, 'utf8'));
   } catch (error) {
     if (error?.code !== 'ENOENT') throw error;
   }
+  return existingValue;
+}
+
+function timestampIsCurrent(existingTimestamp, sourceChangedAt) {
+  const existingTime = Date.parse(existingTimestamp);
+  const sourceTime = Date.parse(sourceChangedAt);
+  return Number.isFinite(existingTime) && Number.isFinite(sourceTime) && existingTime >= sourceTime;
+}
+
+async function snapshotIsFresh(filePath, sourceChangedAt, expectedSeason) {
+  const existingValue = await readJsonIfPresent(filePath);
+  return existingValue?.season === expectedSeason
+    && timestampIsCurrent(existingValue.sourceChangedAt, sourceChangedAt);
+}
+
+async function readEditorialPlannedSeasons(outputDirectory, databaseYears) {
+  const index = await readJsonIfPresent(path.join(outputDirectory, 'seasons.json'));
+  if (!Array.isArray(index?.seasons)) return [];
+  const plannedSeasons = [];
+  for (const season of index.seasons) {
+    if (season?.status !== 'planned' || databaseYears.has(Number(season.year))) continue;
+    const snapshot = await readJsonIfPresent(path.join(outputDirectory, `season-${season.year}.json`));
+    if (snapshot?.season !== season.year || !Array.isArray(snapshot.calendar)) continue;
+    plannedSeasons.push({
+      year: Number(season.year),
+      status: 'planned',
+      roundsPlanned: Number(season.roundsPlanned ?? snapshot.calendar.length),
+      racesAvailable: Number(season.racesAvailable ?? 0),
+    });
+  }
+  return plannedSeasons;
+}
+
+async function publishJsonIfChanged(
+  filePath,
+  semanticValue,
+  exportedAt,
+  sourceChangedAt,
+  checkOnly,
+) {
+  const existingValue = await readJsonIfPresent(filePath);
 
   const unchanged = existingValue !== null
-    && semanticJson(withoutExportMetadata(existingValue)) === semanticJson(semanticValue);
+    && semanticJson(withoutExportMetadata(existingValue)) === semanticJson(semanticValue)
+    && timestampIsCurrent(existingValue.sourceChangedAt, sourceChangedAt);
   if (unchanged) return false;
-  if (!checkOnly) await writeJsonAtomic(filePath, { exportedAt, ...semanticValue });
+  if (!checkOnly) {
+    await writeJsonAtomic(filePath, { exportedAt, sourceChangedAt, ...semanticValue });
+  }
   return true;
 }
 
@@ -363,47 +411,68 @@ async function main() {
          s.year,
          s.status,
          s.rounds_planned,
-         count(r.id)::integer AS races_available
+         count(r.id)::integer AS races_available,
+         f.changed_at
        FROM atlas.seasons AS s
        LEFT JOIN atlas.races AS r ON r.season_year = s.year
-       GROUP BY s.year, s.status, s.rounds_planned
+       JOIN atlas.web_export_freshness AS f ON f.season_year = s.year
+       GROUP BY s.year, s.status, s.rounds_planned, f.changed_at
        ORDER BY s.year DESC`,
     );
 
     await mkdir(outputDirectory, { recursive: true });
     const exportedAt = new Date().toISOString();
     let changedFiles = 0;
-    const seasons = seasonsResult.rows.map((row) => ({
+    const seasonRows = seasonsResult.rows.map((row) => ({
       year: Number(row.year),
       status: row.status,
       roundsPlanned: row.rounds_planned === null ? null : Number(row.rounds_planned),
       racesAvailable: Number(row.races_available),
+      sourceChangedAt: new Date(row.changed_at).toISOString(),
     }));
+    const databaseYears = new Set(seasonRows.map((season) => season.year));
+    const editorialPlannedSeasons = await readEditorialPlannedSeasons(outputDirectory, databaseYears);
+    const seasons = [
+      ...editorialPlannedSeasons,
+      ...seasonRows.map(({ sourceChangedAt: _sourceChangedAt, ...season }) => season),
+    ].sort((left, right) => right.year - left.year);
     const seasonsToExport = requestedSeason === null
-      ? seasons
-      : seasons.filter((season) => season.year === requestedSeason);
+      ? seasonRows
+      : seasonRows.filter((season) => season.year === requestedSeason);
     if (seasonsToExport.length === 0) {
       throw new Error(`Сезон ${requestedSeason} отсутствует в PostgreSQL.`);
     }
 
+    let skippedSeasons = 0;
     for (const [index, season] of seasonsToExport.entries()) {
+      const filePath = path.join(outputDirectory, `season-${season.year}.json`);
+      if (await snapshotIsFresh(filePath, season.sourceChangedAt, season.year)) {
+        skippedSeasons += 1;
+        process.stdout.write(`\rЭкспорт сезонов: ${index + 1}/${seasonsToExport.length}`);
+        continue;
+      }
       const snapshot = await readSeasonSnapshot(client, season.year);
       if (await publishJsonIfChanged(
-        path.join(outputDirectory, `season-${season.year}.json`),
+        filePath,
         snapshot,
         exportedAt,
+        season.sourceChangedAt,
         checkOnly,
       )) changedFiles += 1;
       process.stdout.write(`\rЭкспорт сезонов: ${index + 1}/${seasonsToExport.length}`);
     }
 
+    const indexSourceChangedAt = seasonRows.reduce(
+      (latest, season) => season.sourceChangedAt > latest ? season.sourceChangedAt : latest,
+      '1970-01-01T00:00:00.000Z',
+    );
     if (await publishJsonIfChanged(path.join(outputDirectory, 'seasons.json'), {
       seasons,
-    }, exportedAt, checkOnly)) changedFiles += 1;
+    }, exportedAt, indexSourceChangedAt, checkOnly)) changedFiles += 1;
     process.stdout.write('\n');
     console.log(checkOnly
       ? `Проверка веб-снимков: ${changedFiles === 0 ? 'актуальны' : `устарело ${changedFiles} файлов`}`
-      : `Веб-снимки обновлены: ${changedFiles}; без изменений: ${seasonsToExport.length + 1 - changedFiles}`);
+      : `Веб-снимки обновлены: ${changedFiles}; пропущено актуальных сезонов: ${skippedSeasons}`);
     if (checkOnly && changedFiles > 0) process.exitCode = 1;
   } finally {
     await client.end();

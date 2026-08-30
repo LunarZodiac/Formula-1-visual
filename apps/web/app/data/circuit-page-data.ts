@@ -65,6 +65,7 @@ export type CircuitPageData = {
         title: string;
         description: string;
         markerIds: string[];
+        mapFeatureIds?: string[];
         image?: string;
       }>;
       markers: Array<{
@@ -105,6 +106,8 @@ export type CircuitPageData = {
     };
     planner?: {
       useful: Array<{ label: string; value: string; detail: string }>;
+      sourceNote?: string;
+      routeNote?: string;
     };
   };
   history?: Array<{

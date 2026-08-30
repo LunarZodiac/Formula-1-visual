@@ -9,6 +9,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import type { CircuitPageData } from '../data/circuit-page-data';
 import driverCatalog from '../data/catalogs/drivers.json';
 import { circuitTechnicalData } from '../data/circuit-track-details';
+import { parseGeoJsonFeatureCollection } from '../data/geojson-contract';
 import { trackGeometries } from '../data/track-geometries';
 import type { SeasonSnapshot, SnapshotSessionResult } from '../data/web-snapshots';
 import { DriverFlag, DriverPortrait, TeamLogo } from './racing-visuals';
@@ -292,22 +293,60 @@ function trackBounds(track: GeoJSON.Feature<GeoJSON.LineString> | undefined) {
   );
 }
 
+function pointCollectionBounds(collection: TravelMapCollection) {
+  const coordinates = collection.features.flatMap((feature) => (
+    feature.geometry.type === 'Point' ? [feature.geometry.coordinates as [number, number]] : []
+  ));
+  if (coordinates.length === 0) return undefined;
+  return coordinates.slice(1).reduce(
+    (result, coordinate) => result.extend(coordinate),
+    new maplibregl.LngLatBounds(coordinates[0], coordinates[0]),
+  );
+}
+
+function featureCollectionBounds(features: TravelMapCollection['features']) {
+  let bounds: maplibregl.LngLatBounds | undefined;
+  const visitCoordinates = (value: unknown) => {
+    if (!Array.isArray(value)) return;
+    if (value.length >= 2 && typeof value[0] === 'number' && typeof value[1] === 'number') {
+      const coordinate: [number, number] = [value[0], value[1]];
+      bounds = bounds ? bounds.extend(coordinate) : new maplibregl.LngLatBounds(coordinate, coordinate);
+      return;
+    }
+    value.forEach(visitCoordinates);
+  };
+  features.forEach((feature) => {
+    if ('coordinates' in feature.geometry) visitCoordinates(feature.geometry.coordinates);
+  });
+  return bounds;
+}
+
 type TravelPoiMapProps = {
   collection: TravelMapCollection;
   track?: GeoJSON.Feature<GeoJSON.LineString>;
   roleFilter: TravelRoleFilter;
   selectedId: string | null;
+  focusFeatureIds: string[];
   bounds: [[number, number], [number, number]];
   onSelect: (featureId: string) => void;
 };
 
-function TravelPoiMap({ collection, track, roleFilter, selectedId, bounds, onSelect }: TravelPoiMapProps) {
+function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureIds, bounds, onSelect }: TravelPoiMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const onSelectRef = useRef(onSelect);
   const [basemap, setBasemap] = useState<DetailBasemap>('dark');
+  const [showAllPoints, setShowAllPoints] = useState(true);
   const [ready, setReady] = useState(false);
-  const visiblePoints = useMemo(() => travelCollections(collection, roleFilter).points, [collection, roleFilter]);
+  const mapCollections = useMemo(() => travelCollections(collection, roleFilter), [collection, roleFilter]);
+  const visiblePoints = useMemo(() => ({
+    ...mapCollections.points,
+    features: mapCollections.points.features.filter((feature) => feature.properties?.role !== 'circuit'),
+  }) as TravelMapCollection, [mapCollections.points]);
+  const circuitPoints = useMemo(() => ({
+    type: 'FeatureCollection',
+    features: travelCollections(collection).points.features.filter((feature) => feature.properties?.role === 'circuit'),
+  }) as TravelMapCollection, [collection]);
 
   useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
 
@@ -318,7 +357,7 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, bounds, onSel
       style: detailStyle,
       bounds,
       fitBoundsOptions: { padding: 48 },
-      minZoom: 7,
+      minZoom: 4.5,
       maxZoom: 18,
       attributionControl: false,
     });
@@ -333,13 +372,48 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, bounds, onSel
       map.addSource('poi-section-track', { type: 'geojson', data: { type: 'FeatureCollection', features: track ? [track] : [] } });
       map.addLayer({
         id: 'poi-section-track-glow', type: 'line', source: 'poi-section-track',
+        minzoom: 11.5,
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: { 'line-color': '#ffffff', 'line-width': 7, 'line-opacity': .16, 'line-blur': 3 },
       });
       map.addLayer({
         id: 'poi-section-track', type: 'line', source: 'poi-section-track',
+        minzoom: 11.5,
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: { 'line-color': '#ff3158', 'line-width': 2.2, 'line-opacity': .9 },
+      });
+      map.addSource('poi-section-circuit-point', { type: 'geojson', data: circuitPoints });
+      map.addLayer({
+        id: 'poi-section-circuit-point', type: 'circle', source: 'poi-section-circuit-point', maxzoom: 11.5,
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 4.5, 5, 10, 9],
+          'circle-color': '#ff3158', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2,
+        },
+      });
+      map.addLayer({
+        id: 'poi-section-circuit-label', type: 'symbol', source: 'poi-section-circuit-point', minzoom: 7, maxzoom: 11.5,
+        layout: { 'text-field': ['get', 'name'], 'text-font': ['Noto Sans Regular'], 'text-size': 10, 'text-offset': [0, 1.45], 'text-anchor': 'top' },
+        paint: { 'text-color': '#ffffff', 'text-halo-color': '#06101a', 'text-halo-width': 1.5 },
+      });
+      map.addSource('poi-section-zones', { type: 'geojson', data: mapCollections.zones });
+      map.addLayer({
+        id: 'poi-section-zones-fill', type: 'fill', source: 'poi-section-zones',
+        paint: { 'fill-color': '#58c7e8', 'fill-opacity': .055 },
+      });
+      map.addLayer({
+        id: 'poi-section-zones-line', type: 'line', source: 'poi-section-zones',
+        paint: { 'line-color': '#7eb6c9', 'line-width': 1.2, 'line-opacity': .42, 'line-dasharray': [2, 2] },
+      });
+      map.addSource('poi-section-routes', { type: 'geojson', data: mapCollections.routes });
+      map.addLayer({
+        id: 'poi-section-routes', type: 'line', source: 'poi-section-routes',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: {
+          'line-color': ['coalesce', ['get', 'color'], '#f2c14e'],
+          'line-width': ['interpolate', ['linear'], ['zoom'], 7, 2, 14, 4],
+          'line-opacity': .86,
+          'line-offset': ['coalesce', ['get', 'lineOffset'], 0],
+        },
       });
       map.addSource('poi-section-points', { type: 'geojson', data: visiblePoints, cluster: true, clusterRadius: 42, clusterMaxZoom: 13 });
       map.addLayer({
@@ -359,19 +433,45 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, bounds, onSel
           'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.5,
         },
       });
+      map.addSource('poi-section-selection', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       map.addLayer({
-        id: 'poi-section-selected', type: 'circle', source: 'poi-section-points', filter: ['==', ['get', 'id'], ''],
-        paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 8, 14, 13], 'circle-color': 'rgba(255,49,88,.18)', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 },
+        id: 'poi-section-selected-shape', type: 'line', source: 'poi-section-selection',
+        paint: { 'line-color': '#ffffff', 'line-width': 3, 'line-opacity': .95 },
+      });
+      map.addLayer({
+        id: 'poi-section-selected-point', type: 'circle', source: 'poi-section-selection',
+        filter: ['==', ['geometry-type'], 'Point'],
+        paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 8, 14, 13], 'circle-color': 'rgba(255,49,88,.32)', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 },
+      });
+      map.addSource('poi-section-focus', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      map.addLayer({
+        id: 'poi-section-focus-shape', type: 'line', source: 'poi-section-focus',
+        paint: { 'line-color': '#f2c14e', 'line-width': 2.5, 'line-opacity': .92 },
+      });
+      map.addLayer({
+        id: 'poi-section-focus-point', type: 'circle', source: 'poi-section-focus',
+        filter: ['==', ['geometry-type'], 'Point'],
+        paint: { 'circle-radius': 9, 'circle-color': '#07131d', 'circle-stroke-color': '#f2c14e', 'circle-stroke-width': 3 },
       });
       map.addLayer({
         id: 'poi-section-labels', type: 'symbol', source: 'poi-section-points', filter: ['!', ['has', 'point_count']],
         layout: { 'text-field': ['get', 'name'], 'text-font': ['Noto Sans Regular'], 'text-size': 10, 'text-offset': [0, 1.55], 'text-anchor': 'top', 'text-optional': true },
         paint: { 'text-color': '#ffffff', 'text-halo-color': '#06101a', 'text-halo-width': 1.5 },
       });
+      map.moveLayer('poi-section-circuit-point');
+      map.moveLayer('poi-section-circuit-label');
       map.on('click', 'poi-section-points', (event) => {
         const feature = event.features?.[0];
         if (!feature || feature.geometry.type !== 'Point') return;
         onSelectRef.current(String(feature.properties?.id ?? ''));
+      });
+      map.on('click', 'poi-section-circuit-point', (event) => {
+        const feature = event.features?.[0];
+        if (feature) onSelectRef.current(String(feature.properties?.id ?? ''));
+      });
+      map.on('click', 'poi-section-zones-fill', (event) => {
+        const feature = event.features?.[0];
+        if (feature) onSelectRef.current(String(feature.properties?.id ?? ''));
       });
       map.on('click', 'poi-section-clusters', async (event) => {
         const feature = event.features?.[0];
@@ -380,7 +480,7 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, bounds, onSel
         const zoom = await source.getClusterExpansionZoom(Number(feature.properties?.cluster_id));
         map.easeTo({ center: feature.geometry.coordinates as [number, number], zoom, duration: 500, essential: true });
       });
-      ['poi-section-points', 'poi-section-clusters'].forEach((layer) => {
+      ['poi-section-points', 'poi-section-clusters', 'poi-section-circuit-point', 'poi-section-zones-fill'].forEach((layer) => {
         map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
         map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
       });
@@ -399,24 +499,61 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, bounds, onSel
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!ready || !map?.isStyleLoaded()) return;
-    (map.getSource('poi-section-points') as maplibregl.GeoJSONSource | undefined)?.setData(visiblePoints);
-  }, [ready, visiblePoints]);
+    if (!ready || !map) return;
+    const source = map.getSource('poi-section-points') as maplibregl.GeoJSONSource | undefined;
+    if (!source) return;
+    source.setData(visiblePoints);
+    (map.getSource('poi-section-circuit-point') as maplibregl.GeoJSONSource | undefined)?.setData(circuitPoints);
+    (map.getSource('poi-section-zones') as maplibregl.GeoJSONSource | undefined)?.setData(mapCollections.zones);
+    (map.getSource('poi-section-routes') as maplibregl.GeoJSONSource | undefined)?.setData(mapCollections.routes);
+    if (!showAllPoints) return;
+    const allBounds = pointCollectionBounds(visiblePoints);
+    if (!allBounds) return;
+    const frame = window.requestAnimationFrame(() => {
+      map.stop();
+      map.fitBounds(allBounds, { padding: 64, maxZoom: 12.5, duration: 0 });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [circuitPoints, mapCollections.routes, mapCollections.zones, ready, showAllPoints, visiblePoints]);
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!ready || !map?.isStyleLoaded() || !map.getLayer('poi-section-selected')) return;
-    map.setFilter('poi-section-selected', selectedId ? ['==', ['get', 'id'], selectedId] : ['==', ['get', 'id'], '']);
-    if (!selectedId) return;
+    if (!ready || !map?.isStyleLoaded()) return;
+    const selectionSource = map.getSource('poi-section-selection') as maplibregl.GeoJSONSource | undefined;
     const feature = collection.features.find((candidate) => travelFeatureId(candidate) === selectedId);
-    if (feature?.geometry.type === 'Point') {
-      map.easeTo({ center: feature.geometry.coordinates as [number, number], zoom: Math.max(map.getZoom(), 13.2), duration: 650, essential: true });
-    }
+    selectionSource?.setData({ type: 'FeatureCollection', features: feature ? [feature] : [] });
+    if (!feature) return;
+    const selectedBounds = featureCollectionBounds([feature]);
+    if (selectedBounds) map.fitBounds(selectedBounds, { padding: 86, maxZoom: 13.2, duration: 650, essential: true });
   }, [collection, ready, selectedId]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!ready || !map?.isStyleLoaded()) return;
+    const focusedFeatures = collection.features.filter((feature) => focusFeatureIds.includes(travelFeatureId(feature)));
+    (map.getSource('poi-section-focus') as maplibregl.GeoJSONSource | undefined)?.setData({
+      type: 'FeatureCollection', features: focusedFeatures,
+    });
+    const focusedBounds = featureCollectionBounds(focusedFeatures);
+    if (focusedBounds) map.fitBounds(focusedBounds, { padding: 74, maxZoom: 12, duration: 700, essential: true });
+  }, [collection, focusFeatureIds, ready]);
 
   const chooseBasemap = (next: DetailBasemap) => {
     setBasemap(next);
     if (mapRef.current) applyBasemap(mapRef.current, next);
+  };
+
+  const togglePointExtent = () => {
+    const map = mapRef.current;
+    if (!map) return;
+    const nextShowAll = !showAllPoints;
+    setShowAllPoints(nextShowAll);
+    if (nextShowAll) {
+      const allBounds = pointCollectionBounds(visiblePoints);
+      if (allBounds) map.fitBounds(allBounds, { padding: 64, maxZoom: 12.5, duration: 650, essential: true });
+    } else {
+      map.fitBounds(trackBounds(track) ?? bounds, { padding: 58, maxZoom: 14, duration: 650, essential: true });
+    }
   };
 
   return (
@@ -426,6 +563,9 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, bounds, onSel
         <button type="button" className={basemap === 'dark' ? 'is-active' : ''} onClick={() => chooseBasemap('dark')}>Карта</button>
         <button type="button" className={basemap === 'satellite' ? 'is-active' : ''} onClick={() => chooseBasemap('satellite')}>Спутник</button>
       </div>
+      <button type="button" className="spa-poi-extent" onClick={togglePointExtent}>
+        {showAllPoints ? 'К трассе' : 'Показать все точки'}
+      </button>
     </div>
   );
 }
@@ -442,6 +582,8 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   const [travelMapData, setTravelMapData] = useState<TravelMapCollection>(fallbackTravelPoints);
   const [travelRoleFilter, setTravelRoleFilter] = useState<TravelRoleFilter>('all');
   const [selectedTravelFeatureId, setSelectedTravelFeatureId] = useState<string | null>(null);
+  const [travelFocusFeatureIds, setTravelFocusFeatureIds] = useState<string[]>([]);
+  const [activeTravelChapterId, setActiveTravelChapterId] = useState<string | null>(null);
   const circuitSeasonOptions = pageData.results.seasons;
   const [, setMode] = useState<DetailMode>('track');
   const [, setBasemap] = useState<DetailBasemap>('satellite');
@@ -458,6 +600,10 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   const travelPoints = useMemo(
     () => travelCollections(travelMapData, travelRoleFilter).points.features,
     [travelMapData, travelRoleFilter],
+  );
+  const publishedTravelRouteCount = useMemo(
+    () => travelCollections(travelMapData).routes.features.length,
+    [travelMapData],
   );
   const availableTravelRoles = useMemo(() => {
     const roles = new Set(
@@ -490,10 +636,27 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
 
   const changeTravelRoleFilter = useCallback((nextFilter: TravelRoleFilter) => {
     setTravelRoleFilter(nextFilter);
+    setTravelFocusFeatureIds([]);
+    setActiveTravelChapterId(null);
     if (!selectedTravelFeatureId || nextFilter === 'all') return;
     const selectedFeature = travelMapData.features.find((feature) => travelFeatureId(feature) === selectedTravelFeatureId);
     if (selectedFeature?.properties?.role !== nextFilter) setSelectedTravelFeatureId(null);
   }, [selectedTravelFeatureId, travelMapData]);
+
+  const revealTravelFeatures = useCallback((featureIds: string[], selectedId: string | null = null) => {
+    setTravelRoleFilter('all');
+    setSelectedTravelFeatureId(selectedId);
+    setTravelFocusFeatureIds(featureIds);
+    window.requestAnimationFrame(() => {
+      document.getElementById('circuit-pois')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, []);
+
+  const selectPlannerFeature = useCallback((featureId: string) => {
+    setActiveTravelChapterId(null);
+    setTravelFocusFeatureIds([]);
+    setSelectedTravelFeatureId(featureId);
+  }, []);
 
   useEffect(() => {
     if (!pageData.features.travelMode) return;
@@ -501,8 +664,13 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
     fetch(`/data/travel/${pageData.id}.geojson`, { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error(`Туристический слой ${pageData.id} пока не опубликован`);
-        return response.json() as Promise<TravelMapCollection>;
+        return response.json() as Promise<unknown>;
       })
+      .then((data) => parseGeoJsonFeatureCollection(data, {
+        label: `туристический слой ${pageData.id}`,
+        allowedGeometryTypes: ['Point', 'LineString', 'MultiLineString', 'Polygon', 'MultiPolygon'],
+        requireFeatureId: true,
+      }) as TravelMapCollection)
       .then((collection) => {
         const routeIndexes = new Map<string, number>();
         const features = collection.features
@@ -1434,13 +1602,19 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
               </div>
               <p>{pageData.travel.intro}</p>
             </header>
+            {(pageData.travel.planner?.sourceNote || pageData.travel.planner?.routeNote) && (
+              <aside className="spa-planner-data-note" aria-label="Источники и маршруты">
+                {pageData.travel.planner.sourceNote && <p><strong>Источники</strong>{pageData.travel.planner.sourceNote}</p>}
+                {pageData.travel.planner.routeNote && <p><strong>Маршруты · {publishedTravelRouteCount > 0 ? publishedTravelRouteCount : 'на проверке'}</strong>{pageData.travel.planner.routeNote}</p>}
+              </aside>
+            )}
             <div className="spa-planner-grid">
               <section className="spa-planner-stays" aria-labelledby="spa-stays-title">
                 <h3 id="spa-stays-title">Где остановиться</h3>
                 <ul>
                   {travelStory.zones.map((zone) => (
                     <li key={zone.id} className={selectedTravelFeatureId === zone.mapFeatureId ? 'is-selected' : ''}>
-                      <button type="button" onClick={() => setSelectedTravelFeatureId(zone.mapFeatureId)}>
+                      <button type="button" onClick={() => { setActiveTravelChapterId(null); revealTravelFeatures([zone.mapFeatureId], zone.mapFeatureId); }}>
                         <i style={{ background: zone.tone }} aria-hidden="true" />
                         <span><strong>{zone.name}</strong><small>{zone.character}</small></span>
                         <time>{zone.travelTime}</time>
@@ -1453,9 +1627,18 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
                 <h3 id="spa-scenarios-title">Сценарии поездки</h3>
                 <ol>
                   {travelStory.chapters.map((chapter) => (
-                    <li key={chapter.id}>
-                      <span>{chapter.index}</span>
-                      <div><strong>{chapter.title}</strong><small>{chapter.eyebrow}</small></div>
+                    <li key={chapter.id} className={activeTravelChapterId === chapter.id ? 'is-selected' : ''}>
+                      <button
+                        type="button"
+                        aria-pressed={activeTravelChapterId === chapter.id}
+                        onClick={() => {
+                          setActiveTravelChapterId(chapter.id);
+                          revealTravelFeatures(chapter.mapFeatureIds ?? []);
+                        }}
+                      >
+                        <span>{chapter.index}</span>
+                        <div><strong>{chapter.title}</strong><small>{chapter.eyebrow} · показать на карте</small></div>
+                      </button>
                     </li>
                   ))}
                 </ol>
@@ -1499,8 +1682,9 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
                 track={circuitTrack}
                 roleFilter={travelRoleFilter}
                 selectedId={selectedTravelFeatureId}
+                focusFeatureIds={travelFocusFeatureIds}
                 bounds={pageData.map.travelBounds}
-                onSelect={setSelectedTravelFeatureId}
+                onSelect={selectPlannerFeature}
               />
               <div className="spa-poi-list-panel">
                 <div className="spa-poi-list-heading"><strong>Важное</strong><span>{travelPoints.length} объектов</span></div>
@@ -1515,7 +1699,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
                             type="button"
                             className={selectedTravelFeatureId === featureId ? 'is-selected' : ''}
                             aria-pressed={selectedTravelFeatureId === featureId}
-                            onClick={() => setSelectedTravelFeatureId(featureId)}
+                            onClick={() => selectPlannerFeature(featureId)}
                           >
                             <i style={{ backgroundColor: travelRoleColors[role] ?? '#a9b7bf' }} aria-hidden="true" />
                             <span><strong>{String(feature.properties?.name ?? 'Точка интереса')}</strong><small>{travelRoleLabels[role] ?? String(feature.properties?.categoryRu ?? 'Точка интереса')}</small></span>

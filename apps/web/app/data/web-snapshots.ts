@@ -9,6 +9,7 @@ export type SeasonIndexItem = {
 
 export type SeasonIndex = {
   exportedAt: string;
+  sourceChangedAt?: string;
   seasons: SeasonIndexItem[];
 };
 
@@ -75,6 +76,7 @@ export type SnapshotRaceResult = SnapshotSessionResult;
 
 export type SeasonSnapshot = {
   exportedAt: string;
+  sourceChangedAt?: string;
   season: number;
   calendar: Array<{
     id: string;
@@ -129,6 +131,7 @@ function number(value: unknown, path: string) {
 export function parseSeasonIndex(value: unknown): SeasonIndex {
   const root = record(value, 'index');
   string(root.exportedAt, 'index.exportedAt');
+  if (root.sourceChangedAt !== undefined) string(root.sourceChangedAt, 'index.sourceChangedAt');
   const seasons = array(root.seasons, 'index.seasons');
   seasons.forEach((item, index) => {
     const season = record(item, `index.seasons[${index}]`);
@@ -143,6 +146,7 @@ export function parseSeasonIndex(value: unknown): SeasonIndex {
 export function parseSeasonSnapshot(value: unknown, expectedSeason?: number): SeasonSnapshot {
   const root = record(value, 'season');
   string(root.exportedAt, 'season.exportedAt');
+  if (root.sourceChangedAt !== undefined) string(root.sourceChangedAt, 'season.sourceChangedAt');
   number(root.season, 'season.season');
   if (expectedSeason !== undefined && root.season !== expectedSeason) {
     throw new Error(`Некорректный snapshot: ожидался сезон ${expectedSeason}, получен ${root.season}`);
@@ -276,6 +280,10 @@ const circuitTypes: Record<SeasonSnapshot['calendar'][number]['circuit']['type']
   temporary: 'Временная трасса',
 };
 
+const circuitLocalitiesRu: Record<string, string> = {
+  sepang: 'Куала-Лумпур',
+};
+
 export function snapshotToCircuits(snapshot: SeasonSnapshot): Circuit[] {
   return snapshot.calendar.map((race) => {
     const localized = localizedCircuits.get(race.circuit.id);
@@ -286,7 +294,7 @@ export function snapshotToCircuits(snapshot: SeasonSnapshot): Circuit[] {
       raceName: race.name,
       name: localized?.name ?? circuitNamesRu[race.circuit.id] ?? race.circuit.shortName ?? race.circuit.name,
       officialName: localized?.officialName ?? race.circuit.name,
-      city: localized?.city ?? race.circuit.locality ?? 'Не указано',
+      city: localized?.city ?? circuitLocalitiesRu[race.circuit.id] ?? race.circuit.locality ?? 'Не указано',
       country: localized?.country
         ?? countryNames.of(race.circuit.countryCode)
         ?? race.circuit.countryCode,

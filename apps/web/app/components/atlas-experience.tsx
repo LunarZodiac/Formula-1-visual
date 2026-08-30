@@ -240,16 +240,12 @@ function getTrackBounds(track: GeoJSON.Feature<GeoJSON.LineString>) {
 
 const mapStyle: maplibregl.StyleSpecification = {
   version: 8,
+  glyphs: 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
   sources: {
-    carto: {
-      type: 'raster',
-      tiles: [
-        'https://a.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
-        'https://b.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
-        'https://c.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
-      ],
-      tileSize: 256,
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    streets: {
+      type: 'vector',
+      url: 'https://tiles.openfreemap.org/planet',
+      attribution: '&copy; OpenStreetMap contributors &copy; OpenFreeMap',
     },
     satellite: {
       type: 'raster',
@@ -274,16 +270,44 @@ const mapStyle: maplibregl.StyleSpecification = {
         'raster-brightness-max': 0.88,
       },
     },
+    { id: 'earth-dark', type: 'background', paint: { 'background-color': '#071017' } },
     {
-      id: 'earth-dark', type: 'raster', source: 'carto',
+      id: 'earth-dark-land', type: 'fill', source: 'streets', 'source-layer': 'landcover',
       paint: {
-        'raster-opacity': 0.98, 'raster-saturation': -0.05,
-        'raster-contrast': 0.28, 'raster-brightness-min': 0.14,
-        'raster-brightness-max': 1,
+        'fill-color': ['match', ['get', 'class'], 'wood', '#0b1717', 'grass', '#101b19', '#101a20'],
+        'fill-opacity': 0.92,
+      },
+    },
+    {
+      id: 'earth-dark-water', type: 'fill', source: 'streets', 'source-layer': 'water',
+      paint: { 'fill-color': '#02080e', 'fill-opacity': 1 },
+    },
+    {
+      id: 'earth-dark-boundaries', type: 'line', source: 'streets', 'source-layer': 'boundary',
+      paint: {
+        'line-color': '#78909c',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 1, .35, 7, 1],
+        'line-opacity': .22,
+      },
+    },
+    {
+      id: 'earth-dark-roads', type: 'line', source: 'streets', 'source-layer': 'transportation', minzoom: 4, maxzoom: 12,
+      paint: {
+        'line-color': '#6a7d87',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 4, .25, 10, 1.2],
+        'line-opacity': .2,
       },
     },
   ],
 };
+
+const darkBasemapLayerIds = [
+  'earth-dark',
+  'earth-dark-land',
+  'earth-dark-water',
+  'earth-dark-boundaries',
+  'earth-dark-roads',
+] as const;
 
 function makeGraticule(): GeoJSON.FeatureCollection<GeoJSON.LineString> {
   const features: GeoJSON.Feature<GeoJSON.LineString>[] = [];
@@ -552,7 +576,9 @@ export function AtlasExperience() {
     setBasemap(nextBasemap);
     if (!map?.getLayer('earth-dark') || !map.getLayer('earth-satellite')) return;
 
-    map.setLayoutProperty('earth-dark', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
+    darkBasemapLayerIds.forEach((layerId) => {
+      if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
+    });
     map.setLayoutProperty('earth-satellite', 'visibility', nextBasemap === 'satellite' ? 'visible' : 'none');
     map.setSky(nextBasemap === 'satellite' ? {
       'sky-color': '#01060a',
@@ -875,6 +901,7 @@ export function AtlasExperience() {
         filter: ['==', ['get', 'id'], selectedIdRef.current],
         layout: {
           'text-field': ['to-string', ['get', 'order']],
+          'text-font': ['Noto Sans Regular'],
           'text-size': 11, 'text-offset': [0, -2.1], 'text-allow-overlap': true,
         },
         paint: {

@@ -1,6 +1,7 @@
 import circuitsGeoJson from './circuits.json';
 import openStreetMapCircuitsGeoJson from './circuits-openstreetmap.json';
 import userDigitizedCircuitsGeoJson from './circuits-user-digitized.json';
+import { parseGeoJsonFeatureCollection } from './geojson-contract';
 import { season2024 } from './season-2024';
 import { circuitGeometryRegistry, getCircuitGeometryId } from './track-geometry-registry';
 
@@ -14,11 +15,19 @@ type TrackFeature = GeoJSON.Feature<
   }
 >;
 
-const sourceFeatures = [
-  ...(circuitsGeoJson as GeoJSON.FeatureCollection<GeoJSON.LineString>).features,
-  ...(openStreetMapCircuitsGeoJson as GeoJSON.FeatureCollection<GeoJSON.LineString>).features,
-  ...(userDigitizedCircuitsGeoJson as GeoJSON.FeatureCollection<GeoJSON.LineString>).features,
-] as TrackFeature[];
+const trackSources = [
+  ['основные трассы', circuitsGeoJson],
+  ['трассы OpenStreetMap', openStreetMapCircuitsGeoJson],
+  ['оцифрованные трассы', userDigitizedCircuitsGeoJson],
+] as const;
+
+const sourceFeatures = trackSources.flatMap(([label, source]) => (
+  parseGeoJsonFeatureCollection(source, {
+    label,
+    allowedGeometryTypes: ['LineString'],
+    requireFeatureId: true,
+  }).features as TrackFeature[]
+));
 
 const sourceByGeometryId = new Map(
   sourceFeatures.map((feature) => [feature.properties.id, feature]),
