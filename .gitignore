@@ -28,9 +28,12 @@
 # Logs and temporary files
 *.log
 *.tmp
+*.tmp-*
 *.bak
+*.bak-*
 ~$*
 tmp/
+.tmp-*/
 
 # Operating systems and editors
 .DS_Store

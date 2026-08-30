@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @next/next/no-img-element */
 
 import * as maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
@@ -15,14 +16,17 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import driverCatalog from '../data/catalogs/drivers.json';
 import { circuitPageCatalog } from '../data/circuit-page-data';
 import { season2024, type Circuit } from '../data/season-2024';
-import { getTrackData, trackGeometries } from '../data/track-geometries';
+import { getTrackData, getTrackGeometry } from '../data/track-geometries';
 import { season2024Summary } from '../data/season-summary';
 import {
+  parseSeasonIndex,
+  parseSeasonSnapshot,
   snapshotToCircuits,
   type SeasonIndexItem,
   type SnapshotSessionResult,
   type SeasonSnapshot,
 } from '../data/web-snapshots';
+import { DriverFlag, TeamCar, TeamLogo } from './racing-visuals';
 
 type Basemap = 'dark' | 'satellite';
 type MainSection = 'atlas' | 'season';
@@ -30,6 +34,21 @@ type ResultView = 'sprintQualifying' | 'sprint' | 'qualifying' | 'race';
 
 const fallbackCircuits = season2024;
 const globeOverview = { center: [70, 18] as [number, number], zoom: 2.08 };
+
+const countryCodes = new Map<string, string>([
+  ['ОАЭ', 'AE'], ['Аргентина', 'AR'], ['Австрия', 'AT'], ['Австралия', 'AU'],
+  ['Азербайджан', 'AZ'], ['Бельгия', 'BE'], ['Бахрейн', 'BH'], ['Бразилия', 'BR'],
+  ['Канада', 'CA'], ['Швейцария', 'CH'], ['Китай', 'CN'], ['Германия', 'DE'],
+  ['Испания', 'ES'], ['Франция', 'FR'], ['Великобритания', 'GB'], ['Венгрия', 'HU'],
+  ['Индия', 'IN'], ['Италия', 'IT'], ['Япония', 'JP'], ['Республика Корея', 'KR'], ['Южная Корея', 'KR'],
+  ['Марокко', 'MA'], ['Монако', 'MC'], ['Мексика', 'MX'], ['Малайзия', 'MY'],
+  ['Нидерланды', 'NL'], ['Португалия', 'PT'], ['Катар', 'QA'], ['Россия', 'RU'],
+  ['Саудовская Аравия', 'SA'], ['Швеция', 'SE'], ['Сингапур', 'SG'], ['Турция', 'TR'],
+  ['США', 'US'], ['Соединенные Штаты', 'US'], ['Соединённые Штаты', 'US'],
+  ['Южная Африка', 'ZA'], ['ЮАР', 'ZA'], ['Южно-Африканская Республика', 'ZA'],
+]);
+
+function countryFlagCode(country: string) { return countryCodes.get(country)?.toLocaleLowerCase('en-US'); }
 
 function getOverviewZoom() {
   if (window.innerWidth <= 480) return 1.48;
@@ -331,7 +350,8 @@ export function AtlasExperience() {
   const selectedSeasonRef = useRef(2026);
   const nextCircuitIdRef = useRef<string | null>(null);
   const selectedIdRef = useRef(fallbackCircuits[0].id);
-  const [selectedId, setSelectedId] = useState(fallbackCircuits[0].id);
+  const selectedEventIdRef = useRef(`2026-${fallbackCircuits[0].order}`);
+  const [selectedEventKey, setSelectedEventKey] = useState(`${fallbackCircuits[0].id}:${fallbackCircuits[0].order}`);
   const [selectedSeason, setSelectedSeason] = useState(2026);
   const [availableSeasons, setAvailableSeasons] = useState<SeasonIndexItem[]>([
     { year: 2026, status: 'active', roundsPlanned: 23, racesAvailable: 23 },
@@ -349,7 +369,11 @@ export function AtlasExperience() {
 
   const orderedCircuits = useMemo(() => [...circuits].sort((left, right) => left.order - right.order), [circuits]);
   const circuitGeoJson = useMemo(() => makeCircuitGeoJson(orderedCircuits), [orderedCircuits]);
-  const routeGeoJson = useMemo(() => makeRouteGeoJson(orderedCircuits), [orderedCircuits]);
+  const seasonIsPlanned = availableSeasons.find((season) => season.year === selectedSeason)?.status === 'planned';
+  const routeGeoJson = useMemo(
+    () => seasonIsPlanned ? makeRouteGeoJson([]) : makeRouteGeoJson(orderedCircuits),
+    [orderedCircuits, seasonIsPlanned],
+  );
   const seasonMeta = availableSeasons.find((season) => season.year === selectedSeason);
   const seasonIsActive = seasonMeta?.status === 'active';
   const nextCircuitId = useMemo(
@@ -362,8 +386,10 @@ export function AtlasExperience() {
   );
 
   const selectedCircuit = useMemo(
-    () => circuits.find((circuit) => circuit.id === selectedId) ?? circuits[0] ?? fallbackCircuits[0],
-    [circuits, selectedId],
+    () => circuits.find((circuit) => `${circuit.id}:${circuit.order}` === selectedEventKey)
+      ?? circuits[0]
+      ?? fallbackCircuits[0],
+    [circuits, selectedEventKey],
   );
 
   const driverStandings = useMemo(() => {
@@ -372,9 +398,12 @@ export function AtlasExperience() {
         position: standing.position,
         id: standing.driverId,
         code: standing.driver.code,
+        countryCode: null,
         name: standing.driver.nameRu,
+        constructorId: standing.teamId,
         teamName: standing.teamLabel ?? standing.team.name,
         teamColor: standing.team.color2024,
+        logoImageUrl: null,
         points: standing.points,
       }));
     }
@@ -382,12 +411,20 @@ export function AtlasExperience() {
       position: standing.position,
       id: standing.driverId,
       code: standing.code ?? standing.familyName.slice(0, 3).toUpperCase(),
+      countryCode: standing.countryCode,
       name: formatDriverName(standing),
+      constructorId: standing.constructorId,
       teamName: standing.constructorName ?? 'Команда не указана',
       teamColor: getTeamColor(standing.teamColor, standing.constructorId, standing.constructorName),
+      logoImageUrl: standing.teamLogoUrl,
       points: standing.points,
     }));
   }, [seasonSnapshot, selectedSeason]);
+  const driverStandingMidpoint = Math.ceil(driverStandings.length / 2);
+  const driverStandingColumns = [
+    driverStandings.slice(0, driverStandingMidpoint),
+    driverStandings.slice(driverStandingMidpoint),
+  ];
 
   const constructorStandings = useMemo(() => {
     if (selectedSeason === 2024) {
@@ -397,6 +434,8 @@ export function AtlasExperience() {
         name: standing.team.name,
         officialName: standing.team.officialName2024,
         teamColor: standing.team.color2024,
+        logoImageUrl: null,
+        carImageUrl: null,
         points: standing.points,
       }));
     }
@@ -406,9 +445,16 @@ export function AtlasExperience() {
       name: standing.name,
       officialName: standing.engineName ?? standing.name,
       teamColor: getTeamColor(standing.teamColor, standing.constructorId, standing.name),
+      logoImageUrl: standing.logoImageUrl,
+      carImageUrl: standing.carImageUrl,
       points: standing.points,
     }));
   }, [seasonSnapshot, selectedSeason]);
+  const constructorStandingMidpoint = Math.ceil(constructorStandings.length / 2);
+  const constructorStandingColumns = [
+    constructorStandings.slice(0, constructorStandingMidpoint),
+    constructorStandings.slice(constructorStandingMidpoint),
+  ];
 
   const selectedRaceResults = useMemo(
     () => seasonSnapshot?.raceResults?.[String(selectedCircuit.order)] ?? [],
@@ -455,12 +501,17 @@ export function AtlasExperience() {
   }, []);
 
   const focusCircuit = useCallback((circuit: Circuit) => {
-    setSelectedId(circuit.id);
+    setSelectedEventKey(`${circuit.id}:${circuit.order}`);
     selectedIdRef.current = circuit.id;
+    selectedEventIdRef.current = `${selectedSeasonRef.current}-${circuit.order}`;
     const map = mapRef.current;
-    const track = trackGeometries[circuit.id];
+    const track = getTrackGeometry(circuit.id, selectedSeasonRef.current, selectedEventIdRef.current);
     const trackSource = map?.getSource('selected-track') as maplibregl.GeoJSONSource | undefined;
-    trackSource?.setData(getTrackData(track ? circuit.id : ''));
+    trackSource?.setData(getTrackData(
+      track ? circuit.id : '',
+      selectedSeasonRef.current,
+      selectedEventIdRef.current,
+    ));
 
     if (!map) return;
     if (map.getLayer('circuit-active-marker')) {
@@ -524,7 +575,7 @@ export function AtlasExperience() {
 
   useEffect(() => {
     const seasonFromUrl = Number(new URLSearchParams(window.location.search).get('season'));
-    if (seasonFromUrl >= 1950 && seasonFromUrl <= 2026 && seasonFromUrl !== selectedSeasonRef.current) {
+    if (seasonFromUrl >= 1950 && seasonFromUrl <= 2027 && seasonFromUrl !== selectedSeasonRef.current) {
       queueMicrotask(() => {
         selectedSeasonRef.current = seasonFromUrl;
         setSeasonDataStatus('loading');
@@ -557,8 +608,9 @@ export function AtlasExperience() {
     fetch('/data/f1/seasons.json', { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json() as Promise<{ seasons: SeasonIndexItem[] }>;
+        return response.json() as Promise<unknown>;
       })
+      .then(parseSeasonIndex)
       .then((data) => {
         if (data.seasons.length > 0) setAvailableSeasons(data.seasons);
       })
@@ -574,8 +626,9 @@ export function AtlasExperience() {
     fetch(`/data/f1/season-${selectedSeason}.json`, { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json() as Promise<SeasonSnapshot>;
+        return response.json() as Promise<unknown>;
       })
+      .then((data) => parseSeasonSnapshot(data, selectedSeason))
       .then((snapshot) => {
         const nextCircuits = selectedSeason === 2024
           ? fallbackCircuits
@@ -591,8 +644,9 @@ export function AtlasExperience() {
         setCircuits(nextCircuits);
         circuitsRef.current = nextCircuits;
         nextCircuitIdRef.current = firstCircuit.status === 'completed' ? null : firstCircuit.id;
-        setSelectedId(firstCircuit.id);
+        setSelectedEventKey(`${firstCircuit.id}:${firstCircuit.order}`);
         selectedIdRef.current = firstCircuit.id;
+        selectedEventIdRef.current = `${snapshot.season}-${firstCircuit.order}`;
         setSeasonDataStatus('ready');
       })
       .catch((error: unknown) => {
@@ -611,7 +665,11 @@ export function AtlasExperience() {
     const trackSource = map?.getSource('selected-track') as maplibregl.GeoJSONSource | undefined;
     circuitSource?.setData(circuitGeoJson);
     routeSource?.setData(routeGeoJson);
-    trackSource?.setData(getTrackData(selectedIdRef.current));
+    trackSource?.setData(getTrackData(
+      selectedIdRef.current,
+      selectedSeasonRef.current,
+      selectedEventIdRef.current,
+    ));
     if (map?.getLayer('circuit-active-marker')) {
       map.setFilter('circuit-active-marker', ['==', ['get', 'id'], selectedIdRef.current]);
       map.setFilter('circuit-order', ['==', ['get', 'id'], selectedIdRef.current]);
@@ -626,7 +684,7 @@ export function AtlasExperience() {
     if (!list) return;
 
     const frame = window.requestAnimationFrame(() => {
-      const selectedButton = list.querySelector<HTMLButtonElement>(`button[data-circuit-id="${selectedId}"]`);
+      const selectedButton = list.querySelector<HTMLButtonElement>(`button[data-event-key="${selectedEventKey}"]`);
       if (!selectedButton) return;
       const listBounds = list.getBoundingClientRect();
       const buttonBounds = selectedButton.getBoundingClientRect();
@@ -638,7 +696,7 @@ export function AtlasExperience() {
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [circuits.length, seasonDataStatus, selectedId]);
+  }, [circuits.length, seasonDataStatus, selectedEventKey]);
 
   useEffect(() => {
     const atlas = document.getElementById('atlas');
@@ -853,7 +911,7 @@ export function AtlasExperience() {
     <main className="atlas-shell">
       <header className="topbar" id="top">
         <a className="brand" href="#top" aria-label="Formula 1 — География скорости, главная">
-          <span className="brand-mark" aria-hidden="true">F1</span>
+          <span className="brand-mark" aria-hidden="true"><img src="/icon.svg" alt="" /></span>
           <span>
             <strong>География скорости</strong>
             <small>Скорость • География • История</small>
@@ -952,7 +1010,7 @@ export function AtlasExperience() {
           </a>
         </div>
         <div className="intro-meta" aria-hidden="true">
-          <span>{circuits.length} этапов</span>
+          <span>{circuits.length} {seasonIsPlanned ? 'площадки' : 'этапов'}</span>
           <span>{new Set(circuits.map((circuit) => circuit.country)).size} стран</span>
           <span>Сезон {selectedSeason}</span>
         </div>
@@ -1031,7 +1089,9 @@ export function AtlasExperience() {
 
           <div className="map-caption">
             <span className="live-dot" aria-hidden="true" />
-            Полный маршрут · {circuits.length} этапов сезона {selectedSeason}
+            {seasonIsPlanned
+              ? `Предварительный состав · ${circuits.length} площадки сезона ${selectedSeason}`
+              : `Полный маршрут · ${circuits.length} этапов сезона ${selectedSeason}`}
           </div>
         </div>
 
@@ -1039,34 +1099,36 @@ export function AtlasExperience() {
           <div className="panel-intro">
             <span className="eyebrow">Сезон {selectedSeason}</span>
             <div className="panel-title-row">
-              <h2>Календарный маршрут</h2>
-              <span>{circuits.length} этапов</span>
+              <h2>{seasonIsPlanned ? 'Планируемые площадки' : 'Календарный маршрут'}</h2>
+              <span>{circuits.length} {seasonIsPlanned ? 'площадки' : 'этапов'}</span>
             </div>
             {seasonDataStatus === 'loading' && <small className="season-data-note">Обновляем данные сезона…</small>}
             {seasonDataStatus === 'error' && <small className="season-data-note season-data-note--error">Не удалось обновить данные. Показан последний доступный календарь.</small>}
             {seasonDataStatus === 'ready' && seasonSnapshot && (
               <small className="season-data-note">
-                Данные обновлены {formatDataUpdatedAt(seasonSnapshot.exportedAt)}
+                {seasonIsPlanned
+                  ? 'Предварительный состав. Даты и порядок уточняются'
+                  : `Данные обновлены ${formatDataUpdatedAt(seasonSnapshot.exportedAt)}`}
               </small>
             )}
           </div>
 
           <ol ref={raceListRef} className="race-list" aria-label={`Этапы сезона ${selectedSeason}`}>
             {orderedCircuits.map((circuit) => (
-              <li key={circuit.id}>
+              <li key={`${circuit.id}:${circuit.order}`}>
                 <button
                   type="button"
-                  data-circuit-id={circuit.id}
+                  data-event-key={`${circuit.id}:${circuit.order}`}
                   className={[
-                    circuit.id === selectedId ? 'is-selected' : '',
+                    `${circuit.id}:${circuit.order}` === selectedEventKey ? 'is-selected' : '',
                     circuit.id === nextCircuitId ? 'is-next' : '',
                     seasonIsActive && circuit.status === 'completed' ? 'is-completed' : '',
                     circuit.status === 'live' ? 'is-live' : '',
                   ].filter(Boolean).join(' ')}
                   onClick={() => focusCircuit(circuit)}
-                  aria-current={circuit.id === selectedId ? 'true' : undefined}
+                  aria-current={`${circuit.id}:${circuit.order}` === selectedEventKey ? 'true' : undefined}
                 >
-                  <span className="race-number">{String(circuit.order).padStart(2, '0')}</span>
+                  <span className="race-number">{seasonIsPlanned ? '—' : String(circuit.order).padStart(2, '0')}</span>
                   <span className="race-name">
                     <strong>{circuit.name}</strong>
                     <small>{circuit.country}</small>
@@ -1086,11 +1148,23 @@ export function AtlasExperience() {
 
           <article className="circuit-card" aria-live="polite">
             <div className="card-topline">
-              <span>Этап {String(selectedCircuit.order).padStart(2, '0')}</span>
+              <span>{seasonIsPlanned ? 'Планируемая площадка' : `Этап ${String(selectedCircuit.order).padStart(2, '0')}`}</span>
               <span>{selectedCircuit.type}</span>
             </div>
-            <h3>{selectedCircuit.name}</h3>
-            <p>{selectedCircuit.officialName}</p>
+            <div className="circuit-card__identity">
+              <div>
+                <h3>{selectedCircuit.name}</h3>
+                <p>Этап чемпионата мира</p>
+              </div>
+              {countryFlagCode(selectedCircuit.country) && (
+                <img
+                  className="circuit-country-flag"
+                  src={`https://flagcdn.com/${countryFlagCode(selectedCircuit.country)}.svg`}
+                  alt={`Флаг страны: ${selectedCircuit.country}`}
+                  title={selectedCircuit.country}
+                />
+              )}
+            </div>
             <dl>
               <div><dt>Место</dt><dd>{selectedCircuit.city}</dd></div>
               <div><dt>Страна</dt><dd>{selectedCircuit.country}</dd></div>
@@ -1127,10 +1201,12 @@ export function AtlasExperience() {
                     >
                       <span>{result.position}</span>
                       <strong>{result.code ?? result.familyName.slice(0, 3).toUpperCase()}</strong>
+                      <DriverFlag driverId={result.driverId} countryCode={result.countryCode} />
                       <span className="atlas-podium-driver">
                         <b>{formatDriverName(result)}</b>
                         <small>{result.constructorName ?? 'Команда не указана'}</small>
                       </span>
+                      <TeamLogo season={selectedSeason} logoUrl={result.teamLogoUrl} className="identity-team-logo" constructorId={result.constructorId} constructorName={result.constructorName} teamColor={getTeamColor(result.teamColor, result.constructorId, result.constructorName)} />
                       <span className="atlas-podium-time">
                         <b>{formatSessionTime(result, activeResultView)}</b>
                         <small>{activeResultView === 'qualifying' || activeResultView === 'sprintQualifying' ? 'лучшее время' : `${result.points} очков`}</small>
@@ -1141,7 +1217,10 @@ export function AtlasExperience() {
                 {selectedFastestLap && (
                   <div className="fastest-lap-row">
                     <span>Быстрый круг</span>
+                    <b className="fastest-lap-code">{selectedFastestLap.code ?? selectedFastestLap.familyName.slice(0, 3).toUpperCase()}</b>
+                    <DriverFlag driverId={selectedFastestLap.driverId} countryCode={selectedFastestLap.countryCode} />
                     <strong>{formatDriverName(selectedFastestLap)}</strong>
+                    <TeamLogo season={selectedSeason} logoUrl={selectedFastestLap.teamLogoUrl} className="identity-team-logo" constructorId={selectedFastestLap.constructorId} constructorName={selectedFastestLap.constructorName} teamColor={getTeamColor(selectedFastestLap.teamColor, selectedFastestLap.constructorId, selectedFastestLap.constructorName)} />
                     <span>
                       {selectedFastestLap.fastestLapMs !== null
                         ? formatMilliseconds(selectedFastestLap.fastestLapMs)
@@ -1178,47 +1257,55 @@ export function AtlasExperience() {
       <section className="season-overview" id="season" aria-labelledby="season-title">
         <div className="season-overview-heading">
           <div>
-            <span className="eyebrow">{seasonIsActive ? 'Текущий сезон' : 'Итоги сезона'} {selectedSeason}</span>
-            <h2 id="season-title">Чемпионат в&nbsp;цифрах</h2>
+            <span className="eyebrow">{seasonIsPlanned ? 'Предварительный состав' : seasonIsActive ? 'Текущий сезон' : 'Итоги сезона'} {selectedSeason}</span>
+            <h2 id="season-title">{seasonIsPlanned ? 'География сезона' : 'Чемпионат в цифрах'}</h2>
           </div>
           <p>
-            Календарь показывает географию чемпионата, а&nbsp;этот раздел фиксирует
-            спортивный итог сезона: лидеров личного и&nbsp;командного зачётов
+            {seasonIsPlanned
+              ? 'На глобусе показаны заявленные площадки. Даты и порядок появятся после утверждения календаря FIA'
+              : 'Календарь показывает географию чемпионата, а этот раздел фиксирует спортивный итог сезона: лидеров личного и командного зачётов'}
           </p>
         </div>
 
         <div className="season-stat-strip" aria-label={`Основные показатели сезона ${selectedSeason}`}>
-          <div><strong>{circuits.length}</strong><span>этапов</span></div>
+          <div><strong>{circuits.length}</strong><span>{seasonIsPlanned ? 'площадки' : 'этапов'}</span></div>
           <div><strong>{new Set(circuits.map((circuit) => circuit.country)).size}</strong><span>стран</span></div>
-          <div><strong>{driverStandings.length}</strong><span>пилотов</span></div>
-          <div><strong>{constructorStandings.length}</strong><span>команд</span></div>
+          {!seasonIsPlanned && <div><strong>{driverStandings.length}</strong><span>пилотов</span></div>}
+          {!seasonIsPlanned && <div><strong>{constructorStandings.length}</strong><span>команд</span></div>}
         </div>
 
-        <div className="standings-grid">
+        {!seasonIsPlanned && <div className="standings-grid">
           <article className="standings-panel">
             <div className="standings-title">
               <span>Личный зачёт</span>
               <small>{driverStandings.length} пилотов</small>
             </div>
-            <ol>
-              {driverStandings.map((standing) => (
-                <li
-                  key={standing.id}
-                  className={`standing-rank standing-rank--${standing.position <= 3 ? standing.position : 'regular'}`}
-                  style={{ '--team-color': standing.teamColor } as CSSProperties}
-                >
-                  <span className="standing-position">{String(standing.position).padStart(2, '0')}</span>
-                  {standing.position <= 3 && <span className="standing-trophy" aria-label={`${standing.position} место`}>🏆</span>}
-                  <span className="driver-code">{standing.code}</span>
-                  <span className="standing-name">
-                    <strong>{standing.name}</strong>
-                    <small>{standing.teamName}</small>
-                  </span>
-                  <span className="standing-points"><strong>{standing.points}</strong><small>очков</small></span>
-                </li>
-              ))}
-              {driverStandings.length === 0 && <li className="standings-empty">Данные личного зачёта пока отсутствуют</li>}
-            </ol>
+            {driverStandings.length > 0 ? (
+              <div className="standings-columns">
+                {driverStandingColumns.map((column, columnIndex) => (
+                  <ol key={columnIndex} start={column[0]?.position}>
+                    {column.map((standing) => (
+                      <li
+                        key={standing.id}
+                        className={`standing-rank standing-rank--${standing.position <= 3 ? standing.position : 'regular'}`}
+                        style={{ '--team-color': standing.teamColor } as CSSProperties}
+                      >
+                        <span className="standing-position">{String(standing.position).padStart(2, '0')}</span>
+                        {standing.position <= 3 && <span className="standing-trophy" aria-label={`${standing.position} место`}>🏆</span>}
+                        <span className="driver-code">{standing.code}</span>
+                        <DriverFlag driverId={standing.id} countryCode={standing.countryCode} />
+                        <span className="standing-name">
+                          <strong>{standing.name}</strong>
+                          <small>{standing.teamName}</small>
+                        </span>
+                        <TeamLogo season={selectedSeason} logoUrl={standing.logoImageUrl} className="identity-team-logo" constructorId={standing.constructorId} constructorName={standing.teamName} teamColor={standing.teamColor} />
+                        <span className="standing-points"><strong>{standing.points}</strong><small>очков</small></span>
+                      </li>
+                    ))}
+                  </ol>
+                ))}
+              </div>
+            ) : <ol><li className="standings-empty">Данные личного зачёта пока отсутствуют</li></ol>}
           </article>
 
           <article className="standings-panel standings-panel--teams">
@@ -1226,27 +1313,33 @@ export function AtlasExperience() {
               <span>Кубок конструкторов</span>
               <small>{constructorStandings.length} команд</small>
             </div>
-            <ol>
-              {constructorStandings.map((standing) => (
-                <li
-                  key={standing.id}
-                  className={`standing-rank standing-rank--${standing.position <= 3 ? standing.position : 'regular'}`}
-                  style={{ '--team-color': standing.teamColor } as CSSProperties}
-                >
-                  <span className="standing-position">{String(standing.position).padStart(2, '0')}</span>
-                  {standing.position <= 3 && <span className="standing-trophy" aria-label={`${standing.position} место`}>🏆</span>}
-                  <span className="standing-name">
-                    <strong>{standing.name}</strong>
-                    <small>{standing.officialName}</small>
-                  </span>
-                  <span className="team-car-mark" aria-hidden="true"><i /><i /></span>
-                  <span className="standing-points"><strong>{standing.points}</strong><small>очков</small></span>
-                </li>
-              ))}
-              {constructorStandings.length === 0 && <li className="standings-empty">Кубок конструкторов в этом сезоне ещё не проводился</li>}
-            </ol>
+            {constructorStandings.length > 0 ? (
+              <div className="standings-columns">
+                {constructorStandingColumns.map((column, columnIndex) => (
+                  <ol key={columnIndex} start={column[0]?.position}>
+                    {column.map((standing) => (
+                      <li
+                        key={standing.id}
+                        className={`standing-rank standing-rank--${standing.position <= 3 ? standing.position : 'regular'}`}
+                        style={{ '--team-color': standing.teamColor } as CSSProperties}
+                      >
+                        <span className="standing-position">{String(standing.position).padStart(2, '0')}</span>
+                        {standing.position <= 3 && <span className="standing-trophy" aria-label={`${standing.position} место`}>🏆</span>}
+                        <TeamLogo season={selectedSeason} logoUrl={standing.logoImageUrl} className="constructor-standing-logo" constructorId={standing.id} constructorName={standing.name} teamColor={standing.teamColor} />
+                        <span className="standing-name">
+                          <strong>{standing.name}</strong>
+                          <small>{standing.officialName}</small>
+                        </span>
+                        <TeamCar season={selectedSeason} constructorId={standing.id} constructorName={standing.name} carImageUrl={standing.carImageUrl} />
+                        <span className="standing-points"><strong>{standing.points}</strong><small>очков</small></span>
+                      </li>
+                    ))}
+                  </ol>
+                ))}
+              </div>
+            ) : <ol><li className="standings-empty">Кубок конструкторов в этом сезоне ещё не проводился</li></ol>}
           </article>
-        </div>
+        </div>}
       </section>
     </main>
   );

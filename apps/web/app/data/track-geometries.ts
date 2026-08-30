@@ -1,7 +1,8 @@
 import circuitsGeoJson from './circuits.json';
 import openStreetMapCircuitsGeoJson from './circuits-openstreetmap.json';
+import userDigitizedCircuitsGeoJson from './circuits-user-digitized.json';
 import { season2024 } from './season-2024';
-import { circuitGeometryRegistry } from './track-geometry-registry';
+import { circuitGeometryRegistry, getCircuitGeometryId } from './track-geometry-registry';
 
 type TrackFeature = GeoJSON.Feature<
   GeoJSON.LineString,
@@ -16,6 +17,7 @@ type TrackFeature = GeoJSON.Feature<
 const sourceFeatures = [
   ...(circuitsGeoJson as GeoJSON.FeatureCollection<GeoJSON.LineString>).features,
   ...(openStreetMapCircuitsGeoJson as GeoJSON.FeatureCollection<GeoJSON.LineString>).features,
+  ...(userDigitizedCircuitsGeoJson as GeoJSON.FeatureCollection<GeoJSON.LineString>).features,
 ] as TrackFeature[];
 
 const sourceByGeometryId = new Map(
@@ -50,10 +52,29 @@ export const missingSeason2024TrackIds = season2024
 
 export const registeredTrackIds = Object.keys(trackGeometries);
 
+export function getTrackGeometry(circuitId: string, season?: number, eventId?: string) {
+  const geometryId = getCircuitGeometryId(circuitId, season, eventId);
+  if (!geometryId) return undefined;
+
+  const sourceFeature = sourceByGeometryId.get(geometryId);
+  if (!sourceFeature) return undefined;
+
+  return {
+    ...sourceFeature,
+    properties: {
+      ...sourceFeature.properties,
+      circuitId,
+      geometryId,
+    },
+  } satisfies TrackFeature;
+}
+
 export function getTrackData(
   circuitId: string,
+  season?: number,
+  eventId?: string,
 ): GeoJSON.FeatureCollection<GeoJSON.LineString> {
-  const feature = trackGeometries[circuitId];
+  const feature = getTrackGeometry(circuitId, season, eventId);
 
   return {
     type: 'FeatureCollection',

@@ -1,0 +1,32 @@
+{
+  "auditDate": "2026-08-29",
+  "source": {
+    "system": "PostgreSQL/PostGIS",
+    "table": "atlas.drivers",
+    "field": "nationality",
+    "provenance": "Jolpica database dump imported by scripts/jolpica-dump-import-postgres.mjs",
+    "drivers": 848,
+    "driversWithoutNationality": 16,
+    "historicalNationalitiesWithoutCurrentIso2": {
+      "East German": 3,
+      "Rhodesian": 4
+    }
+  },
+  "export": {
+    "seasons": 77,
+    "records": 39877,
+    "recordsWithCountryCode": 39855,
+    "uniqueDrivers": 818,
+    "uniqueDriversWithCountryCode": 812,
+    "uniqueDriversWithoutCountryCode": 6
+  },
+  "unresolvedExportedDrivers": [
+    { "driverId": "klodwig", "nationality": "East German", "countryCode": null },
+    { "driverId": "krause", "nationality": "East German", "countryCode": null },
+    { "driverId": "fitzau", "nationality": "East German", "countryCode": null },
+    { "driverId": "love", "nationality": "Rhodesian", "countryCode": null },
+    { "driverId": "hocking", "nationality": "Rhodesian", "countryCode": null },
+    { "driverId": "tingle", "nationality": "Rhodesian", "countryCode": null }
+  ],
+  "policy": "Unknown, missing and historically ambiguous nationalities remain null. No modern country flag is substituted without an explicit editorial decision."
+}

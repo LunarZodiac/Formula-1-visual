@@ -1,0 +1,34 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "be-spa-1950-road",
+        "circuitId": "spa",
+        "name": "Circuit de Spa-Francorchamps",
+        "nameRu": "Спа-Франкоршам",
+        "configuration": "Old road circuit",
+        "fromSeason": 1950,
+        "toSeason": 1970,
+        "eventIds": [],
+        "length": 14100,
+        "direction": "clockwise",
+        "source": "Replace with source name",
+        "sourceUrl": "https://example.com/source",
+        "license": "Replace with source license",
+        "checkedAt": "2026-08-26",
+        "startFinish": [5.971, 50.437],
+        "notes": "Replace example coordinates with the complete closed centerline"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [5.971, 50.437],
+          [5.972, 50.438],
+          [5.971, 50.437]
+        ]
+      }
+    }
+  ]
+}

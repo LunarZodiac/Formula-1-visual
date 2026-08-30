@@ -8,10 +8,15 @@
     "dump:import": "node jolpica-dump-import-postgres.mjs",
     "dump:preview": "node jolpica-dump-preview.mjs",
     "export:web": "node export-web-snapshots.mjs",
+    "audit:track-sync": "node audit-track-geometry-sync.mjs",
     "preview": "node jolpica-preview.mjs",
     "sync:active": "node sync-active-season.mjs",
     "import": "node jolpica-import-postgres.mjs",
     "migrate": "node apply-database-migrations.mjs",
+    "travel:import": "node import-travel-candidates.mjs",
+    "travel:routes:spa": "node build-spa-travel-routes.mjs",
+    "travel:export:spa": "node export-spa-travel-review.mjs",
+    "travel:audit:spa-public": "node audit-spa-travel-publication.mjs",
     "verify": "node verify-database.mjs"
   },
   "dependencies": {

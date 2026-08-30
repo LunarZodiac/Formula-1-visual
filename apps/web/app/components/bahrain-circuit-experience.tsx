@@ -1,20 +1,22 @@
 'use client';
+/* eslint-disable @next/next/no-img-element */
 
 import * as maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { BahrainModelViewer } from './bahrain-model-viewer';
 import type { CircuitPageData } from '../data/circuit-page-data';
 import driverCatalog from '../data/catalogs/drivers.json';
 import { circuitTechnicalData } from '../data/circuit-track-details';
 import { trackGeometries } from '../data/track-geometries';
 import type { SeasonSnapshot, SnapshotSessionResult } from '../data/web-snapshots';
+import { DriverFlag, DriverPortrait, TeamLogo } from './racing-visuals';
 
 type DetailMode = 'track' | 'travel' | 'model';
 type DetailBasemap = 'dark' | 'satellite';
 type ResultView = 'sprintQualifying' | 'sprint' | 'qualifying' | 'race';
+type TravelRoleFilter = 'all' | keyof typeof travelRoleLabels;
 
 const resultViewLabels: Record<ResultView, string> = {
   sprintQualifying: 'Спринт-квалификация',
@@ -78,20 +80,17 @@ function formatResultValue(result: SnapshotSessionResult, view: ResultView) {
   return result.status ?? '—';
 }
 
-function teamInitials(name: string | null) {
-  if (!name) return 'F1';
-  return name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
-}
-
 function makeTravelPoints(pageData: CircuitPageData): GeoJSON.FeatureCollection<GeoJSON.Point> {
   return {
     type: 'FeatureCollection',
     features: pageData.travel.points.map((point) => ({
       type: 'Feature',
       properties: {
+        featureType: 'poi',
         id: point.id,
         name: point.name,
-        kind: point.kindRu,
+        role: point.id === 'circuit' ? 'circuit' : 'explore',
+        categoryRu: point.kindRu,
         description: point.descriptionRu,
       },
       geometry: { type: 'Point', coordinates: point.coordinates },
@@ -99,20 +98,48 @@ function makeTravelPoints(pageData: CircuitPageData): GeoJSON.FeatureCollection<
   };
 }
 
+type TravelMapCollection = GeoJSON.FeatureCollection<GeoJSON.Geometry, Record<string, unknown>>;
+
+function travelFeatureId(feature: GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>) {
+  return String(feature.properties?.id ?? '');
+}
+
+function travelCollections(collection: TravelMapCollection, roleFilter: TravelRoleFilter = 'all') {
+  const points = collection.features.filter((feature) => (
+    feature.geometry.type === 'Point'
+      && (roleFilter === 'all' || feature.properties?.role === roleFilter)
+  ));
+  const zones = collection.features.filter((feature) => feature.properties?.featureType === 'accommodation_zone');
+  const routes = collection.features
+    .filter((feature) => feature.properties?.featureType === 'route')
+    .map((feature, index, routeFeatures) => ({
+      ...feature,
+      properties: {
+        ...feature.properties,
+        lineOffset: (index - (routeFeatures.length - 1) / 2) * 2.6,
+      },
+    }));
+  return {
+    points: { type: 'FeatureCollection', features: points } as TravelMapCollection,
+    zones: { type: 'FeatureCollection', features: zones } as TravelMapCollection,
+    routes: { type: 'FeatureCollection', features: routes } as TravelMapCollection,
+  };
+}
+
+const travelRoleLabels: Record<string, string> = {
+  transport: 'Транспорт', stay: 'Размещение', explore: 'Достопримечательности',
+  essential: 'Полезное рядом', circuit: 'Инфраструктура этапа',
+};
+const travelRoleColors: Record<string, string> = {
+  transport: '#58c7e8', stay: '#f2c14e', explore: '#a47cff',
+  essential: '#7fd98a', circuit: '#ff3158',
+};
+const travelRouteColors = ['#ff3158', '#58c7e8', '#f2c14e', '#a47cff', '#7fd98a', '#ff8a4c', '#e06cff', '#b7d657'];
+
 const detailStyle: maplibregl.StyleSpecification = {
   version: 8,
   glyphs: 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
   sources: {
-    carto: {
-      type: 'raster',
-      tiles: [
-        'https://a.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
-        'https://b.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
-        'https://c.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
-      ],
-      tileSize: 256,
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    },
     satellite: {
       type: 'raster',
       tiles: [
@@ -131,18 +158,17 @@ const detailStyle: maplibregl.StyleSpecification = {
       type: 'raster-dem',
       url: 'https://tiles.mapterhorn.com/tilejson.json',
     },
+    hillshadeSource: {
+      type: 'raster-dem',
+      url: 'https://tiles.mapterhorn.com/tilejson.json',
+    },
   },
   layers: [
     { id: 'background', type: 'background', paint: { 'background-color': '#02070d' } },
     {
-      id: 'base', type: 'raster', source: 'carto',
+      id: 'base', type: 'background',
       layout: { visibility: 'none' },
-      paint: {
-        'raster-opacity': 0.96,
-        'raster-saturation': -0.12,
-        'raster-contrast': 0.24,
-        'raster-brightness-min': 0.1,
-      },
+      paint: { 'background-color': '#07111a' },
     },
     {
       id: 'satellite-base', type: 'raster', source: 'satellite',
@@ -151,6 +177,30 @@ const detailStyle: maplibregl.StyleSpecification = {
         'raster-saturation': -0.12,
         'raster-contrast': 0.1,
         'raster-brightness-max': 0.82,
+      },
+    },
+    {
+      id: 'context-landcover', type: 'fill', source: 'streets', 'source-layer': 'landcover',
+      layout: { visibility: 'none' },
+      paint: {
+        'fill-color': ['match', ['get', 'class'], 'wood', '#0d1e1c', 'grass', '#11211d', '#0b1720'],
+        'fill-opacity': 0.78,
+      },
+    },
+    {
+      id: 'context-water', type: 'fill', source: 'streets', 'source-layer': 'water',
+      layout: { visibility: 'none' },
+      paint: { 'fill-color': '#071d2b', 'fill-opacity': 0.96 },
+    },
+    {
+      id: 'terrain-hillshade', type: 'hillshade', source: 'hillshadeSource',
+      paint: {
+        'hillshade-method': 'standard',
+        'hillshade-illumination-direction': 315,
+        'hillshade-shadow-color': '#02070d',
+        'hillshade-highlight-color': '#a4b5be',
+        'hillshade-accent-color': '#26343c',
+        'hillshade-exaggeration': 0.28,
       },
     },
     {
@@ -190,7 +240,7 @@ const detailStyle: maplibregl.StyleSpecification = {
       id: 'context-road-labels', type: 'symbol', source: 'streets', 'source-layer': 'transportation_name', minzoom: 12,
       layout: {
         'symbol-placement': 'line',
-        'text-field': ['coalesce', ['get', 'name:ru'], ['get', 'name:latin'], ['get', 'name:en'], ['get', 'name']],
+        'text-field': ['get', 'name:ru'],
         'text-font': ['Noto Sans Regular'],
         'text-size': ['interpolate', ['linear'], ['zoom'], 12, 9, 17, 12],
         'text-letter-spacing': 0.04,
@@ -206,8 +256,8 @@ const detailStyle: maplibregl.StyleSpecification = {
     {
       id: 'context-place-labels', type: 'symbol', source: 'streets', 'source-layer': 'place', minzoom: 8, maxzoom: 16,
       layout: {
-        'text-field': ['coalesce', ['get', 'name:ru'], ['get', 'name:latin'], ['get', 'name:en'], ['get', 'name']],
-        'text-font': ['Noto Sans Medium'],
+        'text-field': ['get', 'name:ru'],
+        'text-font': ['Noto Sans Regular'],
         'text-size': ['interpolate', ['linear'], ['zoom'], 8, 10, 14, 14],
         'text-max-width': 9,
       },
@@ -218,19 +268,20 @@ const detailStyle: maplibregl.StyleSpecification = {
         'text-opacity': 0.96,
       },
     },
-    {
-      id: 'terrain-hillshade', type: 'hillshade', source: 'terrainSource',
-      paint: {
-        'hillshade-method': 'standard',
-        'hillshade-illumination-direction': 315,
-        'hillshade-shadow-color': '#02070d',
-        'hillshade-highlight-color': '#a4b5be',
-        'hillshade-accent-color': '#26343c',
-        'hillshade-exaggeration': 0.28,
-      },
-    },
   ],
 };
+
+function applyBasemap(map: MapLibreMap, nextBasemap: DetailBasemap) {
+  if (map.getLayer('base')) map.setLayoutProperty('base', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
+  if (map.getLayer('satellite-base')) map.setLayoutProperty('satellite-base', 'visibility', nextBasemap === 'satellite' ? 'visible' : 'none');
+  if (map.getLayer('context-roads-casing')) map.setLayoutProperty('context-roads-casing', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
+  if (map.getLayer('context-roads')) map.setLayoutProperty('context-roads', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
+  if (map.getLayer('context-landcover')) map.setLayoutProperty('context-landcover', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
+  if (map.getLayer('context-water')) map.setLayoutProperty('context-water', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
+  if (map.getLayer('context-road-labels')) map.setPaintProperty('context-road-labels', 'text-color', nextBasemap === 'dark' ? '#e3edf2' : '#ffffff');
+  if (map.getLayer('context-place-labels')) map.setPaintProperty('context-place-labels', 'text-color', nextBasemap === 'dark' ? '#edf5f8' : '#ffffff');
+  if (map.getLayer('context-buildings-3d')) map.setPaintProperty('context-buildings-3d', 'fill-extrusion-color', nextBasemap === 'dark' ? '#61727c' : '#b8a991');
+}
 
 function trackBounds(track: GeoJSON.Feature<GeoJSON.LineString> | undefined) {
   if (!track) return undefined;
@@ -241,21 +292,264 @@ function trackBounds(track: GeoJSON.Feature<GeoJSON.LineString> | undefined) {
   );
 }
 
+type TravelPoiMapProps = {
+  collection: TravelMapCollection;
+  track?: GeoJSON.Feature<GeoJSON.LineString>;
+  roleFilter: TravelRoleFilter;
+  selectedId: string | null;
+  bounds: [[number, number], [number, number]];
+  onSelect: (featureId: string) => void;
+};
+
+function TravelPoiMap({ collection, track, roleFilter, selectedId, bounds, onSelect }: TravelPoiMapProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
+  const onSelectRef = useRef(onSelect);
+  const [basemap, setBasemap] = useState<DetailBasemap>('dark');
+  const [ready, setReady] = useState(false);
+  const visiblePoints = useMemo(() => travelCollections(collection, roleFilter).points, [collection, roleFilter]);
+
+  useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
+
+  useEffect(() => {
+    if (!containerRef.current || mapRef.current) return;
+    const map = new maplibregl.Map({
+      container: containerRef.current,
+      style: detailStyle,
+      bounds,
+      fitBoundsOptions: { padding: 48 },
+      minZoom: 7,
+      maxZoom: 18,
+      attributionControl: false,
+    });
+    mapRef.current = map;
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-left');
+    map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+    const observer = new ResizeObserver(() => map.resize());
+    observer.observe(containerRef.current);
+
+    map.on('load', () => {
+      applyBasemap(map, 'dark');
+      map.addSource('poi-section-track', { type: 'geojson', data: { type: 'FeatureCollection', features: track ? [track] : [] } });
+      map.addLayer({
+        id: 'poi-section-track-glow', type: 'line', source: 'poi-section-track',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': '#ffffff', 'line-width': 7, 'line-opacity': .16, 'line-blur': 3 },
+      });
+      map.addLayer({
+        id: 'poi-section-track', type: 'line', source: 'poi-section-track',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': '#ff3158', 'line-width': 2.2, 'line-opacity': .9 },
+      });
+      map.addSource('poi-section-points', { type: 'geojson', data: visiblePoints, cluster: true, clusterRadius: 42, clusterMaxZoom: 13 });
+      map.addLayer({
+        id: 'poi-section-clusters', type: 'circle', source: 'poi-section-points', filter: ['has', 'point_count'],
+        paint: { 'circle-radius': ['step', ['get', 'point_count'], 15, 8, 19], 'circle-color': '#0b1b26', 'circle-stroke-color': '#ff3158', 'circle-stroke-width': 2 },
+      });
+      map.addLayer({
+        id: 'poi-section-cluster-count', type: 'symbol', source: 'poi-section-points', filter: ['has', 'point_count'],
+        layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-font': ['Noto Sans Regular'], 'text-size': 10 },
+        paint: { 'text-color': '#ffffff' },
+      });
+      map.addLayer({
+        id: 'poi-section-points', type: 'circle', source: 'poi-section-points', filter: ['!', ['has', 'point_count']],
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4, 14, 8],
+          'circle-color': ['match', ['get', 'role'], 'transport', travelRoleColors.transport, 'stay', travelRoleColors.stay, 'explore', travelRoleColors.explore, 'essential', travelRoleColors.essential, 'circuit', travelRoleColors.circuit, '#a9b7bf'],
+          'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.5,
+        },
+      });
+      map.addLayer({
+        id: 'poi-section-selected', type: 'circle', source: 'poi-section-points', filter: ['==', ['get', 'id'], ''],
+        paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 8, 14, 13], 'circle-color': 'rgba(255,49,88,.18)', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 },
+      });
+      map.addLayer({
+        id: 'poi-section-labels', type: 'symbol', source: 'poi-section-points', filter: ['!', ['has', 'point_count']],
+        layout: { 'text-field': ['get', 'name'], 'text-font': ['Noto Sans Regular'], 'text-size': 10, 'text-offset': [0, 1.55], 'text-anchor': 'top', 'text-optional': true },
+        paint: { 'text-color': '#ffffff', 'text-halo-color': '#06101a', 'text-halo-width': 1.5 },
+      });
+      map.on('click', 'poi-section-points', (event) => {
+        const feature = event.features?.[0];
+        if (!feature || feature.geometry.type !== 'Point') return;
+        onSelectRef.current(String(feature.properties?.id ?? ''));
+      });
+      map.on('click', 'poi-section-clusters', async (event) => {
+        const feature = event.features?.[0];
+        if (!feature || feature.geometry.type !== 'Point') return;
+        const source = map.getSource('poi-section-points') as maplibregl.GeoJSONSource;
+        const zoom = await source.getClusterExpansionZoom(Number(feature.properties?.cluster_id));
+        map.easeTo({ center: feature.geometry.coordinates as [number, number], zoom, duration: 500, essential: true });
+      });
+      ['poi-section-points', 'poi-section-clusters'].forEach((layer) => {
+        map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
+        map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
+      });
+      setReady(true);
+      map.resize();
+    });
+
+    return () => {
+      observer.disconnect();
+      map.remove();
+      mapRef.current = null;
+    };
+  // Map lifecycle is intentionally independent from filters and selection.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!ready || !map?.isStyleLoaded()) return;
+    (map.getSource('poi-section-points') as maplibregl.GeoJSONSource | undefined)?.setData(visiblePoints);
+  }, [ready, visiblePoints]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!ready || !map?.isStyleLoaded() || !map.getLayer('poi-section-selected')) return;
+    map.setFilter('poi-section-selected', selectedId ? ['==', ['get', 'id'], selectedId] : ['==', ['get', 'id'], '']);
+    if (!selectedId) return;
+    const feature = collection.features.find((candidate) => travelFeatureId(candidate) === selectedId);
+    if (feature?.geometry.type === 'Point') {
+      map.easeTo({ center: feature.geometry.coordinates as [number, number], zoom: Math.max(map.getZoom(), 13.2), duration: 650, essential: true });
+    }
+  }, [collection, ready, selectedId]);
+
+  const chooseBasemap = (next: DetailBasemap) => {
+    setBasemap(next);
+    if (mapRef.current) applyBasemap(mapRef.current, next);
+  };
+
+  return (
+    <div className="spa-poi-map-shell">
+      <div ref={containerRef} className="spa-poi-map" aria-label="Карта ориентиров поездки" />
+      <div className="spa-poi-basemap" role="group" aria-label="Подложка карты ориентиров">
+        <button type="button" className={basemap === 'dark' ? 'is-active' : ''} onClick={() => chooseBasemap('dark')}>Карта</button>
+        <button type="button" className={basemap === 'satellite' ? 'is-active' : ''} onClick={() => chooseBasemap('satellite')}>Спутник</button>
+      </div>
+    </div>
+  );
+}
+
 export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const mediaDialogRef = useRef<HTMLDialogElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const circuitTrack = trackGeometries[pageData.geometryId];
   const technicalData = circuitTechnicalData[pageData.id as keyof typeof circuitTechnicalData];
   const hasTechnicalOverlay = pageData.features.technicalOverlay && Boolean(technicalData);
-  const travelPoints = useMemo(() => makeTravelPoints(pageData), [pageData]);
+  const fallbackTravelPoints = useMemo(() => makeTravelPoints(pageData), [pageData]);
+  const [travelMapData, setTravelMapData] = useState<TravelMapCollection>(fallbackTravelPoints);
+  const [travelRoleFilter, setTravelRoleFilter] = useState<TravelRoleFilter>('all');
+  const [selectedTravelFeatureId, setSelectedTravelFeatureId] = useState<string | null>(null);
   const circuitSeasonOptions = pageData.results.seasons;
-  const [mode, setMode] = useState<DetailMode>('track');
-  const [basemap, setBasemap] = useState<DetailBasemap>('satellite');
+  const [, setMode] = useState<DetailMode>('track');
+  const [, setBasemap] = useState<DetailBasemap>('satellite');
+  const [, setTravelLegendOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const [mapBearing, setMapBearing] = useState(pageData.map.trackCamera.bearing);
   const [resultSeason, setResultSeason] = useState(pageData.results.defaultSeason);
   const [resultView, setResultView] = useState<ResultView>('race');
   const [seasonSnapshot, setSeasonSnapshot] = useState<SeasonSnapshot | null>(null);
   const [resultStatus, setResultStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [openMediaIndex, setOpenMediaIndex] = useState<number | null>(null);
+  const travelStory = pageData.travel.story;
+  const travelPoints = useMemo(
+    () => travelCollections(travelMapData, travelRoleFilter).points.features,
+    [travelMapData, travelRoleFilter],
+  );
+  const availableTravelRoles = useMemo(() => {
+    const roles = new Set(
+      travelCollections(travelMapData).points.features.map((feature) => String(feature.properties?.role ?? '')),
+    );
+    return Object.entries(travelRoleLabels).filter(([role]) => roles.has(role));
+  }, [travelMapData]);
+  const usesEditorialTemplate = true;
+  const trackHighlights = pageData.summary.highlights ?? ['Пустынный рельеф', 'Ночная гонка', 'Зоны торможения'];
+  const summaryMetric = (label: string) => pageData.summary.metrics.find((metric) => metric.label === label)?.value ?? 'Уточняется';
+  const templateStatBar = pageData.summary.statBar ?? [
+    { label: 'Длина трассы', value: summaryMetric('Длина'), icon: 'length' as const },
+    { label: 'Повороты', value: summaryMetric('Повороты'), icon: 'turns' as const },
+    { label: 'Дебют в F1', value: summaryMetric('Дебют'), icon: 'debut' as const },
+    { label: 'Рекорд гонки', value: 'Уточняется', icon: 'record' as const },
+    { label: 'Перепад высот', value: 'Уточняется', icon: 'elevation' as const },
+    { label: 'Тип трассы', value: pageData.summary.typeRu, icon: 'type' as const },
+  ];
+
+  useEffect(() => {
+    if (openMediaIndex === null) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const dialog = mediaDialogRef.current;
+    if (dialog && !dialog.open) dialog.showModal();
+    return () => {
+      if (dialog?.open) dialog.close();
+      previousFocus?.focus();
+    };
+  }, [openMediaIndex]);
+
+  const changeTravelRoleFilter = useCallback((nextFilter: TravelRoleFilter) => {
+    setTravelRoleFilter(nextFilter);
+    if (!selectedTravelFeatureId || nextFilter === 'all') return;
+    const selectedFeature = travelMapData.features.find((feature) => travelFeatureId(feature) === selectedTravelFeatureId);
+    if (selectedFeature?.properties?.role !== nextFilter) setSelectedTravelFeatureId(null);
+  }, [selectedTravelFeatureId, travelMapData]);
+
+  useEffect(() => {
+    if (!pageData.features.travelMode) return;
+    const controller = new AbortController();
+    fetch(`/data/travel/${pageData.id}.geojson`, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Туристический слой ${pageData.id} пока не опубликован`);
+        return response.json() as Promise<TravelMapCollection>;
+      })
+      .then((collection) => {
+        const routeIndexes = new Map<string, number>();
+        const features = collection.features
+          .filter((feature) => {
+            const reviewStatus = feature.properties?.reviewStatus;
+            return reviewStatus === 'reviewed' || reviewStatus === 'published';
+          })
+          .filter((feature) => (
+            feature.properties?.featureType !== 'route'
+              || feature.properties?.reviewStatus === 'published'
+          ))
+          .map((feature) => {
+          if (feature.properties?.role === 'circuit') {
+            return { ...feature, properties: { ...feature.properties, name: pageData.nameRu } };
+          }
+          if (feature.properties?.featureType !== 'route') return feature;
+          const id = String(feature.properties.id ?? 'route');
+          const index = routeIndexes.size;
+          routeIndexes.set(id, index);
+            return { ...feature, properties: { ...feature.properties, color: travelRouteColors[index % travelRouteColors.length] } };
+          });
+        setTravelMapData({ ...collection, features });
+      })
+      .catch((error) => {
+        if (!(error instanceof DOMException && error.name === 'AbortError')) console.warn(error);
+      });
+    return () => controller.abort();
+  }, [pageData.features.travelMode, pageData.id, pageData.nameRu]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map?.isStyleLoaded()) return;
+    const collections = travelCollections(travelMapData, travelRoleFilter);
+    (map.getSource('travel-pois') as maplibregl.GeoJSONSource | undefined)?.setData(collections.points);
+    (map.getSource('travel-zones') as maplibregl.GeoJSONSource | undefined)?.setData(collections.zones);
+    (map.getSource('travel-routes') as maplibregl.GeoJSONSource | undefined)?.setData(collections.routes);
+  }, [travelMapData, travelRoleFilter, ready]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map?.isStyleLoaded()) return;
+    const selectedPointFilter: maplibregl.FilterSpecification = selectedTravelFeatureId
+      ? ['==', ['get', 'id'], selectedTravelFeatureId]
+      : ['==', ['get', 'id'], ''];
+    if (map.getLayer('travel-selected-point')) map.setFilter('travel-selected-point', selectedPointFilter);
+    if (map.getLayer('travel-selected-zone')) map.setFilter('travel-selected-zone', selectedPointFilter);
+  }, [ready, selectedTravelFeatureId]);
 
   const bahrainRound = useMemo(
     () => seasonSnapshot?.calendar.find((race) => race.circuit.id === pageData.id),
@@ -275,6 +569,11 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   const activeResults = activeSession?.results ?? [];
   const podiumResults = activeResults.slice(0, 3);
   const remainingResults = activeResults.slice(3);
+  const remainingResultsMidpoint = Math.ceil(remainingResults.length / 2);
+  const remainingResultColumns = [
+    remainingResults.slice(0, remainingResultsMidpoint),
+    remainingResults.slice(remainingResultsMidpoint),
+  ];
   const fastestLap = activeResults.find((result) => result.fastestLapRank === 1);
 
   useEffect(() => {
@@ -348,16 +647,23 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
 
   const showMode = useCallback((nextMode: DetailMode) => {
     setMode(nextMode);
+    if (nextMode !== 'travel') setTravelLegendOpen(false);
     const map = mapRef.current;
     if (!map) return;
 
     const travelVisibility = nextMode === 'travel' ? 'visible' : 'none';
     const trackVisibility = nextMode === 'track' ? 'visible' : 'none';
     if (map.getLayer('travel-points')) {
-      map.setLayoutProperty('travel-points', 'visibility', travelVisibility);
-      map.setLayoutProperty('travel-labels', 'visibility', travelVisibility);
+      [
+        'travel-zones-fill', 'travel-zones-line', 'travel-selected-zone', 'travel-routes',
+        'travel-clusters', 'travel-cluster-count', 'travel-points', 'travel-selected-point', 'travel-labels',
+      ]
+        .forEach((layerId) => {
+          if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', travelVisibility);
+        });
       [
         'track-glow', 'track-line', 'track-basic-line', 'sector-lines', 'drs-glow', 'drs-lines',
+        'drs-zone-labels',
         'drs-detection-leader-casing', 'drs-detection-leaders',
         'drs-detection-points', 'drs-detection-labels',
         'start-finish-leader', 'start-finish-marker',
@@ -367,19 +673,23 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         .forEach((layerId) => {
           if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', trackVisibility);
         });
-      if (map.getLayer('terrain-hillshade')) map.setLayoutProperty('terrain-hillshade', 'visibility', trackVisibility);
+      if (map.getLayer('terrain-hillshade')) {
+        map.setLayoutProperty('terrain-hillshade', 'visibility', nextMode === 'model' ? 'none' : 'visible');
+      }
     }
 
     if (nextMode === 'track') {
       map.setTerrain({ source: 'terrainSource', exaggeration: 1 });
       focusTrack(1200);
     } else if (nextMode === 'travel') {
-      map.setTerrain(null);
+      setBasemap('satellite');
+      applyBasemap(map, 'satellite');
+      map.setTerrain({ source: 'terrainSource', exaggeration: 1 });
       map.fitBounds(pageData.map.travelBounds, {
         padding: { top: 76, right: 76, bottom: 76, left: 76 },
         maxZoom: pageData.map.travelZoom,
-        pitch: 0,
-        bearing: 0,
+        pitch: 48,
+        bearing: -18,
         duration: 1200,
         essential: true,
       });
@@ -388,18 +698,38 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
     }
   }, [focusTrack, pageData.map.travelBounds, pageData.map.travelZoom]);
 
-  const selectBasemap = useCallback((nextBasemap: DetailBasemap) => {
-    setBasemap(nextBasemap);
+  const selectTravelFeature = useCallback((featureId: string) => {
     const map = mapRef.current;
-    if (!map) return;
-    map.setLayoutProperty('base', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
-    map.setLayoutProperty('satellite-base', 'visibility', nextBasemap === 'satellite' ? 'visible' : 'none');
-    map.setLayoutProperty('context-roads-casing', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
-    map.setLayoutProperty('context-roads', 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
-    map.setPaintProperty('context-road-labels', 'text-color', nextBasemap === 'dark' ? '#e3edf2' : '#ffffff');
-    map.setPaintProperty('context-place-labels', 'text-color', nextBasemap === 'dark' ? '#edf5f8' : '#ffffff');
-    map.setPaintProperty('context-buildings-3d', 'fill-extrusion-color', nextBasemap === 'dark' ? '#61727c' : '#b8a991');
-  }, []);
+    const feature = travelMapData.features.find((candidate) => travelFeatureId(candidate) === featureId);
+    setSelectedTravelFeatureId(featureId);
+    if (!map || !feature || !map.isStyleLoaded()) return;
+
+    showMode('travel');
+    window.requestAnimationFrame(() => {
+      if (feature.geometry.type === 'Point') {
+        map.easeTo({
+          center: feature.geometry.coordinates as [number, number],
+          zoom: Math.max(map.getZoom(), 13.2),
+          pitch: 48,
+          duration: 700,
+          essential: true,
+        });
+        return;
+      }
+      if (feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon') {
+        const coordinates = feature.geometry.type === 'Polygon'
+          ? feature.geometry.coordinates.flat(1)
+          : feature.geometry.coordinates.flat(2);
+        const first = coordinates[0];
+        if (!first) return;
+        const bounds = coordinates.slice(1).reduce(
+          (nextBounds, coordinate) => nextBounds.extend(coordinate as [number, number]),
+          new maplibregl.LngLatBounds(first as [number, number], first as [number, number]),
+        );
+        map.fitBounds(bounds, { padding: 90, maxZoom: 13.5, pitch: 48, duration: 800, essential: true });
+      }
+    });
+  }, [showMode, travelMapData]);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -414,9 +744,19 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
       maxZoom: 18,
       maxPitch: 75,
       attributionControl: false,
+      interactive: true,
     });
     mapRef.current = map;
-    const resizeObserver = new ResizeObserver(() => map.resize());
+    const updateBearing = () => setMapBearing(map.getBearing());
+    map.on('rotate', updateBearing);
+    let resizeFrame: number | null = null;
+    const resizeObserver = new ResizeObserver(() => {
+      if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame);
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = null;
+        map.resize();
+      });
+    });
     resizeObserver.observe(containerRef.current);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-left');
     map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
@@ -490,6 +830,24 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'line-opacity': 0.92, 'line-dasharray': [1.15, 2.35],
         },
       });
+      if (usesEditorialTemplate) map.addLayer({
+        id: 'drs-zone-labels', type: 'symbol', source: 'drs-zones',
+        layout: {
+          'symbol-placement': 'line-center',
+          'text-field': ['get', 'label'],
+          'text-font': ['Noto Sans Regular'],
+          'text-size': 9,
+          'text-letter-spacing': 0.06,
+          'text-allow-overlap': true,
+        },
+        paint: {
+          'text-color': '#9bff73',
+          'text-halo-color': '#06100b',
+          'text-halo-width': 2,
+          'text-halo-blur': 0.5,
+        },
+      });
+      if (!usesEditorialTemplate) {
       map.addSource('drs-detection-leaders', { type: 'geojson', data: technicalData.drsDetectionLeaders });
       map.addLayer({
         id: 'drs-detection-leader-casing', type: 'line', source: 'drs-detection-leaders',
@@ -543,6 +901,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'icon-text-fit-padding': [5, 7, 5, 7],
           'icon-allow-overlap': true,
           'text-field': ['get', 'label'],
+          'text-font': ['Noto Sans Regular'],
           'text-size': 8,
           'text-allow-overlap': true,
         },
@@ -550,6 +909,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'text-color': '#06100b',
         },
       });
+      }
       map.addSource('turn-label-leaders', { type: 'geojson', data: technicalData.turnLabelLeaders });
       map.addLayer({
         id: 'turn-label-leaders', type: 'line', source: 'turn-label-leaders',
@@ -573,6 +933,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         id: 'turn-labels', type: 'symbol', source: 'turn-labels',
         layout: {
           'text-field': ['get', 'label'],
+          'text-font': ['Noto Sans Regular'],
           'text-size': 9,
           'text-allow-overlap': true,
         },
@@ -619,7 +980,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'icon-allow-overlap': true,
         },
       });
-      map.addLayer({
+      if (!usesEditorialTemplate) map.addLayer({
         id: 'track-info-points', type: 'circle', source: 'track-points',
         filter: ['==', ['get', 'kind'], 'sector'],
         paint: {
@@ -633,11 +994,12 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'circle-stroke-width': 1.5,
         },
       });
-      map.addLayer({
+      if (!usesEditorialTemplate) map.addLayer({
         id: 'track-info-labels', type: 'symbol', source: 'track-points',
         filter: ['==', ['get', 'kind'], 'sector'],
         layout: {
           'text-field': ['get', 'label'],
+          'text-font': ['Noto Sans Regular'],
           'text-size': 10,
           'text-offset': [0, 1.25],
           'text-anchor': 'top',
@@ -650,31 +1012,122 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         },
       });
       }
-      map.addSource('travel', { type: 'geojson', data: travelPoints });
+      const initialTravelCollections = travelCollections(fallbackTravelPoints);
+      map.addSource('travel-pois', {
+        type: 'geojson',
+        data: initialTravelCollections.points,
+        cluster: true,
+        clusterMaxZoom: 13,
+        clusterRadius: 48,
+      });
+      map.addSource('travel-zones', { type: 'geojson', data: initialTravelCollections.zones });
+      map.addSource('travel-routes', { type: 'geojson', data: initialTravelCollections.routes });
       map.addLayer({
-        id: 'travel-points', type: 'circle', source: 'travel',
+        id: 'travel-zones-fill', type: 'fill', source: 'travel-zones',
         layout: { visibility: 'none' },
+        paint: { 'fill-color': '#f2c14e', 'fill-opacity': 0.09 },
+      });
+      map.addLayer({
+        id: 'travel-zones-line', type: 'line', source: 'travel-zones',
+        layout: { visibility: 'none' },
+        paint: { 'line-color': '#f2c14e', 'line-width': 1.5, 'line-opacity': 0.8, 'line-dasharray': [2, 2] },
+      });
+      map.addLayer({
+        id: 'travel-selected-zone', type: 'line', source: 'travel-zones',
+        filter: ['==', ['get', 'id'], ''],
+        layout: { visibility: 'none' },
+        paint: { 'line-color': '#ffffff', 'line-width': 4, 'line-opacity': 0.95 },
+      });
+      map.addLayer({
+        id: 'travel-routes', type: 'line', source: 'travel-routes',
+        layout: { visibility: 'none', 'line-cap': 'round', 'line-join': 'round' },
         paint: {
-          'circle-radius': 7,
-          'circle-color': '#ff2038',
-          'circle-stroke-color': '#f7fbff',
-          'circle-stroke-width': 2,
+          'line-color': ['coalesce', ['get', 'color'], '#ff3158'],
+          'line-width': 3.5,
+          'line-offset': ['coalesce', ['get', 'lineOffset'], 0],
+          'line-opacity': 0.92,
         },
       });
       map.addLayer({
-        id: 'travel-labels', type: 'symbol', source: 'travel',
+        id: 'travel-clusters', type: 'circle', source: 'travel-pois',
+        filter: ['has', 'point_count'],
+        layout: { visibility: 'none' },
+        paint: {
+          'circle-radius': ['step', ['get', 'point_count'], 15, 8, 19, 16, 23],
+          'circle-color': '#0c1b26',
+          'circle-stroke-color': '#ff3158',
+          'circle-stroke-width': 2,
+          'circle-opacity': 0.96,
+        },
+      });
+      map.addLayer({
+        id: 'travel-cluster-count', type: 'symbol', source: 'travel-pois',
+        filter: ['has', 'point_count'],
+        layout: {
+          visibility: 'none',
+          'text-field': ['get', 'point_count_abbreviated'],
+          'text-font': ['Noto Sans Regular'],
+          'text-size': 10,
+        },
+        paint: { 'text-color': '#ffffff' },
+      });
+      map.addLayer({
+        id: 'travel-points', type: 'circle', source: 'travel-pois',
+        filter: ['!', ['has', 'point_count']],
+        layout: { visibility: 'none' },
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4, 12, 6.5, 15, 8],
+          'circle-color': [
+            'match', ['get', 'role'],
+            'transport', travelRoleColors.transport,
+            'stay', travelRoleColors.stay,
+            'explore', travelRoleColors.explore,
+            'essential', travelRoleColors.essential,
+            'circuit', travelRoleColors.circuit,
+            '#a9b7bf',
+          ],
+          'circle-stroke-color': '#f7fbff',
+          'circle-stroke-width': 1.5,
+        },
+      });
+      map.addLayer({
+        id: 'travel-selected-point', type: 'circle', source: 'travel-pois',
+        filter: ['==', ['get', 'id'], ''],
+        layout: { visibility: 'none' },
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 8, 15, 13],
+          'circle-color': 'rgba(255, 49, 88, .2)',
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 3,
+        },
+      });
+      map.addLayer({
+        id: 'travel-labels', type: 'symbol', source: 'travel-pois',
+        filter: ['!', ['has', 'point_count']],
         layout: {
           visibility: 'none',
           'text-field': ['get', 'name'],
-          'text-size': 11,
+          'text-font': ['Noto Sans Regular'],
+          'text-size': 10,
           'text-offset': [0, 1.6],
           'text-anchor': 'top',
+          'text-optional': true,
         },
         paint: {
           'text-color': '#ffffff',
           'text-halo-color': '#06101a',
           'text-halo-width': 1.5,
         },
+      });
+      map.on('mouseenter', 'travel-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'travel-clusters', () => { map.getCanvas().style.cursor = ''; });
+      map.on('click', 'travel-clusters', async (event) => {
+        const feature = event.features?.[0];
+        if (!feature || feature.geometry.type !== 'Point') return;
+        const clusterId = Number(feature.properties?.cluster_id);
+        const source = map.getSource('travel-pois') as maplibregl.GeoJSONSource;
+        const zoom = await source.getClusterExpansionZoom(clusterId);
+        map.easeTo({ center: feature.geometry.coordinates as [number, number], zoom, duration: 600, essential: true });
       });
       map.on('mouseenter', 'travel-points', () => {
         map.getCanvas().style.cursor = 'pointer';
@@ -685,14 +1138,20 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
       map.on('click', 'travel-points', (event) => {
         const feature = event.features?.[0];
         if (!feature || feature.geometry.type !== 'Point') return;
+        setSelectedTravelFeatureId(String(feature.properties?.id ?? ''));
 
         const popupContent = document.createElement('div');
         const kind = document.createElement('span');
         const name = document.createElement('strong');
         const description = document.createElement('p');
-        kind.textContent = String(feature.properties?.kind ?? 'Точка интереса');
+        kind.textContent = travelRoleLabels[String(feature.properties?.role ?? '')] ?? 'Точка интереса';
         name.textContent = String(feature.properties?.name ?? 'Объект');
-        description.textContent = String(feature.properties?.description ?? '');
+        const zones = feature.properties?.zones;
+        description.textContent = Array.isArray(zones) && zones.length > 0
+          ? `Район проживания: ${zones.join(', ')}`
+          : zones
+            ? `Район проживания: ${String(zones).replace(/[\[\]"]/g, '')}`
+            : String(feature.properties?.categoryRu ?? feature.properties?.description ?? 'Откройте объект, чтобы изучить его на карте');
         popupContent.className = 'poi-popup-content';
         popupContent.append(kind, name, description);
 
@@ -701,7 +1160,32 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           .setDOMContent(popupContent)
           .addTo(map);
       });
-      if (hasTechnicalOverlay) {
+      ['travel-routes', 'travel-zones-fill'].forEach((layerId) => {
+        map.on('mouseenter', layerId, () => { map.getCanvas().style.cursor = 'pointer'; });
+        map.on('mouseleave', layerId, () => { map.getCanvas().style.cursor = ''; });
+        map.on('click', layerId, (event) => {
+          const feature = event.features?.[0];
+          if (!feature) return;
+          setSelectedTravelFeatureId(String(feature.properties?.id ?? ''));
+          const isRoute = feature.properties?.featureType === 'route';
+          const popupContent = document.createElement('div');
+          const kind = document.createElement('span');
+          const name = document.createElement('strong');
+          const description = document.createElement('p');
+          kind.textContent = isRoute ? 'Маршрут' : 'Район проживания';
+          name.textContent = String(feature.properties?.name ?? 'Объект');
+          description.textContent = isRoute
+            ? `${Math.round(Number(feature.properties?.distanceM ?? 0) / 1000)} км · ${feature.properties?.durationMinutes ?? '—'} минут`
+            : `Подходящих вариантов размещения: ${feature.properties?.hotelCount ?? '—'}`;
+          popupContent.className = 'poi-popup-content';
+          popupContent.append(kind, name, description);
+          new maplibregl.Popup({ offset: 12, className: 'atlas-poi-popup' })
+            .setLngLat(event.lngLat)
+            .setDOMContent(popupContent)
+            .addTo(map);
+        });
+      });
+      if (hasTechnicalOverlay && !usesEditorialTemplate) {
         map.on('mouseenter', 'turn-points', () => {
           map.getCanvas().style.cursor = 'pointer';
         });
@@ -741,16 +1225,18 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
 
     return () => {
       resizeObserver.disconnect();
+      if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame);
+      map.off('rotate', updateBearing);
       map.remove();
       mapRef.current = null;
     };
-  }, [circuitTrack, hasTechnicalOverlay, pageData, technicalData, travelPoints]);
+  }, [circuitTrack, fallbackTravelPoints, hasTechnicalOverlay, pageData, technicalData, usesEditorialTemplate]);
 
   return (
-    <main className="track-page">
+    <main className="track-page track-page--spa">
       <header className="track-topbar">
         <Link className="brand" href="/" aria-label="Вернуться на главную страницу «География скорости»">
-          <span className="brand-mark" aria-hidden="true">F1</span>
+          <span className="brand-mark" aria-hidden="true"><img src="/icon.svg" alt="" /></span>
           <span><strong>География скорости</strong><small>Скорость • География • История</small></span>
         </Link>
         <Link className="back-to-atlas" href={`/?season=${resultSeason}#atlas`}>← Вернуться к глобусу</Link>
@@ -759,72 +1245,72 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
 
       <section className="track-hero">
         <div className="track-map-wrap">
-          <div ref={containerRef} className="track-map" aria-label={`Карта ${pageData.officialName}`} />
-          {mode === 'model' && pageData.features.local3dModel && pageData.id === 'bahrain' && <BahrainModelViewer />}
+          <div ref={containerRef} className="track-map" aria-label={`Карта трассы ${pageData.nameRu}`} />
           <div className="track-map-shade" aria-hidden="true" />
-          <div
-            className="detail-mode"
-            role="group"
-            aria-label="Режим карты"
-            style={{ gridTemplateColumns: `repeat(${1 + Number(pageData.features.travelMode) + Number(pageData.features.local3dModel)}, 1fr)` }}
-          >
-            <button type="button" className={mode === 'track' ? 'is-active' : ''} onClick={() => showMode('track')} disabled={!ready}>Трасса</button>
-            {pageData.features.travelMode && <button type="button" className={mode === 'travel' ? 'is-active' : ''} onClick={() => showMode('travel')} disabled={!ready}>Поездка</button>}
-            {pageData.features.local3dModel && <button type="button" className={mode === 'model' ? 'is-active' : ''} onClick={() => showMode('model')} disabled={!ready}>3D</button>}
-          </div>
-          {mode === 'track' && (
-            <div className="track-basemap-control" role="group" aria-label="Подложка карты трассы">
-              <button type="button" className={basemap === 'dark' ? 'is-active' : ''} onClick={() => selectBasemap('dark')}>Карта</button>
-              <button type="button" className={basemap === 'satellite' ? 'is-active' : ''} onClick={() => selectBasemap('satellite')}>Спутник</button>
-            </div>
-          )}
-          {mode === 'track' && (
-            <div className="track-map-legend" aria-label="Условные обозначения схемы трассы">
-              {hasTechnicalOverlay ? <>
-                <span><i className="legend-turn" />Повороты</span>
-                <span><i className="legend-sectors"><b /><b /><b /></i>Секторы 1–3</span>
-                <span><i className="legend-drs" />DRS</span>
-                <span><i className="legend-drs-detection" />Детекция DRS</span>
-              </> : <span><i className="legend-turn" />Контур трассы</span>}
-            </div>
-          )}
-          {mode === 'track' && (
-            <button className="return-to-track" type="button" onClick={() => focusTrack()} disabled={!ready}>
-              <span aria-hidden="true">◎</span>
-              Вернуться к трассе
+          <div className="track-hero-actions">
+            <a href="#circuit-pois">◎ На карте</a>
+            <button type="button" aria-pressed={isFavorite} onClick={() => setIsFavorite((favorite) => !favorite)}>
+              {isFavorite ? '★ В избранном' : '☆ Добавить в избранное'}
             </button>
-          )}
-          <div className="track-map-caption">
-            <span className="live-dot" aria-hidden="true" />
-            {mode === 'track'
-              ? 'Контур конфигурации Гран-при'
-              : mode === 'travel'
-                ? 'Пилотный туристический слой'
-                : 'Интерактивная модель рельефа трассы'}
           </div>
+          <div className="track-map-legend" aria-label="Условные обозначения схемы трассы">
+              {hasTechnicalOverlay ? <>
+                  <span><i className="legend-sector legend-sector--one" />Сектор 1</span>
+                  <span><i className="legend-sector legend-sector--two" />Сектор 2</span>
+                  <span><i className="legend-sector legend-sector--three" />Сектор 3</span>
+                  <span><i className="legend-drs" />DRS</span>
+              </> : <span><i className="legend-turn" />Контур трассы</span>}
+          </div>
+          <button
+            type="button"
+            className="track-north-indicator"
+            aria-label="Вернуть исходное направление карты"
+            title="Исходное направление"
+            onClick={() => mapRef.current?.easeTo({
+              center: pageData.map.trackCamera.center,
+              zoom: pageData.map.trackCamera.zoom,
+              bearing: pageData.map.trackCamera.bearing,
+              pitch: pageData.map.trackCamera.pitch,
+              duration: 650,
+              essential: true,
+            })}
+          >
+            <span style={{ transform: `rotate(${-mapBearing}deg)` }} aria-hidden="true">
+              <i />
+              <b>N</b>
+            </span>
+          </button>
         </div>
 
         <aside className="track-summary">
-          <span className="eyebrow">{pageData.location.cityRu} · {pageData.location.countryRu}</span>
-          <p className="track-kicker">{pageData.officialName}</p>
+          <nav className="track-breadcrumbs" aria-label="Хлебные крошки">Трассы <span>›</span> {pageData.location.countryRu} <span>›</span> {pageData.nameRu}</nav>
           <h1 className={pageData.nameRu.length > 18 ? 'is-very-long' : pageData.nameRu.length > 10 ? 'is-long' : undefined}>
             {pageData.nameRu}
           </h1>
+          <div className="track-country">
+            {pageData.location.countryCode && <img src={`https://flagcdn.com/${pageData.location.countryCode}.svg`} alt="" aria-hidden="true" />}
+            <strong>{pageData.location.countryRu}</strong>
+          </div>
           <p className="track-lead">{pageData.summary.description}</p>
-          <dl className="track-metrics">
-            {pageData.summary.metrics.map((metric) => (
-              <div key={metric.label}><dt>{metric.label}</dt><dd>{metric.value}</dd></div>
-            ))}
-          </dl>
-          <div className="track-note">
-            <span>Тип трассы</span>
-            <strong>{pageData.summary.typeRu}</strong>
+          <div className="track-highlights">
+            {trackHighlights.map((highlight) => <span key={highlight}>{highlight}</span>)}
           </div>
         </aside>
       </section>
 
+      <dl className="spa-stat-bar" aria-label="Характеристики трассы">
+          {templateStatBar.map((stat) => (
+            <div key={stat.label}>
+              <span className={`spa-stat-icon spa-stat-icon--${stat.icon ?? 'type'}`} aria-hidden="true" />
+              <dt>{stat.label}</dt>
+              <dd>{stat.value}</dd>
+              {stat.note && <small>{stat.note}</small>}
+            </div>
+          ))}
+      </dl>
+
       <section
-        className={`race-results-section${resultStatus === 'loading' && seasonSnapshot ? ' is-updating' : ''}`}
+        className={`race-results-section race-results-section--spa${resultStatus === 'loading' && seasonSnapshot ? ' is-updating' : ''}`}
         aria-labelledby="race-results-title"
         aria-busy={resultStatus === 'loading'}
       >
@@ -875,12 +1361,16 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
                     style={{ '--team-color': result.teamColor ?? '#5b7890' } as CSSProperties}
                   >
                     <div className="podium-driver-portrait" aria-label={`Место для фотографии: ${localizeDriverName(result)}`}>
-                      <span className="driver-silhouette" aria-hidden="true" />
+                      <DriverPortrait driverId={result.driverId} name={localizeDriverName(result)} />
                       <strong>{result.code ?? result.positionText}</strong>
                     </div>
                     <div className="podium-driver-name">
-                      <strong>{localizeDriverName(result)}</strong>
-                      <small><i className="result-team-mark">{teamInitials(result.constructorName)}</i>{result.constructorName ?? 'Команда не указана'}</small>
+                      <span className="podium-driver-title">
+                        <DriverFlag driverId={result.driverId} countryCode={result.countryCode} />
+                        <strong>{localizeDriverName(result)}</strong>
+                        <TeamLogo season={resultSeason} logoUrl={result.teamLogoUrl} className="identity-team-logo" constructorId={result.constructorId} constructorName={result.constructorName} teamColor={result.teamColor} />
+                      </span>
+                      <small>{result.constructorName ?? 'Команда не указана'}</small>
                     </div>
                     <div className="podium-step"><b>{result.position}</b></div>
                     <time>{formatResultValue(result, activeSession?.id ?? 'race')}</time>
@@ -892,8 +1382,11 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
               {fastestLap && (activeSession?.id === 'race' || activeSession?.id === 'sprint') && (
                 <div className="race-fastest-lap" style={{ '--team-color': fastestLap.teamColor ?? '#5b7890' } as CSSProperties}>
                   <span className="fastest-lap-mark" aria-hidden="true">◉</span>
-                  <span><small>Быстрый круг</small><strong>{localizeDriverName(fastestLap)}</strong></span>
-                  <span className="race-fastest-team"><i className="result-team-mark">{teamInitials(fastestLap.constructorName)}</i>{fastestLap.constructorName}</span>
+                  <span><small>Быстрый круг</small><strong className="fastest-lap-driver-code">{fastestLap.code ?? '—'}</strong></span>
+                  <DriverFlag driverId={fastestLap.driverId} countryCode={fastestLap.countryCode} />
+                  <strong className="fastest-lap-driver-name">{localizeDriverName(fastestLap)}</strong>
+                  <TeamLogo season={resultSeason} logoUrl={fastestLap.teamLogoUrl} className="identity-team-logo" constructorId={fastestLap.constructorId} constructorName={fastestLap.constructorName} teamColor={fastestLap.teamColor} />
+                  <span className="race-fastest-team">{fastestLap.constructorName}</span>
                   <span><small>Круг {fastestLap.fastestLapNumber ?? '—'}</small><strong>{fastestLap.fastestLapMs !== null ? formatMilliseconds(fastestLap.fastestLapMs) : '—'}</strong></span>
                 </div>
               )}
@@ -904,41 +1397,368 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
                 <h3>Остальные позиции</h3>
                 <span>{activeResults.length} участников</span>
               </div>
-              <ol start={4}>
-                {remainingResults.map((result) => (
-                  <li key={`${result.position}-${result.driverId}`} style={{ '--team-color': result.teamColor ?? '#5b7890' } as CSSProperties}>
-                    <b>{result.positionText}</b>
-                    <span className="classification-code">{result.code ?? '—'}</span>
-                    <span className="classification-driver">
-                      <strong>{localizeDriverName(result)}</strong>
-                      <small><i className="result-team-mark">{teamInitials(result.constructorName)}</i>{result.constructorName ?? 'Команда не указана'}</small>
-                    </span>
-                    <span className="classification-result">
-                      <time>{formatResultValue(result, activeSession?.id ?? 'race')}</time>
-                      {(activeSession?.id === 'race' || activeSession?.id === 'sprint') && <small>{result.points} очков</small>}
-                    </span>
-                  </li>
+              <div className="race-classification-columns">
+                {remainingResultColumns.map((column, columnIndex) => (
+                  <ol key={columnIndex} start={column[0]?.position ?? 4}>
+                    {column.map((result) => (
+                      <li key={`${result.position}-${result.driverId}`} style={{ '--team-color': result.teamColor ?? '#5b7890' } as CSSProperties}>
+                        <b>{result.positionText}</b>
+                        <span className="classification-code">{result.code ?? '—'}</span>
+                        <DriverFlag driverId={result.driverId} countryCode={result.countryCode} />
+                        <span className="classification-driver">
+                          <strong>{localizeDriverName(result)}</strong>
+                          <small>{result.constructorName ?? 'Команда не указана'}</small>
+                        </span>
+                        <TeamLogo season={resultSeason} logoUrl={result.teamLogoUrl} className="identity-team-logo" constructorId={result.constructorId} constructorName={result.constructorName} teamColor={result.teamColor} />
+                        <span className="classification-result">
+                          <time>{formatResultValue(result, activeSession?.id ?? 'race')}</time>
+                          {(activeSession?.id === 'race' || activeSession?.id === 'sprint') && <small>{result.points} очков</small>}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
                 ))}
-              </ol>
+              </div>
             </div>
           </div>
         )}
       </section>
 
-      {pageData.features.travelMode && <section className="track-content track-content--travel">
-        <article className="travel-panel">
-          <div className="section-heading">
-            <span className="eyebrow">Для поездки</span>
-            <h2>География этапа</h2>
-          </div>
-          <p>{pageData.travel.intro}</p>
-          <ul className="travel-categories">
-            {pageData.travel.categories.map((category, index) => (
-              <li key={category.id}><span>{String(index + 1).padStart(2, '0')}</span>{category.label}</li>
+      {travelStory && (
+        <>
+          <section className="spa-planner" aria-labelledby="spa-planner-title">
+            <header className="spa-section-heading">
+              <div>
+                <span className="eyebrow">Для поездки</span>
+                <h2 id="spa-planner-title">Планируйте поездку</h2>
+              </div>
+              <p>{pageData.travel.intro}</p>
+            </header>
+            <div className="spa-planner-grid">
+              <section className="spa-planner-stays" aria-labelledby="spa-stays-title">
+                <h3 id="spa-stays-title">Где остановиться</h3>
+                <ul>
+                  {travelStory.zones.map((zone) => (
+                    <li key={zone.id} className={selectedTravelFeatureId === zone.mapFeatureId ? 'is-selected' : ''}>
+                      <button type="button" onClick={() => setSelectedTravelFeatureId(zone.mapFeatureId)}>
+                        <i style={{ background: zone.tone }} aria-hidden="true" />
+                        <span><strong>{zone.name}</strong><small>{zone.character}</small></span>
+                        <time>{zone.travelTime}</time>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+              <section className="spa-planner-scenarios" aria-labelledby="spa-scenarios-title">
+                <h3 id="spa-scenarios-title">Сценарии поездки</h3>
+                <ol>
+                  {travelStory.chapters.map((chapter) => (
+                    <li key={chapter.id}>
+                      <span>{chapter.index}</span>
+                      <div><strong>{chapter.title}</strong><small>{chapter.eyebrow}</small></div>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+              <section className="spa-planner-useful" aria-labelledby="spa-useful-title">
+                <h3 id="spa-useful-title">Полезная информация</h3>
+                <dl>
+                  {pageData.travel.planner?.useful.map((item) => (
+                    <div key={item.label}>
+                      <dt>{item.label}</dt>
+                      <dd>{item.value}</dd>
+                      <small>{item.detail}</small>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            </div>
+          </section>
+
+          <section className="spa-poi-section" id="circuit-pois" aria-labelledby="spa-poi-title">
+            <header className="spa-section-heading">
+              <div>
+                <span className="eyebrow">Точки интереса</span>
+                <h2 id="spa-poi-title">Ориентиры поездки</h2>
+              </div>
+              <div className="spa-poi-filter">
+                <label htmlFor="spa-poi-role">Категория</label>
+                <select
+                  id="spa-poi-role"
+                  value={travelRoleFilter}
+                  onChange={(event) => changeTravelRoleFilter(event.target.value as TravelRoleFilter)}
+                >
+                  <option value="all">Все объекты ({travelCollections(travelMapData).points.features.length})</option>
+                  {availableTravelRoles.map(([role, label]) => <option key={role} value={role}>{label}</option>)}
+                </select>
+              </div>
+            </header>
+            <div className="spa-poi-layout">
+              <TravelPoiMap
+                collection={travelMapData}
+                track={circuitTrack}
+                roleFilter={travelRoleFilter}
+                selectedId={selectedTravelFeatureId}
+                bounds={pageData.map.travelBounds}
+                onSelect={setSelectedTravelFeatureId}
+              />
+              <div className="spa-poi-list-panel">
+                <div className="spa-poi-list-heading"><strong>Важное</strong><span>{travelPoints.length} объектов</span></div>
+                {travelPoints.length > 0 ? (
+                  <ul className="travel-poi-list">
+                    {travelPoints.map((feature) => {
+                      const featureId = travelFeatureId(feature);
+                      const role = String(feature.properties?.role ?? '');
+                      return (
+                        <li key={featureId}>
+                          <button
+                            type="button"
+                            className={selectedTravelFeatureId === featureId ? 'is-selected' : ''}
+                            aria-pressed={selectedTravelFeatureId === featureId}
+                            onClick={() => setSelectedTravelFeatureId(featureId)}
+                          >
+                            <i style={{ backgroundColor: travelRoleColors[role] ?? '#a9b7bf' }} aria-hidden="true" />
+                            <span><strong>{String(feature.properties?.name ?? 'Точка интереса')}</strong><small>{travelRoleLabels[role] ?? String(feature.properties?.categoryRu ?? 'Точка интереса')}</small></span>
+                            <b aria-hidden="true">↗</b>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : <p className="travel-poi-empty">В этой категории пока нет проверенных точек</p>}
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+
+      {false && travelStory && pageData.features.travelMode && (
+        <section className="track-content track-content--travel">
+          <header className="travel-experience__heading">
+            <div className="section-heading">
+              <span className="eyebrow">Для поездки</span>
+              <h2 id="travel-story-title">География этапа</h2>
+            </div>
+            <p>{pageData.travel.intro}</p>
+          </header>
+
+          <dl className="travel-stat-strip">
+            {travelStory.stats.map((stat) => (
+              <div key={stat.label}><dt>{stat.value}</dt><dd>{stat.label}</dd></div>
             ))}
-          </ul>
-        </article>
-      </section>}
+          </dl>
+
+          <div className="travel-scenario-grid" aria-label="Сценарии поездки">
+            {travelStory.chapters.map((chapter) => (
+              <article key={chapter.id}>
+                {chapter.image && <img src={chapter.image} alt="" aria-hidden="true" />}
+                <div className="travel-card-copy">
+                <span>{chapter.index}</span>
+                <small>{chapter.eyebrow}</small>
+                <h3>{chapter.title}</h3>
+                <p>{chapter.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <p className="travel-map-instruction">
+            Все точки, районы проживания и маршруты собраны на карте выше — откройте режим «Поездка» и выберите объект
+          </p>
+
+          <section className="travel-pois" aria-labelledby="travel-pois-title">
+            <div className="travel-subheading">
+              <span className="eyebrow">Точки интереса</span>
+              <h3 id="travel-pois-title">Ориентиры поездки</h3>
+              <p>Фильтр одновременно обновляет список и точки на карте; выбор объекта сохраняется между обоими представлениями</p>
+            </div>
+            <div className="travel-poi-filter">
+              <label htmlFor="travel-poi-role">Показать на карте</label>
+              <select
+                id="travel-poi-role"
+                value={travelRoleFilter}
+                onChange={(event) => changeTravelRoleFilter(event.target.value as TravelRoleFilter)}
+              >
+                <option value="all">Все точки ({travelCollections(travelMapData).points.features.length})</option>
+                {availableTravelRoles.map(([role, label]) => (
+                  <option key={role} value={role}>{label}</option>
+                ))}
+              </select>
+            </div>
+            {travelPoints.length > 0 ? (
+              <ul className="travel-poi-list">
+                {travelPoints.map((feature) => {
+                  const featureId = travelFeatureId(feature);
+                  const role = String(feature.properties?.role ?? '');
+                  return (
+                    <li key={featureId}>
+                      <button
+                        type="button"
+                        className={selectedTravelFeatureId === featureId ? 'is-selected' : ''}
+                        aria-pressed={selectedTravelFeatureId === featureId}
+                        disabled={!ready}
+                        onClick={() => selectTravelFeature(featureId)}
+                      >
+                        <i style={{ backgroundColor: travelRoleColors[role] ?? '#a9b7bf' }} aria-hidden="true" />
+                        <span>
+                          <strong>{String(feature.properties?.name ?? 'Точка интереса')}</strong>
+                          <small>{travelRoleLabels[role] ?? String(feature.properties?.categoryRu ?? 'Точка интереса')}</small>
+                        </span>
+                        <b aria-hidden="true">↗</b>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : <p className="travel-poi-empty">В этой категории пока нет проверенных точек</p>}
+          </section>
+
+          <section className="travel-zones" aria-labelledby="travel-zones-title">
+            <div className="travel-subheading">
+              <span className="eyebrow">Где остановиться</span>
+              <h3 id="travel-zones-title">Шесть характеров одного уик-энда</h3>
+              <p>Зона важнее отдельного отеля: сначала выбираем ритм поездки, затем конкретное размещение</p>
+            </div>
+            <div className="travel-zone-grid">
+              {travelStory.zones.map((zone, index) => (
+                <article
+                  key={zone.id}
+                  className={selectedTravelFeatureId === zone.mapFeatureId ? 'is-selected' : ''}
+                  style={{ '--zone-tone': zone.tone } as CSSProperties}
+                >
+                  {zone.image && <img src={zone.image} alt="" aria-hidden="true" />}
+                  <button
+                    type="button"
+                    className="travel-card-copy"
+                    aria-pressed={selectedTravelFeatureId === zone.mapFeatureId}
+                    disabled={!ready}
+                    onClick={() => selectTravelFeature(zone.mapFeatureId)}
+                  >
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    <small>{zone.character}</small>
+                    <h4>{zone.name}</h4>
+                    <p>{zone.bestFor}</p>
+                    <time>{zone.travelTime}</time>
+                  </button>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          {travelStory.routes.length > 0 && <section className="travel-featured-routes" aria-labelledby="travel-routes-title">
+            <div className="travel-subheading">
+              <span className="eyebrow">Готовые сценарии</span>
+              <h3 id="travel-routes-title">Маршрут — это часть этапа</h3>
+              <p>Не просто линия на карте, а понятный план на гоночный день или свободное время</p>
+            </div>
+            <div className="travel-route-grid">
+              {travelStory.routes.map((route, index) => (
+                <article key={route.id}>
+                  {route.image && <img src={route.image} alt="" aria-hidden="true" />}
+                  <div className="travel-card-copy">
+                  <header><span>{route.type}</span><b>0{index + 1}</b></header>
+                  <h4>{route.title}</h4>
+                  <p>{route.description}</p>
+                  <div className="travel-route-line" aria-hidden="true"><i /><i /><i /></div>
+                  <ol>
+                    {route.stops.map((stop) => <li key={stop}>{stop}</li>)}
+                  </ol>
+                  <footer><strong>{route.distance}</strong><span>{route.duration}</span></footer>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>}
+
+          {travelStory.gallery && travelStory.gallery.length > 0 && (
+            <section className="track-gallery" aria-labelledby="track-gallery-title">
+              <div className="travel-subheading track-gallery__heading">
+                <span className="eyebrow">Атмосфера трассы</span>
+                <h3 id="track-gallery-title">Арденны в движении</h3>
+                <div className="track-gallery__controls">
+                  <button type="button" aria-label="Предыдущие фотографии" onClick={() => galleryRef.current?.scrollBy({ left: -galleryRef.current.clientWidth * 0.72, behavior: 'smooth' })}>←</button>
+                  <button type="button" aria-label="Следующие фотографии" onClick={() => galleryRef.current?.scrollBy({ left: galleryRef.current.clientWidth * 0.72, behavior: 'smooth' })}>→</button>
+                </div>
+              </div>
+              <div className="track-gallery__rail" ref={galleryRef}>
+                {travelStory.gallery.map((image, index) => (
+                  <figure key={`${image.src}-${index}`}>
+                    <img src={image.src} alt={image.title} loading="lazy" />
+                    <figcaption><span>{String(index + 1).padStart(2, '0')}</span><strong>{image.title}</strong><small>{image.description}</small></figcaption>
+                  </figure>
+                ))}
+              </div>
+            </section>
+          )}
+        </section>
+      )}
+      {!travelStory && pageData.features.travelMode && (
+        <section className="track-content track-content--travel">
+          <article className="travel-panel">
+            <div className="section-heading">
+              <span className="eyebrow">Для поездки</span>
+              <h2>География этапа</h2>
+            </div>
+            <p>{pageData.travel.intro}</p>
+            <ul className="travel-categories">
+              {pageData.travel.categories.map((category, index) => (
+                <li key={category.id}><span>{String(index + 1).padStart(2, '0')}</span>{category.label}</li>
+              ))}
+            </ul>
+          </article>
+        </section>
+      )}
+
+      {pageData.history && pageData.history.length > 0 && (
+        <section className="spa-history" aria-labelledby="spa-history-title">
+          <header className="spa-section-heading">
+            <div><span className="eyebrow">Эволюция</span><h2 id="spa-history-title">История трассы</h2></div>
+          </header>
+          <ol>
+            {pageData.history.map((item) => (
+              <li key={item.year}>
+                {item.image && <img src={item.image} alt={item.imageAlt ?? item.title} loading="lazy" />}
+                <time>{item.year}</time>
+                <strong>{item.title}</strong>
+                <p>{item.description}</p>
+                {item.sourceUrl && <a className="spa-history-credit" href={item.sourceUrl} target="_blank" rel="noreferrer">{item.credit} · {item.license}</a>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {travelStory?.gallery && travelStory.gallery.length > 0 && (
+        <section className="spa-media" aria-labelledby="spa-media-title">
+          <header className="spa-section-heading">
+            <div><span className="eyebrow">Фотоархив</span><h2 id="spa-media-title">Медиатека</h2></div>
+            <div className="spa-media-controls">
+              <button type="button" aria-label="Предыдущие фотографии" onClick={() => galleryRef.current?.scrollBy({ left: -520, behavior: 'smooth' })}>←</button>
+              <button type="button" aria-label="Следующие фотографии" onClick={() => galleryRef.current?.scrollBy({ left: 520, behavior: 'smooth' })}>→</button>
+            </div>
+          </header>
+          <div className="spa-media-rail" ref={galleryRef}>
+            {travelStory.gallery.map((image, index) => (
+              <button type="button" key={`${image.src}-${index}`} onClick={() => setOpenMediaIndex(index)} aria-label={`Открыть фотографию «${image.title}»`}>
+                <img src={image.src} alt={image.title} loading="lazy" />
+                <span><strong>{image.title}</strong><small>{image.description}</small><small>{image.credit} · {image.license}</small></span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+      {openMediaIndex !== null && travelStory?.gallery?.[openMediaIndex] && (
+        <dialog ref={mediaDialogRef} className="spa-media-lightbox" aria-label={travelStory.gallery[openMediaIndex].title} onCancel={() => setOpenMediaIndex(null)} onClick={(event) => { if (event.target === event.currentTarget) setOpenMediaIndex(null); }}>
+          <button autoFocus type="button" className="spa-media-lightbox__close" aria-label="Закрыть" onClick={() => setOpenMediaIndex(null)}>×</button>
+          <figure onClick={(event) => event.stopPropagation()}>
+            <img src={travelStory.gallery[openMediaIndex].src} alt={travelStory.gallery[openMediaIndex].title} />
+            <figcaption>
+              <strong>{travelStory.gallery[openMediaIndex].title}</strong>
+              <span>{travelStory.gallery[openMediaIndex].description}</span>
+              {travelStory.gallery[openMediaIndex].sourceUrl && <a href={travelStory.gallery[openMediaIndex].sourceUrl} target="_blank" rel="noreferrer">{travelStory.gallery[openMediaIndex].credit} · {travelStory.gallery[openMediaIndex].license}</a>}
+            </figcaption>
+          </figure>
+        </dialog>
+      )}
     </main>
   );
 }

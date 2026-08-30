@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "dataset": "circuits-user-digitized",
+  "coordinateReferenceSystem": "WGS 84 (EPSG:4326), GeoJSON coordinate order [longitude, latitude]",
+  "source": {
+    "path": "apps/web/app/data/circuits-user-digitized.json",
+    "sha256": "9da110233dc02f9f3f8580778d4b52cd1db08bd7c6496e0aec4d3b4e7a7d69b4",
+    "bytes": 337785,
+    "featureCount": 25,
+    "coordinateCount": 3605
+  },
+  "canonicalCopy": {
+    "path": "data/canonical/tracks/circuits-user-digitized.geojson",
+    "sha256": "9da110233dc02f9f3f8580778d4b52cd1db08bd7c6496e0aec4d3b4e7a7d69b4",
+    "bytes": 337785,
+    "featureCount": 25,
+    "coordinateCount": 3605
+  },
+  "equality": {
+    "byteForByte": true,
+    "collectionMetadata": true,
+    "geometry": true,
+    "properties": true
+  }
+}

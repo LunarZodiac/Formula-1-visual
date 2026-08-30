@@ -2,15 +2,16 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'F1 Geovisual Atlas — география скорости',
+  title: 'География скорости — интерактивный атлас Formula 1',
   description:
     'Интерактивный картографический атлас географии и истории Formula 1',
   openGraph: {
-    title: 'F1 Geovisual Atlas',
+    title: 'География скорости — интерактивный атлас Formula 1',
     description:
       'Интерактивный картографический атлас географии и истории Formula 1',
     type: 'website',
   },
+  icons: { icon: '/icon.svg', shortcut: '/icon.svg' },
 };
 
 export default function RootLayout({

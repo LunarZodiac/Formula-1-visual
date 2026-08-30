@@ -1,0 +1,1118 @@
+{
+  "type": "FeatureCollection",
+  "name": "f1-track-digitizing-worklist",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "properties": {
+    "coordinateOrder": "[longitude, latitude]",
+    "geometryType": "LineString",
+    "taskCount": 25,
+    "instructions": "Выберите объект по id и замените его маленькую линию полным замкнутым контуром. Атрибуты не изменяйте"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "au-adelaide-1985",
+        "circuitId": "adelaide",
+        "name": "Adelaide Street Circuit",
+        "nameRu": "Аделаида",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1985-1995",
+        "fromSeason": 1985,
+        "toSeason": 1995,
+        "eventIds": [],
+        "expectedLength": 3780,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            138.61685363714778,
+            -34.927279999999996
+          ],
+          [
+            138.6171463628522,
+            -34.927279999999996
+          ],
+          [
+            138.617,
+            -34.92712
+          ],
+          [
+            138.61685363714778,
+            -34.927279999999996
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ma-ain-diab-1958",
+        "circuitId": "ain-diab",
+        "name": "Ain-Diab Circuit",
+        "nameRu": "Айн-Диаб",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1958",
+        "fromSeason": 1958,
+        "toSeason": 1958,
+        "eventIds": [],
+        "expectedLength": 7618,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -7.687644035512023,
+            33.578520000000005
+          ],
+          [
+            -7.687355964487977,
+            33.578520000000005
+          ],
+          [
+            -7.6875,
+            33.57868
+          ],
+          [
+            -7.687644035512023,
+            33.578520000000005
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gb-aintree-1955",
+        "circuitId": "aintree",
+        "name": "Aintree Motor Racing Circuit",
+        "nameRu": "Эйнтри",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1955, 1957, 1959, 1961-1962",
+        "fromSeason": 1955,
+        "toSeason": 1962,
+        "eventIds": [],
+        "expectedLength": 4828,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -2.9407616309151066,
+            53.476820000000004
+          ],
+          [
+            -2.9403583690848936,
+            53.476820000000004
+          ],
+          [
+            -2.94056,
+            53.47698
+          ],
+          [
+            -2.9407616309151066,
+            53.476820000000004
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "de-avus-1959",
+        "circuitId": "avus",
+        "name": "AVUS",
+        "nameRu": "АВУС",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1959",
+        "fromSeason": 1959,
+        "toSeason": 1959,
+        "eventIds": [],
+        "expectedLength": 8300,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            13.25120296537721,
+            52.480520000000006
+          ],
+          [
+            13.25159703462279,
+            52.480520000000006
+          ],
+          [
+            13.2514,
+            52.48068
+          ],
+          [
+            13.25120296537721,
+            52.480520000000006
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt-boavista-1958",
+        "circuitId": "boavista",
+        "name": "Circuito da Boavista",
+        "nameRu": "Боавишта",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1958, 1960",
+        "fromSeason": 1958,
+        "toSeason": 1960,
+        "eventIds": [],
+        "expectedLength": 7407,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.67340941464007,
+            41.17042
+          ],
+          [
+            -8.67309058535993,
+            41.17042
+          ],
+          [
+            -8.67325,
+            41.170579999999994
+          ],
+          [
+            -8.67340941464007,
+            41.17042
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "fr-charade-1965",
+        "circuitId": "charade",
+        "name": "Charade Circuit",
+        "nameRu": "Шарада",
+        "configuration": "Большое дорожное кольцо",
+        "seasons": "1965, 1969-1970, 1972",
+        "fromSeason": 1965,
+        "toSeason": 1972,
+        "eventIds": [],
+        "expectedLength": 8055,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            3.038718037229695,
+            45.74712
+          ],
+          [
+            3.0390619627703046,
+            45.74712
+          ],
+          [
+            3.03889,
+            45.747279999999996
+          ],
+          [
+            3.038718037229695,
+            45.74712
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "us-dallas-1984",
+        "circuitId": "dallas",
+        "name": "Dallas Fair Park",
+        "nameRu": "Даллас, Фэйр-Парк",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1984",
+        "fromSeason": 1984,
+        "toSeason": 1984,
+        "eventIds": [],
+        "expectedLength": 3901,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -96.7588427245769,
+            32.77732
+          ],
+          [
+            -96.75855727542312,
+            32.77732
+          ],
+          [
+            -96.7587,
+            32.77748
+          ],
+          [
+            -96.7588427245769,
+            32.77732
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "us-detroit-1982",
+        "circuitId": "detroit",
+        "name": "Detroit Street Circuit",
+        "nameRu": "Детройт",
+        "configuration": "Первоначальная конфигурация",
+        "seasons": "1982",
+        "fromSeason": 1982,
+        "toSeason": 1982,
+        "eventIds": [],
+        "expectedLength": 4012,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -83.04026231988539,
+            42.32972
+          ],
+          [
+            -83.0399376801146,
+            42.32972
+          ],
+          [
+            -83.0401,
+            42.329879999999996
+          ],
+          [
+            -83.04026231988539,
+            42.32972
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "us-detroit-1983",
+        "circuitId": "detroit",
+        "name": "Detroit Street Circuit",
+        "nameRu": "Детройт",
+        "configuration": "Изменённая конфигурация",
+        "seasons": "1983-1988",
+        "fromSeason": 1983,
+        "toSeason": 1988,
+        "eventIds": [],
+        "expectedLength": 4023,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -83.04026231988539,
+            42.32972
+          ],
+          [
+            -83.0399376801146,
+            42.32972
+          ],
+          [
+            -83.0401,
+            42.329879999999996
+          ],
+          [
+            -83.04026231988539,
+            42.32972
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "fr-rouen-1952",
+        "circuitId": "essarts",
+        "name": "Rouen-Les-Essarts",
+        "nameRu": "Руан-Ле-Эссар",
+        "configuration": "Короткая конфигурация",
+        "seasons": "1952",
+        "fromSeason": 1952,
+        "toSeason": 1952,
+        "eventIds": [],
+        "expectedLength": 5100,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.004395864335102,
+            49.33052
+          ],
+          [
+            1.004764135664898,
+            49.33052
+          ],
+          [
+            1.00458,
+            49.330679999999994
+          ],
+          [
+            1.004395864335102,
+            49.33052
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "fr-rouen-1957",
+        "circuitId": "essarts",
+        "name": "Rouen-Les-Essarts",
+        "nameRu": "Руан-Ле-Эссар",
+        "configuration": "Большое дорожное кольцо",
+        "seasons": "1957, 1962, 1964, 1968",
+        "fromSeason": 1957,
+        "toSeason": 1968,
+        "eventIds": [],
+        "expectedLength": 6542,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.004395864335102,
+            49.33052
+          ],
+          [
+            1.004764135664898,
+            49.33052
+          ],
+          [
+            1.00458,
+            49.330679999999994
+          ],
+          [
+            1.004395864335102,
+            49.33052
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "us-caesars-palace-1981",
+        "circuitId": "las_vegas",
+        "name": "Caesars Palace Grand Prix Circuit",
+        "nameRu": "Сизарс-Пэлас",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1981-1982",
+        "fromSeason": 1981,
+        "toSeason": 1982,
+        "eventIds": [],
+        "expectedLength": 3650,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -115.17414854734433,
+            36.11612
+          ],
+          [
+            -115.17385145265568,
+            36.11612
+          ],
+          [
+            -115.174,
+            36.116279999999996
+          ],
+          [
+            -115.17414854734433,
+            36.11612
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "fr-bugatti-1967",
+        "circuitId": "lemans",
+        "name": "Bugatti Circuit",
+        "nameRu": "Трасса Бугатти",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1967",
+        "fromSeason": 1967,
+        "toSeason": 1967,
+        "eventIds": [],
+        "expectedLength": 4430,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.22405183638975718,
+            47.949920000000006
+          ],
+          [
+            0.22441016361024285,
+            47.949920000000006
+          ],
+          [
+            0.224231,
+            47.95008
+          ],
+          [
+            0.22405183638975718,
+            47.949920000000006
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "us-long-beach-1976",
+        "circuitId": "long_beach",
+        "name": "Long Beach Street Circuit",
+        "nameRu": "Лонг-Бич",
+        "configuration": "Первая конфигурация",
+        "seasons": "1976-1981",
+        "fromSeason": 1976,
+        "toSeason": 1981,
+        "eventIds": [],
+        "expectedLength": 3251,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -118.18914434819686,
+            33.76502
+          ],
+          [
+            -118.18885565180312,
+            33.76502
+          ],
+          [
+            -118.189,
+            33.765179999999994
+          ],
+          [
+            -118.18914434819686,
+            33.76502
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "us-long-beach-1982",
+        "circuitId": "long_beach",
+        "name": "Long Beach Street Circuit",
+        "nameRu": "Лонг-Бич",
+        "configuration": "Конфигурация 1982 года",
+        "seasons": "1982",
+        "fromSeason": 1982,
+        "toSeason": 1982,
+        "eventIds": [],
+        "expectedLength": 3428,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -118.18914434819686,
+            33.76502
+          ],
+          [
+            -118.18885565180312,
+            33.76502
+          ],
+          [
+            -118.189,
+            33.765179999999994
+          ],
+          [
+            -118.18914434819686,
+            33.76502
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "us-long-beach-1983",
+        "circuitId": "long_beach",
+        "name": "Long Beach Street Circuit",
+        "nameRu": "Лонг-Бич",
+        "configuration": "Конфигурация 1983 года",
+        "seasons": "1983",
+        "fromSeason": 1983,
+        "toSeason": 1983,
+        "eventIds": [],
+        "expectedLength": 3275,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -118.18914434819686,
+            33.76502
+          ],
+          [
+            -118.18885565180312,
+            33.76502
+          ],
+          [
+            -118.189,
+            33.765179999999994
+          ],
+          [
+            -118.18914434819686,
+            33.76502
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt-monsanto-1959",
+        "circuitId": "monsanto",
+        "name": "Circuito de Monsanto",
+        "nameRu": "Монсанту",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1959",
+        "fromSeason": 1959,
+        "toSeason": 1959,
+        "eventIds": [],
+        "expectedLength": 5440,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -9.2032138036835,
+            38.719620000000006
+          ],
+          [
+            -9.202906196316501,
+            38.719620000000006
+          ],
+          [
+            -9.20306,
+            38.71978
+          ],
+          [
+            -9.2032138036835,
+            38.719620000000006
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "be-nivelles-1972",
+        "circuitId": "nivelles",
+        "name": "Nivelles-Baulers",
+        "nameRu": "Нивель-Болер",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1972, 1974",
+        "fromSeason": 1972,
+        "toSeason": 1974,
+        "eventIds": [],
+        "expectedLength": 3724,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            4.326750858577494,
+            50.62102
+          ],
+          [
+            4.327129141422505,
+            50.62102
+          ],
+          [
+            4.32694,
+            50.621179999999995
+          ],
+          [
+            4.326750858577494,
+            50.62102
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "es-pedralbes-1951",
+        "circuitId": "pedralbes",
+        "name": "Pedralbes Circuit",
+        "nameRu": "Педральбес",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1951, 1954",
+        "fromSeason": 1951,
+        "toSeason": 1954,
+        "eventIds": [],
+        "expectedLength": 6316,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.116510047562807,
+            41.39022000000001
+          ],
+          [
+            2.116829952437193,
+            41.39022000000001
+          ],
+          [
+            2.11667,
+            41.39038
+          ],
+          [
+            2.116510047562807,
+            41.39022000000001
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "it-pescara-1957",
+        "circuitId": "pescara",
+        "name": "Pescara Circuit",
+        "nameRu": "Пескара",
+        "configuration": "Конфигурация Formula 1",
+        "seasons": "1957",
+        "fromSeason": 1957,
+        "toSeason": 1957,
+        "eventIds": [],
+        "expectedLength": 25979,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            14.150637304029821,
+            42.474920000000004
+          ],
+          [
+            14.150962695970179,
+            42.474920000000004
+          ],
+          [
+            14.1508,
+            42.47508
+          ],
+          [
+            14.150637304029821,
+            42.474920000000004
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "at-zeltweg-1964",
+        "circuitId": "zeltweg",
+        "name": "Zeltweg Airfield",
+        "nameRu": "Цельтвег",
+        "configuration": "Конфигурация аэродрома",
+        "seasons": "1964",
+        "fromSeason": 1964,
+        "toSeason": 1964,
+        "eventIds": [],
+        "expectedLength": 3200,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            14.747623371318518,
+            47.20382
+          ],
+          [
+            14.747976628681482,
+            47.20382
+          ],
+          [
+            14.7478,
+            47.203979999999994
+          ],
+          [
+            14.747623371318518,
+            47.20382
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bh-bahrain-endurance-2010",
+        "circuitId": "bahrain",
+        "name": "Bahrain International Circuit",
+        "nameRu": "Сахир",
+        "configuration": "Endurance Circuit",
+        "seasons": "2010",
+        "fromSeason": 2010,
+        "toSeason": 2010,
+        "eventIds": [],
+        "expectedLength": 6299,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            50.51046645079826,
+            26.03242
+          ],
+          [
+            50.51073354920173,
+            26.03242
+          ],
+          [
+            50.5106,
+            26.03258
+          ],
+          [
+            50.51046645079826,
+            26.03242
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "jp-fuji-1976",
+        "circuitId": "fuji",
+        "name": "Fuji Speedway",
+        "nameRu": "Фудзи",
+        "configuration": "Историческая конфигурация Formula 1",
+        "seasons": "1976-1977",
+        "fromSeason": 1976,
+        "toSeason": 1977,
+        "eventIds": [],
+        "expectedLength": 4359,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            138.92685283545958,
+            35.37162
+          ],
+          [
+            138.9271471645404,
+            35.37162
+          ],
+          [
+            138.927,
+            35.371779999999994
+          ],
+          [
+            138.92685283545958,
+            35.37162
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "us-phoenix-1991",
+        "circuitId": "phoenix",
+        "name": "Phoenix Street Circuit",
+        "nameRu": "Финикс",
+        "configuration": "Конфигурация 1991 года",
+        "seasons": "1991",
+        "fromSeason": 1991,
+        "toSeason": 1991,
+        "eventIds": [],
+        "expectedLength": 3719,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -112.07514381809382,
+            33.44782
+          ],
+          [
+            -112.07485618190618,
+            33.44782
+          ],
+          [
+            -112.075,
+            33.447979999999994
+          ],
+          [
+            -112.07514381809382,
+            33.44782
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "fr-reims-1950",
+        "circuitId": "reims",
+        "name": "Reims-Gueux",
+        "nameRu": "Реймс-Гё",
+        "configuration": "Исходная конфигурация через Гё",
+        "seasons": "1950-1951",
+        "fromSeason": 1950,
+        "toSeason": 1951,
+        "eventIds": [],
+        "expectedLength": 7815,
+        "direction": "pending",
+        "source": "pending",
+        "sourceUrl": "",
+        "license": "pending",
+        "checkedAt": null,
+        "status": "todo",
+        "placeholder": true,
+        "instructions": "Замените маленький треугольник полным замкнутым контуром по центру трассы"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            3.9306461494952285,
+            49.25412
+          ],
+          [
+            3.931013850504771,
+            49.25412
+          ],
+          [
+            3.93083,
+            49.254279999999994
+          ],
+          [
+            3.9306461494952285,
+            49.25412
+          ]
+        ]
+      }
+    }
+  ]
+}

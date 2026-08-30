@@ -1,11 +1,62 @@
 #!/usr/bin/env node
 
-import { copyFile, mkdir, readdir, rename, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 
 const { Client } = pg;
+const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
+const repositoryRoot = path.resolve(scriptDirectory, '..');
+
+// Jolpica stores a driver's nationality as an English demonym. Keep the
+// conversion explicit: an unknown or historically ambiguous value must remain
+// null instead of silently displaying a different country's flag.
+const NATIONALITY_COUNTRY_CODES = new Map([
+  ['American', 'us'],
+  ['Argentine', 'ar'],
+  ['Australian', 'au'],
+  ['Austrian', 'at'],
+  ['Belgian', 'be'],
+  ['Brazilian', 'br'],
+  ['British', 'gb'],
+  ['Canadian', 'ca'],
+  ['Chilean', 'cl'],
+  ['Chinese', 'cn'],
+  ['Colombian', 'co'],
+  ['Czech', 'cz'],
+  ['Danish', 'dk'],
+  ['Dutch', 'nl'],
+  ['Finnish', 'fi'],
+  ['French', 'fr'],
+  ['German', 'de'],
+  ['Hungarian', 'hu'],
+  ['Indian', 'in'],
+  ['Indonesian', 'id'],
+  ['Irish', 'ie'],
+  ['Italian', 'it'],
+  ['Japanese', 'jp'],
+  ['Liechtensteiner', 'li'],
+  ['Malaysian', 'my'],
+  ['Mexican', 'mx'],
+  ['Monegasque', 'mc'],
+  ['New Zealander', 'nz'],
+  ['Polish', 'pl'],
+  ['Portuguese', 'pt'],
+  ['Russian', 'ru'],
+  ['South African', 'za'],
+  ['Spanish', 'es'],
+  ['Swedish', 'se'],
+  ['Swiss', 'ch'],
+  ['Thai', 'th'],
+  ['Uruguayan', 'uy'],
+  ['Venezuelan', 've'],
+]);
+
+function nationalityCountryCode(nationality) {
+  return nationality ? NATIONALITY_COUNTRY_CODES.get(nationality) ?? null : null;
+}
 
 function assertDatabaseEnvironment() {
   const required = ['PGHOST', 'PGPORT', 'PGDATABASE', 'PGUSER', 'PGPASSWORD'];
@@ -16,40 +67,64 @@ function assertDatabaseEnvironment() {
 }
 
 function readOptions(argv) {
-  const option = argv.find((value) => value.startsWith('--output='));
-  const output = option?.slice('--output='.length) ?? 'apps/web/public/data/f1';
+  const inlineOutput = argv.find((value) => value.startsWith('--output='));
+  const outputIndex = argv.indexOf('--output');
+  const output = inlineOutput?.slice('--output='.length)
+    ?? (outputIndex >= 0 ? argv[outputIndex + 1] : undefined)
+    ?? 'apps/web/public/data/f1';
+  if (output.startsWith('--')) throw new Error('Не задан путь после --output.');
   const inlineSeason = argv.find((value) => value.startsWith('--season='));
   const seasonIndex = argv.indexOf('--season');
-  const rawSeason = inlineSeason?.slice('--season='.length) ?? argv[seasonIndex + 1];
+  const rawSeason = inlineSeason?.slice('--season='.length)
+    ?? (seasonIndex >= 0 ? argv[seasonIndex + 1] : undefined);
   const season = rawSeason === undefined ? null : Number(rawSeason);
   if (season !== null && (!Number.isInteger(season) || season < 1950)) {
     throw new Error(`Некорректный сезон для экспорта: ${rawSeason}.`);
   }
-  return { outputDirectory: path.resolve(output), season };
+  return {
+    outputDirectory: path.isAbsolute(output) ? output : path.resolve(repositoryRoot, output),
+    season,
+    checkOnly: argv.includes('--check'),
+  };
 }
 
 async function writeJsonAtomic(filePath, value) {
-  const temporaryPath = `${filePath}.tmp`;
+  const temporaryPath = `${filePath}.tmp-${process.pid}`;
   await writeFile(temporaryPath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
   await rename(temporaryPath, filePath);
 }
 
-async function publishStagedDirectory(stagingDirectory, outputDirectory) {
-  await mkdir(outputDirectory, { recursive: true });
-  const entries = await readdir(stagingDirectory, { withFileTypes: true });
+function withoutExportMetadata(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
+  const { exportedAt: _exportedAt, ...semanticValue } = value;
+  return semanticValue;
+}
 
-  for (const entry of entries) {
-    if (!entry.isFile() || !entry.name.endsWith('.json')) continue;
-    const sourcePath = path.join(stagingDirectory, entry.name);
-    const targetPath = path.join(outputDirectory, entry.name);
-    const temporaryPath = `${targetPath}.tmp`;
-    try {
-      await copyFile(sourcePath, temporaryPath);
-      await rename(temporaryPath, targetPath);
-    } finally {
-      await rm(temporaryPath, { force: true });
-    }
+function canonicalize(value) {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(
+    Object.keys(value).sort().map((key) => [key, canonicalize(value[key])]),
+  );
+}
+
+function semanticJson(value) {
+  return JSON.stringify(canonicalize(value));
+}
+
+async function publishJsonIfChanged(filePath, semanticValue, exportedAt, checkOnly) {
+  let existingValue = null;
+  try {
+    existingValue = JSON.parse(await readFile(filePath, 'utf8'));
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
   }
+
+  const unchanged = existingValue !== null
+    && semanticJson(withoutExportMetadata(existingValue)) === semanticJson(semanticValue);
+  if (unchanged) return false;
+  if (!checkOnly) await writeJsonAtomic(filePath, { exportedAt, ...semanticValue });
+  return true;
 }
 
 function asNumber(value) {
@@ -94,14 +169,16 @@ async function readSeasonSnapshot(client, season) {
          d.given_name,
          d.family_name,
          d.abbreviation,
+         d.nationality,
          latest_team.constructor_id,
          latest_team.display_name AS constructor_name,
-         latest_team.team_colour
+         latest_team.team_colour,
+         latest_team.logo_image_url
        FROM atlas.driver_standings AS ds
        JOIN final_round AS fr ON ds.after_round = fr.value
        JOIN atlas.drivers AS d ON d.id = ds.driver_id
        LEFT JOIN LATERAL (
-         SELECT ce.constructor_id, ce.display_name, ce.team_colour
+         SELECT ce.constructor_id, ce.display_name, ce.team_colour, ce.logo_image_url
          FROM atlas.session_results AS sr
          JOIN atlas.sessions AS s ON s.id = sr.session_id
          JOIN atlas.races AS r ON r.id = s.race_id
@@ -129,6 +206,7 @@ async function readSeasonSnapshot(client, season) {
          ce.display_name,
          ce.engine_name,
          ce.team_colour,
+         ce.logo_image_url,
          ce.car_model,
          ce.car_image_url
        FROM atlas.constructor_standings AS cs
@@ -158,9 +236,11 @@ async function readSeasonSnapshot(client, season) {
        d.given_name,
        d.family_name,
        d.abbreviation,
+       d.nationality,
        ce.constructor_id,
        ce.display_name AS constructor_name,
-       ce.team_colour
+       ce.team_colour,
+       ce.logo_image_url
      FROM atlas.session_results AS sr
      JOIN atlas.sessions AS s ON s.id = sr.session_id
      JOIN atlas.races AS r ON r.id = s.race_id
@@ -189,9 +269,11 @@ async function readSeasonSnapshot(client, season) {
       givenName: row.given_name,
       familyName: row.family_name,
       code: row.abbreviation?.trim() ?? null,
+      countryCode: nationalityCountryCode(row.nationality),
       constructorId: row.constructor_id,
       constructorName: row.constructor_name,
       teamColor: row.team_colour,
+      teamLogoUrl: row.logo_image_url,
       points: asNumber(row.points) ?? 0,
       laps: row.laps === null ? null : Number(row.laps),
       status: row.status,
@@ -241,11 +323,13 @@ async function readSeasonSnapshot(client, season) {
         givenName: row.given_name,
         familyName: row.family_name,
         code: row.abbreviation?.trim() ?? null,
+        countryCode: nationalityCountryCode(row.nationality),
         points: asNumber(row.points) ?? 0,
         wins: Number(row.wins),
         constructorId: row.constructor_id,
         constructorName: row.constructor_name,
         teamColor: row.team_colour,
+        teamLogoUrl: row.logo_image_url,
       })),
       constructors: constructorResult.rows.map((row) => ({
         position: Number(row.position),
@@ -255,6 +339,7 @@ async function readSeasonSnapshot(client, season) {
         points: asNumber(row.points) ?? 0,
         wins: Number(row.wins),
         teamColor: row.team_colour,
+        logoImageUrl: row.logo_image_url,
         carModel: row.car_model,
         carImageUrl: row.car_image_url,
       })),
@@ -268,8 +353,7 @@ async function readSeasonSnapshot(client, season) {
 
 async function main() {
   assertDatabaseEnvironment();
-  const { outputDirectory, season: requestedSeason } = readOptions(process.argv.slice(2));
-  const stagingDirectory = `${outputDirectory}.staging-${process.pid}`;
+  const { outputDirectory, season: requestedSeason, checkOnly } = readOptions(process.argv.slice(2));
   const client = new Client({ application_name: 'f1-geovisual-atlas-web-exporter' });
   await client.connect();
 
@@ -286,9 +370,9 @@ async function main() {
        ORDER BY s.year DESC`,
     );
 
-    await rm(stagingDirectory, { recursive: true, force: true });
-    await mkdir(stagingDirectory, { recursive: true });
+    await mkdir(outputDirectory, { recursive: true });
     const exportedAt = new Date().toISOString();
+    let changedFiles = 0;
     const seasons = seasonsResult.rows.map((row) => ({
       year: Number(row.year),
       status: row.status,
@@ -304,23 +388,25 @@ async function main() {
 
     for (const [index, season] of seasonsToExport.entries()) {
       const snapshot = await readSeasonSnapshot(client, season.year);
-      await writeJsonAtomic(path.join(stagingDirectory, `season-${season.year}.json`), {
+      if (await publishJsonIfChanged(
+        path.join(outputDirectory, `season-${season.year}.json`),
+        snapshot,
         exportedAt,
-        ...snapshot,
-      });
+        checkOnly,
+      )) changedFiles += 1;
       process.stdout.write(`\rЭкспорт сезонов: ${index + 1}/${seasonsToExport.length}`);
     }
 
-    await writeJsonAtomic(path.join(stagingDirectory, 'seasons.json'), {
-      exportedAt,
+    if (await publishJsonIfChanged(path.join(outputDirectory, 'seasons.json'), {
       seasons,
-    });
-    await publishStagedDirectory(stagingDirectory, outputDirectory);
+    }, exportedAt, checkOnly)) changedFiles += 1;
     process.stdout.write('\n');
-    console.log(`Веб-снимки сохранены: ${outputDirectory}`);
+    console.log(checkOnly
+      ? `Проверка веб-снимков: ${changedFiles === 0 ? 'актуальны' : `устарело ${changedFiles} файлов`}`
+      : `Веб-снимки обновлены: ${changedFiles}; без изменений: ${seasonsToExport.length + 1 - changedFiles}`);
+    if (checkOnly && changedFiles > 0) process.exitCode = 1;
   } finally {
     await client.end();
-    await rm(stagingDirectory, { recursive: true, force: true });
   }
 }
 

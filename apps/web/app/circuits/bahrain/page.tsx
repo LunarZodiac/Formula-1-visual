@@ -3,10 +3,10 @@ import { CircuitExperience } from '../../components/bahrain-circuit-experience';
 import { bahrainCircuitPage } from '../../data/circuit-page-data';
 
 export const metadata: Metadata = {
-  title: `${bahrainCircuitPage.nameRu} — ${bahrainCircuitPage.officialName} | F1 Geovisual Atlas`,
+  title: `${bahrainCircuitPage.nameRu} — География скорости`,
   description: bahrainCircuitPage.summary.description,
   openGraph: {
-    title: `${bahrainCircuitPage.nameRu} — ${bahrainCircuitPage.officialName}`,
+    title: `${bahrainCircuitPage.nameRu} — География скорости`,
     description: bahrainCircuitPage.summary.description,
     images: [],
   },
