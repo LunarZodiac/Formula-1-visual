@@ -341,12 +341,11 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
   const mapCollections = useMemo(() => travelCollections(collection, roleFilter), [collection, roleFilter]);
   const visiblePoints = useMemo(() => ({
     ...mapCollections.points,
-    features: mapCollections.points.features.filter((feature) => feature.properties?.role !== 'circuit'),
-  }) as TravelMapCollection, [mapCollections.points]);
-  const circuitPoints = useMemo(() => ({
-    type: 'FeatureCollection',
-    features: travelCollections(collection).points.features.filter((feature) => feature.properties?.role === 'circuit'),
-  }) as TravelMapCollection, [collection]);
+    features: [
+      ...mapCollections.points.features.filter((feature) => feature.properties?.role !== 'circuit'),
+      ...travelCollections(collection).points.features.filter((feature) => feature.properties?.role === 'circuit'),
+    ],
+  }) as TravelMapCollection, [collection, mapCollections.points]);
 
   useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
 
@@ -382,19 +381,6 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: { 'line-color': '#ff3158', 'line-width': 2.2, 'line-opacity': .9 },
       });
-      map.addSource('poi-section-circuit-point', { type: 'geojson', data: circuitPoints });
-      map.addLayer({
-        id: 'poi-section-circuit-point', type: 'circle', source: 'poi-section-circuit-point', maxzoom: 11.5,
-        paint: {
-          'circle-radius': ['interpolate', ['linear'], ['zoom'], 4.5, 5, 10, 9],
-          'circle-color': '#ff3158', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2,
-        },
-      });
-      map.addLayer({
-        id: 'poi-section-circuit-label', type: 'symbol', source: 'poi-section-circuit-point', minzoom: 7, maxzoom: 11.5,
-        layout: { 'text-field': ['get', 'name'], 'text-font': ['Noto Sans Regular'], 'text-size': 10, 'text-offset': [0, 1.45], 'text-anchor': 'top' },
-        paint: { 'text-color': '#ffffff', 'text-halo-color': '#06101a', 'text-halo-width': 1.5 },
-      });
       map.addSource('poi-section-zones', { type: 'geojson', data: mapCollections.zones });
       map.addLayer({
         id: 'poi-section-zones-fill', type: 'fill', source: 'poi-section-zones',
@@ -426,12 +412,27 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
         paint: { 'text-color': '#ffffff' },
       });
       map.addLayer({
-        id: 'poi-section-points', type: 'circle', source: 'poi-section-points', filter: ['!', ['has', 'point_count']],
+        id: 'poi-section-points', type: 'circle', source: 'poi-section-points',
+        filter: ['all', ['!', ['has', 'point_count']], ['!=', ['get', 'role'], 'circuit']],
         paint: {
           'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4, 14, 8],
           'circle-color': ['match', ['get', 'role'], 'transport', travelRoleColors.transport, 'stay', travelRoleColors.stay, 'explore', travelRoleColors.explore, 'essential', travelRoleColors.essential, 'circuit', travelRoleColors.circuit, '#a9b7bf'],
           'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.5,
         },
+      });
+      map.addLayer({
+        id: 'poi-section-circuit-point', type: 'circle', source: 'poi-section-points', maxzoom: 11.5,
+        filter: ['all', ['!', ['has', 'point_count']], ['==', ['get', 'role'], 'circuit']],
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 4.5, 5, 10, 9],
+          'circle-color': '#ff3158', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2,
+        },
+      });
+      map.addLayer({
+        id: 'poi-section-circuit-label', type: 'symbol', source: 'poi-section-points', minzoom: 7, maxzoom: 11.5,
+        filter: ['all', ['!', ['has', 'point_count']], ['==', ['get', 'role'], 'circuit']],
+        layout: { 'text-field': ['get', 'name'], 'text-font': ['Noto Sans Regular'], 'text-size': 10, 'text-offset': [0, 1.45], 'text-anchor': 'top' },
+        paint: { 'text-color': '#ffffff', 'text-halo-color': '#06101a', 'text-halo-width': 1.5 },
       });
       map.addSource('poi-section-selection', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       map.addLayer({
@@ -441,7 +442,14 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
       map.addLayer({
         id: 'poi-section-selected-point', type: 'circle', source: 'poi-section-selection',
         filter: ['==', ['geometry-type'], 'Point'],
-        paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 8, 14, 13], 'circle-color': 'rgba(255,49,88,.32)', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 },
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 8, 14, 13],
+          'circle-color': 'rgba(255,49,88,.32)',
+          'circle-opacity': ['case', ['==', ['get', 'role'], 'circuit'], ['step', ['zoom'], 1, 11.5, 0], 1],
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 3,
+          'circle-stroke-opacity': ['case', ['==', ['get', 'role'], 'circuit'], ['step', ['zoom'], 1, 11.5, 0], 1],
+        },
       });
       map.addSource('poi-section-focus', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       map.addLayer({
@@ -451,15 +459,21 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
       map.addLayer({
         id: 'poi-section-focus-point', type: 'circle', source: 'poi-section-focus',
         filter: ['==', ['geometry-type'], 'Point'],
-        paint: { 'circle-radius': 9, 'circle-color': '#07131d', 'circle-stroke-color': '#f2c14e', 'circle-stroke-width': 3 },
+        paint: {
+          'circle-radius': 9,
+          'circle-color': '#07131d',
+          'circle-opacity': ['case', ['==', ['get', 'role'], 'circuit'], ['step', ['zoom'], 1, 11.5, 0], 1],
+          'circle-stroke-color': '#f2c14e',
+          'circle-stroke-width': 3,
+          'circle-stroke-opacity': ['case', ['==', ['get', 'role'], 'circuit'], ['step', ['zoom'], 1, 11.5, 0], 1],
+        },
       });
       map.addLayer({
-        id: 'poi-section-labels', type: 'symbol', source: 'poi-section-points', filter: ['!', ['has', 'point_count']],
+        id: 'poi-section-labels', type: 'symbol', source: 'poi-section-points',
+        filter: ['all', ['!', ['has', 'point_count']], ['!=', ['get', 'role'], 'circuit']],
         layout: { 'text-field': ['get', 'name'], 'text-font': ['Noto Sans Regular'], 'text-size': 10, 'text-offset': [0, 1.55], 'text-anchor': 'top', 'text-optional': true },
         paint: { 'text-color': '#ffffff', 'text-halo-color': '#06101a', 'text-halo-width': 1.5 },
       });
-      map.moveLayer('poi-section-circuit-point');
-      map.moveLayer('poi-section-circuit-label');
       map.on('click', 'poi-section-points', (event) => {
         const feature = event.features?.[0];
         if (!feature || feature.geometry.type !== 'Point') return;
@@ -503,7 +517,6 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
     const source = map.getSource('poi-section-points') as maplibregl.GeoJSONSource | undefined;
     if (!source) return;
     source.setData(visiblePoints);
-    (map.getSource('poi-section-circuit-point') as maplibregl.GeoJSONSource | undefined)?.setData(circuitPoints);
     (map.getSource('poi-section-zones') as maplibregl.GeoJSONSource | undefined)?.setData(mapCollections.zones);
     (map.getSource('poi-section-routes') as maplibregl.GeoJSONSource | undefined)?.setData(mapCollections.routes);
     if (!showAllPoints) return;
@@ -514,7 +527,7 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
       map.fitBounds(allBounds, { padding: 64, maxZoom: 12.5, duration: 0 });
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [circuitPoints, mapCollections.routes, mapCollections.zones, ready, showAllPoints, visiblePoints]);
+  }, [mapCollections.routes, mapCollections.zones, ready, showAllPoints, visiblePoints]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -926,7 +939,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
       });
     });
     resizeObserver.observe(containerRef.current);
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-left');
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
     map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
 
     const collapseAttribution = () => {
@@ -1530,7 +1543,6 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
                   >
                     <div className="podium-driver-portrait" aria-label={`Место для фотографии: ${localizeDriverName(result)}`}>
                       <DriverPortrait driverId={result.driverId} name={localizeDriverName(result)} />
-                      <strong>{result.code ?? result.positionText}</strong>
                     </div>
                     <div className="podium-driver-name">
                       <span className="podium-driver-title">

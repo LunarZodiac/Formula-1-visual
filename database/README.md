@@ -27,6 +27,9 @@ GeoJSON: они будут формироваться импортёром ка�
 - `buildings` — контуры, высоты и ссылки на детальные 3D-модели;
 - `data_sources`, `media_assets`, `external_identifiers` — происхождение,
   лицензии и связь с внешними API.
+- `circuit_page_profiles`, `circuit_page_stats`, `circuit_history_entries`,
+  `circuit_media_gallery` — редакционный профиль универсальной страницы трассы,
+  её показатели, история и упорядоченная медиатека.
 
 ## Пространственная загрузка зданий
 
@@ -64,6 +67,32 @@ WHERE ST_DWithin(
 значение в `sourceChangedAt` и не перечитывает из БД сезоны, источник которых
 не менялся. После применения миграции один полный экспорт обновит метаданные
 существующих снимков; следующие запуски будут выборочными.
+
+Миграция `009_circuit_page_editorial.sql` выносит Hero, stat bar, исторические
+вехи и медиатеку из ручного registry в нормализованные таблицы. Начальные данные
+Спа загружаются идемпотентным seed-файлом, после чего JSON страницы собирается
+из PostgreSQL:
+
+```powershell
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/005_spa_circuit_page.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/006_bahrain_circuit_page.sql --apply
+node --env-file=.env.database.local scripts/export-circuit-pages.mjs
+node --env-file=.env.database.local scripts/export-circuit-pages.mjs --check
+```
+
+Файлы `apps/web/app/data/circuit-pages/spa.json` и `bahrain.json` остаются
+read-model для сборки Next.js. Редактировать перенесённые поля вручную в них не
+следует: экспортёр перезапишет их значениями из базы.
+
+Покрытие профилей и качество источников проверяются отдельным аудитом:
+
+```powershell
+node --env-file=.env.database.local scripts/audit-circuit-page-data.mjs
+```
+
+Отчёт сохраняется в `data/review/circuit-page-data-audit.json`. Показатели без
+`source_id` остаются видимым редакционным долгом, а не получают выдуманный
+источник.
 
 Первая миграция находится в
 `database/migrations/001_initial_postgis_schema.sql`. Она рассчитана на

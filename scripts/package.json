@@ -8,6 +8,8 @@
     "dump:import": "node jolpica-dump-import-postgres.mjs",
     "dump:preview": "node jolpica-dump-preview.mjs",
     "export:web": "node export-web-snapshots.mjs",
+    "export:circuit-pages": "node export-circuit-pages.mjs",
+    "audit:circuit-pages": "node audit-circuit-page-data.mjs",
     "audit:track-sync": "node audit-track-geometry-sync.mjs",
     "preview": "node jolpica-preview.mjs",
     "sync:active": "node sync-active-season.mjs",

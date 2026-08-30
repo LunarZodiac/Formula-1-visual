@@ -1255,8 +1255,8 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   bottom: 48px;
   z-index: 6;
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 31px;
+  height: 31px;
   padding: 0;
   place-items: center;
   border: 1px solid rgba(126, 151, 164, 0.42);
@@ -1271,8 +1271,8 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 .track-north-indicator > span {
   position: relative;
   display: grid;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   place-items: center;
   transition: transform 120ms linear;
 }
@@ -1281,11 +1281,11 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   top: 0;
   width: 0;
   height: 0;
-  border-right: 4px solid transparent;
-  border-bottom: 11px solid var(--accent);
-  border-left: 4px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 8px solid var(--accent);
+  border-left: 3px solid transparent;
 }
-.track-north-indicator b { margin-top: 8px; font-size: 9px; letter-spacing: 0.08em; }
+.track-north-indicator b { margin-top: 6px; font-size: 8px; letter-spacing: 0.08em; }
 .detail-mode {
   position: absolute;
   top: 22px;
@@ -2800,10 +2800,9 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 .track-page--spa .spa-planner,
 .track-page--spa .spa-poi-section,
 .track-page--spa .spa-history {
-  width: min(100%, 1600px);
-  margin-inline: auto;
+  width: 100%;
 }
-.track-page--spa .spa-media { width: min(100%, 1600px); margin-inline: auto; }
+.track-page--spa .spa-media { width: 100%; }
 .track-page--spa .track-hero {
   grid-template-columns: minmax(320px, 4fr) minmax(0, 8fr);
   min-height: 610px;
@@ -2831,7 +2830,10 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
     linear-gradient(90deg, rgba(6, 16, 26, .96) 0, rgba(6, 16, 26, .72) 10%, rgba(6, 16, 26, .28) 24%, transparent 36%, transparent 90%, rgba(3, 10, 16, .5) 100%),
     linear-gradient(0deg, rgba(3, 10, 16, .58), transparent 24%);
 }
-.track-page--spa .track-map-wrap .maplibregl-ctrl-bottom-left { left: 180px; bottom: 8px; }
+.track-page--spa .track-map-wrap .maplibregl-ctrl-bottom-right > .maplibregl-ctrl-group {
+  margin-right: 20px;
+  margin-bottom: 62px;
+}
 .track-hero-actions {
   position: absolute;
   top: 18px;
@@ -2997,7 +2999,7 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 .spa-poi-list-heading span { color: #667b86; font-size: 8px; }
 .spa-poi-list-panel .travel-poi-list { grid-template-columns: 1fr; margin: 0; }
 
-.back-to-top { position: fixed; bottom: 92px; left: 20px; z-index: 80; display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid rgba(105,130,143,.58); border-radius: 50%; color: #dce8ed; background: rgba(4,13,21,.82); opacity: 0; pointer-events: none; transform: translateY(12px); transition: opacity .2s ease, transform .2s ease, border-color .2s ease, background .2s ease; backdrop-filter: blur(12px); cursor: pointer; }
+.back-to-top { position: fixed; bottom: 20px; left: 20px; z-index: 80; display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid rgba(105,130,143,.58); border-radius: 50%; color: #dce8ed; background: rgba(4,13,21,.82); opacity: 0; pointer-events: none; transform: translateY(12px); transition: opacity .2s ease, transform .2s ease, border-color .2s ease, background .2s ease; backdrop-filter: blur(12px); cursor: pointer; }
 .back-to-top.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
 .back-to-top:hover,
 .back-to-top:focus-visible { border-color: var(--accent); color: #fff; background: rgba(255,32,56,.14); }
@@ -3059,7 +3061,10 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   .track-page--spa .track-hero { display: flex; flex-direction: column; }
   .track-page--spa .track-summary { order: 1; padding: 42px 22px 48px; border-right: 0; border-bottom: 1px solid var(--line); }
   .track-page--spa .track-map-wrap { order: 2; width: 100%; min-height: 58svh; margin-left: 0; }
-  .track-page--spa .track-map-wrap .maplibregl-ctrl-bottom-left { left: 0; bottom: 8px; }
+  .track-page--spa .track-map-wrap .maplibregl-ctrl-bottom-right > .maplibregl-ctrl-group {
+    margin-right: 12px;
+    margin-bottom: 56px;
+  }
   .track-hero-actions { top: 12px; right: 12px; }
   .track-hero-actions button { display: none; }
   .track-breadcrumbs { margin-bottom: 24px; }
@@ -3089,5 +3094,5 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
   .spa-history ol { display: block; border-top: 0; border-left: 1px solid var(--line); }
   .spa-history li { min-height: 0; padding: 0 0 34px 28px; border-right: 0; }
   .spa-history li::before { top: 3px; left: -5px; }
-  .back-to-top { bottom: 72px; left: 12px; width: 38px; height: 38px; }
+  .back-to-top { bottom: 12px; left: 12px; width: 38px; height: 38px; }
 }
