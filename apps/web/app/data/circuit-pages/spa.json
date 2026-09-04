@@ -9,25 +9,70 @@
     "cityRu": "Спа-Франкоршам",
     "countryRu": "Бельгия",
     "countryCode": "be",
-    "coordinates": [5.97139, 50.4372]
+    "coordinates": [
+      5.97139,
+      50.4372
+    ]
   },
   "summary": {
     "description": "Семикилометровая трасса в Арденнах с быстрыми связками, переменчивой погодой и одним из самых выразительных перепадов высот в календаре Формулы-1",
     "typeRu": "Стационарная",
-    "highlights": ["Арденны", "19 поворотов", "Стационарная трасса"],
+    "highlights": [
+      "Арденны",
+      "19 поворотов",
+      "Стационарная трасса"
+    ],
     "statBar": [
-      { "label": "Длина трассы", "value": "7,004 км", "icon": "length" },
-      { "label": "Повороты", "value": "19", "icon": "turns" },
-      { "label": "Дебют в F1", "value": "1950", "icon": "debut" },
-      { "label": "Рекорд гонки", "value": "1:44.701", "note": "Серхио Перес · 2024", "icon": "record" },
-      { "label": "Перепад высот", "value": "≈102 м", "note": "Оценка для современной конфигурации", "icon": "elevation" },
-      { "label": "Тип трассы", "value": "Стационарная", "icon": "type" }
+      {
+        "label": "Длина трассы",
+        "value": "7,004 км",
+        "icon": "length"
+      },
+      {
+        "label": "Повороты",
+        "value": "19",
+        "icon": "turns"
+      },
+      {
+        "label": "Дебют в F1",
+        "value": "1950",
+        "icon": "debut"
+      },
+      {
+        "label": "Рекорд круга F1",
+        "value": "1:44.701",
+        "note": "Серхио Перес · 2024",
+        "icon": "record"
+      },
+      {
+        "label": "Перепад высот",
+        "value": "≈102 м",
+        "note": "Оценка для современной конфигурации",
+        "icon": "elevation"
+      },
+      {
+        "label": "Тип трассы",
+        "value": "Стационарная",
+        "icon": "type"
+      }
     ],
     "metrics": [
-      { "label": "Длина", "value": "7,004 км" },
-      { "label": "Круги", "value": "44" },
-      { "label": "Повороты", "value": "19" },
-      { "label": "Дебют", "value": "1950" }
+      {
+        "label": "Длина",
+        "value": "7,004 км"
+      },
+      {
+        "label": "Круги",
+        "value": "44"
+      },
+      {
+        "label": "Повороты",
+        "value": "19"
+      },
+      {
+        "label": "Дебют",
+        "value": "1950"
+      }
     ]
   },
   "map": {
@@ -37,11 +82,80 @@
       "bearing": -31,
       "padding": 30
     },
-    "travelBounds": [[5.84, 50.38], [6.04, 50.52]],
+    "travelBounds": [
+      [
+        5.84,
+        50.38
+      ],
+      [
+        6.04,
+        50.52
+      ]
+    ],
     "travelZoom": 11
   },
   "results": {
-    "seasons": [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008, 2007, 2005, 2004, 2002, 2001, 2000, 1999, 1998, 1997, 1996, 1995, 1994, 1993, 1992, 1991, 1990, 1989, 1988, 1987, 1986, 1985, 1983, 1970, 1968, 1967, 1966, 1965, 1964, 1963, 1962, 1961, 1960, 1958, 1956, 1955, 1954, 1953, 1952, 1951, 1950],
+    "seasons": [
+      2026,
+      2025,
+      2024,
+      2023,
+      2022,
+      2021,
+      2020,
+      2019,
+      2018,
+      2017,
+      2016,
+      2015,
+      2014,
+      2013,
+      2012,
+      2011,
+      2010,
+      2009,
+      2008,
+      2007,
+      2005,
+      2004,
+      2002,
+      2001,
+      2000,
+      1999,
+      1998,
+      1997,
+      1996,
+      1995,
+      1994,
+      1993,
+      1992,
+      1991,
+      1990,
+      1989,
+      1988,
+      1987,
+      1986,
+      1985,
+      1983,
+      1970,
+      1968,
+      1967,
+      1966,
+      1965,
+      1964,
+      1963,
+      1962,
+      1961,
+      1960,
+      1958,
+      1956,
+      1955,
+      1954,
+      1953,
+      1952,
+      1951,
+      1950
+    ],
     "defaultSeason": 2026
   },
   "features": {
@@ -53,55 +167,335 @@
   "travel": {
     "intro": "Гоночный уик-энд в Арденнах начинается задолго до входа на трассу. Выберите сценарий поездки — карта покажет главные точки прибытия, районы проживания и маршруты для свободного дня",
     "categories": [
-      { "id": "transport", "label": "Транспорт" },
-      { "id": "accommodation", "label": "Размещение" },
-      { "id": "attractions", "label": "Достопримечательности" }
+      {
+        "id": "transport",
+        "label": "Транспорт"
+      },
+      {
+        "id": "stay",
+        "label": "Размещение"
+      },
+      {
+        "id": "explore",
+        "label": "Достопримечательности"
+      }
     ],
     "points": [
       {
         "id": "circuit",
         "name": "Спа-Франкоршам",
         "kindRu": "Трасса",
-        "descriptionRu": "Центральная точка гоночного уикенда",
-        "coordinates": [5.97139, 50.4372]
+        "descriptionRu": "Семикилометровая трасса в Арденнах с быстрыми связками, переменчивой погодой и одним из самых выразительных перепадов высот в календаре Формулы-1",
+        "coordinates": [
+          5.97139,
+          50.4372
+        ],
+        "role": "circuit"
       },
       {
-        "id": "spa-town",
-        "name": "Спа",
-        "kindRu": "Город",
-        "descriptionRu": "Курортный город и один из основных ориентиров для поездки",
-        "coordinates": [5.8667, 50.4923]
+        "id": "osm-node-26446051",
+        "name": "Вокзал Вервье-Центральный",
+        "kindRu": "Железнодорожный вокзал",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          5.8551021,
+          50.5883259
+        ],
+        "role": "transport"
       },
       {
-        "id": "stavelot",
-        "name": "Ставло",
-        "kindRu": "Город",
-        "descriptionRu": "Исторический город к юго-западу от трассы",
-        "coordinates": [5.9304, 50.395]
+        "id": "osm-node-5307127700",
+        "name": "Вокзал Льеж-Гийемен",
+        "kindRu": "Железнодорожный вокзал",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          5.567065,
+          50.624728
+        ],
+        "role": "transport"
       },
       {
-        "id": "malmedy",
-        "name": "Мальмеди",
-        "kindRu": "Город",
-        "descriptionRu": "Город к востоку от трассы и дополнительная база размещения",
-        "coordinates": [6.027, 50.426]
+        "id": "osm-way-370594935",
+        "name": "Аэропорт Брюссель",
+        "kindRu": "Аэропорт",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          4.4858042,
+          50.9009305
+        ],
+        "role": "transport"
+      },
+      {
+        "id": "osm-way-63223157",
+        "name": "Аэропорт Брюссель-Шарлеруа",
+        "kindRu": "Аэропорт",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          4.4594573,
+          50.4636393
+        ],
+        "role": "transport"
+      },
+      {
+        "id": "osm-node-1489845082",
+        "name": "Пещеры Ремушам",
+        "kindRu": "Достопримечательность",
+        "descriptionRu": "Достопримечательность",
+        "coordinates": [
+          5.7121091,
+          50.4802072
+        ],
+        "role": "explore"
+      },
+      {
+        "id": "osm-node-1931226811",
+        "name": "Музей трассы Спа-Франкоршам",
+        "kindRu": "Музей",
+        "descriptionRu": "Музей",
+        "coordinates": [
+          5.9322176,
+          50.393728
+        ],
+        "role": "explore"
+      },
+      {
+        "id": "osm-node-1955780257",
+        "name": "Сигнал-де-Ботранж",
+        "kindRu": "Природа",
+        "descriptionRu": "Природа",
+        "coordinates": [
+          6.0925502,
+          50.5015831
+        ],
+        "role": "explore"
+      },
+      {
+        "id": "osm-node-2018449851",
+        "name": "Малмундариум",
+        "kindRu": "Музей",
+        "descriptionRu": "Музей",
+        "coordinates": [
+          6.0274894,
+          50.4270855
+        ],
+        "role": "explore"
+      },
+      {
+        "id": "osm-node-2292957653",
+        "name": "Водопад Байон",
+        "kindRu": "Достопримечательность",
+        "descriptionRu": "Достопримечательность",
+        "coordinates": [
+          6.0868833,
+          50.4782885
+        ],
+        "role": "explore"
+      },
+      {
+        "id": "osm-node-5771053254",
+        "name": "Водопад Коо",
+        "kindRu": "Смотровая площадка",
+        "descriptionRu": "Смотровая площадка",
+        "coordinates": [
+          5.8766351,
+          50.3935946
+        ],
+        "role": "explore"
+      },
+      {
+        "id": "osm-relation-1346961",
+        "name": "Природный центр Ботранж",
+        "kindRu": "Туристический центр",
+        "descriptionRu": "Туристический центр",
+        "coordinates": [
+          6.0995478,
+          50.4934686
+        ],
+        "role": "essential"
+      },
+      {
+        "id": "osm-relation-17885242",
+        "name": "Замок Франшимон",
+        "kindRu": "Историческое место",
+        "descriptionRu": "Историческое место",
+        "coordinates": [
+          5.8240262,
+          50.5276053
+        ],
+        "role": "explore"
+      },
+      {
+        "id": "osm-relation-2269304",
+        "name": "Аэропорт Кёльн/Бонн",
+        "kindRu": "Аэропорт",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          7.1420456,
+          50.8678654
+        ],
+        "role": "transport"
+      },
+      {
+        "id": "osm-way-105586318",
+        "name": "Замок Рейнхардштайн",
+        "kindRu": "Историческое место",
+        "descriptionRu": "Историческое место",
+        "coordinates": [
+          6.1024071,
+          50.4525864
+        ],
+        "role": "explore"
+      },
+      {
+        "id": "osm-way-1418726543",
+        "name": "Аббатство Ставло",
+        "kindRu": "Историческое место",
+        "descriptionRu": "Историческое место",
+        "coordinates": [
+          5.9315352,
+          50.3938119
+        ],
+        "role": "explore"
+      },
+      {
+        "id": "osm-way-89341118",
+        "name": "Казино Спа",
+        "kindRu": "Достопримечательность",
+        "descriptionRu": "Достопримечательность",
+        "coordinates": [
+          5.8658498,
+          50.4919658
+        ],
+        "role": "explore"
+      },
+      {
+        "id": "osm-way-143269312",
+        "name": "Аэропорт Дюссельдорф",
+        "kindRu": "Аэропорт",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          6.7683825,
+          51.2870984
+        ],
+        "role": "transport"
+      },
+      {
+        "id": "osm-node-4021608030",
+        "name": "Станция Спа",
+        "kindRu": "Железнодорожный вокзал",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          5.8555278,
+          50.490188
+        ],
+        "role": "transport"
+      },
+      {
+        "id": "osm-way-389958279",
+        "name": "Аэропорт Люксембург",
+        "kindRu": "Аэропорт",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          6.2114481,
+          49.6263875
+        ],
+        "role": "transport"
+      },
+      {
+        "id": "osm-node-4333858841",
+        "name": "Станция Труа-Пон",
+        "kindRu": "Железнодорожный вокзал",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          5.8730278,
+          50.3691636
+        ],
+        "role": "transport"
+      },
+      {
+        "id": "osm-way-6344354",
+        "name": "Аэропорт Маастрихт-Ахен",
+        "kindRu": "Аэропорт",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          5.7700666,
+          50.9120332
+        ],
+        "role": "transport"
+      },
+      {
+        "id": "osm-node-4021608031",
+        "name": "Станция Спа-Жеронстер",
+        "kindRu": "Железнодорожный вокзал",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          5.867001,
+          50.4892874
+        ],
+        "role": "transport"
+      },
+      {
+        "id": "osm-node-3070631211",
+        "name": "Главный вокзал Ахена",
+        "kindRu": "Железнодорожный вокзал",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          6.0913818,
+          50.7677663
+        ],
+        "role": "transport"
+      },
+      {
+        "id": "osm-way-363819134",
+        "name": "Аэропорт Льеж",
+        "kindRu": "Аэропорт",
+        "descriptionRu": "Проверить расписание и доступность трансфера для выбранного года",
+        "coordinates": [
+          5.4450141,
+          50.6382307
+        ],
+        "role": "transport"
       }
     ],
     "planner": {
-      "sourceNote": "Точки и районы поступают из PostgreSQL/PostGIS и OpenStreetMap, затем проходят редакционную проверку перед публикацией",
-      "routeNote": "Маршруты появятся на карте только после проверки геометрии, сезонной схемы движения и статуса published",
       "useful": [
-        { "label": "Прибытие", "value": "Через Вервье", "detail": "В дни этапа схему трансфера определяют организатор и полиция" },
-        { "label": "Размещение", "value": "Шесть районов", "detail": "Выбор района задаёт ритм всей поездки" },
-        { "label": "Свободный день", "value": "Арденны", "detail": "Ставло, Коо и Высокие Фены собраны в туристическом слое" }
-      ]
+        {
+          "label": "Прибытие",
+          "value": "Через Вервье",
+          "detail": "В дни этапа схему трансфера определяют организатор и полиция"
+        },
+        {
+          "label": "Размещение",
+          "value": "Шесть районов",
+          "detail": "Выбор района задаёт ритм всей поездки"
+        },
+        {
+          "label": "Свободный день",
+          "value": "Арденны",
+          "detail": "Ставло, Коо и Высокие Фены собраны в туристическом слое"
+        }
+      ],
+      "sourceNote": "Точки и районы поступают из PostgreSQL/PostGIS и OpenStreetMap, затем проходят редакционную проверку перед публикацией",
+      "routeNote": "Маршруты появятся на карте только после проверки геометрии, сезонной схемы движения и статуса published"
     },
     "story": {
       "stats": [
-        { "value": "3", "label": "сценария поездки" },
-        { "value": "6", "label": "районов проживания" },
-        { "value": "22", "label": "проверенные точки" },
-        { "value": "2026", "label": "сезон транспортной схемы" }
+        {
+          "value": "3",
+          "label": "сценария поездки"
+        },
+        {
+          "value": "6",
+          "label": "районов проживания"
+        },
+        {
+          "value": "22",
+          "label": "проверенные точки"
+        },
+        {
+          "value": "2026",
+          "label": "сезон транспортной схемы"
+        }
       ],
       "chapters": [
         {
@@ -110,8 +504,12 @@
           "eyebrow": "Прибытие",
           "title": "В Арденны через Вервье",
           "description": "В 2026 году поезд доставлял до Вервье-Центрального, откуда в дни Гран-при работал специальный трансфер. Точная линия не показывается: сезонный маршрут определяли организатор и полиция",
-          "markerIds": ["brussels", "liege", "verviers", "circuit"],
-          "mapFeatureIds": ["osm-way-370594935", "osm-node-5307127700", "osm-node-26446051", "osm-way-234804574"],
+          "mapFeatureIds": [
+            "osm-way-370594935",
+            "osm-node-5307127700",
+            "osm-node-26446051",
+            "osm-way-234804574"
+          ],
           "image": "https://upload.wikimedia.org/wikipedia/commons/6/62/Spa-Francorchamps_overview.jpg"
         },
         {
@@ -120,8 +518,12 @@
           "eyebrow": "Размещение",
           "title": "Выберите характер поездки",
           "description": "Франкоршам — ради близости к трассе, Мальмеди — ради удобства, Ставло — ради истории, а Спа — ради городской жизни после заездов",
-          "markerIds": ["spa", "stavelot", "malmedy", "circuit"],
-          "mapFeatureIds": ["spa-stay-spa", "spa-stay-stavelot", "spa-stay-malmedy", "spa-stay-francorchamps"],
+          "mapFeatureIds": [
+            "spa-stay-spa",
+            "spa-stay-stavelot",
+            "spa-stay-malmedy",
+            "spa-stay-francorchamps"
+          ],
           "image": "https://www.carnetdescapades.com/wp-content/uploads/2023/06/ville-spa-wallonie-1080x810.jpg"
         },
         {
@@ -130,46 +532,188 @@
           "eyebrow": "Свободный день",
           "title": "За пределами автодрома",
           "description": "После квалификации можно отправиться к аббатству Ставло и водопаду Коо, а полный свободный день посвятить Высоким Фенам и замку Рейнхардштайн",
-          "markerIds": ["stavelot", "coo", "botrange", "circuit"],
-          "mapFeatureIds": ["osm-way-1418726543", "osm-node-5771053254", "osm-node-1955780257", "osm-way-105586318"],
+          "mapFeatureIds": [
+            "osm-way-1418726543",
+            "osm-node-5771053254",
+            "osm-node-1955780257",
+            "osm-way-105586318"
+          ],
           "image": "https://heritage-voyager-production-contentbucket-xwndfune.s3.amazonaws.com/images/sites/spa-towns-of-europe/spa-belgium-thermes-modern-large-1920w.webp"
         }
       ],
-      "markers": [
-        { "id": "brussels", "label": "Брюссель", "kind": "Аэропорт", "x": 11, "y": 72 },
-        { "id": "liege", "label": "Льеж", "kind": "Вокзал", "x": 34, "y": 52 },
-        { "id": "verviers", "label": "Вервье", "kind": "Трансфер", "x": 52, "y": 38 },
-        { "id": "spa", "label": "Спа", "kind": "Город", "x": 54, "y": 18 },
-        { "id": "stavelot", "label": "Ставло", "kind": "История", "x": 66, "y": 71 },
-        { "id": "malmedy", "label": "Мальмеди", "kind": "Город", "x": 84, "y": 51 },
-        { "id": "coo", "label": "Коо", "kind": "Водопад", "x": 57, "y": 87 },
-        { "id": "botrange", "label": "Ботранж", "kind": "Природа", "x": 88, "y": 17 },
-        { "id": "circuit", "label": "Спа-Франкоршам", "kind": "Трасса", "x": 70, "y": 43 }
-      ],
       "zones": [
-        { "id": "francorchamps", "mapFeatureId": "spa-stay-francorchamps", "name": "Франкоршам", "character": "В эпицентре гонки", "travelTime": "5–15 минут", "bestFor": "пешком до трассы и атмосфера этапа", "tone": "#ff3158", "image": "https://www.mini-ardenne.be/pictures/walks/182.jpg" },
-        { "id": "malmedy", "mapFeatureId": "spa-stay-malmedy", "name": "Мальмеди", "character": "Практичная база", "travelTime": "15–30 минут", "bestFor": "автомобиль, рестораны и семья", "tone": "#f2c14e", "image": "https://upload.wikimedia.org/wikipedia/commons/6/62/Spa-Francorchamps_overview.jpg" },
-        { "id": "stavelot", "mapFeatureId": "spa-stay-stavelot", "name": "Ставло", "character": "История Арденн", "travelTime": "20–35 минут", "bestFor": "музей трассы и спокойный вечер", "tone": "#a47cff", "image": "https://www.carnetdescapades.com/wp-content/uploads/2023/06/ville-spa-wallonie-1080x810.jpg" },
-        { "id": "spa", "mapFeatureId": "spa-stay-spa", "name": "Спа", "character": "Город после заездов", "travelTime": "25–45 минут", "bestFor": "отели, вокзал и рестораны", "tone": "#58c7e8", "image": "https://img.static-rmg.be/a/view/q75/w2000/h1333/5402972/62d6e96c079257ab100a87c2d1abc783-jpg.jpg" },
-        { "id": "trois-ponts", "mapFeatureId": "spa-stay-trois-ponts", "name": "Труа-Пон", "character": "Ближе к природе", "travelTime": "30–45 минут", "bestFor": "поезд, Коо и тихий отдых", "tone": "#7fd98a", "image": "https://heritage-voyager-production-contentbucket-xwndfune.s3.amazonaws.com/images/sites/spa-towns-of-europe/spa-belgium-thermes-modern-large-1920w.webp" },
-        { "id": "verviers", "mapFeatureId": "spa-stay-verviers", "name": "Вервье", "character": "Без автомобиля", "travelTime": "трансфер 25–50 минут", "bestFor": "железная дорога и городской сервис", "tone": "#8ea0aa", "image": "https://www.carnetdescapades.com/wp-content/uploads/2023/06/ville-spa-wallonie-1080x810.jpg" }
+        {
+          "id": "francorchamps",
+          "mapFeatureId": "spa-stay-francorchamps",
+          "name": "Франкоршам",
+          "character": "В эпицентре гонки",
+          "travelTime": "5–15 минут",
+          "bestFor": "короткий путь до трассы, кемпинг, атмосфера этапа",
+          "tone": "#FF3158",
+          "image": "https://www.mini-ardenne.be/pictures/walks/182.jpg"
+        },
+        {
+          "id": "malmedy",
+          "mapFeatureId": "spa-stay-malmedy",
+          "name": "Мальмеди",
+          "character": "Практичная база",
+          "travelTime": "15–30 минут",
+          "bestFor": "автомобиль, рестораны, семья",
+          "tone": "#F2C14E",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/6/62/Spa-Francorchamps_overview.jpg"
+        },
+        {
+          "id": "stavelot",
+          "mapFeatureId": "spa-stay-stavelot",
+          "name": "Ставло",
+          "character": "История Арденн",
+          "travelTime": "20–35 минут",
+          "bestFor": "история, спокойный отдых, музей автоспорта",
+          "tone": "#A47CFF",
+          "image": "https://www.carnetdescapades.com/wp-content/uploads/2023/06/ville-spa-wallonie-1080x810.jpg"
+        },
+        {
+          "id": "spa",
+          "mapFeatureId": "spa-stay-spa",
+          "name": "Спа",
+          "character": "Город после заездов",
+          "travelTime": "25–45 минут",
+          "bestFor": "без автомобиля, отели, городская прогулка",
+          "tone": "#58C7E8",
+          "image": "https://img.static-rmg.be/a/view/q75/w2000/h1333/5402972/62d6e96c079257ab100a87c2d1abc783-jpg.jpg"
+        },
+        {
+          "id": "trois-ponts",
+          "mapFeatureId": "spa-stay-trois-ponts",
+          "name": "Труа-Пон",
+          "character": "Ближе к природе",
+          "travelTime": "30–45 минут",
+          "bestFor": "поезд, природа, спокойный отдых",
+          "tone": "#7FD98A",
+          "image": "https://heritage-voyager-production-contentbucket-xwndfune.s3.amazonaws.com/images/sites/spa-towns-of-europe/spa-belgium-thermes-modern-large-1920w.webp"
+        },
+        {
+          "id": "verviers",
+          "mapFeatureId": "spa-stay-verviers",
+          "name": "Вервье",
+          "character": "Без автомобиля",
+          "travelTime": "трансфер 25–50 минут",
+          "bestFor": "общественный транспорт, бюджетное размещение, длительная поездка",
+          "tone": "#8EA0AA",
+          "image": "https://www.carnetdescapades.com/wp-content/uploads/2023/06/ville-spa-wallonie-1080x810.jpg"
+        }
       ],
       "routes": [],
       "gallery": [
-        { "src": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ayrton_Senna_during_the_race_in_Spa-Francorchamps_on_25_August_1991.jpg", "title": "Айртон Сенна · 1991", "description": "Айртон Сенна на трассе Спа-Франкоршам", "credit": "George Voudouris", "license": "CC BY-SA 4.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ayrton_Senna_during_the_race_in_Spa-Francorchamps_on_25_August_1991.jpg" },
-        { "src": "https://commons.wikimedia.org/wiki/Special:Redirect/file/David_Coulthard_2008_Belgian_GP_001.jpg", "title": "Гран-при Бельгии · 2008", "description": "Дэвид Култхард во время гоночного уик-энда", "credit": "Mark J. McArdle / ph-stop", "license": "CC BY-SA 2.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:David_Coulthard_2008_Belgian_GP_001.jpg" },
-        { "src": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Spa_francorchamps.jpg", "title": "Спа · 2005", "description": "Автодром во время гоночного уик-энда", "credit": "Auguste Linotte", "license": "CC BY-SA 3.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spa_francorchamps.jpg" },
-        { "src": "https://commons.wikimedia.org/wiki/Special:Redirect/file/EauRougeInTheSnow.jpg", "title": "Eau Rouge зимой", "description": "Знаменитый подъём вне гоночного сезона", "credit": "David Edgar", "license": "CC BY-SA 3.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:EauRougeInTheSnow.jpg" },
-        { "src": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Spa_after_finish,_2011_Belgian_Grand_Prix._-_panoramio.jpg", "title": "После финиша · 2011", "description": "Панорама трассы после Гран-при Бельгии", "credit": "de_vald", "license": "CC BY-SA 3.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spa_after_finish,_2011_Belgian_Grand_Prix._-_panoramio.jpg" },
-        { "src": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Circuit_de_Spa-Francorchamps_(1).jpg", "title": "Трасса · 2013", "description": "Спа-Франкоршам перед гоночным уик-эндом", "credit": "Kevin A. McGill", "license": "CC BY-SA 2.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Circuit_de_Spa-Francorchamps_(1).jpg" },
-        { "src": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Spa_paddock.jpg", "title": "Паддок · 2005", "description": "Рабочая зона команд на Спа-Франкоршам", "credit": "Schumi4ever", "license": "CC BY-SA 4.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spa_paddock.jpg" }
+        {
+          "src": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ayrton_Senna_during_the_race_in_Spa-Francorchamps_on_25_August_1991.jpg",
+          "title": "Айртон Сенна · 1991",
+          "description": "Айртон Сенна на трассе Спа-Франкоршам",
+          "credit": "George Voudouris",
+          "license": "CC BY-SA 4.0",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ayrton_Senna_during_the_race_in_Spa-Francorchamps_on_25_August_1991.jpg"
+        },
+        {
+          "src": "/assets/f1/circuits/spa/media/spa-gallery-belgian-gp-2008-1280.webp",
+          "srcSet": "/assets/f1/circuits/spa/media/spa-gallery-belgian-gp-2008-640.webp 640w, /assets/f1/circuits/spa/media/spa-gallery-belgian-gp-2008-1280.webp 1280w, /assets/f1/circuits/spa/media/spa-gallery-belgian-gp-2008-1920.webp 1920w",
+          "fullSrc": "/assets/f1/circuits/spa/media/spa-gallery-belgian-gp-2008-1920.webp",
+          "title": "Гран-при Бельгии · 2008",
+          "description": "Дэвид Култхард во время гоночного уик-энда",
+          "credit": "Mark J. McArdle / ph-stop",
+          "license": "CC BY-SA 2.0",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:David_Coulthard_2008_Belgian_GP_001.jpg"
+        },
+        {
+          "src": "/assets/f1/circuits/spa/media/spa-gallery-circuit-2005-1280.webp",
+          "srcSet": "/assets/f1/circuits/spa/media/spa-gallery-circuit-2005-640.webp 640w, /assets/f1/circuits/spa/media/spa-gallery-circuit-2005-1280.webp 1280w, /assets/f1/circuits/spa/media/spa-gallery-circuit-2005-1920.webp 1920w",
+          "fullSrc": "/assets/f1/circuits/spa/media/spa-gallery-circuit-2005-1920.webp",
+          "title": "Спа · 2005",
+          "description": "Автодром во время гоночного уик-энда",
+          "credit": "Auguste Linotte",
+          "license": "CC BY-SA 3.0",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spa_francorchamps.jpg"
+        },
+        {
+          "src": "/assets/f1/circuits/spa/media/spa-gallery-eau-rouge-snow-1280.webp",
+          "srcSet": "/assets/f1/circuits/spa/media/spa-gallery-eau-rouge-snow-640.webp 640w, /assets/f1/circuits/spa/media/spa-gallery-eau-rouge-snow-1280.webp 1280w, /assets/f1/circuits/spa/media/spa-gallery-eau-rouge-snow-1920.webp 1920w",
+          "fullSrc": "/assets/f1/circuits/spa/media/spa-gallery-eau-rouge-snow-1920.webp",
+          "title": "Eau Rouge зимой",
+          "description": "Знаменитый подъём вне гоночного сезона",
+          "credit": "David Edgar",
+          "license": "CC BY-SA 3.0",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:EauRougeInTheSnow.jpg"
+        },
+        {
+          "src": "/assets/f1/circuits/spa/media/spa-gallery-after-finish-2011-1280.webp",
+          "srcSet": "/assets/f1/circuits/spa/media/spa-gallery-after-finish-2011-640.webp 640w, /assets/f1/circuits/spa/media/spa-gallery-after-finish-2011-1280.webp 1280w, /assets/f1/circuits/spa/media/spa-gallery-after-finish-2011-1920.webp 1920w",
+          "fullSrc": "/assets/f1/circuits/spa/media/spa-gallery-after-finish-2011-1920.webp",
+          "title": "После финиша · 2011",
+          "description": "Панорама трассы после Гран-при Бельгии",
+          "credit": "de_vald",
+          "license": "CC BY-SA 3.0",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spa_after_finish,_2011_Belgian_Grand_Prix._-_panoramio.jpg"
+        },
+        {
+          "src": "/assets/f1/circuits/spa/media/spa-gallery-circuit-2013-1280.webp",
+          "srcSet": "/assets/f1/circuits/spa/media/spa-gallery-circuit-2013-640.webp 640w, /assets/f1/circuits/spa/media/spa-gallery-circuit-2013-1280.webp 1280w, /assets/f1/circuits/spa/media/spa-gallery-circuit-2013-1920.webp 1920w",
+          "fullSrc": "/assets/f1/circuits/spa/media/spa-gallery-circuit-2013-1920.webp",
+          "title": "Трасса · 2013",
+          "description": "Спа-Франкоршам перед гоночным уик-эндом",
+          "credit": "Kevin A. McGill",
+          "license": "CC BY-SA 2.0",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Circuit_de_Spa-Francorchamps_(1).jpg"
+        },
+        {
+          "src": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Spa_paddock.jpg",
+          "title": "Паддок · 2005",
+          "description": "Рабочая зона команд на Спа-Франкоршам",
+          "credit": "Schumi4ever",
+          "license": "CC BY-SA 4.0",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spa_paddock.jpg"
+        }
       ]
     }
   },
   "history": [
-    { "year": "1921", "title": "Первые соревнования", "description": "Автогонка не состоялась из-за одной заявки, но по дорожному кольцу прошла мотогонка", "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/D%C3%A9part_du_Grand_Prix_d%27Europe_1925_%C3%A0_Spa,_Antonio_Ascari_devant_Campari.jpg", "imageAlt": "Старт Гран-при в Спа в 1925 году", "credit": "Le Miroir des sports, автор неизвестен", "license": "Public domain", "sourceUrl": "https://commons.wikimedia.org/wiki/File:D%C3%A9part_du_Grand_Prix_d%27Europe_1925_%C3%A0_Spa,_Antonio_Ascari_devant_Campari.jpg" },
-    { "year": "1939", "title": "Рождение Raidillon", "description": "Спрямление у старой таможни сформировало знаменитый подъём с уклоном до 17%", "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Start_Grand_Prix_Belgie_(1939).jpg", "imageAlt": "Старт Гран-при Бельгии 1939 года", "credit": "Magazine Auto, автор неизвестен", "license": "Public domain", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Start_Grand_Prix_Belgie_(1939).jpg" },
-    { "year": "1950", "title": "Дебют чемпионата мира", "description": "Спа вошёл в первый сезон Формулы-1; гонку выиграл Хуан-Мануэль Фанхио", "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Grand_prix_vers_1950.jpg", "imageAlt": "Гоночные автомобили эпохи первого чемпионата мира около 1950 года", "credit": "Chantal Buldorini Detaille / Fonds photographie Georges Detaille", "license": "CC BY-SA 4.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Grand_prix_vers_1950.jpg" },
-    { "year": "1979", "title": "Новая конфигурация", "description": "Кольцо сократили до 6,947 км; современная версия позднее достигла длины 7,004 км", "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/1989_Belgian_GP_race_start_08.jpg", "imageAlt": "Старт Гран-при Бельгии 1989 года на укороченной конфигурации", "credit": "madagascarica", "license": "CC BY 2.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:1989_Belgian_GP_race_start_08.jpg" }
+    {
+      "year": "1921",
+      "title": "Первые соревнования",
+      "description": "Автогонка не состоялась из-за одной заявки, но по дорожному кольцу прошла мотогонка",
+      "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/D%C3%A9part_du_Grand_Prix_d%27Europe_1925_%C3%A0_Spa,_Antonio_Ascari_devant_Campari.jpg",
+      "imageAlt": "Старт Гран-при в Спа в 1925 году",
+      "credit": "Le Miroir des sports, автор неизвестен",
+      "license": "Public domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:D%C3%A9part_du_Grand_Prix_d%27Europe_1925_%C3%A0_Spa,_Antonio_Ascari_devant_Campari.jpg"
+    },
+    {
+      "year": "1939",
+      "title": "Рождение Raidillon",
+      "description": "Спрямление у старой таможни сформировало знаменитый подъём с уклоном до 17%",
+      "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Start_Grand_Prix_Belgie_(1939).jpg",
+      "imageAlt": "Старт Гран-при Бельгии 1939 года",
+      "credit": "Magazine Auto, автор неизвестен",
+      "license": "Public domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Start_Grand_Prix_Belgie_(1939).jpg"
+    },
+    {
+      "year": "1950",
+      "title": "Дебют чемпионата мира",
+      "description": "Спа вошёл в первый сезон Формулы-1; гонку выиграл Хуан-Мануэль Фанхио",
+      "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Grand_prix_vers_1950.jpg",
+      "imageAlt": "Гоночные автомобили эпохи первого чемпионата мира около 1950 года",
+      "credit": "Chantal Buldorini Detaille / Fonds photographie Georges Detaille",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Grand_prix_vers_1950.jpg"
+    },
+    {
+      "year": "1979",
+      "title": "Новая конфигурация",
+      "description": "Кольцо сократили до 6,947 км; современная версия позднее достигла длины 7,004 км",
+      "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/1989_Belgian_GP_race_start_08.jpg",
+      "imageAlt": "Старт Гран-при Бельгии 1989 года на укороченной конфигурации",
+      "credit": "madagascarica",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:1989_Belgian_GP_race_start_08.jpg"
+    }
   ]
 }

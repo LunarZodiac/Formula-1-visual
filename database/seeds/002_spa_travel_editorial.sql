@@ -129,6 +129,7 @@ WHERE id IN (
 
 UPDATE atlas.circuit_travel_pois
 SET
+    role = CASE WHEN poi_id = 'osm-way-234804574' THEN 'circuit' ELSE role END,
     priority = 96,
     is_featured = true,
     source_id = 'visit_wallonia',

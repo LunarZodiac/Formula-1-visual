@@ -1,6 +1,11 @@
 BEGIN;
 
-CREATE EXTENSION IF NOT EXISTS postgis;
+-- Supabase installs extensions into a dedicated schema. Keeping both schemas in
+-- the migration search path also preserves compatibility with local databases
+-- where PostGIS was previously installed into public.
+CREATE SCHEMA IF NOT EXISTS extensions;
+CREATE EXTENSION IF NOT EXISTS postgis SCHEMA extensions;
+SET LOCAL search_path = public, extensions;
 
 CREATE SCHEMA IF NOT EXISTS atlas;
 

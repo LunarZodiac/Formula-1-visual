@@ -30,6 +30,52 @@ ON CONFLICT (circuit_id) DO UPDATE SET
     source_id = EXCLUDED.source_id,
     updated_at = now();
 
+INSERT INTO atlas.circuit_page_map_settings (
+    circuit_id, track_max_zoom, track_pitch, track_bearing, track_padding,
+    travel_bounds, travel_zoom
+) VALUES (
+    'bahrain', 15.3, 52, -18, 92,
+    ST_MakeEnvelope(50.48, 25.99, 50.67, 26.3, 4326), 10.8
+)
+ON CONFLICT (circuit_id) DO UPDATE SET
+    track_max_zoom = EXCLUDED.track_max_zoom,
+    track_pitch = EXCLUDED.track_pitch,
+    track_bearing = EXCLUDED.track_bearing,
+    track_padding = EXCLUDED.track_padding,
+    travel_bounds = EXCLUDED.travel_bounds,
+    travel_zoom = EXCLUDED.travel_zoom,
+    updated_at = now();
+
+INSERT INTO atlas.circuit_page_feature_flags (
+    circuit_id, technical_overlay, travel_mode, local_3d_model, buildings_3d
+) VALUES ('bahrain', true, true, true, true)
+ON CONFLICT (circuit_id) DO UPDATE SET
+    technical_overlay = EXCLUDED.technical_overlay,
+    travel_mode = EXCLUDED.travel_mode,
+    local_3d_model = EXCLUDED.local_3d_model,
+    buildings_3d = EXCLUDED.buildings_3d,
+    updated_at = now();
+
+INSERT INTO atlas.circuit_page_result_settings (circuit_id, default_season)
+VALUES ('bahrain', 2024)
+ON CONFLICT (circuit_id) DO UPDATE SET
+    default_season = EXCLUDED.default_season,
+    updated_at = now();
+
+INSERT INTO atlas.circuit_travel_profiles (
+    circuit_id, base_city_name, timezone, intro_ru, page_intro_ru,
+    target_poi_count, target_route_count, target_zone_count, editorial_status
+) VALUES (
+    'bahrain', 'Манама', 'Asia/Bahrain', 'Путеводитель по Бахрейну вокруг автодрома',
+    'Режим «Поездка» связывает трассу с Манамой и международным аэропортом. Далее сюда добавятся проверенные категории мест без перегрузки основной карты',
+    40, 4, 3, 'draft'
+)
+ON CONFLICT (circuit_id) DO UPDATE SET
+    base_city_name = EXCLUDED.base_city_name,
+    timezone = EXCLUDED.timezone,
+    page_intro_ru = EXCLUDED.page_intro_ru,
+    updated_at = now();
+
 DELETE FROM atlas.circuit_page_stats WHERE circuit_id = 'bahrain';
 INSERT INTO atlas.circuit_page_stats (
     circuit_id, section, sort_order, label_ru, value_ru, note_ru, icon, source_id

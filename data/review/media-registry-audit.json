@@ -1,0 +1,81 @@
+{
+  "generatedAt": "2026-08-30T22:17:11.955Z",
+  "scope": {
+    "publishedCircuitPages": 2,
+    "note": "Проверка страниц пока ограничена опубликованными шаблонами Спа и Бахрейна."
+  },
+  "summary": {
+    "mediaAssets": 73,
+    "publishedCircuitPagesWithoutHistory": 1,
+    "publishedCircuitPagesWithoutGallery": 1,
+    "globallyReusedCircuitMedia": 0,
+    "reviewedImagesWithoutDerivatives": 6,
+    "missingLocalFiles": 0
+  },
+  "circuitCoverage": [
+    {
+      "circuitId": "bahrain",
+      "historyItems": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "spa",
+      "historyItems": 4,
+      "galleryItems": 7
+    }
+  ],
+  "registryStatus": [
+    {
+      "provenance_type": "provided_by_user",
+      "rights_status": "unresolved",
+      "review_status": "candidate",
+      "count": 62
+    },
+    {
+      "provenance_type": "verified_source",
+      "rights_status": "verified",
+      "review_status": "reviewed",
+      "count": 11
+    }
+  ],
+  "globallyReusedCircuitMedia": [],
+  "reviewedImagesWithoutDerivatives": [
+    {
+      "id": "spa-gallery-paddock-2005",
+      "entity_type": "circuit",
+      "entity_id": "spa",
+      "usage_role": "gallery"
+    },
+    {
+      "id": "spa-gallery-senna-1991",
+      "entity_type": "circuit",
+      "entity_id": "spa",
+      "usage_role": "gallery"
+    },
+    {
+      "id": "spa-history-1921",
+      "entity_type": "circuit_history",
+      "entity_id": "spa-1921",
+      "usage_role": "history"
+    },
+    {
+      "id": "spa-history-1939",
+      "entity_type": "circuit_history",
+      "entity_id": "spa-1939",
+      "usage_role": "history"
+    },
+    {
+      "id": "spa-history-1950",
+      "entity_type": "circuit_history",
+      "entity_id": "spa-1950",
+      "usage_role": "history"
+    },
+    {
+      "id": "spa-history-1979",
+      "entity_type": "circuit_history",
+      "entity_id": "spa-1979",
+      "usage_role": "history"
+    }
+  ],
+  "missingLocalFiles": []
+}

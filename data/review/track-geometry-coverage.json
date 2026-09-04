@@ -1,0 +1,807 @@
+{
+  "scopeNote": "Проверяет техническую разрешимость runtime-геометрии, но не подтверждает историческую точность и связь races.layout_id. Для этого используется audit-historical-layouts.mjs.",
+  "seasons": 78,
+  "uniqueCircuits": 78,
+  "registeredCircuits": 78,
+  "automaticallyCoveredCircuits": 77,
+  "unresolvedGeometryProvenance": 0,
+  "registeredGeometries": [
+    {
+      "circuitId": "yas_marina",
+      "geometryId": "ae-2009",
+      "length": 5281,
+      "years": "2009–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "galvez",
+      "geometryId": "ar-1952",
+      "length": 4322,
+      "years": "1953–1958, 1960, 1972–1975, 1977–1981, 1995–1998",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "red_bull_ring",
+      "geometryId": "at-1969",
+      "length": 4318,
+      "years": "1970–1987, 1997–2003, 2014–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "zeltweg",
+      "geometryId": "at-zeltweg-1964",
+      "length": 6189,
+      "years": "1964",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "adelaide",
+      "geometryId": "au-adelaide-1985",
+      "length": 3934,
+      "years": "1985–1995",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "albert_park",
+      "geometryId": "au-1953",
+      "length": 5278,
+      "years": "1996–2019, 2022–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "baku",
+      "geometryId": "az-2016",
+      "length": 6003,
+      "years": "2016–2019, 2021–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "spa",
+      "geometryId": "be-1925",
+      "length": 7004,
+      "years": "1950–1956, 1958, 1960–1968, 1970, 1983, 1985–2002, 2004–2005, 2007–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "zolder",
+      "geometryId": "be-1963-zolder",
+      "length": 4001,
+      "years": "1973, 1975–1982, 1984",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "nivelles",
+      "geometryId": "be-nivelles-1972",
+      "length": 2821,
+      "years": "1972, 1974",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "bahrain",
+      "geometryId": "bh-2002",
+      "length": 5412,
+      "years": "2004–2010, 2012–2025, 2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "interlagos",
+      "geometryId": "br-1940",
+      "length": 4309,
+      "years": "1973–1977, 1979–1980, 1990–2019, 2021–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "jacarepagua",
+      "geometryId": "br-1977",
+      "length": 5031,
+      "years": "1978, 1981–1989",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "villeneuve",
+      "geometryId": "ca-1978",
+      "length": 4361,
+      "years": "1978–1986, 1988–2008, 2010–2019, 2022–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "mosport",
+      "geometryId": "ca-1961-mosport",
+      "length": 3943,
+      "years": "1967, 1969, 1971–1974, 1976–1977",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "tremblant",
+      "geometryId": "ca-1964-mont-tremblant",
+      "length": 4234,
+      "years": "1968, 1970",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "shanghai",
+      "geometryId": "cn-2004",
+      "length": 5451,
+      "years": "2004–2019, 2024–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "bremgarten",
+      "geometryId": "ch-1931-bremgarten",
+      "length": 7216,
+      "years": "1950–1954",
+      "dataset": "openstreetmap",
+      "source": "OpenHistoricalMap contributors — Bremgarten-Rundstrecke",
+      "licence": "CC0-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "nurburgring",
+      "geometryId": "de-1927",
+      "length": 5148,
+      "years": "1951–1954, 1956–1958, 1961–1969, 1971–1976, 1984–1985, 1995–2007, 2009, 2011, 2013, 2020",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "hockenheimring",
+      "geometryId": "de-1932",
+      "length": 4574,
+      "years": "1970, 1977–1984, 1986–2006, 2008, 2010, 2012, 2014, 2016, 2018–2019",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "avus",
+      "geometryId": "de-avus-1959",
+      "length": 3897,
+      "years": "1959",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "catalunya",
+      "geometryId": "es-1991",
+      "length": 4655,
+      "years": "1991–2026",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "jarama",
+      "geometryId": "es-1967-jarama",
+      "length": 3906,
+      "years": "1968, 1970, 1972, 1974, 1976–1979, 1981",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "jerez",
+      "geometryId": "es-1985-jerez",
+      "length": 4426,
+      "years": "1986–1990, 1994, 1997",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "valencia",
+      "geometryId": "es-2008-valencia",
+      "length": 5313,
+      "years": "2008–2012",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "montjuic",
+      "geometryId": "es-1933-montjuic",
+      "length": 3787,
+      "years": "1969, 1971, 1973, 1975",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "madring",
+      "geometryId": "es-2026",
+      "length": 5474,
+      "years": "2026–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "pedralbes",
+      "geometryId": "es-pedralbes-1951",
+      "length": 6446,
+      "years": "1951, 1954",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "magny_cours",
+      "geometryId": "fr-1960",
+      "length": 4412,
+      "years": "1991–2008",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "reims",
+      "geometryId": "fr-1954-reims",
+      "length": 8024,
+      "years": "1950–1951, 1953–1954, 1956, 1958–1961, 1963, 1966",
+      "dataset": "openstreetmap",
+      "source": "OpenHistoricalMap contributors — Reims-Gueux 1954–1972",
+      "licence": "CC0-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "dijon",
+      "geometryId": "fr-1972-dijon",
+      "length": 3723,
+      "years": "1974, 1977, 1979, 1981–1982, 1984",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "ricard",
+      "geometryId": "fr-1969",
+      "length": 5842,
+      "years": "1971, 1973, 1975–1976, 1978, 1980, 1982–1983, 1985–1990, 2018–2019, 2021–2022",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "charade",
+      "geometryId": "fr-charade-1965",
+      "length": 6375,
+      "years": "1965, 1969–1970, 1972",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "essarts",
+      "geometryId": "fr-rouen-1957",
+      "length": 6778,
+      "years": "1952, 1957, 1962, 1964, 1968",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "lemans",
+      "geometryId": "fr-bugatti-1967",
+      "length": 4165,
+      "years": "1967",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "brands_hatch",
+      "geometryId": "gb-1950-brands-hatch-gp",
+      "length": 3895,
+      "years": "1964, 1966, 1968, 1970, 1972, 1974, 1976, 1978, 1980, 1982–1986",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "silverstone",
+      "geometryId": "gb-1948",
+      "length": 5891,
+      "years": "1950–1954, 1956, 1958, 1960, 1963, 1965, 1967, 1969, 1971, 1973, 1975, 1977, 1979, 1981, 1983, 1985, 1987–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "donington",
+      "geometryId": "gb-1931-donington",
+      "length": 3995,
+      "years": "1993",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "aintree",
+      "geometryId": "gb-aintree-1955",
+      "length": 4822,
+      "years": "1955, 1957, 1959, 1961–1962",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "hungaroring",
+      "geometryId": "hu-1986",
+      "length": 4381,
+      "years": "1986–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "buddh",
+      "geometryId": "in-2011",
+      "length": 5136,
+      "years": "2011–2013",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "mugello",
+      "geometryId": "it-1914",
+      "length": 5245,
+      "years": "2020",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "monza",
+      "geometryId": "it-1922",
+      "length": 5793,
+      "years": "1950–1979, 1981–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "imola",
+      "geometryId": "it-1953",
+      "length": 4909,
+      "years": "1980–2006, 2020–2022, 2024–2025",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "pescara",
+      "geometryId": "it-pescara-1957",
+      "length": 25632,
+      "years": "1957",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "suzuka",
+      "geometryId": "jp-1962",
+      "length": 5807,
+      "years": "1987–2006, 2009–2019, 2022–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "fuji",
+      "geometryId": "jp-2005-fuji",
+      "length": 4554,
+      "years": "1976–1977, 2007–2008",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "okayama",
+      "geometryId": "jp-1990",
+      "length": 3700,
+      "years": "1994–1995",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "yeongam",
+      "geometryId": "kr-2010",
+      "length": 5596,
+      "years": "2010–2013",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "ain-diab",
+      "geometryId": "ma-ain-diab-1958",
+      "length": 7558,
+      "years": "1958",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "monaco",
+      "geometryId": "mc-1929",
+      "length": 3337,
+      "years": "1950, 1955–2019, 2021–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "rodriguez",
+      "geometryId": "mx-1962",
+      "length": 4304,
+      "years": "1963–1970, 1986–1992, 2015–2019, 2021–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "sepang",
+      "geometryId": "my-1999",
+      "length": 5543,
+      "years": "1999–2017, 2026",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "zandvoort",
+      "geometryId": "nl-1948",
+      "length": 4259,
+      "years": "1952–1953, 1955, 1958–1971, 1973–1985, 2021–2026",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "estoril",
+      "geometryId": "pt-1972",
+      "length": 4349,
+      "years": "1984–1996",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "portimao",
+      "geometryId": "pt-2008",
+      "length": 4653,
+      "years": "2020–2021, 2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "boavista",
+      "geometryId": "pt-boavista-1958",
+      "length": 7347,
+      "years": "1958, 1960",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "monsanto",
+      "geometryId": "pt-monsanto-1959",
+      "length": 5354,
+      "years": "1959",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "losail",
+      "geometryId": "qa-2004",
+      "length": 5380,
+      "years": "2021, 2023–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "sochi",
+      "geometryId": "ru-2014",
+      "length": 5848,
+      "years": "2014–2021",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "anderstorp",
+      "geometryId": "se-1968-anderstorp",
+      "length": 4017,
+      "years": "1973–1978",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "george",
+      "geometryId": "za-1934-prince-george",
+      "length": 3900,
+      "years": "1962–1963, 1965",
+      "dataset": "openstreetmap",
+      "source": "OpenStreetMap contributors — Prince George Circuit",
+      "licence": "ODbL-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "jeddah",
+      "geometryId": "sa-2021",
+      "length": 6175,
+      "years": "2021–2025, 2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "marina_bay",
+      "geometryId": "sg-2008",
+      "length": 4928,
+      "years": "2008–2019, 2022–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "istanbul",
+      "geometryId": "tr-2005",
+      "length": 5338,
+      "years": "2005–2011, 2020–2021, 2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "indianapolis",
+      "geometryId": "us-1909",
+      "length": 4192,
+      "years": "1950–1960, 2000–2007",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "phoenix",
+      "geometryId": "us-1989-phoenix",
+      "length": 3756,
+      "years": "1989–1991",
+      "dataset": "openstreetmap",
+      "source": "Wikimedia Commons — Phoenix Grand Prix Route 1989–1990",
+      "licence": "Public domain",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "riverside",
+      "geometryId": "us-1957-riverside-long",
+      "length": 5255,
+      "years": "1960",
+      "dataset": "openstreetmap",
+      "source": "OpenHistoricalMap contributors — Riverside International Raceway Long Course",
+      "licence": "CC0-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "sebring",
+      "geometryId": "us-1952-sebring",
+      "length": 8382,
+      "years": "1959",
+      "dataset": "openstreetmap",
+      "source": "OpenHistoricalMap contributors — Sebring Second Circuit",
+      "licence": "CC0-1.0",
+      "provenanceStatus": "documented"
+    },
+    {
+      "circuitId": "watkins_glen",
+      "geometryId": "us-1956",
+      "length": 5430,
+      "years": "1961–1980",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "americas",
+      "geometryId": "us-2012",
+      "length": 5514,
+      "years": "2012–2019, 2021–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "miami",
+      "geometryId": "us-2022",
+      "length": 5412,
+      "years": "2022–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "vegas",
+      "geometryId": "us-2023",
+      "length": 6201,
+      "years": "2023–2027",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "dallas",
+      "geometryId": "us-dallas-1984",
+      "length": 4081,
+      "years": "1984",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "detroit",
+      "geometryId": "us-detroit-1983",
+      "length": 4097,
+      "years": "1982–1988",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "las_vegas",
+      "geometryId": "us-caesars-palace-1981",
+      "length": 3774,
+      "years": "1981–1982",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "long_beach",
+      "geometryId": "us-long-beach-1983",
+      "length": 4601,
+      "years": "1976–1983",
+      "dataset": "user-digitized",
+      "source": "Оцифровка пользователя по картографическим материалам",
+      "licence": "User-provided",
+      "provenanceStatus": "documented-local"
+    },
+    {
+      "circuitId": "kyalami",
+      "geometryId": "za-1961",
+      "length": 4529,
+      "years": "1967–1980, 1982–1985, 1992–1993",
+      "dataset": "project-digitized",
+      "source": "Самостоятельная оцифровка трасс проекта",
+      "licence": "Provided by project owner",
+      "provenanceStatus": "documented-local"
+    }
+  ],
+  "missingCircuits": [],
+  "missingPeriods": [
+    {
+      "id": "bahrain",
+      "name": "Bahrain International Circuit",
+      "seasons": [
+        2027
+      ],
+      "coordinates": [
+        50.5106,
+        26.0325
+      ],
+      "years": "2027"
+    }
+  ],
+  "invalidCoordinates": [],
+  "brokenReferences": []
+}

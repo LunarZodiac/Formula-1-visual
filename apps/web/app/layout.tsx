@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { BackToTop } from './components/back-to-top';
+import { SiteHeader } from './components/site-header';
+import { SiteFooter } from './components/site-footer';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -23,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
+        <SiteHeader />
         {children}
+        <SiteFooter />
         <BackToTop />
       </body>
     </html>

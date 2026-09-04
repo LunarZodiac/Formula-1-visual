@@ -1,0 +1,189 @@
+{
+  "generatedAt": "2026-08-30T18:43:04.976Z",
+  "circuitId": "spa",
+  "routeCount": 7,
+  "routes": [
+    {
+      "id": "spa-route-brussels-airport",
+      "name_ru": "Аэропорт Брюссель → трасса",
+      "route_type": "arrival",
+      "review_status": "candidate",
+      "distance_m": 141991,
+      "route_group": "spa-combes-approach",
+      "line_offset_px": -6,
+      "min_zoom": 7,
+      "max_zoom": 18,
+      "endpoint_distance_to_track_m": 37,
+      "track_buffer_overlap_m": 0
+    },
+    {
+      "id": "spa-route-charleroi-airport",
+      "name_ru": "Аэропорт Шарлеруа → трасса",
+      "route_type": "arrival",
+      "review_status": "candidate",
+      "distance_m": 139373,
+      "route_group": "spa-combes-approach",
+      "line_offset_px": -3,
+      "min_zoom": 7,
+      "max_zoom": 18,
+      "endpoint_distance_to_track_m": 37,
+      "track_buffer_overlap_m": 0
+    },
+    {
+      "id": "spa-route-cologne-airport",
+      "name_ru": "Аэропорт Кёльн/Бонн → трасса",
+      "route_type": "arrival",
+      "review_status": "candidate",
+      "distance_m": 144351,
+      "route_group": "spa-combes-approach",
+      "line_offset_px": 0,
+      "min_zoom": 7,
+      "max_zoom": 18,
+      "endpoint_distance_to_track_m": 37,
+      "track_buffer_overlap_m": 0
+    },
+    {
+      "id": "spa-route-coo-half-day",
+      "name_ru": "Ставло и водопад Коо",
+      "route_type": "tourist_half_day",
+      "review_status": "candidate",
+      "distance_m": 26647,
+      "route_group": "spa-combes-approach",
+      "line_offset_px": 6,
+      "min_zoom": 9,
+      "max_zoom": 18,
+      "endpoint_distance_to_track_m": 37,
+      "track_buffer_overlap_m": 0
+    },
+    {
+      "id": "spa-route-high-fens",
+      "name_ru": "Высокие Фены и замок Рейнхардштайн",
+      "route_type": "tourist_full_day",
+      "review_status": "candidate",
+      "distance_m": 44582,
+      "route_group": "spa-combes-approach",
+      "line_offset_px": 9,
+      "min_zoom": 8,
+      "max_zoom": 18,
+      "endpoint_distance_to_track_m": 37,
+      "track_buffer_overlap_m": 0
+    },
+    {
+      "id": "spa-route-liege-arrival",
+      "name_ru": "Льеж → трасса",
+      "route_type": "arrival",
+      "review_status": "candidate",
+      "distance_m": 55934,
+      "route_group": "spa-combes-approach",
+      "line_offset_px": -9,
+      "min_zoom": 8,
+      "max_zoom": 18,
+      "endpoint_distance_to_track_m": 37,
+      "track_buffer_overlap_m": 0
+    },
+    {
+      "id": "spa-route-stavelot",
+      "name_ru": "Ставло → трасса",
+      "route_type": "arrival",
+      "review_status": "candidate",
+      "distance_m": 5654,
+      "route_group": "spa-combes-approach",
+      "line_offset_px": 3,
+      "min_zoom": 9,
+      "max_zoom": 18,
+      "endpoint_distance_to_track_m": 37,
+      "track_buffer_overlap_m": 0
+    }
+  ],
+  "overlappingPairsOver100m": [
+    {
+      "first_route_id": "spa-route-brussels-airport",
+      "second_route_id": "spa-route-charleroi-airport",
+      "nearby_overlap_m": 56788,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": -6,
+      "second_offset_px": -3
+    },
+    {
+      "first_route_id": "spa-route-brussels-airport",
+      "second_route_id": "spa-route-liege-arrival",
+      "nearby_overlap_m": 44561,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": -6,
+      "second_offset_px": -9
+    },
+    {
+      "first_route_id": "spa-route-charleroi-airport",
+      "second_route_id": "spa-route-liege-arrival",
+      "nearby_overlap_m": 44561,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": -3,
+      "second_offset_px": -9
+    },
+    {
+      "first_route_id": "spa-route-brussels-airport",
+      "second_route_id": "spa-route-cologne-airport",
+      "nearby_overlap_m": 29977,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": -6,
+      "second_offset_px": 0
+    },
+    {
+      "first_route_id": "spa-route-charleroi-airport",
+      "second_route_id": "spa-route-cologne-airport",
+      "nearby_overlap_m": 29977,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": -3,
+      "second_offset_px": 0
+    },
+    {
+      "first_route_id": "spa-route-cologne-airport",
+      "second_route_id": "spa-route-liege-arrival",
+      "nearby_overlap_m": 29976,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": 0,
+      "second_offset_px": -9
+    },
+    {
+      "first_route_id": "spa-route-coo-half-day",
+      "second_route_id": "spa-route-stavelot",
+      "nearby_overlap_m": 5741,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": 6,
+      "second_offset_px": 3
+    },
+    {
+      "first_route_id": "spa-route-brussels-airport",
+      "second_route_id": "spa-route-high-fens",
+      "nearby_overlap_m": 401,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": -6,
+      "second_offset_px": 9
+    },
+    {
+      "first_route_id": "spa-route-charleroi-airport",
+      "second_route_id": "spa-route-high-fens",
+      "nearby_overlap_m": 401,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": -3,
+      "second_offset_px": 9
+    },
+    {
+      "first_route_id": "spa-route-cologne-airport",
+      "second_route_id": "spa-route-high-fens",
+      "nearby_overlap_m": 401,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": 0,
+      "second_offset_px": 9
+    },
+    {
+      "first_route_id": "spa-route-high-fens",
+      "second_route_id": "spa-route-liege-arrival",
+      "nearby_overlap_m": 401,
+      "route_group": "spa-combes-approach",
+      "first_offset_px": 9,
+      "second_offset_px": -9
+    }
+  ],
+  "errors": []
+}

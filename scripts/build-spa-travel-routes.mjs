@@ -4,6 +4,7 @@ import pg from 'pg';
 
 const { Client } = pg;
 const shouldApply = process.argv.includes('--apply');
+const circuitApproachPoiId = 'spa-routing-anchor-combes';
 
 if (!shouldApply) {
   console.error('Использование: node build-spa-travel-routes.mjs --apply');
@@ -17,7 +18,7 @@ const routes = [
     mode: 'shuttle',
     nameRu: 'Вервье-Центральный → трасса',
     summaryRu: 'Основной маршрут общественным транспортом в дни Гран-при',
-    stops: ['osm-node-26446051', 'osm-way-234804574'],
+    stops: ['osm-node-26446051', circuitApproachPoiId],
     sourceId: 'spa_grand_prix',
     eventOnly: true,
     bookingRequired: true,
@@ -26,38 +27,38 @@ const routes = [
   {
     id: 'spa-route-liege-arrival', type: 'arrival', mode: 'car',
     nameRu: 'Льеж → трасса', summaryRu: 'Маршрут от вокзала Льеж-Гийемен',
-    stops: ['osm-node-5307127700', 'osm-way-234804574'], sourceId: 'spa_grand_prix',
+    stops: ['osm-node-5307127700', circuitApproachPoiId], sourceId: 'spa_grand_prix',
   },
   {
     id: 'spa-route-brussels-airport', type: 'arrival', mode: 'car',
     nameRu: 'Аэропорт Брюссель → трасса', summaryRu: 'Автомобильный маршрут из главного аэропорта Бельгии',
-    stops: ['osm-way-370594935', 'osm-way-234804574'], sourceId: 'spa_grand_prix',
+    stops: ['osm-way-370594935', circuitApproachPoiId], sourceId: 'spa_grand_prix',
   },
   {
     id: 'spa-route-charleroi-airport', type: 'arrival', mode: 'car',
     nameRu: 'Аэропорт Шарлеруа → трасса', summaryRu: 'Маршрут из аэропорта Брюссель-Шарлеруа',
-    stops: ['osm-way-63223157', 'osm-way-234804574'], sourceId: 'spa_grand_prix',
+    stops: ['osm-way-63223157', circuitApproachPoiId], sourceId: 'spa_grand_prix',
   },
   {
     id: 'spa-route-cologne-airport', type: 'arrival', mode: 'car',
     nameRu: 'Аэропорт Кёльн/Бонн → трасса', summaryRu: 'Трансграничный автомобильный маршрут из Германии',
-    stops: ['osm-relation-2269304', 'osm-way-234804574'], sourceId: 'spa_grand_prix',
+    stops: ['osm-relation-2269304', circuitApproachPoiId], sourceId: 'spa_grand_prix',
   },
   {
     id: 'spa-route-stavelot', type: 'arrival', mode: 'car',
     nameRu: 'Ставло → трасса', summaryRu: 'Короткий маршрут из исторического центра Ставло',
-    stops: ['osm-way-1418726543', 'osm-way-234804574'], sourceId: 'visit_wallonia',
+    stops: ['osm-way-1418726543', circuitApproachPoiId], sourceId: 'visit_wallonia',
   },
   {
     id: 'spa-route-coo-half-day', type: 'tourist_half_day', mode: 'car',
     nameRu: 'Ставло и водопад Коо', summaryRu: 'Короткий маршрут по главным местам к югу от трассы',
-    stops: ['osm-way-234804574', 'osm-way-1418726543', 'osm-node-5771053254', 'osm-way-234804574'],
+    stops: [circuitApproachPoiId, 'osm-way-1418726543', 'osm-node-5771053254', circuitApproachPoiId],
     sourceId: 'visit_wallonia',
   },
   {
     id: 'spa-route-high-fens', type: 'tourist_full_day', mode: 'car',
     nameRu: 'Высокие Фены и замок Рейнхардштайн', summaryRu: 'Природный маршрут через высшую точку Бельгии и долину Варш',
-    stops: ['osm-way-234804574', 'osm-relation-1346961', 'osm-node-1955780257', 'osm-way-105586318', 'osm-way-234804574'],
+    stops: [circuitApproachPoiId, 'osm-relation-1346961', 'osm-node-1955780257', 'osm-way-105586318', circuitApproachPoiId],
     sourceId: 'visit_wallonia',
   },
 ];
@@ -74,7 +75,8 @@ async function loadPoi(id) {
   return result.rows[0];
 }
 
-routes.forEach(assertRouteCanBeBuilt);
+const routableRoutes = routes.filter((definition) => definition.mode === 'car');
+routableRoutes.forEach(assertRouteCanBeBuilt);
 
 const client = new Client({ application_name: 'f1-geovisual-atlas-spa-routes' });
 await client.connect();
@@ -93,17 +95,40 @@ async function fetchRoute(points) {
 }
 
 function assertRouteCanBeBuilt(definition) {
-  if (definition.mode !== 'car') {
-    throw new Error(
-      `${definition.id}: событийный маршрут ${definition.mode} нельзя строить автомобильным профилем OSRM`,
-    );
-  }
   if (definition.stops.includes('osm-way-234804574')) {
     throw new Error(
       `${definition.id}: центр полигона автодрома нельзя использовать как точку въезда; `
         + 'сначала добавьте проверенную точку доступа для конкретного типа события',
     );
   }
+}
+
+async function inspectTrackConflict(geometry) {
+  const result = await client.query(
+    `WITH route AS (
+       SELECT ST_Force2D(ST_SetSRID(ST_GeomFromGeoJSON($1), 4326)) AS geometry
+     ), layout AS (
+       SELECT ST_Force2D(track.centerline) AS centerline
+       FROM atlas.track_layouts AS track
+       WHERE track.circuit_id = 'spa'
+         AND track.review_status IN ('reviewed', 'published')
+       ORDER BY (track.review_status = 'published') DESC,
+                track.valid_to_year DESC NULLS FIRST,
+                track.id
+       LIMIT 1
+     )
+     SELECT
+       round(ST_Distance(ST_EndPoint(route.geometry)::geography, layout.centerline::geography))::integer
+         AS endpoint_distance_m,
+       round(ST_Length(ST_Intersection(
+         ST_LineSubstring(route.geometry, 0.02, 0.98),
+         ST_Buffer(layout.centerline::geography, 20)::geometry
+       )::geography))::integer AS track_buffer_overlap_m
+     FROM route CROSS JOIN layout`,
+    [JSON.stringify(geometry)],
+  );
+  if (result.rowCount !== 1) throw new Error('Не найдена актуальная геометрия Спа для проверки маршрута');
+  return result.rows[0];
 }
 
 try {
@@ -114,11 +139,14 @@ try {
        licence = EXCLUDED.licence, notes = EXCLUDED.notes`,
   );
 
-  for (const definition of routes) {
+  console.log('Маршрут трансфера пропущен: автомобильный OSRM не моделирует официальную автобусную схему');
+  for (const definition of routableRoutes) {
     const points = [];
     for (const poiId of definition.stops) points.push(await loadPoi(poiId));
     console.log(`Маршрут: ${definition.nameRu}`);
     const result = await fetchRoute(points);
+    const trackConflict = await inspectTrackConflict(result.geometry);
+    const reviewStatus = trackConflict.track_buffer_overlap_m > 0 ? 'hidden' : 'candidate';
     await client.query('BEGIN');
     await client.query(
       `INSERT INTO atlas.travel_routes (
@@ -130,7 +158,7 @@ try {
           $1, 'spa', $2, $3, $4, $4, $5,
           ST_SetSRID(ST_GeomFromGeoJSON($6), 4326)::geography,
           $7, $8, $9, $10, $11, $12, 'osrm', 'driving',
-          $13::jsonb, 'candidate', now()
+          $13::jsonb, $14, now()
        ) ON CONFLICT (id) DO UPDATE SET
           route_type = EXCLUDED.route_type,
           travel_mode = EXCLUDED.travel_mode,
@@ -147,7 +175,7 @@ try {
           route_engine = EXCLUDED.route_engine,
           route_engine_profile = EXCLUDED.route_engine_profile,
           properties = EXCLUDED.properties,
-          review_status = 'candidate',
+          review_status = EXCLUDED.review_status,
           verified_at = NULL,
           updated_at = now()`,
       [
@@ -156,7 +184,14 @@ try {
         Math.max(1, Math.round(result.duration / 60)), definition.eventOnly ?? false,
         definition.bookingRequired ?? false, definition.scheduleNotesRu ?? null,
         definition.sourceId,
-        JSON.stringify({ routingSource: 'osrm', editorialSource: definition.sourceId }),
+        JSON.stringify({
+          routingSource: 'osrm',
+          editorialSource: definition.sourceId,
+          approachPoiId: circuitApproachPoiId,
+          endpointDistanceToTrackM: trackConflict.endpoint_distance_m,
+          trackBufferOverlapM: trackConflict.track_buffer_overlap_m,
+        }),
+        reviewStatus,
       ],
     );
     await client.query('DELETE FROM atlas.travel_route_stops WHERE route_id = $1', [definition.id]);
@@ -168,6 +203,10 @@ try {
       );
     }
     await client.query('COMMIT');
+    console.log(
+      `  до трассы ${trackConflict.endpoint_distance_m} м; пересечение буфера: `
+        + `${trackConflict.track_buffer_overlap_m} м; статус ${reviewStatus}`,
+    );
   }
 } catch (error) {
   try { await client.query('ROLLBACK'); } catch {}
@@ -176,4 +215,4 @@ try {
   await client.end();
 }
 
-console.log(`Сохранено маршрутов: ${routes.length}`);
+console.log(`Сохранено автомобильных маршрутов: ${routableRoutes.length}`);

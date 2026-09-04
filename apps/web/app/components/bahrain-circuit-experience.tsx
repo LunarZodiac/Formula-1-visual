@@ -8,6 +8,8 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { CircuitPageData } from '../data/circuit-page-data';
 import driverCatalog from '../data/catalogs/drivers.json';
+import currentDriverCatalog from '../data/catalogs/drivers-2026.json';
+import currentTeamCatalog from '../data/catalogs/teams-2026.json';
 import { circuitTechnicalData } from '../data/circuit-track-details';
 import { parseGeoJsonFeatureCollection } from '../data/geojson-contract';
 import { trackGeometries } from '../data/track-geometries';
@@ -29,6 +31,8 @@ const resultViewLabels: Record<ResultView, string> = {
 const localizedDriverNames = new Map(
   driverCatalog.map((driver) => [driver.nameEn.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(), driver.nameRu]),
 );
+const profiledDriverIds = new Set(currentDriverCatalog.drivers.map((driver) => driver.id));
+const profiledTeamIds = new Set(currentTeamCatalog.teams.map((team) => team.id));
 
 function normalizeDriverName(name: string) {
   return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -81,7 +85,9 @@ function formatResultValue(result: SnapshotSessionResult, view: ResultView) {
   return result.status ?? '—';
 }
 
-function makeTravelPoints(pageData: CircuitPageData): GeoJSON.FeatureCollection<GeoJSON.Point> {
+function makeTravelPoints(
+  pageData: CircuitPageData,
+): GeoJSON.FeatureCollection<GeoJSON.Point, Record<string, unknown>> {
   return {
     type: 'FeatureCollection',
     features: pageData.travel.points.map((point) => ({
@@ -90,7 +96,7 @@ function makeTravelPoints(pageData: CircuitPageData): GeoJSON.FeatureCollection<
         featureType: 'poi',
         id: point.id,
         name: point.name,
-        role: point.id === 'circuit' ? 'circuit' : 'explore',
+        role: point.role ?? (point.id === 'circuit' ? 'circuit' : 'explore'),
         categoryRu: point.kindRu,
         description: point.descriptionRu,
       },
@@ -100,6 +106,7 @@ function makeTravelPoints(pageData: CircuitPageData): GeoJSON.FeatureCollection<
 }
 
 type TravelMapCollection = GeoJSON.FeatureCollection<GeoJSON.Geometry, Record<string, unknown>>;
+const showLegacyTravelStory: boolean = false;
 
 function travelFeatureId(feature: GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>) {
   return String(feature.properties?.id ?? '');
@@ -287,9 +294,10 @@ function applyBasemap(map: MapLibreMap, nextBasemap: DetailBasemap) {
 function trackBounds(track: GeoJSON.Feature<GeoJSON.LineString> | undefined) {
   if (!track) return undefined;
   const [first, ...coordinates] = track.geometry.coordinates;
+  const firstLngLat: [number, number] = [first[0], first[1]];
   return coordinates.reduce(
-    (bounds, coordinate) => bounds.extend(coordinate),
-    new maplibregl.LngLatBounds(first, first),
+    (bounds, coordinate) => bounds.extend([coordinate[0], coordinate[1]]),
+    new maplibregl.LngLatBounds(firstLngLat, firstLngLat),
   );
 }
 
@@ -610,6 +618,23 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [openMediaIndex, setOpenMediaIndex] = useState<number | null>(null);
   const travelStory = pageData.travel.story;
+  useEffect(() => {
+    queueMicrotask(() => {
+      try {
+        const stored = JSON.parse(window.localStorage.getItem('f1-atlas-favorite-circuits') ?? '[]');
+        setIsFavorite(Array.isArray(stored) && stored.includes(pageData.id));
+      } catch { setIsFavorite(false); }
+    });
+  }, [pageData.id]);
+
+  const toggleFavorite = () => {
+    let stored: string[] = [];
+    try { const value = JSON.parse(window.localStorage.getItem('f1-atlas-favorite-circuits') ?? '[]'); if (Array.isArray(value)) stored = value.filter((item): item is string => typeof item === 'string'); } catch { /* Начинаем с пустого списка. */ }
+    const next = isFavorite ? stored.filter((item) => item !== pageData.id) : [pageData.id, ...stored.filter((item) => item !== pageData.id)];
+    window.localStorage.setItem('f1-atlas-favorite-circuits', JSON.stringify(next));
+    setIsFavorite(!isFavorite);
+    window.dispatchEvent(new Event('f1-favorites-changed'));
+  };
   const travelPoints = useMemo(
     () => travelCollections(travelMapData, travelRoleFilter).points.features,
     [travelMapData, travelRoleFilter],
@@ -1415,22 +1440,13 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
 
   return (
     <main className="track-page track-page--spa">
-      <header className="track-topbar">
-        <Link className="brand" href="/" aria-label="Вернуться на главную страницу «География скорости»">
-          <span className="brand-mark" aria-hidden="true"><img src="/icon.svg" alt="" /></span>
-          <span><strong>География скорости</strong><small>Скорость • География • История</small></span>
-        </Link>
-        <Link className="back-to-atlas" href={`/?season=${resultSeason}#atlas`}>← Вернуться к глобусу</Link>
-        <span className="track-stage-index">{pageData.nameRu} · {resultSeason}</span>
-      </header>
-
       <section className="track-hero">
         <div className="track-map-wrap">
           <div ref={containerRef} className="track-map" aria-label={`Карта трассы ${pageData.nameRu}`} />
           <div className="track-map-shade" aria-hidden="true" />
           <div className="track-hero-actions">
             <a href="#circuit-pois">◎ На карте</a>
-            <button type="button" aria-pressed={isFavorite} onClick={() => setIsFavorite((favorite) => !favorite)}>
+            <button type="button" aria-pressed={isFavorite} onClick={toggleFavorite}>
               {isFavorite ? '★ В избранном' : '☆ Добавить в избранное'}
             </button>
           </div>
@@ -1447,14 +1463,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
             className="track-north-indicator"
             aria-label="Вернуть исходное направление карты"
             title="Исходное направление"
-            onClick={() => mapRef.current?.easeTo({
-              center: pageData.map.trackCamera.center,
-              zoom: pageData.map.trackCamera.zoom,
-              bearing: pageData.map.trackCamera.bearing,
-              pitch: pageData.map.trackCamera.pitch,
-              duration: 650,
-              essential: true,
-            })}
+            onClick={() => focusTrack(650)}
           >
             <span style={{ transform: `rotate(${-mapBearing}deg)` }} aria-hidden="true">
               <i />
@@ -1547,10 +1556,10 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
                     <div className="podium-driver-name">
                       <span className="podium-driver-title">
                         <DriverFlag driverId={result.driverId} countryCode={result.countryCode} />
-                        <strong>{localizeDriverName(result)}</strong>
+                        {profiledDriverIds.has(result.driverId) ? <Link href={`/drivers/${result.driverId}`}><strong>{localizeDriverName(result)}</strong></Link> : <strong>{localizeDriverName(result)}</strong>}
                         <TeamLogo season={resultSeason} logoUrl={result.teamLogoUrl} className="identity-team-logo" constructorId={result.constructorId} constructorName={result.constructorName} teamColor={result.teamColor} />
                       </span>
-                      <small>{result.constructorName ?? 'Команда не указана'}</small>
+                      <small>{result.constructorId && profiledTeamIds.has(result.constructorId) ? <Link href={`/teams/${result.constructorId}`}>{result.constructorName ?? 'Команда не указана'}</Link> : result.constructorName ?? 'Команда не указана'}</small>
                     </div>
                     <div className="podium-step"><b>{result.position}</b></div>
                     <time>{formatResultValue(result, activeSession?.id ?? 'race')}</time>
@@ -1586,8 +1595,8 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
                         <span className="classification-code">{result.code ?? '—'}</span>
                         <DriverFlag driverId={result.driverId} countryCode={result.countryCode} />
                         <span className="classification-driver">
-                          <strong>{localizeDriverName(result)}</strong>
-                          <small>{result.constructorName ?? 'Команда не указана'}</small>
+                          {profiledDriverIds.has(result.driverId) ? <Link href={`/drivers/${result.driverId}`}><strong>{localizeDriverName(result)}</strong></Link> : <strong>{localizeDriverName(result)}</strong>}
+                          <small>{result.constructorId && profiledTeamIds.has(result.constructorId) ? <Link href={`/teams/${result.constructorId}`}>{result.constructorName ?? 'Команда не указана'}</Link> : result.constructorName ?? 'Команда не указана'}</small>
                         </span>
                         <TeamLogo season={resultSeason} logoUrl={result.teamLogoUrl} className="identity-team-logo" constructorId={result.constructorId} constructorName={result.constructorName} teamColor={result.teamColor} />
                         <span className="classification-result">
@@ -1728,7 +1737,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         </>
       )}
 
-      {false && travelStory && pageData.features.travelMode && (
+      {travelStory && showLegacyTravelStory && pageData.features.travelMode && (
         <section className="track-content track-content--travel">
           <header className="travel-experience__heading">
             <div className="section-heading">
@@ -1878,7 +1887,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
               <div className="track-gallery__rail" ref={galleryRef}>
                 {travelStory.gallery.map((image, index) => (
                   <figure key={`${image.src}-${index}`}>
-                    <img src={image.src} alt={image.title} loading="lazy" />
+                    <img src={image.src} srcSet={image.srcSet} sizes="(max-width: 760px) 88vw, 31vw" alt={image.title} loading="lazy" decoding="async" />
                     <figcaption><span>{String(index + 1).padStart(2, '0')}</span><strong>{image.title}</strong><small>{image.description}</small></figcaption>
                   </figure>
                 ))}
@@ -1912,7 +1921,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           <ol>
             {pageData.history.map((item) => (
               <li key={item.year}>
-                {item.image && <img src={item.image} alt={item.imageAlt ?? item.title} loading="lazy" />}
+                {item.image && <img src={item.image} srcSet={item.imageSrcSet} sizes="(max-width: 760px) 92vw, 25vw" alt={item.imageAlt ?? item.title} loading="lazy" decoding="async" />}
                 <time>{item.year}</time>
                 <strong>{item.title}</strong>
                 <p>{item.description}</p>
@@ -1920,6 +1929,19 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
               </li>
             ))}
           </ol>
+        </section>
+      )}
+      {(!pageData.history || pageData.history.length === 0) && (
+        <section className="spa-history spa-media-placeholder" aria-labelledby="history-placeholder-title">
+          <header className="spa-section-heading">
+            <div><span className="eyebrow">Эволюция</span><h2 id="history-placeholder-title">История трассы</h2></div>
+            <p>Исторические материалы будут добавлены после проверки источников и прав</p>
+          </header>
+          <div className="spa-media-placeholder__history" aria-label="Место для будущих исторических материалов">
+            {Array.from({ length: 4 }, (_, index) => (
+              <div key={index} aria-hidden="true"><span /><i /></div>
+            ))}
+          </div>
         </section>
       )}
 
@@ -1935,9 +1957,22 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           <div className="spa-media-rail" ref={galleryRef}>
             {travelStory.gallery.map((image, index) => (
               <button type="button" key={`${image.src}-${index}`} onClick={() => setOpenMediaIndex(index)} aria-label={`Открыть фотографию «${image.title}»`}>
-                <img src={image.src} alt={image.title} loading="lazy" />
+                <img src={image.src} srcSet={image.srcSet} sizes="(max-width: 760px) 88vw, 31vw" alt={image.title} loading="lazy" decoding="async" />
                 <span><strong>{image.title}</strong><small>{image.description}</small><small>{image.credit} · {image.license}</small></span>
               </button>
+            ))}
+          </div>
+        </section>
+      )}
+      {(!travelStory?.gallery || travelStory.gallery.length === 0) && (
+        <section className="spa-media spa-media-placeholder" aria-labelledby="gallery-placeholder-title">
+          <header className="spa-section-heading">
+            <div><span className="eyebrow">Фотоархив</span><h2 id="gallery-placeholder-title">Медиатека</h2></div>
+            <p>Фотографии появятся здесь после редакционной и правовой проверки</p>
+          </header>
+          <div className="spa-media-placeholder__gallery" aria-label="Место для будущей фотоленты">
+            {Array.from({ length: 3 }, (_, index) => (
+              <div key={index} aria-hidden="true"><span /></div>
             ))}
           </div>
         </section>
@@ -1946,7 +1981,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         <dialog ref={mediaDialogRef} className="spa-media-lightbox" aria-label={travelStory.gallery[openMediaIndex].title} onCancel={() => setOpenMediaIndex(null)} onClick={(event) => { if (event.target === event.currentTarget) setOpenMediaIndex(null); }}>
           <button autoFocus type="button" className="spa-media-lightbox__close" aria-label="Закрыть" onClick={() => setOpenMediaIndex(null)}>×</button>
           <figure onClick={(event) => event.stopPropagation()}>
-            <img src={travelStory.gallery[openMediaIndex].src} alt={travelStory.gallery[openMediaIndex].title} />
+            <img src={travelStory.gallery[openMediaIndex].fullSrc ?? travelStory.gallery[openMediaIndex].src} alt={travelStory.gallery[openMediaIndex].title} decoding="async" />
             <figcaption>
               <strong>{travelStory.gallery[openMediaIndex].title}</strong>
               <span>{travelStory.gallery[openMediaIndex].description}</span>

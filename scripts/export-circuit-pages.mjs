@@ -82,7 +82,10 @@ async function readPageData(client, circuitId) {
          media.alt_text_ru,
          media.author,
          media.licence,
-         media.source_url
+         media.source_url,
+         (SELECT url FROM atlas.media_asset_derivatives WHERE media_asset_id = media.id AND variant = '640w') AS image_640,
+         (SELECT url FROM atlas.media_asset_derivatives WHERE media_asset_id = media.id AND variant = '1280w') AS image_1280,
+         (SELECT url FROM atlas.media_asset_derivatives WHERE media_asset_id = media.id AND variant = '1920w') AS image_1920
        FROM atlas.circuit_history_entries AS entry
        LEFT JOIN atlas.media_assets AS media ON media.id = entry.media_asset_id
        WHERE entry.circuit_id = $1
@@ -96,16 +99,132 @@ async function readPageData(client, circuitId) {
          media.url,
          media.author,
          media.licence,
-         media.source_url
+         media.source_url,
+         (SELECT url FROM atlas.media_asset_derivatives WHERE media_asset_id = media.id AND variant = '640w') AS image_640,
+         (SELECT url FROM atlas.media_asset_derivatives WHERE media_asset_id = media.id AND variant = '1280w') AS image_1280,
+         (SELECT url FROM atlas.media_asset_derivatives WHERE media_asset_id = media.id AND variant = '1920w') AS image_1920
        FROM atlas.circuit_media_gallery AS gallery
        JOIN atlas.media_assets AS media ON media.id = gallery.media_asset_id
        WHERE gallery.circuit_id = $1
        ORDER BY gallery.sort_order`,
       [circuitId],
     );
+  const runtimeSettingsResult = await client.query(
+    `SELECT
+       map.track_max_zoom,
+       map.track_pitch,
+       map.track_bearing,
+       map.track_padding,
+       ST_XMin(Box3D(map.travel_bounds)) AS travel_west,
+       ST_YMin(Box3D(map.travel_bounds)) AS travel_south,
+       ST_XMax(Box3D(map.travel_bounds)) AS travel_east,
+       ST_YMax(Box3D(map.travel_bounds)) AS travel_north,
+       map.travel_zoom,
+       flags.technical_overlay,
+       flags.travel_mode,
+       flags.local_3d_model,
+       flags.buildings_3d,
+       results.default_season
+     FROM atlas.circuit_page_map_settings AS map
+     JOIN atlas.circuit_page_feature_flags AS flags USING (circuit_id)
+     JOIN atlas.circuit_page_result_settings AS results USING (circuit_id)
+     WHERE map.circuit_id = $1`,
+    [circuitId],
+  );
+  const resultSeasonsResult = await client.query(
+    `SELECT DISTINCT season_year
+     FROM atlas.races
+     WHERE circuit_id = $1
+     ORDER BY season_year DESC`,
+    [circuitId],
+  );
+  const travelProfileResult = await client.query(
+    `SELECT page_intro_ru, source_note_ru, route_note_ru
+     FROM atlas.circuit_travel_profiles
+     WHERE circuit_id = $1`,
+    [circuitId],
+  );
+  const travelStatsResult = await client.query(
+    `SELECT value_ru, label_ru
+     FROM atlas.circuit_travel_story_stats
+     WHERE circuit_id = $1
+     ORDER BY sort_order`,
+    [circuitId],
+  );
+  const travelChaptersResult = await client.query(
+    `SELECT chapter.id, chapter.display_index, chapter.eyebrow_ru, chapter.title_ru,
+            chapter.description_ru,
+            COALESCE(array_agg(feature.feature_id ORDER BY feature.sort_order)
+              FILTER (WHERE feature.feature_id IS NOT NULL), ARRAY[]::text[]) AS feature_ids
+     FROM atlas.circuit_travel_story_chapters AS chapter
+     LEFT JOIN atlas.circuit_travel_story_chapter_features AS feature
+       ON feature.chapter_id = chapter.id
+     WHERE chapter.circuit_id = $1
+     GROUP BY chapter.id, chapter.sort_order
+     ORDER BY chapter.sort_order`,
+    [circuitId],
+  );
+  const travelPlannerResult = await client.query(
+    `SELECT label_ru, value_ru, detail_ru
+     FROM atlas.circuit_travel_planner_items
+     WHERE circuit_id = $1
+     ORDER BY sort_order`,
+    [circuitId],
+  );
+  const travelZonesResult = await client.query(
+    `SELECT zone.id, zone.name_ru, zone.best_for, presentation.character_ru,
+            presentation.travel_time_ru, presentation.tone
+     FROM atlas.travel_zones AS zone
+     JOIN atlas.circuit_travel_zone_presentations AS presentation ON presentation.zone_id = zone.id
+     WHERE zone.circuit_id = $1
+       AND zone.review_status IN ('reviewed', 'published')
+     ORDER BY presentation.sort_order`,
+    [circuitId],
+  );
+  const travelCategoriesResult = await client.query(
+    `SELECT id, name_ru
+     FROM atlas.travel_category_groups
+     WHERE id IN ('transport', 'stay', 'explore')
+     ORDER BY sort_order`,
+  );
+  const travelPointsResult = await client.query(
+    `SELECT * FROM (
+       SELECT 'circuit'::text AS id, profile.name_ru, 'Трасса'::text AS kind_ru,
+              profile.summary_ru AS description_ru,
+              ST_X(circuit.location::geometry) AS longitude,
+              ST_Y(circuit.location::geometry) AS latitude,
+              'circuit'::text AS role, 1000::integer AS priority
+       FROM atlas.circuit_page_profiles AS profile
+       JOIN atlas.circuits AS circuit ON circuit.id = profile.circuit_id
+       WHERE profile.circuit_id = $1
+       UNION ALL
+       SELECT poi.id, COALESCE(poi.name_ru, poi.name), category.name_ru,
+              COALESCE(poi.description_ru, travel.editorial_note_ru, category.name_ru),
+              ST_X(poi.location::geometry), ST_Y(poi.location::geometry),
+              travel.role, travel.priority
+       FROM atlas.circuit_travel_pois AS travel
+       JOIN atlas.tourism_pois AS poi ON poi.id = travel.poi_id
+       JOIN atlas.poi_categories AS category ON category.id = poi.category_id
+       WHERE travel.circuit_id = $1
+         AND travel.role <> 'circuit'
+         AND travel.is_featured
+         AND poi.source_id IS NOT NULL
+         AND poi.review_status IN ('reviewed', 'published')
+     ) AS points
+     ORDER BY priority DESC, id`,
+    [circuitId],
+  );
 
   if (profileResult.rowCount !== 1) {
     throw new Error(`Опубликованный профиль страницы трассы ${circuitId} не найден`);
+  }
+  if (runtimeSettingsResult.rowCount !== 1) {
+    throw new Error(`Настройки карты, результатов или функций ${circuitId} заполнены не полностью`);
+  }
+  const runtimeSettings = runtimeSettingsResult.rows[0];
+  const resultSeasons = resultSeasonsResult.rows.map((row) => Number(row.season_year));
+  if (!resultSeasons.includes(Number(runtimeSettings.default_season))) {
+    throw new Error(`Сезон по умолчанию ${runtimeSettings.default_season} отсутствует у трассы ${circuitId}`);
   }
   const mediaUrls = [
     ...historyResult.rows.map((item) => item.url),
@@ -119,6 +238,8 @@ async function readPageData(client, circuitId) {
   const stats = statsResult.rows;
   return {
     profile,
+    runtimeSettings,
+    resultSeasons,
     highlights: stats.filter((item) => item.section === 'highlight').map((item) => item.label_ru),
     metrics: stats.filter((item) => item.section === 'metric').map((item) => ({
       label: item.label_ru,
@@ -135,6 +256,9 @@ async function readPageData(client, circuitId) {
       title: item.title_ru,
       description: item.description_ru,
       ...(item.url ? { image: item.url } : {}),
+      ...(item.image_640 && item.image_1280 && item.image_1920 ? {
+        imageSrcSet: `${item.image_640} 640w, ${item.image_1280} 1280w, ${item.image_1920} 1920w`,
+      } : {}),
       ...(item.alt_text_ru ? { imageAlt: item.alt_text_ru } : {}),
       ...(item.author ? { credit: item.author } : {}),
       ...(item.licence ? { license: item.licence } : {}),
@@ -142,17 +266,32 @@ async function readPageData(client, circuitId) {
     })),
     gallery: galleryResult.rows.map((item) => ({
       src: item.url,
+      ...(item.image_640 && item.image_1280 && item.image_1920 ? {
+        srcSet: `${item.image_640} 640w, ${item.image_1280} 1280w, ${item.image_1920} 1920w`,
+        fullSrc: item.image_1920,
+      } : {}),
       title: item.title_ru,
       description: item.description_ru,
       ...(item.author ? { credit: item.author } : {}),
       ...(item.licence ? { license: item.licence } : {}),
       ...(item.source_url ? { sourceUrl: item.source_url } : {}),
     })),
+    travel: {
+      profile: travelProfileResult.rows[0] ?? null,
+      stats: travelStatsResult.rows,
+      chapters: travelChaptersResult.rows,
+      planner: travelPlannerResult.rows,
+      zones: travelZonesResult.rows,
+      categories: travelCategoriesResult.rows,
+      points: travelPointsResult.rows,
+    },
   };
 }
 
 function buildReadModel(existing, databasePage) {
-  const { profile, highlights, metrics, statBar, history, gallery } = databasePage;
+  const {
+    profile, runtimeSettings, resultSeasons, highlights, metrics, statBar, history, gallery, travel,
+  } = databasePage;
   if (gallery.length > 0 && !existing.travel?.story) {
     throw new Error(`Для медиатеки ${profile.slug} в snapshot отсутствует travel.story`);
   }
@@ -177,15 +316,106 @@ function buildReadModel(existing, databasePage) {
       statBar,
       metrics,
     },
+    map: {
+      trackCamera: {
+        maxZoom: Number(runtimeSettings.track_max_zoom),
+        pitch: Number(runtimeSettings.track_pitch),
+        bearing: Number(runtimeSettings.track_bearing),
+        padding: Number(runtimeSettings.track_padding),
+      },
+      travelBounds: [
+        [Number(runtimeSettings.travel_west), Number(runtimeSettings.travel_south)],
+        [Number(runtimeSettings.travel_east), Number(runtimeSettings.travel_north)],
+      ],
+      travelZoom: Number(runtimeSettings.travel_zoom),
+    },
+    results: {
+      seasons: resultSeasons,
+      defaultSeason: Number(runtimeSettings.default_season),
+    },
+    features: {
+      technicalOverlay: runtimeSettings.technical_overlay,
+      travelMode: runtimeSettings.travel_mode,
+      local3dModel: runtimeSettings.local_3d_model,
+      buildings3d: runtimeSettings.buildings_3d,
+    },
     history,
   };
   if (existing.travel?.story) {
+    const existingChapters = new Map(existing.travel.story.chapters.map((item) => [item.id, item]));
+    const existingZones = new Map(existing.travel.story.zones.map((item) => [item.id, item]));
+    const { markers: _legacyMarkers, ...existingStory } = existing.travel.story;
     readModel.travel = {
       ...existing.travel,
+      categories: travel.categories.map((item) => ({ id: item.id, label: item.name_ru })),
+      points: travel.points.map((item) => ({
+        id: item.id,
+        name: item.name_ru,
+        kindRu: item.kind_ru,
+        descriptionRu: item.description_ru,
+        coordinates: [Number(item.longitude), Number(item.latitude)],
+        role: item.role,
+      })),
+      ...(travel.profile?.page_intro_ru ? { intro: travel.profile.page_intro_ru } : {}),
+      planner: {
+        useful: travel.planner.map((item) => ({
+          label: item.label_ru,
+          value: item.value_ru,
+          detail: item.detail_ru,
+        })),
+        ...(travel.profile?.source_note_ru ? { sourceNote: travel.profile.source_note_ru } : {}),
+        ...(travel.profile?.route_note_ru ? { routeNote: travel.profile.route_note_ru } : {}),
+      },
       story: {
-        ...existing.travel.story,
+        ...existingStory,
+        stats: travel.stats.map((item) => ({ value: item.value_ru, label: item.label_ru })),
+        chapters: travel.chapters.map((item) => {
+          const id = item.id.startsWith(`${profile.circuit_id}-`)
+            ? item.id.slice(profile.circuit_id.length + 1)
+            : item.id;
+          const previous = existingChapters.get(id);
+          return {
+            id,
+            index: item.display_index,
+            eyebrow: item.eyebrow_ru,
+            title: item.title_ru,
+            description: item.description_ru,
+            mapFeatureIds: item.feature_ids,
+            ...(previous?.image ? { image: previous.image } : {}),
+          };
+        }),
+        zones: travel.zones.map((item) => {
+          const id = item.id.startsWith(`${profile.circuit_id}-stay-`)
+            ? item.id.slice(`${profile.circuit_id}-stay-`.length)
+            : item.id;
+          const previous = existingZones.get(id);
+          return {
+            id,
+            mapFeatureId: item.id,
+            name: item.name_ru,
+            character: item.character_ru,
+            travelTime: item.travel_time_ru,
+            bestFor: item.best_for.join(', '),
+            tone: item.tone,
+            ...(previous?.image ? { image: previous.image } : {}),
+          };
+        }),
         gallery,
       },
+    };
+  } else if (travel.profile?.page_intro_ru && existing.travel) {
+    readModel.travel = {
+      ...existing.travel,
+      intro: travel.profile.page_intro_ru,
+      categories: travel.categories.map((item) => ({ id: item.id, label: item.name_ru })),
+      points: travel.points.map((item) => ({
+        id: item.id,
+        name: item.name_ru,
+        kindRu: item.kind_ru,
+        descriptionRu: item.description_ru,
+        coordinates: [Number(item.longitude), Number(item.latitude)],
+        role: item.role,
+      })),
     };
   }
   return readModel;

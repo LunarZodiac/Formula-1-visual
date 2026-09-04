@@ -4,6 +4,7 @@ INSERT INTO atlas.data_sources (id, name, url, licence, notes) VALUES
     ('spa_circuit_official', 'Circuit de Spa-Francorchamps', 'https://www.spa-francorchamps.be/en/the-circuit', 'Official website', 'История и общие сведения о трассе'),
     ('fia_spa_2025_map', 'FIA Spa-Francorchamps 2025 circuit map', 'https://www.fia.com/system/files/decision-document/2025_spa_francorchamps_event_-_circuit_map_-_spa_francorchamps_2025.pdf', 'Official document', 'Длина и нумерация поворотов современной конфигурации'),
     ('formula1_spa', 'Formula 1 — Belgium circuit profile', 'https://www.formula1.com/en/information/belgium-circuit-de-spa-francorchamps.3LltuYaAXVRU8iezEsjzGw', 'Official website', 'Дебют в чемпионате мира и справочные параметры'),
+    ('formula1_spa_2026_guide', 'Formula 1 — Spa-Francorchamps circuit guide 2026', 'https://www.formula1.com/en/latest/article/circuit-guide-everything-you-need-to-know-about-the-circuit-de-spa-francorchamps.pC5N3J3W9LEj8REFvU6FX', 'Official website', 'Актуальная конфигурация и рекорд круга на 2026 год'),
     ('wikimedia_commons', 'Wikimedia Commons', 'https://commons.wikimedia.org/', 'Per-file licence', 'Автор и лицензия фиксируются на каждом медиаобъекте')
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
@@ -31,6 +32,84 @@ ON CONFLICT (circuit_id) DO UPDATE SET
     source_id = EXCLUDED.source_id,
     updated_at = now();
 
+INSERT INTO atlas.circuit_page_map_settings (
+    circuit_id, track_max_zoom, track_pitch, track_bearing, track_padding,
+    travel_bounds, travel_zoom
+) VALUES (
+    'spa', 14.75, 48, -31, 30,
+    ST_MakeEnvelope(5.84, 50.38, 6.04, 50.52, 4326), 11
+)
+ON CONFLICT (circuit_id) DO UPDATE SET
+    track_max_zoom = EXCLUDED.track_max_zoom,
+    track_pitch = EXCLUDED.track_pitch,
+    track_bearing = EXCLUDED.track_bearing,
+    track_padding = EXCLUDED.track_padding,
+    travel_bounds = EXCLUDED.travel_bounds,
+    travel_zoom = EXCLUDED.travel_zoom,
+    updated_at = now();
+
+INSERT INTO atlas.circuit_page_feature_flags (
+    circuit_id, technical_overlay, travel_mode, local_3d_model, buildings_3d
+) VALUES ('spa', true, true, false, true)
+ON CONFLICT (circuit_id) DO UPDATE SET
+    technical_overlay = EXCLUDED.technical_overlay,
+    travel_mode = EXCLUDED.travel_mode,
+    local_3d_model = EXCLUDED.local_3d_model,
+    buildings_3d = EXCLUDED.buildings_3d,
+    updated_at = now();
+
+INSERT INTO atlas.circuit_page_result_settings (circuit_id, default_season)
+VALUES ('spa', 2026)
+ON CONFLICT (circuit_id) DO UPDATE SET
+    default_season = EXCLUDED.default_season,
+    updated_at = now();
+
+UPDATE atlas.circuit_travel_profiles SET
+    page_intro_ru = 'Гоночный уик-энд в Арденнах начинается задолго до входа на трассу. Выберите сценарий поездки — карта покажет главные точки прибытия, районы проживания и маршруты для свободного дня',
+    source_note_ru = 'Точки и районы поступают из PostgreSQL/PostGIS и OpenStreetMap, затем проходят редакционную проверку перед публикацией',
+    route_note_ru = 'Маршруты появятся на карте только после проверки геометрии, сезонной схемы движения и статуса published',
+    updated_at = now()
+WHERE circuit_id = 'spa';
+
+DELETE FROM atlas.circuit_travel_story_stats WHERE circuit_id = 'spa';
+INSERT INTO atlas.circuit_travel_story_stats (circuit_id, sort_order, value_ru, label_ru) VALUES
+    ('spa', 1, '3', 'сценария поездки'),
+    ('spa', 2, '6', 'районов проживания'),
+    ('spa', 3, '22', 'проверенные точки'),
+    ('spa', 4, '2026', 'сезон транспортной схемы');
+
+DELETE FROM atlas.circuit_travel_story_chapters WHERE circuit_id = 'spa';
+INSERT INTO atlas.circuit_travel_story_chapters (
+    id, circuit_id, sort_order, display_index, eyebrow_ru, title_ru, description_ru
+) VALUES
+    ('spa-arrival', 'spa', 1, '01', 'Прибытие', 'В Арденны через Вервье', 'В 2026 году поезд доставлял до Вервье-Центрального, откуда в дни Гран-при работал специальный трансфер. Точная линия не показывается: сезонный маршрут определяли организатор и полиция'),
+    ('spa-stay', 'spa', 2, '02', 'Размещение', 'Выберите характер поездки', 'Франкоршам — ради близости к трассе, Мальмеди — ради удобства, Ставло — ради истории, а Спа — ради городской жизни после заездов'),
+    ('spa-explore', 'spa', 3, '03', 'Свободный день', 'За пределами автодрома', 'После квалификации можно отправиться к аббатству Ставло и водопаду Коо, а полный свободный день посвятить Высоким Фенам и замку Рейнхардштайн');
+
+INSERT INTO atlas.circuit_travel_story_chapter_features (chapter_id, feature_id, sort_order) VALUES
+    ('spa-arrival', 'osm-way-370594935', 1), ('spa-arrival', 'osm-node-5307127700', 2),
+    ('spa-arrival', 'osm-node-26446051', 3), ('spa-arrival', 'osm-way-234804574', 4),
+    ('spa-stay', 'spa-stay-spa', 1), ('spa-stay', 'spa-stay-stavelot', 2),
+    ('spa-stay', 'spa-stay-malmedy', 3), ('spa-stay', 'spa-stay-francorchamps', 4),
+    ('spa-explore', 'osm-way-1418726543', 1), ('spa-explore', 'osm-node-5771053254', 2),
+    ('spa-explore', 'osm-node-1955780257', 3), ('spa-explore', 'osm-way-105586318', 4);
+
+DELETE FROM atlas.circuit_travel_planner_items WHERE circuit_id = 'spa';
+INSERT INTO atlas.circuit_travel_planner_items (circuit_id, sort_order, label_ru, value_ru, detail_ru) VALUES
+    ('spa', 1, 'Прибытие', 'Через Вервье', 'В дни этапа схему трансфера определяют организатор и полиция'),
+    ('spa', 2, 'Размещение', 'Шесть районов', 'Выбор района задаёт ритм всей поездки'),
+    ('spa', 3, 'Свободный день', 'Арденны', 'Ставло, Коо и Высокие Фены собраны в туристическом слое');
+
+DELETE FROM atlas.circuit_travel_zone_presentations
+WHERE zone_id IN (SELECT id FROM atlas.travel_zones WHERE circuit_id = 'spa');
+INSERT INTO atlas.circuit_travel_zone_presentations (zone_id, sort_order, character_ru, travel_time_ru, tone) VALUES
+    ('spa-stay-francorchamps', 1, 'В эпицентре гонки', '5–15 минут', '#FF3158'),
+    ('spa-stay-malmedy', 2, 'Практичная база', '15–30 минут', '#F2C14E'),
+    ('spa-stay-stavelot', 3, 'История Арденн', '20–35 минут', '#A47CFF'),
+    ('spa-stay-spa', 4, 'Город после заездов', '25–45 минут', '#58C7E8'),
+    ('spa-stay-trois-ponts', 5, 'Ближе к природе', '30–45 минут', '#7FD98A'),
+    ('spa-stay-verviers', 6, 'Без автомобиля', 'трансфер 25–50 минут', '#8EA0AA');
+
 DELETE FROM atlas.circuit_page_stats WHERE circuit_id = 'spa';
 INSERT INTO atlas.circuit_page_stats (
     circuit_id, section, sort_order, label_ru, value_ru, note_ru, icon, source_id
@@ -45,7 +124,7 @@ INSERT INTO atlas.circuit_page_stats (
     ('spa', 'stat_bar', 1, 'Длина трассы', '7,004 км', NULL, 'length', 'fia_spa_2025_map'),
     ('spa', 'stat_bar', 2, 'Повороты', '19', NULL, 'turns', 'fia_spa_2025_map'),
     ('spa', 'stat_bar', 3, 'Дебют в F1', '1950', NULL, 'debut', 'formula1_spa'),
-    ('spa', 'stat_bar', 4, 'Рекорд гонки', '1:44.701', 'Серхио Перес · 2024', 'record', 'formula1_spa'),
+    ('spa', 'stat_bar', 4, 'Рекорд круга F1', '1:44.701', 'Серхио Перес · 2024', 'record', 'formula1_spa_2026_guide'),
     ('spa', 'stat_bar', 5, 'Перепад высот', '≈102 м', 'Оценка для современной конфигурации', 'elevation', 'spa_circuit_official'),
     ('spa', 'stat_bar', 6, 'Тип трассы', 'Стационарная', NULL, 'type', 'spa_circuit_official');
 
@@ -73,6 +152,22 @@ ON CONFLICT (id) DO UPDATE SET
     licence = EXCLUDED.licence,
     source_url = EXCLUDED.source_url,
     is_primary = EXCLUDED.is_primary;
+
+UPDATE atlas.media_assets
+SET usage_role = CASE
+        WHEN id LIKE 'spa-history-%' THEN 'history'
+        ELSE 'gallery'
+    END,
+    source_id = 'wikimedia_commons',
+    provenance_type = 'verified_source',
+    rights_status = 'verified',
+    review_status = 'reviewed',
+    verified_at = '2026-08-30T00:00:00Z',
+    usage_scope = CASE
+        WHEN id LIKE 'spa-history-%' THEN ARRAY['circuit_history']::text[]
+        ELSE ARRAY['circuit_gallery']::text[]
+    END
+WHERE id LIKE 'spa-history-%' OR id LIKE 'spa-gallery-%';
 
 DELETE FROM atlas.circuit_history_entries WHERE circuit_id = 'spa';
 INSERT INTO atlas.circuit_history_entries (

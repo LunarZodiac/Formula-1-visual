@@ -53,7 +53,8 @@ try {
             WHERE link.zone_id = zone.id AND link.is_example), '[]'::jsonb)
         )
       )
-      FROM atlas.travel_zones zone WHERE zone.circuit_id = 'spa'
+      FROM atlas.travel_zones zone
+      WHERE zone.circuit_id = 'spa' AND zone.geometry IS NOT NULL
 
       UNION ALL
 
@@ -85,6 +86,7 @@ try {
   const publicFeatures = reviewCollection.features.filter((feature) => {
     const reviewStatus = feature.properties?.reviewStatus;
     if (feature.properties?.featureType === 'route') return reviewStatus === 'published';
+    if (feature.properties?.featureType === 'poi' && feature.properties?.featured === false) return false;
     return reviewStatus === 'reviewed' || reviewStatus === 'published';
   });
   const publicCollection = {
@@ -92,7 +94,7 @@ try {
     name: 'spa-travel-public',
     properties: {
       note: 'Публичный слой содержит только редакционно проверенные или опубликованные объекты.',
-      expectedCounts: { poi: 22, accommodation_zone: 6 },
+      expectedCounts: { poi: 21, accommodation_zone: 6 },
     },
     features: publicFeatures,
   };

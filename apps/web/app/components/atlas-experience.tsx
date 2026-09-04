@@ -29,7 +29,6 @@ import {
 import { DriverFlag, TeamCar, TeamLogo } from './racing-visuals';
 
 type Basemap = 'dark' | 'satellite';
-type MainSection = 'atlas' | 'season';
 type ResultView = 'sprintQualifying' | 'sprint' | 'qualifying' | 'race';
 
 const fallbackCircuits = season2024;
@@ -232,9 +231,10 @@ function makeCircuitMarker(type: Circuit['type']): ImageData {
 
 function getTrackBounds(track: GeoJSON.Feature<GeoJSON.LineString>) {
   const [firstCoordinate, ...coordinates] = track.geometry.coordinates;
+  const firstLngLat: [number, number] = [firstCoordinate[0], firstCoordinate[1]];
   return coordinates.reduce(
-    (bounds, coordinate) => bounds.extend(coordinate),
-    new maplibregl.LngLatBounds(firstCoordinate, firstCoordinate),
+    (bounds, coordinate) => bounds.extend([coordinate[0], coordinate[1]]),
+    new maplibregl.LngLatBounds(firstLngLat, firstLngLat),
   );
 }
 
@@ -366,8 +366,6 @@ function makeRouteGeoJson(circuits: Circuit[]): GeoJSON.FeatureCollection<GeoJSO
 export function AtlasExperience() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const raceListRef = useRef<HTMLOListElement>(null);
-  const seasonMenuRef = useRef<HTMLDivElement>(null);
-  const seasonMenuScrollRef = useRef(0);
   const sectionNavigationLockRef = useRef(0);
   const mapRef = useRef<MapLibreMap | null>(null);
   const circuitsRef = useRef<Circuit[]>(fallbackCircuits);
@@ -386,9 +384,7 @@ export function AtlasExperience() {
   const [seasonDataStatus, setSeasonDataStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [basemap, setBasemap] = useState<Basemap>('dark');
   const [mapReady, setMapReady] = useState(false);
-  const [activeSection, setActiveSection] = useState<MainSection>('atlas');
   const [resultView, setResultView] = useState<ResultView>('race');
-  const [seasonMenuOpen, setSeasonMenuOpen] = useState(false);
   const [mapLegendOpen, setMapLegendOpen] = useState(false);
 
   const orderedCircuits = useMemo(() => [...circuits].sort((left, right) => left.order - right.order), [circuits]);
@@ -614,22 +610,6 @@ export function AtlasExperience() {
   }, []);
 
   useEffect(() => {
-    if (!seasonMenuOpen) return;
-    const closeMenu = (event: MouseEvent) => {
-      if (!seasonMenuRef.current?.contains(event.target as Node)) setSeasonMenuOpen(false);
-    };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setSeasonMenuOpen(false);
-    };
-    document.addEventListener('mousedown', closeMenu);
-    document.addEventListener('keydown', closeOnEscape);
-    return () => {
-      document.removeEventListener('mousedown', closeMenu);
-      document.removeEventListener('keydown', closeOnEscape);
-    };
-  }, [seasonMenuOpen]);
-
-  useEffect(() => {
     const controller = new AbortController();
     fetch('/data/f1/seasons.json', { signal: controller.signal })
       .then((response) => {
@@ -661,11 +641,13 @@ export function AtlasExperience() {
           : snapshotToCircuits(snapshot);
         if (nextCircuits.length === 0) throw new Error('В календаре нет этапов.');
 
-        const firstCircuit = snapshot.season === new Date().getUTCFullYear()
+        const defaultCircuit = snapshot.season === new Date().getUTCFullYear()
           ? nextCircuits.find((circuit) => circuit.status === 'live')
             ?? nextCircuits.find((circuit) => circuit.status === 'scheduled' || circuit.status === 'postponed')
             ?? nextCircuits[0]
           : nextCircuits[0];
+        const requestedCircuitId = new URLSearchParams(window.location.search).get('circuit');
+        const firstCircuit = nextCircuits.find((circuit) => circuit.id === requestedCircuitId) ?? defaultCircuit;
         setSeasonSnapshot(snapshot);
         setCircuits(nextCircuits);
         circuitsRef.current = nextCircuits;
@@ -723,28 +705,6 @@ export function AtlasExperience() {
 
     return () => window.cancelAnimationFrame(frame);
   }, [circuits.length, seasonDataStatus, selectedEventKey]);
-
-  useEffect(() => {
-    const atlas = document.getElementById('atlas');
-    const season = document.getElementById('season');
-
-    if (!atlas || !season) return;
-
-    const updateActiveSection = () => {
-      if (Date.now() < sectionNavigationLockRef.current) return;
-      const seasonBoundary = season.offsetTop - Math.min(240, window.innerHeight * 0.28);
-      setActiveSection(window.scrollY >= seasonBoundary ? 'season' : 'atlas');
-    };
-
-    updateActiveSection();
-    window.addEventListener('scroll', updateActiveSection, { passive: true });
-    window.addEventListener('resize', updateActiveSection);
-
-    return () => {
-      window.removeEventListener('scroll', updateActiveSection);
-      window.removeEventListener('resize', updateActiveSection);
-    };
-  }, []);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
@@ -936,88 +896,6 @@ export function AtlasExperience() {
 
   return (
     <main className="atlas-shell">
-      <header className="topbar" id="top">
-        <a className="brand" href="#top" aria-label="Formula 1 — География скорости, главная">
-          <span className="brand-mark" aria-hidden="true"><img src="/icon.svg" alt="" /></span>
-          <span>
-            <strong>География скорости</strong>
-            <small>Скорость • География • История</small>
-          </span>
-        </a>
-
-        <nav className="topnav" aria-label="Основная навигация">
-          <a
-            className={activeSection === 'atlas' ? 'is-active' : ''}
-            href="#atlas"
-            aria-current={activeSection === 'atlas' ? 'page' : undefined}
-            onClick={(event) => {
-              setActiveSection('atlas');
-              scrollToSection(event, 'atlas');
-            }}
-          >
-            Атлас
-          </a>
-          <a
-            className={activeSection === 'season' ? 'is-active' : ''}
-            href="#season"
-            aria-current={activeSection === 'season' ? 'page' : undefined}
-            onClick={(event) => {
-              setActiveSection('season');
-              scrollToSection(event, 'season');
-            }}
-          >
-            Сезон
-          </a>
-          <a href="#history">История</a>
-          <a href="#project">О проекте</a>
-        </nav>
-
-        <div ref={seasonMenuRef} className="season-control" aria-label="Выбранный сезон">
-          <span>Сезон</span>
-          <button
-            type="button"
-            className="season-menu-trigger"
-            aria-label="Сезон"
-            aria-haspopup="listbox"
-            aria-expanded={seasonMenuOpen}
-            onClick={() => {
-              seasonMenuScrollRef.current = window.scrollY;
-              setSeasonMenuOpen((open) => !open);
-            }}
-          >
-            {selectedSeason}
-            <span aria-hidden="true">⌄</span>
-          </button>
-          {seasonMenuOpen && (
-            <div className="season-menu" role="listbox" aria-label="Выберите сезон">
-              {availableSeasons.map((season) => (
-                <button
-                  key={season.year}
-                  type="button"
-                  role="option"
-                  aria-selected={season.year === selectedSeason}
-                  className={season.year === selectedSeason ? 'is-selected' : ''}
-                  onClick={() => {
-                    const scrollPosition = seasonMenuScrollRef.current;
-                    selectedSeasonRef.current = season.year;
-                    setSeasonDataStatus('loading');
-                    setSelectedSeason(season.year);
-                    setSeasonMenuOpen(false);
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('season', String(season.year));
-                    window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
-                    window.requestAnimationFrame(() => window.scrollTo({ top: scrollPosition, behavior: 'auto' }));
-                    window.setTimeout(() => window.scrollTo({ top: scrollPosition, behavior: 'auto' }), 80);
-                  }}
-                >
-                  {season.year}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </header>
-
       <section className="intro-hero" aria-labelledby="intro-title">
         <div className="intro-hero-shade" aria-hidden="true" />
         <div className="intro-copy">
@@ -1314,11 +1192,10 @@ export function AtlasExperience() {
                     {column.map((standing) => (
                       <li
                         key={standing.id}
-                        className={`standing-rank standing-rank--${standing.position <= 3 ? standing.position : 'regular'}`}
+                        className="standing-rank"
                         style={{ '--team-color': standing.teamColor } as CSSProperties}
                       >
                         <span className="standing-position">{String(standing.position).padStart(2, '0')}</span>
-                        {standing.position <= 3 && <span className="standing-trophy" aria-label={`${standing.position} место`}>🏆</span>}
                         <span className="driver-code">{standing.code}</span>
                         <DriverFlag driverId={standing.id} countryCode={standing.countryCode} />
                         <span className="standing-name">
@@ -1347,11 +1224,10 @@ export function AtlasExperience() {
                     {column.map((standing) => (
                       <li
                         key={standing.id}
-                        className={`standing-rank standing-rank--${standing.position <= 3 ? standing.position : 'regular'}`}
+                        className="standing-rank"
                         style={{ '--team-color': standing.teamColor } as CSSProperties}
                       >
                         <span className="standing-position">{String(standing.position).padStart(2, '0')}</span>
-                        {standing.position <= 3 && <span className="standing-trophy" aria-label={`${standing.position} место`}>🏆</span>}
                         <TeamLogo season={selectedSeason} logoUrl={standing.logoImageUrl} className="constructor-standing-logo" constructorId={standing.id} constructorName={standing.name} teamColor={standing.teamColor} />
                         <span className="standing-name">
                           <strong>{standing.name}</strong>

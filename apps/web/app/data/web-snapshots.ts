@@ -277,10 +277,11 @@ const circuitTypes: Record<SeasonSnapshot['calendar'][number]['circuit']['type']
   permanent: 'Стационарная трасса',
   street: 'Городская трасса',
   hybrid: 'Смешанная трасса',
-  temporary: 'Временная трасса',
+  temporary: 'Смешанная трасса',
 };
 
 const circuitLocalitiesRu: Record<string, string> = {
+  madring: 'Мадрид',
   sepang: 'Куала-Лумпур',
 };
 

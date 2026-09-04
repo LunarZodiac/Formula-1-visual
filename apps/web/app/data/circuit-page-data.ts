@@ -55,6 +55,7 @@ export type CircuitPageData = {
       kindRu: string;
       descriptionRu: string;
       coordinates: [number, number];
+      role?: 'transport' | 'stay' | 'explore' | 'essential' | 'circuit';
     }>;
     story?: {
       stats: Array<{ value: string; label: string }>;
@@ -64,16 +65,8 @@ export type CircuitPageData = {
         eyebrow: string;
         title: string;
         description: string;
-        markerIds: string[];
         mapFeatureIds?: string[];
         image?: string;
-      }>;
-      markers: Array<{
-        id: string;
-        label: string;
-        kind: string;
-        x: number;
-        y: number;
       }>;
       zones: Array<{
         id: string;
@@ -97,6 +90,8 @@ export type CircuitPageData = {
       }>;
       gallery?: Array<{
         src: string;
+        srcSet?: string;
+        fullSrc?: string;
         title: string;
         description: string;
         credit?: string;
@@ -115,6 +110,7 @@ export type CircuitPageData = {
     title: string;
     description: string;
     image?: string;
+    imageSrcSet?: string;
     imageAlt?: string;
     credit?: string;
     license?: string;
@@ -122,8 +118,8 @@ export type CircuitPageData = {
   }>;
 };
 
-export const bahrainCircuitPage = bahrainPageJson as CircuitPageData;
-export const spaCircuitPage = spaPageJson as CircuitPageData;
+export const bahrainCircuitPage = bahrainPageJson as unknown as CircuitPageData;
+export const spaCircuitPage = spaPageJson as unknown as CircuitPageData;
 
 export const circuitPageCatalog = new Map<string, CircuitPageData>([
   [bahrainCircuitPage.slug, bahrainCircuitPage],

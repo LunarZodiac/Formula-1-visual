@@ -30,6 +30,10 @@ GeoJSON: они будут формироваться импортёром ка�
 - `circuit_page_profiles`, `circuit_page_stats`, `circuit_history_entries`,
   `circuit_media_gallery` — редакционный профиль универсальной страницы трассы,
   её показатели, история и упорядоченная медиатека.
+- `circuit_page_map_settings`, `circuit_page_feature_flags`,
+  `circuit_page_result_settings` — камера и туристический охват карты,
+  доступные режимы и сезон результатов по умолчанию. Список сезонов трассы
+  вычисляется из `races`, а не хранится массивом в редакционном JSON.
 
 ## Пространственная загрузка зданий
 
@@ -60,6 +64,29 @@ WHERE ST_DWithin(
 
 ## Миграции
 
+### Что такое миграция
+
+Миграция — это пронумерованный SQL-файл, который последовательно изменяет
+структуру базы данных: создаёт таблицу, добавляет колонку, индекс, ограничение
+или представление. Это не копия базы и не набор данных конкретной трассы.
+
+Например, `011_circuit_travel_editorial.sql` создаёт место для хранения
+туристических сценариев у всех трасс. Сами значения для Спа и Бахрейна затем
+загружаются отдельными идемпотентными seed-файлами из `database/seeds`.
+
+Применённые миграции регистрируются в служебной таблице, поэтому повторный
+запуск пропускает уже выполненные файлы. Новые миграции добавляются следующим
+номером; ранее применённые файлы не переписываются, чтобы разные установки
+проекта получали одинаковую схему.
+
+Коротко:
+
+- `migrations` — как устроена база;
+- `seeds` — какие проверенные начальные данные в неё загрузить;
+- `export-circuit-pages.mjs` — как собрать из базы JSON для веб-приложения;
+- `audit-circuit-page-data.mjs` — как найти пропуски, данные без источников и
+  проблемы с медиаматериалами.
+
 Миграция `007_web_query_indexes_and_geometry_lods.sql` добавляет индексы для страниц трасс и туристического редактора, а также view `atlas.track_layout_web_geometries` с полной геометрией и вариантами, упрощёнными в проекции Web Mercator на 25 и 150 метров. Канонический `centerline` при этом не изменяется.
 
 Миграция `008_web_export_freshness.sql` добавляет автоматическое обновление
@@ -76,8 +103,23 @@ WHERE ST_DWithin(
 ```powershell
 node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/005_spa_circuit_page.sql --apply
 node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/006_bahrain_circuit_page.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/007_2026_circuit_page_drafts.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/008_2026_circuit_facts_batch_01.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/009_2026_circuit_facts_batch_02.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/010_2026_circuit_facts_batch_03.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/011_2026_circuit_facts_batch_04.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/012_2026_circuit_facts_batch_05.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/013_spa_event_access.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/014_spa_route_presentations.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/015_spa_parking_2027.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/016_team_media_registry.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/017_spa_current_layout_period.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/018_2026_race_layout_assignments.sql --apply
 node --env-file=.env.database.local scripts/export-circuit-pages.mjs
 node --env-file=.env.database.local scripts/export-circuit-pages.mjs --check
+node --env-file=.env.database.local scripts/export-circuit-catalog.mjs
+node --env-file=.env.database.local scripts/export-competitor-catalogs.mjs
+node --env-file=.env.database.local scripts/export-search-index.mjs
 ```
 
 Файлы `apps/web/app/data/circuit-pages/spa.json` и `bahrain.json` остаются
@@ -88,11 +130,67 @@ read-model для сборки Next.js. Редактировать перене�
 
 ```powershell
 node --env-file=.env.database.local scripts/audit-circuit-page-data.mjs
+node --env-file=.env.database.local scripts/audit-spa-travel-routes.mjs
+node --env-file=.env.database.local scripts/audit-media-registry.mjs
+node --env-file=.env.database.local scripts/audit-historical-layouts.mjs
+node --env-file=.env.database.local scripts/localize-circuit-media.mjs --circuit spa --apply
 ```
 
 Отчёт сохраняется в `data/review/circuit-page-data-audit.json`. Показатели без
 `source_id` остаются видимым редакционным долгом, а не получают выдуманный
 источник.
+
+Миграция `010_circuit_page_runtime_settings.sql` переносит параметры камеры,
+туристические границы, функциональные флаги и сезон результатов по умолчанию.
+Экспортёр проверяет, что сезон по умолчанию действительно связан с этапом этой
+трассы в таблице `races`.
+
+Миграция `011_circuit_travel_editorial.sql` переносит вводный текст поездки,
+редакционные примечания, полезную информацию, сценарии и представление районов
+проживания. Геометрии POI, зон и проверенных маршрутов остаются в отдельных
+PostGIS-таблицах и не дублируются в редакционном слое.
+
+Миграция `012_draft_circuit_page_profiles.sql` разрешает оставлять геометрию,
+описание и тип трассы пустыми у чернового профиля. Для статуса `published` эти
+поля по-прежнему обязательны на уровне ограничения PostgreSQL. Это позволяет
+создать очередь наполнения, не подменяя отсутствующие сведения догадками.
+
+Миграция `013_track_layout_provenance.sql` добавляет к конфигурации тип
+происхождения, редакционный статус и дату проверки. Самостоятельно
+оцифрованные контуры календаря импортируются в `track_layouts` отдельным
+скриптом и связываются с черновыми профилями, но не подменяют официальные
+источники длины, поворотов и периода использования.
+
+Миграция `014_circuit_page_field_sources.sql` хранит происхождение отдельно для
+каждого заполненного поля чернового профиля: источник, статус редакционной
+проверки, дату и примечание. Поэтому локализация, описание, тип и геометрия
+могут иметь разные достоверные источники, не маскируясь одним `source_id` всей
+строки. Аудит считает отсутствие такой связи ошибкой происхождения данных.
+
+Миграция `015_travel_route_presentation.sql` хранит группу, порядок, цвет,
+смещение и диапазон масштаба маршрута, а также предоставляет полную и две
+упрощённые геометрии для карты. Эти параметры не меняют каноническую линию.
+
+Миграция `016_draft_travel_zones.sql` разрешает кандидату парковочной или иной
+туристической зоны временно не иметь геометрии. Для статусов `reviewed` и
+`published` полигон остаётся обязательным. Так официальное название сезонной
+парковки можно сохранить сразу, не рисуя приблизительную площадку по картинке.
+
+Миграция `017_media_registry_governance.sql` добавляет роль медиа, происхождение,
+статусы прав и редакционной проверки, область использования и таблицу
+производных файлов. Проверенное или опубликованное медиа нельзя сохранить без
+источника, автора, лицензии, alt-текста и даты проверки.
+
+Seed `017_spa_current_layout_period.sql` фиксирует подтверждённую временную
+границу современной конфигурации Спа: самостоятельно оцифрованный контур
+7,004 км назначается только этапам 2007 года и позднее. Этапы 1950–2005 годов
+намеренно остаются без `layout_id`, пока для их конфигураций не появятся
+отдельные проверенные геометрии.
+
+Seed `018_2026_race_layout_assignments.sql` связывает все этапы сезона 2026 с
+единственной проверенной конфигурацией, импортированной именно для этого
+сезона. Перед изменением он проверяет полноту и однозначность соответствий и
+останавливается, если у этапа уже указана другая конфигурация.
 
 Первая миграция находится в
 `database/migrations/001_initial_postgis_schema.sql`. Она рассчитана на

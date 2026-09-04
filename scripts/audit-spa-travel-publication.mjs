@@ -42,16 +42,17 @@ for (const feature of collection.features ?? []) {
   }
 }
 
-const expectedCounts = collection.properties?.expectedCounts ?? { poi: 22, accommodation_zone: 6 };
+const expectedCounts = collection.properties?.expectedCounts ?? { poi: 21, accommodation_zone: 6 };
 for (const [featureType, expectedCount] of Object.entries(expectedCounts)) {
   if (counts[featureType] !== expectedCount) {
     errors.push(`${featureType}: ожидалось ${expectedCount}, получено ${counts[featureType] ?? 0}`);
   }
 }
 
-const circuit = (collection.features ?? []).find((feature) => feature.properties?.id === 'osm-way-234804574');
-if (!circuit) errors.push('В публичном слое отсутствует точка трассы Спа-Франкоршам');
-else if (circuit.properties?.role !== 'circuit') errors.push('Точка трассы должна иметь роль circuit');
+const duplicatedCircuit = (collection.features ?? []).find((feature) => feature.properties?.role === 'circuit');
+if (duplicatedCircuit) {
+  errors.push('Точка трассы не должна дублироваться в туристическом GeoJSON: она поступает из read-model страницы');
+}
 
 if (errors.length > 0) {
   console.error(errors.join('\n'));
