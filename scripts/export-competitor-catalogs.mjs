@@ -12,9 +12,38 @@ if (missing.length) throw new Error(`Не заданы параметры баз
 
 const outputDirectory = path.resolve('apps', 'web', 'app', 'data', 'catalogs');
 const driverLocalizationPath = path.join(outputDirectory, 'drivers.json');
+const requestedSeason = Number(process.env.CATALOG_SEASON);
+const seasonArgument = Number.isInteger(requestedSeason) && requestedSeason >= 1950 ? requestedSeason : null;
 
 function normalize(value) {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+}
+
+const historicalDriverNames = new Map([
+  ['michael schumacher', 'Михаэль Шумахер'],
+  ['alain prost', 'Ален Прост'],
+  ['ayrton senna', 'Айртон Сенна'],
+  ['niki lauda', 'Ники Лауда'],
+  ['mika hakkinen', 'Мика Хаккинен'],
+  ['nigel mansell', 'Найджел Мэнселл'],
+  ['jackie stewart', 'Джеки Стюарт'],
+  ['emerson fittipaldi', 'Эмерсон Фиттипальди'],
+  ['nelson piquet', 'Нельсон Пике'],
+  ['damon hill', 'Деймон Хилл'],
+  ['juan manuel fangio', 'Хуан Мануэль Фанхио'],
+  ['giuseppe farina', 'Джузеппе Фарина'],
+  ['james hunt', 'Джеймс Хант'],
+  ['carlos reutemann', 'Карлос Ройтеман'],
+]);
+
+function transliterateDriverName(name) {
+  const knownName = historicalDriverNames.get(normalize(name));
+  if (knownName) return knownName;
+  const pairs = [[/sch/g, 'ш'], [/sh/g, 'ш'], [/ch/g, 'ч'], [/zh/g, 'ж'], [/kh/g, 'х'], [/ph/g, 'ф'], [/th/g, 'т'], [/qu/g, 'кв'], [/ck/g, 'к'], [/ya/g, 'я'], [/yu/g, 'ю'], [/yo/g, 'ё'], [/ye/g, 'е'], [/j/g, 'дж'], [/c(?=[eiy])/g, 'с'], [/c/g, 'к'], [/x/g, 'кс'], [/w/g, 'у']];
+  const letters = { a: 'а', b: 'б', d: 'д', e: 'е', f: 'ф', g: 'г', h: 'х', i: 'и', k: 'к', l: 'л', m: 'м', n: 'н', o: 'о', p: 'п', q: 'к', r: 'р', s: 'с', t: 'т', u: 'у', v: 'в', y: 'и', z: 'з' };
+  let value = normalize(name);
+  for (const [pattern, replacement] of pairs) value = value.replace(pattern, replacement);
+  return value.split(' ').map((part) => part.replace(/[a-z]/g, (letter) => letters[letter] ?? letter)).map((part) => part ? `${part[0].toLocaleUpperCase('ru-RU')}${part.slice(1)}` : part).join(' ');
 }
 
 async function writeJson(fileName, value) {
@@ -33,8 +62,9 @@ const client = new pg.Client({ application_name: 'f1-geovisual-atlas-competitor-
 await client.connect();
 try {
   await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
-  const seasonResult = await client.query(`SELECT max(season_year)::integer AS year FROM atlas.driver_standings
-    WHERE season_year IN (SELECT season_year FROM atlas.constructor_standings)`);
+  const seasonResult = await client.query(`SELECT coalesce($1::integer, max(season_year))::integer AS year FROM atlas.driver_standings
+    WHERE season_year IN (SELECT season_year FROM atlas.constructor_standings)
+      AND ($1::integer IS NULL OR season_year = $1::integer)`, [seasonArgument]);
   const season = Number(seasonResult.rows[0].year);
   if (!season) throw new Error('Нет сезона с таблицами обоих чемпионатов');
   const seasonMetadata = await client.query(`SELECT year, status,
@@ -63,27 +93,43 @@ try {
       SELECT max(after_round) AS value
       FROM atlas.driver_standings
       WHERE season_year = $1
+    ), final_standings AS (
+      SELECT standings.*
+      FROM atlas.driver_standings AS standings
+      JOIN final_round ON standings.after_round = final_round.value
+      WHERE standings.season_year = $1
+    ), participants AS (
+      SELECT result.driver_id,
+             coalesce(sum(result.points), 0) AS result_points,
+             count(*) FILTER (WHERE result.position_order = 1)::integer AS result_wins
+      FROM atlas.session_results AS result
+      JOIN atlas.sessions AS session ON session.id = result.session_id AND session.session_type = 'race'
+      JOIN atlas.races AS race ON race.id = session.race_id
+      WHERE race.season_year = $1
+      GROUP BY result.driver_id
     )
-    SELECT standings.position, standings.points, standings.wins,
+    SELECT standings.position,
+           coalesce(standings.points, participants.result_points, 0) AS points,
+           coalesce(standings.wins, participants.result_wins, 0) AS wins,
+           (standings.driver_id IS NOT NULL) AS standing_available,
            driver.id, driver.given_name, driver.family_name,
            driver.abbreviation, driver.permanent_number, driver.nationality,
            latest_team.constructor_id, latest_team.display_name AS team_name,
            latest_team.team_colour, latest_team.logo_image_url
-    FROM atlas.driver_standings AS standings
-    JOIN final_round ON standings.after_round = final_round.value
-    JOIN atlas.drivers AS driver ON driver.id = standings.driver_id
+    FROM participants
+    JOIN atlas.drivers AS driver ON driver.id = participants.driver_id
+    LEFT JOIN final_standings AS standings ON standings.driver_id = participants.driver_id
     LEFT JOIN LATERAL (
       SELECT entry.constructor_id, entry.display_name, entry.team_colour, entry.logo_image_url
       FROM atlas.session_results AS result
       JOIN atlas.sessions AS session ON session.id = result.session_id AND session.session_type = 'race'
       JOIN atlas.races AS race ON race.id = session.race_id
       JOIN atlas.constructor_entries AS entry ON entry.id = result.constructor_entry_id
-      WHERE race.season_year = standings.season_year AND result.driver_id = standings.driver_id
+      WHERE race.season_year = $1 AND result.driver_id = participants.driver_id
       ORDER BY race.round DESC, CASE session.session_type WHEN 'race' THEN 0 ELSE 1 END
       LIMIT 1
     ) AS latest_team ON true
-    WHERE standings.season_year = $1
-    ORDER BY standings.position
+    ORDER BY standings.position NULLS LAST, driver.family_name, driver.given_name
   `, [season]);
   const teamsResult = await client.query(`
     WITH final_round AS (
@@ -107,14 +153,33 @@ try {
       SELECT season_year, max(after_round) AS value
       FROM atlas.driver_standings
       GROUP BY season_year
+    ), final_standings AS (
+      SELECT standings.*
+      FROM atlas.driver_standings AS standings
+      JOIN final_rounds ON final_rounds.season_year = standings.season_year
+                       AND final_rounds.value = standings.after_round
+      WHERE standings.season_year <= $1
+    ), participation AS (
+      SELECT result.driver_id, race.season_year, max(race.round)::integer AS after_round,
+             coalesce(sum(result.points), 0) AS result_points,
+             count(*) FILTER (WHERE result.position_order = 1)::integer AS result_wins
+      FROM atlas.session_results AS result
+      JOIN atlas.sessions AS session ON session.id = result.session_id AND session.session_type = 'race'
+      JOIN atlas.races AS race ON race.id = session.race_id
+      WHERE race.season_year <= $1
+      GROUP BY result.driver_id, race.season_year
     )
-    SELECT standings.driver_id, standings.season_year, standings.position, standings.after_round,
-           standings.points, standings.wins
-    FROM atlas.driver_standings AS standings
-    JOIN final_rounds ON final_rounds.season_year = standings.season_year
-                     AND final_rounds.value = standings.after_round
-    ORDER BY standings.driver_id, standings.season_year DESC
-  `);
+    SELECT participation.driver_id, participation.season_year, standings.position,
+           coalesce(standings.after_round, participation.after_round) AS after_round,
+           coalesce(standings.points, participation.result_points, 0) AS points,
+           coalesce(standings.wins, participation.result_wins, 0) AS wins,
+           (standings.driver_id IS NOT NULL) AS standing_available
+    FROM participation
+    LEFT JOIN final_standings AS standings
+      ON standings.driver_id = participation.driver_id
+     AND standings.season_year = participation.season_year
+    ORDER BY participation.driver_id, participation.season_year DESC
+  `, [season]);
   const teamSeasonHistoryResult = await client.query(`
     WITH final_rounds AS (
       SELECT season_year, max(after_round) AS value
@@ -127,8 +192,9 @@ try {
     JOIN final_rounds ON final_rounds.season_year = standings.season_year
                      AND final_rounds.value = standings.after_round
     JOIN atlas.constructor_entries AS entry ON entry.id = standings.constructor_entry_id
+    WHERE standings.season_year <= $1
     ORDER BY entry.constructor_id, standings.season_year DESC
-  `);
+  `, [season]);
 
   const groupRows = (rows, key) => rows.reduce((groups, row) => {
     (groups[row[key]] ??= []).push(row);
@@ -146,12 +212,13 @@ try {
       const nameEn = `${row.given_name} ${row.family_name}`;
       return {
         id: row.id,
-        nameRu: nameRuById.get(row.id) ?? nameRuByEnglishName.get(normalize(nameEn)) ?? nameEn,
+        nameRu: nameRuById.get(row.id) ?? nameRuByEnglishName.get(normalize(nameEn)) ?? transliterateDriverName(nameEn),
         nameEn,
         code: row.abbreviation?.trim() ?? null,
         number: row.permanent_number === null ? null : Number(row.permanent_number),
         nationality: row.nationality,
-        position: Number(row.position),
+        position: row.position === null ? null : Number(row.position),
+        standingAvailable: row.standing_available,
         points: Number(row.points),
         wins: Number(row.wins),
         team: row.constructor_id ? {
@@ -164,8 +231,9 @@ try {
           season: Number(standing.season_year),
           afterRound: Number(standing.after_round),
           status: seasonsByYear.get(Number(standing.season_year)).status,
-          isFinal: isFinalStanding(seasonsByYear.get(Number(standing.season_year)).status, Number(standing.after_round), seasonsByYear.get(Number(standing.season_year)).last_round),
-          position: Number(standing.position),
+          isFinal: standing.position !== null && isFinalStanding(seasonsByYear.get(Number(standing.season_year)).status, Number(standing.after_round), seasonsByYear.get(Number(standing.season_year)).last_round),
+          position: standing.position === null ? null : Number(standing.position),
+          standingAvailable: standing.standing_available,
           points: Number(standing.points),
           wins: Number(standing.wins),
         })),
@@ -224,7 +292,7 @@ try {
       const first = appearances[0];
       const standing = drivers.drivers.find((row) => row.id === id);
       const nameEn = `${first.given_name} ${first.family_name}`;
-      return { id, nameRu: nameRuById.get(id) ?? nameRuByEnglishName.get(normalize(nameEn)) ?? nameEn,
+      return { id, nameRu: nameRuById.get(id) ?? nameRuByEnglishName.get(normalize(nameEn)) ?? transliterateDriverName(nameEn),
         code: first.abbreviation?.trim() ?? null, position: standing?.position ?? null, points: standing?.points ?? 0,
         raceEntries: summarizeRaces(appearances).raceEntries, teamPoints: summarizeRaces(appearances).points };
     });
@@ -232,7 +300,8 @@ try {
   }
   for (const [kind, catalog] of [['drivers', drivers], ['teams', teams]]) {
     catalog.seasonStatus = seasonsByYear.get(season).status;
-    catalog.afterRound = Math.max(...catalog[kind].flatMap((item) => item.seasonHistory.filter((row) => row.season === season).map((row) => row.afterRound)));
+    const seasonRounds = catalog[kind].flatMap((item) => item.seasonHistory.filter((row) => row.season === season).map((row) => row.afterRound));
+    catalog.afterRound = seasonRounds.length ? Math.max(...seasonRounds) : 0;
     catalog.sources = sourcesResult.rows.map((source) => ({...source, retrievedAt: source.retrievedAt?.toISOString() ?? null}));
     assertCompetitorCatalog(catalog, kind);
   }

@@ -4591,7 +4591,7 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
   line-height: .9;
   text-transform: uppercase;
 }
-.driver-showcase-hero p { max-width: 510px; margin: 0; color: #81939d; font-size: 11px; line-height: 1.65; }
+.driver-showcase-hero p { max-width: 560px; margin: 0; color: #81939d; font-size: 13px; line-height: 1.65; }
 .driver-showcase-hero-art { position: absolute; inset: 0 0 0 42%; overflow: hidden; opacity: .8; }
 .driver-showcase-hero-art::before {
   position: absolute;
@@ -4613,10 +4613,15 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
   gap: 10px;
   padding: 22px 0 14px;
 }
-.driver-showcase-tabs { display: flex; min-width: 0; border: 1px solid #263a46; border-radius: 3px; }
-.driver-showcase-tabs > * { display: grid; min-height: 45px; flex: 1; place-items: center; padding: 0 14px; border-right: 1px solid #263a46; color: #778b96; font-size: 8px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.driver-showcase-tabs { --tab-position: 0; position: relative; display: flex; min-width: 0; overflow: hidden; border: 1px solid #263a46; border-radius: 3px; isolation: isolate; }
+.driver-showcase-tabs.is-season { --tab-position: 1; }
+.driver-showcase-tabs.is-teams { --tab-position: 2; }
+.driver-showcase-tabs::before { position: absolute; z-index: -1; inset: 0 auto 0 0; width: calc(100% / 3); background: linear-gradient(90deg, rgba(255, 32, 56, .22), rgba(255, 32, 56, .08)); transform: translateX(calc(var(--tab-position) * 100%)); transition: transform .34s cubic-bezier(.22, 1, .36, 1); content: ''; }
+.driver-showcase-tabs::after { position: absolute; bottom: 0; left: 0; width: calc(100% / 3); height: 2px; background: var(--accent); box-shadow: 0 0 12px rgba(255, 32, 56, .55); transform: translateX(calc(var(--tab-position) * 100%)); transition: transform .34s cubic-bezier(.22, 1, .36, 1); content: ''; }
+.driver-showcase-tabs > * { display: grid; position: relative; min-height: 45px; flex: 1; place-items: center; padding: 0 14px; border-right: 1px solid #263a46; color: #778b96; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; transition: color .22s ease; }
+.driver-showcase-tabs button { border-top: 0; border-bottom: 0; border-left: 0; background: transparent; cursor: pointer; }
 .driver-showcase-tabs > :last-child { border-right: 0; }
-.driver-showcase-tabs b { color: #fff; background: linear-gradient(90deg, rgba(255, 32, 56, .2), rgba(255, 32, 56, .08)); box-shadow: inset 0 -2px var(--accent); }
+.driver-showcase-tabs .is-active { color: #fff; }
 .driver-showcase-search,
 .driver-showcase-select { display: block; }
 .driver-showcase-search input,
@@ -4629,14 +4634,14 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
   border-radius: 3px;
   color: #eaf0f2;
   background: #06121c;
-  font-size: 9px;
+  font-size: 11px;
   outline: none;
 }
 .driver-showcase-search input:focus,
 .driver-showcase-select select:focus { border-color: var(--accent); }
-.driver-showcase-toolbar > button { color: #84949c; font-size: 8px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+.driver-showcase-toolbar > button { color: #84949c; font-size: 10px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
 .driver-showcase-toolbar > button:disabled { opacity: .35; cursor: default; }
-.driver-showcase-count { padding: 0 0 14px; color: #70848e; font-size: 8px; }
+.driver-showcase-count { padding: 0 0 14px; color: #70848e; font-size: 10px; }
 .driver-showcase-count strong { color: #dbe5e9; }
 .driver-featured-card {
   position: relative;
@@ -4660,7 +4665,7 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 .driver-featured-name > div { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
 .driver-featured-name .driver-flag { width: 31px; height: 20px; }
 .driver-featured-name h2 { margin: 0; font-family: var(--display); font-size: clamp(34px, 3.1vw, 54px); font-style: italic; font-weight: 500; line-height: .92; text-transform: uppercase; }
-.driver-featured-name p { margin: 12px 0 0; color: #7c909a; font-size: 8px; text-transform: uppercase; }
+.driver-featured-name p { margin: 12px 0 0; color: #7c909a; font-size: 10px; text-transform: uppercase; }
 .driver-showcase-portrait { position: relative; min-height: 190px; overflow: hidden; background: radial-gradient(circle at 50% 54%, color-mix(in srgb, var(--entity-color) 18%, transparent), transparent 55%); }
 .driver-showcase-portrait.is-featured { min-height: 320px; }
 .driver-showcase-portrait .driver-photo { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; filter: saturate(.86) contrast(1.04); }
@@ -4669,11 +4674,11 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 .driver-showcase-portrait .team-logo { position: absolute; z-index: 2; right: 13px; top: 13px; width: 58px; height: 34px; opacity: .88; }
 .driver-featured-data { align-self: center; padding: 32px 34px 32px 25px; }
 .driver-featured-data h3 { margin: 13px 0 9px; font-family: var(--display); font-size: clamp(25px, 2.3vw, 39px); font-style: italic; font-weight: 500; line-height: .96; text-transform: uppercase; }
-.driver-featured-data > p { max-width: 510px; margin: 0; color: #81939d; font-size: 9px; line-height: 1.55; }
-.driver-featured-data > b { display: inline-block; margin-top: 22px; color: #c6d2d7; font-size: 8px; letter-spacing: .06em; text-transform: uppercase; }
+.driver-featured-data > p { max-width: 510px; margin: 0; color: #81939d; font-size: 11px; line-height: 1.55; }
+.driver-featured-data > b { display: inline-block; margin-top: 22px; color: #c6d2d7; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
 .driver-showcase-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 24px 0 0; padding: 18px 0 0; border-top: 1px solid rgba(77, 102, 114, .35); }
 .driver-showcase-facts div { padding-right: 10px; }
-.driver-showcase-facts dt { color: #657a85; font-size: 6px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.driver-showcase-facts dt { color: #657a85; font-size: 8px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
 .driver-showcase-facts dd { margin: 5px 0 0; font-family: var(--display); font-size: 22px; font-style: italic; }
 .driver-showcase-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
 .driver-showcase-card { position: relative; min-width: 0; overflow: hidden; border: 1px solid #263a46; border-radius: 4px; color: inherit; background: #06121c; text-decoration: none; transition: border-color .18s ease, transform .18s ease; }
@@ -4683,9 +4688,12 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 .driver-showcase-card-title { display: flex; min-height: 51px; align-items: flex-start; gap: 10px; }
 .driver-showcase-card-title .driver-flag { width: 27px; height: 18px; flex: 0 0 27px; margin-top: 2px; }
 .driver-showcase-card-title h2 { margin: 0; font-family: var(--display); font-size: clamp(22px, 1.7vw, 30px); font-style: italic; font-weight: 500; line-height: .95; text-transform: uppercase; }
-.driver-showcase-card-title p { margin: 6px 0 0; color: #6f838e; font-size: 7px; text-transform: uppercase; }
+.driver-showcase-card-title p { margin: 6px 0 0; color: #6f838e; font-size: 9px; text-transform: uppercase; }
 .driver-showcase-facts.is-compact { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 14px; padding-top: 13px; }
-.driver-showcase-facts.is-compact dd { font-size: 17px; }
+.driver-showcase-facts.is-compact dd { font-size: 20px; }
+.driver-showcase-loader { display: flex; min-height: 64px; align-items: center; justify-content: center; gap: 12px; color: #7f929c; font-size: 10px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+.driver-showcase-loader i { width: 18px; height: 18px; border: 2px solid #29404c; border-top-color: var(--accent); border-radius: 50%; animation: driver-loader-spin .75s linear infinite; }
+@keyframes driver-loader-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 1260px) {
   .driver-showcase-toolbar { grid-template-columns: minmax(300px, 1fr) minmax(190px, 280px) minmax(170px, 220px); }
@@ -4826,6 +4834,14 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 .driver-profile-section > header { display: grid; grid-template-columns: minmax(310px, .9fr) minmax(310px, 1.1fr); align-items: end; gap: 45px; margin-bottom: 25px; }
 .driver-profile-section h2 { font-size: clamp(43px, 5vw, 72px); }
 .driver-profile-section > header p { max-width: 580px; margin: 0 0 4px; color: #71858f; font-size: 9px; line-height: 1.6; }
+.driver-profile-biography-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); gap: 1px; border: 1px solid var(--driver-line); background: var(--driver-line); }
+.driver-profile-biography-copy,
+.driver-profile-biography-facts { min-height: 150px; margin: 0; padding: 25px; background: var(--driver-panel); }
+.driver-profile-biography-copy p { max-width: 680px; margin: 0; color: #a8b6bd; font-size: 12px; line-height: 1.75; }
+.driver-profile-biography-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; }
+.driver-profile-biography-facts div { min-width: 0; }
+.driver-profile-biography-facts dt { color: #68808d; font-size: 7px; letter-spacing: .12em; text-transform: uppercase; }
+.driver-profile-biography-facts dd { margin: 7px 0 0; color: #edf3f5; font-size: 13px; }
 .driver-profile-circuits { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--driver-line); border-left: 1px solid var(--driver-line); }
 .driver-profile-circuits > a,
 .driver-profile-circuits > div { display: grid; min-height: 112px; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 15px; padding: 18px 20px; border-right: 1px solid var(--driver-line); border-bottom: 1px solid var(--driver-line); color: inherit; background: var(--driver-panel); text-decoration: none; }
@@ -4836,7 +4852,7 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 .driver-profile-circuits b { color: #536a76; font-weight: 400; }
 .driver-profile-circuits > div b { opacity: 0; }
 .driver-profile-history { min-width: 620px; border-top: 1px solid var(--driver-line); }
-.driver-profile-history-row { display: grid; min-height: 58px; grid-template-columns: 1.3fr repeat(3, 1fr); align-items: center; border-right: 1px solid var(--driver-line); border-bottom: 1px solid var(--driver-line); border-left: 1px solid var(--driver-line); background: rgba(6,18,28,.78); }
+.driver-profile-history-row { display: grid; min-height: 58px; grid-template-columns: 1.1fr 2.2fr repeat(3, 1fr); align-items: center; border-right: 1px solid var(--driver-line); border-bottom: 1px solid var(--driver-line); border-left: 1px solid var(--driver-line); background: rgba(6,18,28,.78); }
 .driver-profile-history-row > * { padding: 0 24px; text-align: right; }
 .driver-profile-history-row > :first-child { text-align: left; }
 .driver-profile-history-row strong { font-family: var(--display); font-size: 25px; font-style: italic; font-weight: 500; }
@@ -4868,6 +4884,7 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
   .driver-profile-subnav a { min-width: 130px; }
   .driver-profile-overview { grid-template-columns: 1fr; }
   .driver-profile-team-card { grid-column: auto; }
+  .driver-profile-biography-grid { grid-template-columns: 1fr; }
   .driver-profile-section > header { grid-template-columns: 1fr; gap: 13px; }
   .driver-profile-circuits { grid-template-columns: 1fr; }
   .driver-profile-history { overflow: hidden; }
@@ -4889,11 +4906,13 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
   .driver-profile-subnav a { min-width: 116px; min-height: 48px; }
   .driver-profile-panel { min-height: 0; padding: 20px; }
   .driver-profile-career-card > dl { grid-template-columns: repeat(2, 1fr); }
+  .driver-profile-biography-copy,
+  .driver-profile-biography-facts { padding: 20px; }
   .driver-profile-section { padding-top: 54px; }
   .driver-profile-section h2 { font-size: 43px; }
   .driver-profile-circuits > a,
   .driver-profile-circuits > div { grid-template-columns: 34px minmax(0, 1fr) auto; padding-inline: 15px; }
-  .driver-profile-history-row { grid-template-columns: 105px repeat(3, 95px); }
+  .driver-profile-history-row { grid-template-columns: 75px 160px repeat(3, 85px); }
   .driver-profile-history-row > * { padding: 0 14px; }
 }
 

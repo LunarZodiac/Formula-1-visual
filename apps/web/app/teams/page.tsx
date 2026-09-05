@@ -1,16 +1,14 @@
 import type { Metadata } from 'next';
-import catalogJson from '../data/catalogs/teams-2026.json';
 import { TeamCatalog } from '../components/team-catalog';
-import { assertCompetitorCatalog, type TeamCatalogData } from '../data/competitor-contract';
-
-assertCompetitorCatalog(catalogJson, 'teams');
-const catalog = catalogJson as TeamCatalogData;
+import { getTeamCatalog } from '../data/season-catalogs';
 
 export const metadata: Metadata = {
   title: 'Кубок конструкторов — География скорости',
   description: 'Команды Formula 1, турнирная таблица и история выступлений',
 };
 
-export default function TeamsPage() {
+export default async function TeamsPage({ searchParams }: { searchParams?: { season?: string } }) {
+  const requestedSeason = Number(searchParams?.season);
+  const catalog = await getTeamCatalog(Number.isInteger(requestedSeason) ? requestedSeason : 2026);
   return <TeamCatalog season={catalog.season} afterRound={catalog.afterRound} teams={catalog.teams} />;
 }

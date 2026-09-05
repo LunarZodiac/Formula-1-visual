@@ -31,6 +31,9 @@ const resultViewLabels: Record<ResultView, string> = {
 const localizedDriverNames = new Map(
   driverCatalog.map((driver) => [driver.nameEn.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(), driver.nameRu]),
 );
+const historicalDriverNames = new Map<string, string>([
+  ['michael schumacher', 'Михаэль Шумахер'],
+]);
 const profiledDriverIds = new Set(currentDriverCatalog.drivers.map((driver) => driver.id));
 const profiledTeamIds = new Set(currentTeamCatalog.teams.map((team) => team.id));
 
@@ -61,7 +64,9 @@ function transliterateDriverName(name: string) {
 
 function localizeDriverName(result: Pick<SnapshotSessionResult, 'givenName' | 'familyName'>) {
   const original = `${result.givenName} ${result.familyName}`;
-  return localizedDriverNames.get(normalizeDriverName(original)) ?? transliterateDriverName(original);
+  return historicalDriverNames.get(normalizeDriverName(original))
+    ?? localizedDriverNames.get(normalizeDriverName(original))
+    ?? transliterateDriverName(original);
 }
 
 function formatMilliseconds(milliseconds: number, showHours = false) {
@@ -85,9 +90,7 @@ function formatResultValue(result: SnapshotSessionResult, view: ResultView) {
   return result.status ?? '—';
 }
 
-function makeTravelPoints(
-  pageData: CircuitPageData,
-): GeoJSON.FeatureCollection<GeoJSON.Point, Record<string, unknown>> {
+function makeTravelPoints(pageData: CircuitPageData): GeoJSON.FeatureCollection<GeoJSON.Point> {
   return {
     type: 'FeatureCollection',
     features: pageData.travel.points.map((point) => ({
@@ -106,7 +109,6 @@ function makeTravelPoints(
 }
 
 type TravelMapCollection = GeoJSON.FeatureCollection<GeoJSON.Geometry, Record<string, unknown>>;
-const showLegacyTravelStory: boolean = false;
 
 function travelFeatureId(feature: GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>) {
   return String(feature.properties?.id ?? '');
@@ -294,10 +296,9 @@ function applyBasemap(map: MapLibreMap, nextBasemap: DetailBasemap) {
 function trackBounds(track: GeoJSON.Feature<GeoJSON.LineString> | undefined) {
   if (!track) return undefined;
   const [first, ...coordinates] = track.geometry.coordinates;
-  const firstLngLat: [number, number] = [first[0], first[1]];
   return coordinates.reduce(
-    (bounds, coordinate) => bounds.extend([coordinate[0], coordinate[1]]),
-    new maplibregl.LngLatBounds(firstLngLat, firstLngLat),
+    (bounds, coordinate) => bounds.extend(coordinate),
+    new maplibregl.LngLatBounds(first, first),
   );
 }
 
@@ -1737,7 +1738,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         </>
       )}
 
-      {travelStory && showLegacyTravelStory && pageData.features.travelMode && (
+      {false && travelStory && pageData.features.travelMode && (
         <section className="track-content track-content--travel">
           <header className="travel-experience__heading">
             <div className="section-heading">

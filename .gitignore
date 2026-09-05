@@ -22,8 +22,9 @@
 # Environment variables and local settings
 .env
 .env.*
-!.env.example
 *.local
+.dev.vars
+.dev.vars.*
 
 # Logs and temporary files
 *.log
@@ -34,6 +35,7 @@
 ~$*
 tmp/
 .tmp-*/
+.repo-backup-*.bundle
 
 # Operating systems and editors
 .DS_Store
@@ -47,9 +49,16 @@ Desktop.ini
 chrome-devs-trace.json
 
 # Earlier experimental copies are kept locally, but not versioned.
+F1_v1/
 F1_v1/F1_v1/Версии/
 
 # Delta is a third-party research reference. Its source, virtual environment,
 # caches and generated assets stay local until we extract an attributed,
 # independently maintained telemetry module.
 F1_v1/Delta-main/
+
+# Local Codex/Sites and Cloudflare tooling state
+.codex/
+/AGENTS.md
+**/.openai/
+**/.wrangler/

@@ -1,0 +1,8030 @@
+{
+  "schemaVersion": 2,
+  "season": 1950,
+  "generatedAt": "2026-09-05T01:53:08.785Z",
+  "drivers": [
+    {
+      "id": "farina",
+      "nameRu": "Нино Фарина",
+      "nameEn": "Nino Farina",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": 1,
+      "standingAvailable": true,
+      "points": 30,
+      "wins": 3,
+      "team": {
+        "id": "alfa",
+        "name": "Alfa Romeo",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 1,
+          "standingAvailable": true,
+          "points": 30,
+          "wins": 3,
+          "teams": [
+            {
+              "id": "alfa",
+              "name": "Alfa Romeo",
+              "raceEntries": 6,
+              "points": 30
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 6,
+        "wins": 3,
+        "podiums": 3,
+        "points": 30,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 3,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 6,
+        "wins": 3,
+        "podiums": 3,
+        "points": 30,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 3,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 1,
+          "points": 9
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 1,
+          "points": 8
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 1,
+          "points": 9
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 4
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 1,
+      "successfulCircuits": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "wins": 1
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "wins": 1
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "wins": 1
+        }
+      ]
+    },
+    {
+      "id": "fangio",
+      "nameRu": "Джуан Фангио",
+      "nameEn": "Juan Fangio",
+      "code": null,
+      "number": null,
+      "nationality": "Argentine",
+      "position": 2,
+      "standingAvailable": true,
+      "points": 27,
+      "wins": 3,
+      "team": {
+        "id": "alfa",
+        "name": "Alfa Romeo",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 2,
+          "standingAvailable": true,
+          "points": 27,
+          "wins": 3,
+          "teams": [
+            {
+              "id": "alfa",
+              "name": "Alfa Romeo",
+              "raceEntries": 6,
+              "points": 27
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 6,
+        "wins": 3,
+        "podiums": 3,
+        "points": 27,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 3,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 6,
+        "wins": 3,
+        "podiums": 3,
+        "points": 27,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 3,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 1,
+          "points": 9
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 1,
+          "points": 9
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 1,
+          "points": 8
+        },
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 1
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "wins": 1
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "wins": 1
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "wins": 1
+        }
+      ]
+    },
+    {
+      "id": "fagioli",
+      "nameRu": "Луиги Фагиоли",
+      "nameEn": "Luigi Fagioli",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": 3,
+      "standingAvailable": true,
+      "points": 24,
+      "wins": 0,
+      "team": {
+        "id": "alfa",
+        "name": "Alfa Romeo",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 3,
+          "standingAvailable": true,
+          "points": 24,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "alfa",
+              "name": "Alfa Romeo",
+              "raceEntries": 6,
+              "points": 28
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 6,
+        "wins": 0,
+        "podiums": 5,
+        "points": 28,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 6,
+        "wins": 0,
+        "podiums": 5,
+        "points": 28,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 6
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 4
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 6
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 6
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 6
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "rosier",
+      "nameRu": "Лоуис Росиер",
+      "nameEn": "Louis Rosier",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": 4,
+      "standingAvailable": true,
+      "points": 13,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 4,
+          "standingAvailable": true,
+          "points": 13,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 6,
+              "points": 13
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 6,
+        "wins": 0,
+        "podiums": 2,
+        "points": 13,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 6,
+        "wins": 0,
+        "podiums": 2,
+        "points": 13,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 4
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 4
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "ascari",
+      "nameRu": "Алберто Аскари",
+      "nameEn": "Alberto Ascari",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": 5,
+      "standingAvailable": true,
+      "points": 11,
+      "wins": 0,
+      "team": {
+        "id": "ferrari",
+        "name": "Ferrari",
+        "color": "#ED1131",
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 5,
+          "standingAvailable": true,
+          "points": 11,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "ferrari",
+              "name": "Ferrari",
+              "raceEntries": 4,
+              "points": 8
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 4,
+        "wins": 0,
+        "podiums": 1,
+        "points": 8,
+        "circuits": 4,
+        "countries": 4,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 4,
+        "wins": 0,
+        "podiums": 1,
+        "points": 8,
+        "circuits": 4,
+        "countries": 4,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 6
+        },
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "parsons",
+      "nameRu": "Джохнние Парсонс",
+      "nameEn": "Johnnie Parsons",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": 6,
+      "standingAvailable": true,
+      "points": 9,
+      "wins": 1,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 6,
+          "standingAvailable": true,
+          "points": 9,
+          "wins": 1,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 9
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 1,
+        "podiums": 1,
+        "points": 9,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 1,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 1,
+        "podiums": 1,
+        "points": 9,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 1,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 1,
+          "points": 9
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "wins": 1
+        }
+      ]
+    },
+    {
+      "id": "holland",
+      "nameRu": "Билл Холланд",
+      "nameEn": "Bill Holland",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": 7,
+      "standingAvailable": true,
+      "points": 6,
+      "wins": 0,
+      "team": {
+        "id": "deidt",
+        "name": "Deidt",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 7,
+          "standingAvailable": true,
+          "points": 6,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "deidt",
+              "name": "Deidt",
+              "raceEntries": 1,
+              "points": 6
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 1,
+        "points": 6,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 1,
+        "points": 6,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 6
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "bira",
+      "nameRu": "Принсе Бира",
+      "nameEn": "Prince Bira",
+      "code": null,
+      "number": null,
+      "nationality": "Thai",
+      "position": 8,
+      "standingAvailable": true,
+      "points": 5,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 8,
+          "standingAvailable": true,
+          "points": 5,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 4,
+              "points": 5
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 4,
+        "wins": 0,
+        "podiums": 0,
+        "points": 5,
+        "circuits": 4,
+        "countries": 4,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 4,
+        "wins": 0,
+        "podiums": 0,
+        "points": 5,
+        "circuits": 4,
+        "countries": 4,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "whitehead",
+      "nameRu": "Петер Ухитехеад",
+      "nameEn": "Peter Whitehead",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": 9,
+      "standingAvailable": true,
+      "points": 4,
+      "wins": 0,
+      "team": {
+        "id": "ferrari",
+        "name": "Ferrari",
+        "color": "#ED1131",
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 9,
+          "standingAvailable": true,
+          "points": 4,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "ferrari",
+              "name": "Ferrari",
+              "raceEntries": 3,
+              "points": 4
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 1,
+        "points": 4,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 1,
+        "points": 4,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 4
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "chiron",
+      "nameRu": "Лоуис Чирон",
+      "nameEn": "Louis Chiron",
+      "code": null,
+      "number": null,
+      "nationality": "Monegasque",
+      "position": 10,
+      "standingAvailable": true,
+      "points": 4,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 10,
+          "standingAvailable": true,
+          "points": 4,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 5,
+              "points": 4
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 5,
+        "wins": 0,
+        "podiums": 1,
+        "points": 4,
+        "circuits": 5,
+        "countries": 5,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 5,
+        "wins": 0,
+        "podiums": 1,
+        "points": 4,
+        "circuits": 5,
+        "countries": 5,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 4
+        },
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "reg_parnell",
+      "nameRu": "Рег Парнелл",
+      "nameEn": "Reg Parnell",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": 11,
+      "standingAvailable": true,
+      "points": 4,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 11,
+          "standingAvailable": true,
+          "points": 4,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "alfa",
+              "name": "Alfa Romeo",
+              "raceEntries": 1,
+              "points": 4
+            },
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 1,
+        "points": 4,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 1,
+        "points": 4,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "resultGeography": [
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 4
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "rose",
+      "nameRu": "Маури Росе",
+      "nameEn": "Mauri Rose",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": 12,
+      "standingAvailable": true,
+      "points": 4,
+      "wins": 0,
+      "team": {
+        "id": "deidt",
+        "name": "Deidt",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 12,
+          "standingAvailable": true,
+          "points": 4,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "deidt",
+              "name": "Deidt",
+              "raceEntries": 1,
+              "points": 4
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 1,
+        "points": 4,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 1,
+        "points": 4,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 4
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "serafini",
+      "nameRu": "Дорино Серафини",
+      "nameEn": "Dorino Serafini",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": 13,
+      "standingAvailable": true,
+      "points": 3,
+      "wins": 0,
+      "team": {
+        "id": "ferrari",
+        "name": "Ferrari",
+        "color": "#ED1131",
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 13,
+          "standingAvailable": true,
+          "points": 3,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "ferrari",
+              "name": "Ferrari",
+              "raceEntries": 1,
+              "points": 3
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 1,
+        "points": 3,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 1,
+        "points": 3,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 3
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "cabantous",
+      "nameRu": "Ивес Кабантоус",
+      "nameEn": "Yves Cabantous",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": 14,
+      "standingAvailable": true,
+      "points": 3,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 14,
+          "standingAvailable": true,
+          "points": 3,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 4,
+              "points": 3
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 4,
+        "wins": 0,
+        "podiums": 0,
+        "points": 3,
+        "circuits": 4,
+        "countries": 4,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 4,
+        "wins": 0,
+        "podiums": 0,
+        "points": 3,
+        "circuits": 4,
+        "countries": 4,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "sommer",
+      "nameRu": "Раимонд Соммер",
+      "nameEn": "Raymond Sommer",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": 15,
+      "standingAvailable": true,
+      "points": 3,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 15,
+          "standingAvailable": true,
+          "points": 3,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 3,
+              "points": 0
+            },
+            {
+              "id": "ferrari",
+              "name": "Ferrari",
+              "raceEntries": 2,
+              "points": 3
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 5,
+        "wins": 0,
+        "podiums": 0,
+        "points": 3,
+        "circuits": 5,
+        "countries": 5,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 5,
+        "wins": 0,
+        "podiums": 0,
+        "points": 3,
+        "circuits": 5,
+        "countries": 5,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "manzon",
+      "nameRu": "Роберт Манзон",
+      "nameEn": "Robert Manzon",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": 16,
+      "standingAvailable": true,
+      "points": 3,
+      "wins": 0,
+      "team": {
+        "id": "simca",
+        "name": "Simca",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 16,
+          "standingAvailable": true,
+          "points": 3,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "simca",
+              "name": "Simca",
+              "raceEntries": 3,
+              "points": 3
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 3,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 3,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "green",
+      "nameRu": "Сесил Греен",
+      "nameEn": "Cecil Green",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": 17,
+      "standingAvailable": true,
+      "points": 3,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 17,
+          "standingAvailable": true,
+          "points": 3,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 3
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 3,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 3,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "etancelin",
+      "nameRu": "Филиппе Етанселин",
+      "nameEn": "Philippe Étancelin",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": 18,
+      "standingAvailable": true,
+      "points": 3,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 18,
+          "standingAvailable": true,
+          "points": 3,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 6,
+              "points": 3
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 6,
+        "wins": 0,
+        "podiums": 0,
+        "points": 3,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 6,
+        "wins": 0,
+        "podiums": 0,
+        "points": 3,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 1
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "bonetto",
+      "nameRu": "Фелисе Бонетто",
+      "nameEn": "Felice Bonetto",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": 19,
+      "standingAvailable": true,
+      "points": 2,
+      "wins": 0,
+      "team": {
+        "id": "milano",
+        "name": "Milano",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 19,
+          "standingAvailable": true,
+          "points": 2,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 2,
+              "points": 2
+            },
+            {
+              "id": "milano",
+              "name": "Milano",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 2,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 2,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "chaboud",
+      "nameRu": "Еугене Чабоуд",
+      "nameEn": "Eugène Chaboud",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": 20,
+      "standingAvailable": true,
+      "points": 1,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 20,
+          "standingAvailable": true,
+          "points": 1,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 2,
+              "points": 1
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 1,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 1,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "resultGeography": [
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 1
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "bettenhausen",
+      "nameRu": "Тони Беттенхаусен",
+      "nameEn": "Tony Bettenhausen",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": 21,
+      "standingAvailable": true,
+      "points": 1,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 21,
+          "standingAvailable": true,
+          "points": 1,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "chitwood",
+      "nameRu": "Джоие Читуоод",
+      "nameEn": "Joie Chitwood",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": 22,
+      "standingAvailable": true,
+      "points": 1,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": true,
+          "position": 22,
+          "standingAvailable": true,
+          "points": 1,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 1
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 1,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 1,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 1
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "ader",
+      "nameRu": "Уалт Адер",
+      "nameEn": "Walt Ader",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "rae",
+        "name": "Rae",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "rae",
+              "name": "Rae",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "agabashian",
+      "nameRu": "Фред Агабашиан",
+      "nameEn": "Fred Agabashian",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "banks",
+      "nameRu": "Хенри Банкс",
+      "nameEn": "Henry Banks",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "biondetti",
+      "nameRu": "Клементе Биондетти",
+      "nameEn": "Clemente Biondetti",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "ferrari",
+        "name": "Ferrari",
+        "color": "#ED1131",
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "ferrari",
+              "name": "Ferrari",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "branca",
+      "nameRu": "Тони Бранка",
+      "nameEn": "Toni Branca",
+      "code": null,
+      "number": null,
+      "nationality": "Swiss",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 5,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 2,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 5
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 5
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "walt_brown",
+      "nameRu": "Уалт Броун",
+      "nameEn": "Walt Brown",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "cantrell",
+      "nameRu": "Билл Кантрелл",
+      "nameEn": "Bill Cantrell",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "adams",
+        "name": "Adams",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "adams",
+              "name": "Adams",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "darter",
+      "nameRu": "Дуане Картер",
+      "nameEn": "Duane Carter",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "stevens",
+        "name": "Stevens",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "stevens",
+              "name": "Stevens",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "claes",
+      "nameRu": "Джохнни Клаес",
+      "nameEn": "Johnny Claes",
+      "code": null,
+      "number": null,
+      "nationality": "Belgian",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 6,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 6,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 6,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 6,
+        "countries": 6,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "comotti",
+      "nameRu": "Франко Комотти",
+      "nameEn": "Franco Comotti",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "george_connor",
+      "nameRu": "Георге Коннор",
+      "nameEn": "George Connor",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "lesovsky",
+        "name": "Lesovsky",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lesovsky",
+              "name": "Lesovsky",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "crossley",
+      "nameRu": "Геофф Кросслеи",
+      "nameEn": "Geoff Crossley",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "alta",
+        "name": "Alta",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 5,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "alta",
+              "name": "Alta",
+              "raceEntries": 2,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 5
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 5
+      },
+      "resultGeography": [
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "davies",
+      "nameRu": "Джимми Давиес",
+      "nameEn": "Jimmy Davies",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "ewing",
+        "name": "Ewing",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "ewing",
+              "name": "Ewing",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "graffenried",
+      "nameRu": "Тоуло Де Граффенриед",
+      "nameEn": "Toulo de Graffenried",
+      "code": null,
+      "number": null,
+      "nationality": "Swiss",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 4,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 4,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 4,
+        "countries": 4,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 4,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 4,
+        "countries": 4,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "dinsmore",
+      "nameRu": "Дуке Динсморе",
+      "nameEn": "Duke Dinsmore",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "faulkner",
+      "nameRu": "Уалт Фаулкнер",
+      "nameEn": "Walt Faulkner",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "flaherty",
+      "nameRu": "Пат Флахерти",
+      "nameEn": "Pat Flaherty",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "fohr",
+      "nameRu": "Мирон Фохр",
+      "nameEn": "Myron Fohr",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "marchese",
+        "name": "Marchese",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "marchese",
+              "name": "Marchese",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "fry",
+      "nameRu": "Джое Фри",
+      "nameEn": "Joe Fry",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 1,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "resultGeography": [
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "gerard",
+      "nameRu": "Боб Герард",
+      "nameEn": "Bob Gerard",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "era",
+        "name": "ERA",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 2,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "era",
+              "name": "ERA",
+              "raceEntries": 2,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 2
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 2
+      },
+      "resultGeography": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "gonzalez",
+      "nameRu": "Джосе Фроилан Гонзалез",
+      "nameEn": "José Froilán González",
+      "code": null,
+      "number": null,
+      "nationality": "Argentine",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 6,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 2,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "resultGeography": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "hampshire",
+      "nameRu": "Давид Хампшире",
+      "nameEn": "David Hampshire",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 6,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 2,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "resultGeography": [
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "hanks",
+      "nameRu": "Сам Ханкс",
+      "nameEn": "Sam Hanks",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "harrison",
+      "nameRu": "Кут Харрисон",
+      "nameEn": "Cuth Harrison",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "era",
+        "name": "ERA",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "era",
+              "name": "ERA",
+              "raceEntries": 3,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "hartley",
+      "nameRu": "Гене Хартлеи",
+      "nameEn": "Gene Hartley",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "langley",
+        "name": "Langley",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "langley",
+              "name": "Langley",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "hellings",
+      "nameRu": "Мак Хеллингс",
+      "nameEn": "Mack Hellings",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "holmes",
+      "nameRu": "Джакие Холмес",
+      "nameEn": "Jackie Holmes",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "olson",
+        "name": "Olson",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "olson",
+              "name": "Olson",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "hoyt",
+      "nameRu": "Джерри Хоит",
+      "nameEn": "Jerry Hoyt",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "jackson",
+      "nameRu": "Джимми Джаксон",
+      "nameEn": "Jimmy Jackson",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "leslie_johnson",
+      "nameRu": "Леслие Джохнсон",
+      "nameEn": "Leslie Johnson",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "era",
+        "name": "ERA",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 1,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "era",
+              "name": "ERA",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "resultGeography": [
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "kelly",
+      "nameRu": "Джое Келли",
+      "nameEn": "Joe Kelly",
+      "code": null,
+      "number": null,
+      "nationality": "Irish",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "alta",
+        "name": "Alta",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 1,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "alta",
+              "name": "Alta",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "resultGeography": [
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "levegh",
+      "nameRu": "Пиерре Левегх",
+      "nameEn": "Pierre Levegh",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 3,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "levrett",
+      "nameRu": "Баилисс Левретт",
+      "nameEn": "Bayliss Levrett",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "adams",
+        "name": "Adams",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "adams",
+              "name": "Adams",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "louveau",
+      "nameRu": "Хенри Лоувеау",
+      "nameEn": "Henri Louveau",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "guy_mairesse",
+      "nameRu": "Гуи Маирессе",
+      "nameEn": "Guy Mairesse",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "martin",
+      "nameRu": "Еугене Мартин",
+      "nameEn": "Eugène Martin",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 4,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 2,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 4
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 4
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "mcdowell",
+      "nameRu": "Джохнни Мкдоуелл",
+      "nameEn": "Johnny McDowell",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "mcgrath",
+      "nameRu": "Джак Мкграт",
+      "nameEn": "Jack McGrath",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "kurtis_kraft",
+        "name": "Kurtis Kraft",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "kurtis_kraft",
+              "name": "Kurtis Kraft",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "murray",
+      "nameRu": "Давид Мурраи",
+      "nameEn": "David Murray",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 2,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "pagani",
+      "nameRu": "Нелло Пагани",
+      "nameEn": "Nello Pagani",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 4,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 4
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 4
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "pian",
+      "nameRu": "Алфредо Пиан",
+      "nameEn": "Alfredo Pián",
+      "code": null,
+      "number": null,
+      "nationality": "Argentine",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 2,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 2
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 2
+      },
+      "resultGeography": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "pietsch",
+      "nameRu": "Паул Пиетш",
+      "nameEn": "Paul Pietsch",
+      "code": null,
+      "number": null,
+      "nationality": "German",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "pozzi",
+      "nameRu": "Чарлес Поззи",
+      "nameEn": "Charles Pozzi",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 6,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 6
+      },
+      "resultGeography": [
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "dick_rathmann",
+      "nameRu": "Дик Ратманн",
+      "nameEn": "Dick Rathmann",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "watson",
+        "name": "Watson",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "watson",
+              "name": "Watson",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "rathmann",
+      "nameRu": "Джим Ратманн",
+      "nameEn": "Jim Rathmann",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "wetteroth",
+        "name": "Wetteroth",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "wetteroth",
+              "name": "Wetteroth",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "rol",
+      "nameRu": "Франко Рол",
+      "nameEn": "Franco Rol",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 3,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "rolt",
+      "nameRu": "Тони Ролт",
+      "nameEn": "Tony Rolt",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "era",
+        "name": "ERA",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 1,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "era",
+              "name": "ERA",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "resultGeography": [
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "paul_russo",
+      "nameRu": "Паул Руссо",
+      "nameEn": "Paul Russo",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "nichels",
+        "name": "Nichels",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "nichels",
+              "name": "Nichels",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "ruttman",
+      "nameRu": "Трои Руттман",
+      "nameEn": "Troy Ruttman",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "lesovsky",
+        "name": "Lesovsky",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "lesovsky",
+              "name": "Lesovsky",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "sanesi",
+      "nameRu": "Консалво Санеси",
+      "nameEn": "Consalvo Sanesi",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "alfa",
+        "name": "Alfa Romeo",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "alfa",
+              "name": "Alfa Romeo",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "schell",
+      "nameRu": "Харри Шелл",
+      "nameEn": "Harry Schell",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "lago",
+        "name": "Talbot-Lago",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 4,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "cooper",
+              "name": "Cooper",
+              "raceEntries": 1,
+              "points": 0
+            },
+            {
+              "id": "lago",
+              "name": "Talbot-Lago",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 4
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 4
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "schindler",
+      "nameRu": "Билл Шиндлер",
+      "nameEn": "Bill Schindler",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "snowberger",
+        "name": "Snowberger",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "snowberger",
+              "name": "Snowberger",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "shawe_taylor",
+      "nameRu": "Бриан Шауе Таилор",
+      "nameEn": "Brian Shawe Taylor",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 1,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "resultGeography": [
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "taruffi",
+      "nameRu": "Пиеро Таруффи",
+      "nameEn": "Piero Taruffi",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "alfa",
+        "name": "Alfa Romeo",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "alfa",
+              "name": "Alfa Romeo",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "trintignant",
+      "nameRu": "Маурисе Тринтигнант",
+      "nameEn": "Maurice Trintignant",
+      "code": null,
+      "number": null,
+      "nationality": "French",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "simca",
+        "name": "Simca",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 7,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "simca",
+              "name": "Simca",
+              "raceEntries": 2,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 2,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 2,
+        "countries": 2,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 7
+      },
+      "resultGeography": [
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "villoresi",
+      "nameRu": "Луиги Виллореси",
+      "nameEn": "Luigi Villoresi",
+      "code": null,
+      "number": null,
+      "nationality": "Italian",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "ferrari",
+        "name": "Ferrari",
+        "color": "#ED1131",
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 5,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "ferrari",
+              "name": "Ferrari",
+              "raceEntries": 3,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 5
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 3,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 3,
+        "countries": 3,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 5
+      },
+      "resultGeography": [
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "peter_walker",
+      "nameRu": "Петер Уалкер",
+      "nameEn": "Peter Walker",
+      "code": null,
+      "number": null,
+      "nationality": "British",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "era",
+        "name": "ERA",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 1,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "era",
+              "name": "ERA",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 1
+      },
+      "resultGeography": [
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "wallard",
+      "nameRu": "Лее Уаллард",
+      "nameEn": "Lee Wallard",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "moore",
+        "name": "Moore",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "moore",
+              "name": "Moore",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    },
+    {
+      "id": "webb",
+      "nameRu": "Травис Уебб",
+      "nameEn": "Travis Webb",
+      "code": null,
+      "number": null,
+      "nationality": "American",
+      "position": null,
+      "standingAvailable": false,
+      "points": 0,
+      "wins": 0,
+      "team": {
+        "id": "maserati",
+        "name": "Maserati",
+        "color": null,
+        "logoUrl": null
+      },
+      "seasonHistory": [
+        {
+          "season": 1950,
+          "afterRound": 3,
+          "status": "completed",
+          "isFinal": false,
+          "position": null,
+          "standingAvailable": false,
+          "points": 0,
+          "wins": 0,
+          "teams": [
+            {
+              "id": "maserati",
+              "name": "Maserati",
+              "raceEntries": 1,
+              "points": 0
+            }
+          ]
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 1,
+        "wins": 0,
+        "podiums": 0,
+        "points": 0,
+        "circuits": 1,
+        "countries": 1,
+        "winningCircuits": 0,
+        "firstSeason": 1950,
+        "lastSeason": 1950,
+        "throughRound": 3
+      },
+      "resultGeography": [
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": []
+    }
+  ],
+  "seasonStatus": "completed",
+  "afterRound": 7,
+  "sources": [
+    {
+      "id": "jolpica",
+      "name": "Jolpica F1",
+      "url": "https://api.jolpi.ca/ergast/f1/",
+      "licence": "Jolpica Terms of Use",
+      "retrievedAt": "2026-08-24T23:42:18.035Z"
+    },
+    {
+      "id": "jolpica-csv-2026-08-01",
+      "name": "Jolpica F1 CSV dump",
+      "url": "https://api.jolpi.ca/data/dumps/download/",
+      "licence": "CC BY-NC-SA 4.0",
+      "retrievedAt": "2026-07-31T21:00:00.000Z"
+    }
+  ]
+}

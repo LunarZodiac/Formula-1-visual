@@ -21,8 +21,9 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
     points: result.points + standing.points,
     wins: result.wins + standing.wins,
   }), { points: 0, wins: 0 });
-  const bestPosition = orderedHistory.length > 0
-    ? Math.min(...orderedHistory.map((standing) => standing.position))
+  const rankedHistory = orderedHistory.filter((standing) => standing.position !== null);
+  const bestPosition = rankedHistory.length > 0
+    ? Math.min(...rankedHistory.map((standing) => standing.position as number))
     : null;
   const debutSeason = orderedHistory.at(-1)?.season ?? null;
   const nationalityNames: Record<string, string> = {
@@ -42,7 +43,7 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
         const headerHeight = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 74;
         const subnavHeight = document.querySelector<HTMLElement>('.driver-profile-subnav')?.offsetHeight ?? 54;
         const threshold = headerHeight + subnavHeight + 18;
-        const sections = ['overview', 'circuits', 'history']
+        const sections = ['overview', 'biography', 'circuits', 'history']
           .map((id) => document.getElementById(id))
           .filter((section): section is HTMLElement => Boolean(section));
         const current = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
@@ -60,7 +61,7 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
   useEffect(() => {
     const syncHashTarget = () => {
       const id = window.location.hash.slice(1);
-      if (!['overview', 'circuits', 'history'].includes(id)) return;
+      if (!['overview', 'biography', 'circuits', 'history'].includes(id)) return;
       const target = document.getElementById(id);
       if (!target) return;
       setActiveSection(id);
@@ -108,23 +109,23 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
           <p className="driver-profile-original-name">{driver.nameEn}</p>
           <div className="driver-profile-identity"><DriverFlag driverId={driver.id} /><strong>{nationality}</strong><i aria-hidden="true" />{driver.team ? <Link href={`/teams/${driver.team.id}`}>{driver.team.name}</Link> : <span>Команда не указана</span>}</div>
           <dl className="driver-profile-hero-facts">
-            <div><dt>Позиция в сезоне</dt><dd>{driver.position}</dd></div>
+            <div><dt>Позиция в сезоне</dt><dd>{driver.position ?? '—'}</dd></div>
             <div><dt>Очки</dt><dd>{driver.points}</dd></div>
             <div><dt>Победы</dt><dd>{driver.wins}</dd></div>
             <div><dt>Номер</dt><dd>{driver.number ?? '—'}</dd></div>
           </dl>
         </div>
-        <div className="driver-profile-hero-number"><small>Номер пилота</small><strong>{driver.number ?? '—'}</strong><span>{driver.code ?? 'F1'}</span></div>
+          <div className="driver-profile-hero-number"><small>Номер пилота</small><strong>{driver.number ?? '—'}</strong></div>
       </header>
 
-      <nav className="driver-profile-subnav" aria-label="Разделы профиля" style={{ '--active-section': ['overview', 'circuits', 'history'].indexOf(activeSection) } as CSSProperties}>
-        {([['overview', 'Обзор'], ['circuits', 'Трассы'], ['history', 'История сезонов']] as const).map(([id, label]) => <a className={activeSection === id ? 'is-active' : undefined} href={`#${id}`} aria-current={activeSection === id ? 'location' : undefined} onClick={(event) => navigateToSection(event, id)} key={id}>{label}</a>)}
+      <nav className="driver-profile-subnav" aria-label="Разделы профиля" style={{ '--active-section': ['overview', 'biography', 'circuits', 'history'].indexOf(activeSection) } as CSSProperties}>
+        {([['overview', 'Обзор'], ['biography', 'Биография'], ['circuits', 'Трассы'], ['history', 'История сезонов']] as const).map(([id, label]) => <a className={activeSection === id ? 'is-active' : undefined} href={`#${id}`} aria-current={activeSection === id ? 'location' : undefined} onClick={(event) => navigateToSection(event, id)} key={id}>{label}</a>)}
       </nav>
 
       <section className="driver-profile-overview" id="overview" aria-label="Обзор показателей">
         <article className="driver-profile-panel driver-profile-season-card">
           <header><span>Текущий сезон</span><h2>Сезон {season}</h2></header>
-          <div className="driver-profile-position"><strong>{driver.position}</strong><span>место<br />в чемпионате</span></div>
+          <div className="driver-profile-position"><strong>{driver.position ?? '—'}</strong><span>место<br />в чемпионате</span></div>
           <dl><div><dt>Очки</dt><dd>{driver.points}</dd></div><div><dt>Победы</dt><dd>{driver.wins}</dd></div><div><dt>Трасс с победой</dt><dd>{driver.successfulCircuits.length}</dd></div></dl>
         </article>
 
@@ -139,6 +140,19 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
         </article>
       </section>
 
+      <section className="driver-profile-section driver-profile-biography" id="biography">
+        <header><div><span>Личная информация</span><h2>Биография</h2></div><p>Проверенные биографические сведения о пилоте</p></header>
+        <div className="driver-profile-biography-grid">
+          <div className="driver-profile-biography-copy"><p>{driver.biography ?? 'Биографическая справка готовится. Мы добавим её после проверки источников.'}</p></div>
+          <dl className="driver-profile-biography-facts">
+            <div><dt>Дата рождения</dt><dd>{driver.birthDate ?? 'Не указана'}</dd></div>
+            <div><dt>Место рождения</dt><dd>{driver.birthPlace ?? 'Не указано'}</dd></div>
+            <div><dt>Рост</dt><dd>{driver.heightCm ? `${driver.heightCm} см` : 'Не указан'}</dd></div>
+            <div><dt>Вес</dt><dd>{driver.weightKg ? `${driver.weightKg} кг` : 'Не указан'}</dd></div>
+          </dl>
+        </div>
+      </section>
+
       <section className="driver-profile-section" id="circuits">
         <header><div><span>География результатов</span><h2>Успешные трассы</h2></div><p>Трассы, на которых зафиксированы победы пилота в загруженном наборе результатов</p></header>
         {driver.successfulCircuits.length > 0 ? <div className="driver-profile-circuits">{driver.successfulCircuits.map((circuit, index) => {
@@ -150,8 +164,8 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
       <section className="driver-profile-section" id="history">
         <header><div><span>Результаты по годам</span><h2>История сезонов</h2></div><p>{orderedHistory.length > 0 ? `${orderedHistory.length} ${orderedHistory.length === 1 ? 'сезон' : orderedHistory.length < 5 ? 'сезона' : 'сезонов'} в текущей базе` : 'История сезонов пока не загружена'}</p></header>
         {orderedHistory.length > 0 ? <div className="driver-profile-history" role="table" aria-label="История результатов пилота">
-          <div className="driver-profile-history-row is-header" role="row"><span role="columnheader">Сезон</span><span role="columnheader">Место</span><span role="columnheader">Очки</span><span role="columnheader">Победы</span></div>
-          {orderedHistory.map((standing) => <div className="driver-profile-history-row" role="row" key={standing.season}><strong role="cell">{standing.season}</strong><span role="cell">{standing.position}</span><span role="cell">{standing.points}</span><span role="cell">{standing.wins}</span></div>)}
+          <div className="driver-profile-history-row is-header" role="row"><span role="columnheader">Сезон</span><span role="columnheader">Команды</span><span role="columnheader">Место</span><span role="columnheader">Очки</span><span role="columnheader">Победы</span></div>
+          {orderedHistory.map((standing) => <div className="driver-profile-history-row" role="row" key={standing.season}><strong role="cell">{standing.season}</strong><span role="cell">{standing.teams.length ? [...new Set(standing.teams.map((team) => team.name))].join(', ') : '—'}</span><span role="cell">{standing.position ?? '—'}</span><span role="cell">{standing.points}</span><span role="cell">{standing.wins}</span></div>)}
         </div> : <p className="driver-profile-empty">История сезонов пока не загружена</p>}
       </section>
       <p className="driver-profile-data-note">Показатели отражают последний загруженный срез базы и могут измениться после следующего обновления</p>
@@ -180,7 +194,7 @@ export function TeamProfile({ season, team }: { season: number; team: TeamCatalo
     <section className="team-profile-facts" aria-label="Факты о команде"><div><span>Лучшее место в базе</span><strong>{bestPosition ?? '—'}</strong></div><div><span>Титулы в базе</span><strong>{titles}</strong></div><div><span>Победы в базе</span><strong>{totals.wins}</strong></div><div><span>Очки в базе</span><strong>{totals.points}</strong></div><div><span>Первый сезон в базе</span><strong>{firstSeason ?? '—'}</strong></div></section>
 
     <div className="team-profile-dashboard">
-      <section className="team-profile-panel team-profile-drivers"><header><span>Состав</span><h2>Пилоты {season}</h2></header><div>{team.drivers.length ? team.drivers.map((driver) => <Link href={`/drivers/${driver.id}`} key={driver.id}><div className="team-profile-driver-photo"><DriverPortrait driverId={driver.id} name={driver.nameRu} /></div><div><small>{driver.code ?? 'F1'}</small><strong>{driver.nameRu}</strong><span>{driver.points} очков · {driver.position} место</span></div></Link>) : <p>Состав сезона пока не загружен</p>}</div></section>
+      <section className="team-profile-panel team-profile-drivers"><header><span>Состав</span><h2>Пилоты {season}</h2></header><div>{team.drivers.length ? team.drivers.map((driver) => <Link href={`/drivers/${driver.id}`} key={driver.id}><div className="team-profile-driver-photo"><DriverPortrait driverId={driver.id} name={driver.nameRu} /></div><div><strong>{driver.nameRu}</strong><span>{driver.points} очков · {driver.position} место</span></div></Link>) : <p>Состав сезона пока не загружен</p>}</div></section>
       <section className="team-profile-panel team-profile-season"><header><span>Текущий срез</span><h2>Сезон {season}</h2></header><div className="team-profile-season-position"><strong>{team.position}</strong><span>место в Кубке<br />конструкторов</span></div><dl><div><dt>Очки</dt><dd>{team.points}</dd></div><div><dt>Победы</dt><dd>{team.wins}</dd></div><div><dt>Пилоты</dt><dd>{team.driverCount}</dd></div></dl></section>
       <section className="team-profile-panel team-profile-summary"><header><span>Все загруженные сезоны</span><h2>Сводка по базе</h2></header><dl><div><dt>Сезоны</dt><dd>{history.length}</dd></div><div><dt>Титулы</dt><dd>{titles}</dd></div><div><dt>Победы</dt><dd>{totals.wins}</dd></div><div><dt>Очки</dt><dd>{totals.points}</dd></div></dl></section>
     </div>

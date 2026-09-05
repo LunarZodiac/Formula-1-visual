@@ -113,9 +113,8 @@ export function BahrainModelViewer() {
       resizeObserver.disconnect();
       controls.dispose();
       model?.geometry.dispose();
-      const modelMaterial = model?.material;
-      if (Array.isArray(modelMaterial)) modelMaterial.forEach((material) => material.dispose());
-      else modelMaterial?.dispose();
+      if (model && Array.isArray(model.material)) model.material.forEach((material) => material.dispose());
+      else if (model) model.material.dispose();
       grid?.geometry.dispose();
       renderer.dispose();
       renderer.domElement.remove();

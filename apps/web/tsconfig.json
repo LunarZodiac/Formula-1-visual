@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
-    "types": ["node", "geojson"],
+    "types": ["node", "@cloudflare/workers-types"],
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",

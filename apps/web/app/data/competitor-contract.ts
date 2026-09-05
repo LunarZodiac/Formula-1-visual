@@ -12,8 +12,9 @@ export type ResultGeography = {
   raceEntries: number; wins: number; podiums: number; points: number;
 };
 export type CompetitorStanding = {
-  season: number; position: number; points: number; wins: number;
+  season: number; position: number | null; points: number; wins: number;
   afterRound: number; isFinal: boolean; status: string;
+  standingAvailable?: boolean;
 };
 type CompetitorHistory = {
   careerTitles: number; sourceIds: string[];
@@ -23,9 +24,18 @@ type CompetitorHistory = {
 };
 export type DriverCatalogItem = CompetitorHistory & {
   id: string; nameRu: string; nameEn: string; code: string | null; number: number | null;
-  nationality: string | null; position: number; points: number; wins: number;
+  nationality: string | null; position: number | null; points: number; wins: number;
+  standingAvailable?: boolean;
+  biography?: string | null; birthDate?: string | null; birthPlace?: string | null;
+  heightCm?: number | null; weightKg?: number | null;
   team: { id: string; name: string; color: string | null; logoUrl: string | null } | null;
   seasonHistory: (CompetitorStanding & { teams: { id: string; name: string; raceEntries: number; points: number }[] })[];
+};
+export type DriverListItem = Pick<DriverCatalogItem, 'id' | 'nameRu' | 'nameEn' | 'code' | 'number' | 'nationality' | 'position' | 'points' | 'wins' | 'team'> & {
+  latestSeason?: number;
+  firstSeason?: number;
+  seasonCount?: number;
+  seasonHistory?: { season: number }[];
 };
 export type TeamCatalogItem = CompetitorHistory & {
   id: string; name: string; nationality: string | null; position: number; points: number; wins: number;
@@ -108,7 +118,10 @@ export function assertCompetitorCatalog(value: unknown, kind: 'drivers' | 'teams
     const path = `${kind}[${index}]`;
     const row = object(item, path);
     text(row.id, `${path}.id`);
-    integer(row.position, `${path}.position`, 1);
+    if (kind === 'drivers' && row.position === null) {
+      if (row.standingAvailable !== false) fail(`${path}.standingAvailable`);
+    } else integer(row.position, `${path}.position`, 1);
+    if (kind === 'drivers' && row.standingAvailable !== undefined) boolean(row.standingAvailable, `${path}.standingAvailable`);
     finite(row.points, `${path}.points`);
     integer(row.wins, `${path}.wins`);
     const titles = integer(row.careerTitles, `${path}.careerTitles`);
@@ -146,7 +159,11 @@ export function assertCompetitorCatalog(value: unknown, kind: 'drivers' | 'teams
       const historyPath = `${path}.seasonHistory[${historyIndex}]`;
       const standing = object(entry, historyPath);
       if (integer(standing.season, `${historyPath}.season`, 1950) > season) fail(`${historyPath}.season`);
-      integer(standing.position, `${historyPath}.position`, 1); finite(standing.points, `${historyPath}.points`);
+      if (kind === 'drivers' && standing.position === null) {
+        if (standing.standingAvailable !== false) fail(`${historyPath}.standingAvailable`);
+      } else integer(standing.position, `${historyPath}.position`, 1);
+      if (kind === 'drivers' && standing.standingAvailable !== undefined) boolean(standing.standingAvailable, `${historyPath}.standingAvailable`);
+      finite(standing.points, `${historyPath}.points`);
       integer(standing.wins, `${historyPath}.wins`); integer(standing.afterRound, `${historyPath}.afterRound`);
       boolean(standing.isFinal, `${historyPath}.isFinal`); text(standing.status, `${historyPath}.status`);
       if (standing.isFinal && standing.position === 1) confirmedTitles++;

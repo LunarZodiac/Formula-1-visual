@@ -1,0 +1,1439 @@
+{
+  "schemaVersion": 2,
+  "season": 1959,
+  "generatedAt": "2026-09-05T01:53:11.735Z",
+  "teams": [
+    {
+      "id": "cooper-climax",
+      "name": "Cooper-Climax",
+      "nationality": "British",
+      "position": 1,
+      "points": 40,
+      "wins": 5,
+      "engineName": null,
+      "color": null,
+      "logoUrl": null,
+      "carModel": null,
+      "carImageUrl": null,
+      "seasonHistory": [
+        {
+          "season": 1959,
+          "afterRound": 9,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Cooper-Climax",
+          "position": 1,
+          "points": 40,
+          "wins": 5
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 8,
+        "wins": 5,
+        "podiums": 13,
+        "points": 97.5,
+        "circuits": 8,
+        "countries": 8,
+        "winningCircuits": 5,
+        "firstSeason": 1959,
+        "lastSeason": 1959,
+        "throughRound": 9
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 8,
+        "wins": 5,
+        "podiums": 13,
+        "points": 97.5,
+        "circuits": 8,
+        "countries": 8,
+        "winningCircuits": 5,
+        "firstSeason": 1959,
+        "lastSeason": 1959,
+        "throughRound": 9
+      },
+      "resultGeography": [
+        {
+          "id": "aintree",
+          "name": "Aintree",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -2.94056,
+            53.4769
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 2,
+          "points": 14.5
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 2,
+          "points": 15
+        },
+        {
+          "id": "monsanto",
+          "name": "Monsanto Park Circuit",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "pt",
+          "coordinates": [
+            -9.20306,
+            38.7197
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 2,
+          "points": 18
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 2,
+          "points": 12
+        },
+        {
+          "id": "sebring",
+          "name": "Sebring International Raceway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -81.3483,
+            27.4547
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 2,
+          "points": 18
+        },
+        {
+          "id": "zandvoort",
+          "name": "Зандворт",
+          "slug": "zandvoort",
+          "isPublished": false,
+          "countryCode": "nl",
+          "coordinates": [
+            4.54092,
+            52.3888
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 2,
+          "points": 11
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 6
+        },
+        {
+          "id": "avus",
+          "name": "AVUS",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "de",
+          "coordinates": [
+            13.2514,
+            52.4806
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 1,
+      "successfulCircuits": [
+        {
+          "id": "aintree",
+          "name": "Aintree",
+          "slug": null,
+          "isPublished": false,
+          "wins": 1
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "wins": 1
+        },
+        {
+          "id": "monsanto",
+          "name": "Monsanto Park Circuit",
+          "slug": null,
+          "isPublished": false,
+          "wins": 1
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "wins": 1
+        },
+        {
+          "id": "sebring",
+          "name": "Sebring International Raceway",
+          "slug": null,
+          "isPublished": false,
+          "wins": 1
+        }
+      ],
+      "drivers": [
+        {
+          "id": "ashdown",
+          "nameRu": "Петер Ашдоун",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 1,
+          "teamPoints": 0
+        },
+        {
+          "id": "fairman",
+          "nameRu": "Джак Фаирман",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 1,
+          "teamPoints": 0
+        },
+        {
+          "id": "gregory",
+          "nameRu": "Мастен Грегори",
+          "code": null,
+          "position": 9,
+          "points": 10,
+          "raceEntries": 6,
+          "teamPoints": 10
+        },
+        {
+          "id": "henry_taylor",
+          "nameRu": "Хенри Таилор",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 1,
+          "teamPoints": 0
+        },
+        {
+          "id": "jack_brabham",
+          "nameRu": "Джак Брабхам",
+          "code": null,
+          "position": 1,
+          "points": 31,
+          "raceEntries": 8,
+          "teamPoints": 34
+        },
+        {
+          "id": "mclaren",
+          "nameRu": "Брусе Мкларен",
+          "code": null,
+          "position": 6,
+          "points": 16.5,
+          "raceEntries": 7,
+          "teamPoints": 16.5
+        },
+        {
+          "id": "mike_taylor",
+          "nameRu": "Мике Таилор",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 1,
+          "teamPoints": 0
+        },
+        {
+          "id": "moss",
+          "nameRu": "Стирлинг Мосс",
+          "code": null,
+          "position": 3,
+          "points": 25.5,
+          "raceEntries": 6,
+          "teamPoints": 18
+        },
+        {
+          "id": "scarlatti",
+          "nameRu": "Гиоргио Скарлатти",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 1,
+          "teamPoints": 0
+        },
+        {
+          "id": "schell",
+          "nameRu": "Харри Шелл",
+          "code": null,
+          "position": 13,
+          "points": 5,
+          "raceEntries": 1,
+          "teamPoints": 0
+        },
+        {
+          "id": "trintignant",
+          "nameRu": "Маурисе Тринтигнант",
+          "code": null,
+          "position": 5,
+          "points": 19,
+          "raceEntries": 8,
+          "teamPoints": 19
+        }
+      ],
+      "driverCount": 11
+    },
+    {
+      "id": "ferrari",
+      "name": "Ferrari",
+      "nationality": "Italian",
+      "position": 2,
+      "points": 32,
+      "wins": 2,
+      "engineName": null,
+      "color": "#ED1131",
+      "logoUrl": null,
+      "carModel": null,
+      "carImageUrl": null,
+      "seasonHistory": [
+        {
+          "season": 1959,
+          "afterRound": 9,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Ferrari",
+          "position": 2,
+          "points": 32,
+          "wins": 2
+        },
+        {
+          "season": 1958,
+          "afterRound": 11,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Ferrari",
+          "position": 2,
+          "points": 40,
+          "wins": 2
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 73,
+        "wins": 29,
+        "podiums": 104,
+        "points": 715.94,
+        "circuits": 19,
+        "countries": 13,
+        "winningCircuits": 12,
+        "firstSeason": 1950,
+        "lastSeason": 1959,
+        "throughRound": 9
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 7,
+        "wins": 2,
+        "podiums": 9,
+        "points": 67,
+        "circuits": 7,
+        "countries": 7,
+        "winningCircuits": 2,
+        "firstSeason": 1959,
+        "lastSeason": 1959,
+        "throughRound": 9
+      },
+      "resultGeography": [
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 6,
+          "wins": 6,
+          "podiums": 11,
+          "points": 80.78
+        },
+        {
+          "id": "nurburgring",
+          "name": "Nürburgring",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "de",
+          "coordinates": [
+            6.9475,
+            50.3356
+          ],
+          "raceEntries": 7,
+          "wins": 4,
+          "podiums": 12,
+          "points": 84
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 7,
+          "wins": 4,
+          "podiums": 11,
+          "points": 81
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 8,
+          "wins": 3,
+          "podiums": 11,
+          "points": 76.5
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 10,
+          "wins": 2,
+          "podiums": 15,
+          "points": 94.5
+        },
+        {
+          "id": "galvez",
+          "name": "Autódromo Juan y Oscar Gálvez",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ar",
+          "coordinates": [
+            -58.4593,
+            -34.6943
+          ],
+          "raceEntries": 6,
+          "wins": 2,
+          "podiums": 9,
+          "points": 54.66
+        },
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ch",
+          "coordinates": [
+            7.40194,
+            46.9589
+          ],
+          "raceEntries": 5,
+          "wins": 2,
+          "podiums": 7,
+          "points": 46
+        },
+        {
+          "id": "zandvoort",
+          "name": "Зандворт",
+          "slug": "zandvoort",
+          "isPublished": false,
+          "countryCode": "nl",
+          "coordinates": [
+            4.54092,
+            52.3888
+          ],
+          "raceEntries": 5,
+          "wins": 2,
+          "podiums": 5,
+          "points": 43
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 6,
+          "wins": 1,
+          "podiums": 6,
+          "points": 46.5
+        },
+        {
+          "id": "essarts",
+          "name": "Rouen-Les-Essarts",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            1.00458,
+            49.3306
+          ],
+          "raceEntries": 2,
+          "wins": 1,
+          "podiums": 5,
+          "points": 33
+        },
+        {
+          "id": "avus",
+          "name": "AVUS",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "de",
+          "coordinates": [
+            13.2514,
+            52.4806
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 3,
+          "points": 19
+        },
+        {
+          "id": "pedralbes",
+          "name": "Circuit de Pedralbes",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            2.11667,
+            41.3903
+          ],
+          "raceEntries": 2,
+          "wins": 1,
+          "podiums": 2,
+          "points": 17
+        },
+        {
+          "id": "ain-diab",
+          "name": "Ain Diab",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ma",
+          "coordinates": [
+            -7.6875,
+            33.5786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 2,
+          "points": 10
+        },
+        {
+          "id": "aintree",
+          "name": "Aintree",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -2.94056,
+            53.4769
+          ],
+          "raceEntries": 2,
+          "wins": 0,
+          "podiums": 2,
+          "points": 13
+        },
+        {
+          "id": "boavista",
+          "name": "Circuito da Boavista",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "pt",
+          "coordinates": [
+            -8.67325,
+            41.1705
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 9
+        },
+        {
+          "id": "monsanto",
+          "name": "Monsanto Park Circuit",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "pt",
+          "coordinates": [
+            -9.20306,
+            38.7197
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 4
+        },
+        {
+          "id": "sebring",
+          "name": "Sebring International Raceway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -81.3483,
+            27.4547
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 4
+        },
+        {
+          "id": "indianapolis",
+          "name": "Indianapolis Motor Speedway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "pescara",
+          "name": "Pescara Circuit",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            14.1508,
+            42.475
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": [
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "wins": 6
+        },
+        {
+          "id": "nurburgring",
+          "name": "Nürburgring",
+          "slug": null,
+          "isPublished": false,
+          "wins": 4
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "wins": 4
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "wins": 3
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "wins": 2
+        },
+        {
+          "id": "galvez",
+          "name": "Autódromo Juan y Oscar Gálvez",
+          "slug": null,
+          "isPublished": false,
+          "wins": 2
+        },
+        {
+          "id": "bremgarten",
+          "name": "Circuit Bremgarten",
+          "slug": null,
+          "isPublished": false,
+          "wins": 2
+        },
+        {
+          "id": "zandvoort",
+          "name": "Зандворт",
+          "slug": "zandvoort",
+          "isPublished": false,
+          "wins": 2
+        }
+      ],
+      "drivers": [
+        {
+          "id": "allison",
+          "nameRu": "Клифф Аллисон",
+          "code": null,
+          "position": 17,
+          "points": 2,
+          "raceEntries": 5,
+          "teamPoints": 2
+        },
+        {
+          "id": "behra",
+          "nameRu": "Джеан Бехра",
+          "code": null,
+          "position": 18,
+          "points": 2,
+          "raceEntries": 3,
+          "teamPoints": 2
+        },
+        {
+          "id": "brooks",
+          "nameRu": "Тони Броокс",
+          "code": null,
+          "position": 2,
+          "points": 27,
+          "raceEntries": 7,
+          "teamPoints": 27
+        },
+        {
+          "id": "gendebien",
+          "nameRu": "Оливиер Гендебиен",
+          "code": null,
+          "position": 15,
+          "points": 3,
+          "raceEntries": 2,
+          "teamPoints": 3
+        },
+        {
+          "id": "gurney",
+          "nameRu": "Дан Гурнеи",
+          "code": null,
+          "position": 7,
+          "points": 13,
+          "raceEntries": 4,
+          "teamPoints": 13
+        },
+        {
+          "id": "phil_hill",
+          "nameRu": "Фил Хилл",
+          "code": null,
+          "position": 4,
+          "points": 20,
+          "raceEntries": 7,
+          "teamPoints": 20
+        },
+        {
+          "id": "trips",
+          "nameRu": "Уолфганг Вон Трипс",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 1,
+          "teamPoints": 0
+        }
+      ],
+      "driverCount": 7
+    },
+    {
+      "id": "brm",
+      "name": "BRM",
+      "nationality": "British",
+      "position": 3,
+      "points": 18,
+      "wins": 1,
+      "engineName": null,
+      "color": null,
+      "logoUrl": null,
+      "carModel": null,
+      "carImageUrl": null,
+      "seasonHistory": [
+        {
+          "season": 1959,
+          "afterRound": 9,
+          "status": "completed",
+          "isFinal": true,
+          "name": "BRM",
+          "position": 3,
+          "points": 18,
+          "wins": 1
+        },
+        {
+          "season": 1958,
+          "afterRound": 11,
+          "status": "completed",
+          "isFinal": true,
+          "name": "BRM",
+          "position": 4,
+          "points": 18,
+          "wins": 0
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 23,
+        "wins": 1,
+        "podiums": 4,
+        "points": 48.5,
+        "circuits": 13,
+        "countries": 9,
+        "winningCircuits": 1,
+        "firstSeason": 1951,
+        "lastSeason": 1959,
+        "throughRound": 8
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 7,
+        "wins": 1,
+        "podiums": 2,
+        "points": 22.5,
+        "circuits": 7,
+        "countries": 7,
+        "winningCircuits": 1,
+        "firstSeason": 1959,
+        "lastSeason": 1959,
+        "throughRound": 8
+      },
+      "resultGeography": [
+        {
+          "id": "zandvoort",
+          "name": "Зандворт",
+          "slug": "zandvoort",
+          "isPublished": false,
+          "countryCode": "nl",
+          "coordinates": [
+            4.54092,
+            52.3888
+          ],
+          "raceEntries": 2,
+          "wins": 1,
+          "podiums": 3,
+          "points": 18
+        },
+        {
+          "id": "aintree",
+          "name": "Aintree",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -2.94056,
+            53.4769
+          ],
+          "raceEntries": 2,
+          "wins": 0,
+          "podiums": 1,
+          "points": 9.5
+        },
+        {
+          "id": "ain-diab",
+          "name": "Ain Diab",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ma",
+          "coordinates": [
+            -7.6875,
+            33.5786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 5
+        },
+        {
+          "id": "avus",
+          "name": "AVUS",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "de",
+          "coordinates": [
+            13.2514,
+            52.4806
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        },
+        {
+          "id": "boavista",
+          "name": "Circuito da Boavista",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "pt",
+          "coordinates": [
+            -8.67325,
+            41.1705
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        },
+        {
+          "id": "essarts",
+          "name": "Rouen-Les-Essarts",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            1.00458,
+            49.3306
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 4,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        },
+        {
+          "id": "monsanto",
+          "name": "Monsanto Park Circuit",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "pt",
+          "coordinates": [
+            -9.20306,
+            38.7197
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 3,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "nurburgring",
+          "name": "Nürburgring",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "de",
+          "coordinates": [
+            6.9475,
+            50.3356
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 2,
+          "wins": 0,
+          "podiums": 0,
+          "points": 1
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 3,
+          "wins": 0,
+          "podiums": 0,
+          "points": 4
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": [
+        {
+          "id": "zandvoort",
+          "name": "Зандворт",
+          "slug": "zandvoort",
+          "isPublished": false,
+          "wins": 1
+        }
+      ],
+      "drivers": [
+        {
+          "id": "bonnier",
+          "nameRu": "Джо Бонниер",
+          "code": null,
+          "position": 8,
+          "points": 10,
+          "raceEntries": 7,
+          "teamPoints": 10
+        },
+        {
+          "id": "flockhart",
+          "nameRu": "Рон Флокхарт",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 5,
+          "teamPoints": 0
+        },
+        {
+          "id": "herrmann",
+          "nameRu": "Ханс Херрманн",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 1,
+          "teamPoints": 0
+        },
+        {
+          "id": "moss",
+          "nameRu": "Стирлинг Мосс",
+          "code": null,
+          "position": 3,
+          "points": 25.5,
+          "raceEntries": 2,
+          "teamPoints": 7.5
+        },
+        {
+          "id": "schell",
+          "nameRu": "Харри Шелл",
+          "code": null,
+          "position": 13,
+          "points": 5,
+          "raceEntries": 7,
+          "teamPoints": 5
+        }
+      ],
+      "driverCount": 5
+    },
+    {
+      "id": "team_lotus",
+      "name": "Team Lotus",
+      "nationality": "British",
+      "position": 4,
+      "points": 5,
+      "wins": 0,
+      "engineName": null,
+      "color": null,
+      "logoUrl": null,
+      "carModel": null,
+      "carImageUrl": null,
+      "seasonHistory": [
+        {
+          "season": 1959,
+          "afterRound": 9,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Team Lotus",
+          "position": 4,
+          "points": 5,
+          "wins": 0
+        },
+        {
+          "season": 1958,
+          "afterRound": 11,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Team Lotus",
+          "position": 6,
+          "points": 3,
+          "wins": 0
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 17,
+        "wins": 0,
+        "podiums": 0,
+        "points": 8,
+        "circuits": 13,
+        "countries": 10,
+        "winningCircuits": 0,
+        "firstSeason": 1958,
+        "lastSeason": 1959,
+        "throughRound": 9
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 8,
+        "wins": 0,
+        "podiums": 0,
+        "points": 5,
+        "circuits": 8,
+        "countries": 8,
+        "winningCircuits": 0,
+        "firstSeason": 1959,
+        "lastSeason": 1959,
+        "throughRound": 9
+      },
+      "resultGeography": [
+        {
+          "id": "ain-diab",
+          "name": "Ain Diab",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "ma",
+          "coordinates": [
+            -7.6875,
+            33.5786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "aintree",
+          "name": "Aintree",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -2.94056,
+            53.4769
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "avus",
+          "name": "AVUS",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "de",
+          "coordinates": [
+            13.2514,
+            52.4806
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "boavista",
+          "name": "Circuito da Boavista",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "pt",
+          "coordinates": [
+            -8.67325,
+            41.1705
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 2,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monsanto",
+          "name": "Monsanto Park Circuit",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "pt",
+          "coordinates": [
+            -9.20306,
+            38.7197
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 2,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "nurburgring",
+          "name": "Nürburgring",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "de",
+          "coordinates": [
+            6.9475,
+            50.3356
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "reims",
+          "name": "Reims-Gueux",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.93083,
+            49.2542
+          ],
+          "raceEntries": 2,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "sebring",
+          "name": "Sebring International Raceway",
+          "slug": null,
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -81.3483,
+            27.4547
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        },
+        {
+          "id": "zandvoort",
+          "name": "Зандворт",
+          "slug": "zandvoort",
+          "isPublished": false,
+          "countryCode": "nl",
+          "coordinates": [
+            4.54092,
+            52.3888
+          ],
+          "raceEntries": 2,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        }
+      ],
+      "sourceIds": [
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 0,
+      "successfulCircuits": [],
+      "drivers": [
+        {
+          "id": "halford",
+          "nameRu": "Брусе Халфорд",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 1,
+          "teamPoints": 0
+        },
+        {
+          "id": "hill",
+          "nameRu": "Грахам Хилл",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 7,
+          "teamPoints": 0
+        },
+        {
+          "id": "ireland",
+          "nameRu": "Иннес Иреланд",
+          "code": null,
+          "position": 14,
+          "points": 5,
+          "raceEntries": 6,
+          "teamPoints": 5
+        },
+        {
+          "id": "piper",
+          "nameRu": "Давид Пипер",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 1,
+          "teamPoints": 0
+        },
+        {
+          "id": "stacey",
+          "nameRu": "Алан Стасеи",
+          "code": null,
+          "position": null,
+          "points": 0,
+          "raceEntries": 2,
+          "teamPoints": 0
+        }
+      ],
+      "driverCount": 5
+    }
+  ],
+  "seasonStatus": "completed",
+  "afterRound": 9,
+  "sources": [
+    {
+      "id": "jolpica",
+      "name": "Jolpica F1",
+      "url": "https://api.jolpi.ca/ergast/f1/",
+      "licence": "Jolpica Terms of Use",
+      "retrievedAt": "2026-08-24T23:42:18.035Z"
+    },
+    {
+      "id": "jolpica-csv-2026-08-01",
+      "name": "Jolpica F1 CSV dump",
+      "url": "https://api.jolpi.ca/data/dumps/download/",
+      "licence": "CC BY-NC-SA 4.0",
+      "retrievedAt": "2026-07-31T21:00:00.000Z"
+    }
+  ]
+}

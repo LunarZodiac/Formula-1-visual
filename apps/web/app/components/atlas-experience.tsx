@@ -80,6 +80,7 @@ const historicalDriverNames = new Map<string, string>([
   ['juan manuel fangio', 'Хуан Мануэль Фанхио'],
   ['james hunt', 'Джеймс Хант'],
   ['carlos reutemann', 'Карлос Ройтеман'],
+  ['michael schumacher', 'Михаэль Шумахер'],
 ]);
 
 const raceDateFormatter = new Intl.DateTimeFormat('ru-RU', {
@@ -231,10 +232,9 @@ function makeCircuitMarker(type: Circuit['type']): ImageData {
 
 function getTrackBounds(track: GeoJSON.Feature<GeoJSON.LineString>) {
   const [firstCoordinate, ...coordinates] = track.geometry.coordinates;
-  const firstLngLat: [number, number] = [firstCoordinate[0], firstCoordinate[1]];
   return coordinates.reduce(
-    (bounds, coordinate) => bounds.extend([coordinate[0], coordinate[1]]),
-    new maplibregl.LngLatBounds(firstLngLat, firstLngLat),
+    (bounds, coordinate) => bounds.extend(coordinate),
+    new maplibregl.LngLatBounds(firstCoordinate, firstCoordinate),
   );
 }
 

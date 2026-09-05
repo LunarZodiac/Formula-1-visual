@@ -21,5 +21,5 @@ export default async function TeamPage({ params }: TeamPageProps) {
   const { slug } = await params;
   const team = teams.find((item) => item.id === slug);
   if (!team) notFound();
-  return <TeamProfile season={catalog.season} team={team} />;
+  return <TeamProfile season={catalog.season} team={team} sources={catalog.sources} />;
 }

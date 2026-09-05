@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 2,
+  "season": 1950,
+  "generatedAt": "2026-09-05T01:53:08.785Z",
+  "teams": [],
+  "seasonStatus": "completed",
+  "afterRound": 0,
+  "sources": [
+    {
+      "id": "jolpica",
+      "name": "Jolpica F1",
+      "url": "https://api.jolpi.ca/ergast/f1/",
+      "licence": "Jolpica Terms of Use",
+      "retrievedAt": "2026-08-24T23:42:18.035Z"
+    },
+    {
+      "id": "jolpica-csv-2026-08-01",
+      "name": "Jolpica F1 CSV dump",
+      "url": "https://api.jolpi.ca/data/dumps/download/",
+      "licence": "CC BY-NC-SA 4.0",
+      "retrievedAt": "2026-07-31T21:00:00.000Z"
+    }
+  ]
+}

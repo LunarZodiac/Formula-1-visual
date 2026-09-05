@@ -17,7 +17,7 @@ curl.exe --silent --fail --output NUL "%SITE_URL%" >nul 2>&1
 if not errorlevel 1 goto open_site
 
 echo Starting F1 Geovisual Atlas...
-start "F1 Geovisual Atlas server" /D "%WEB_DIR%" cmd /k "pnpm.cmd dev"
+start "F1 Geovisual Atlas server" /D "%WEB_DIR%" cmd /k "pnpm.cmd exec vinext dev --hostname 127.0.0.1"
 
 for /L %%I in (1,1,30) do (
   timeout /t 1 /nobreak >nul

@@ -118,8 +118,8 @@ export type CircuitPageData = {
   }>;
 };
 
-export const bahrainCircuitPage = bahrainPageJson as unknown as CircuitPageData;
-export const spaCircuitPage = spaPageJson as unknown as CircuitPageData;
+export const bahrainCircuitPage = bahrainPageJson as CircuitPageData;
+export const spaCircuitPage = spaPageJson as CircuitPageData;
 
 export const circuitPageCatalog = new Map<string, CircuitPageData>([
   [bahrainCircuitPage.slug, bahrainCircuitPage],
