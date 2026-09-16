@@ -2,6 +2,7 @@
 
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import { summarizeRaces, resultGeography, teamHistoryForSeason, isFinalStanding } from './lib/competitor-statistics.mjs';
 import { assertCompetitorCatalog } from '../apps/web/app/data/competitor-contract.ts';
@@ -10,7 +11,8 @@ const required = ['PGHOST', 'PGPORT', 'PGDATABASE', 'PGUSER', 'PGPASSWORD'];
 const missing = required.filter((name) => !process.env[name]);
 if (missing.length) throw new Error(`Не заданы параметры базы: ${missing.join(', ')}`);
 
-const outputDirectory = path.resolve('apps', 'web', 'app', 'data', 'catalogs');
+const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const outputDirectory = path.join(repositoryRoot, 'apps', 'web', 'app', 'data', 'catalogs');
 const driverLocalizationPath = path.join(outputDirectory, 'drivers.json');
 const requestedSeason = Number(process.env.CATALOG_SEASON);
 const seasonArgument = Number.isInteger(requestedSeason) && requestedSeason >= 1950 ? requestedSeason : null;
@@ -114,10 +116,15 @@ try {
            (standings.driver_id IS NOT NULL) AS standing_available,
            driver.id, driver.given_name, driver.family_name,
            driver.abbreviation, driver.permanent_number, driver.nationality,
+           to_char(driver.date_of_birth, 'YYYY-MM-DD') AS date_of_birth,
+           profile.name_ru, profile.birth_place_ru, to_char(profile.death_date, 'YYYY-MM-DD') AS death_date, profile.height_cm,
+           profile.weight_kg, profile.biography_ru,
+           latest_number.car_number AS latest_car_number,
            latest_team.constructor_id, latest_team.display_name AS team_name,
            latest_team.team_colour, latest_team.logo_image_url
     FROM participants
     JOIN atlas.drivers AS driver ON driver.id = participants.driver_id
+    LEFT JOIN atlas.driver_profiles AS profile ON profile.driver_id = driver.id
     LEFT JOIN final_standings AS standings ON standings.driver_id = participants.driver_id
     LEFT JOIN LATERAL (
       SELECT entry.constructor_id, entry.display_name, entry.team_colour, entry.logo_image_url
@@ -129,6 +136,16 @@ try {
       ORDER BY race.round DESC, CASE session.session_type WHEN 'race' THEN 0 ELSE 1 END
       LIMIT 1
     ) AS latest_team ON true
+    LEFT JOIN LATERAL (
+      SELECT event_entry.car_number
+      FROM atlas.driver_event_entries AS event_entry
+      JOIN atlas.races AS number_race ON number_race.id = event_entry.race_id
+      WHERE number_race.season_year = $1
+        AND event_entry.driver_id = participants.driver_id
+        AND event_entry.car_number IS NOT NULL
+      ORDER BY number_race.round DESC, event_entry.id DESC
+      LIMIT 1
+    ) AS latest_number ON true
     ORDER BY standings.position NULLS LAST, driver.family_name, driver.given_name
   `, [season]);
   const teamsResult = await client.query(`
@@ -180,6 +197,39 @@ try {
      AND standings.season_year = participation.season_year
     ORDER BY participation.driver_id, participation.season_year DESC
   `, [season]);
+  const driverNumberHistoryResult = await client.query(`
+    SELECT driver_id, season_year, car_numbers
+    FROM atlas.driver_number_history
+    WHERE season_year <= $1
+    ORDER BY driver_id, season_year DESC
+  `, [season]);
+  const driverNumberEntriesResult = await client.query(`
+    SELECT event_entry.driver_id, event_entry.race_id,
+           race.round, coalesce(profile.name_ru, circuit.short_name, circuit.name, race.name) AS race_name,
+           event_entry.car_number, event_entry.number_type,
+           event_entry.review_status,
+           constructor.constructor_id, constructor.display_name AS team_name
+    FROM atlas.driver_event_entries AS event_entry
+    JOIN atlas.races AS race ON race.id = event_entry.race_id
+    JOIN atlas.circuits AS circuit ON circuit.id = race.circuit_id
+    LEFT JOIN atlas.circuit_page_profiles AS profile ON profile.circuit_id = circuit.id
+    LEFT JOIN atlas.constructor_entries AS constructor ON constructor.id = event_entry.constructor_entry_id
+    WHERE race.season_year = $1 AND event_entry.car_number IS NOT NULL
+    ORDER BY event_entry.driver_id, race.round, event_entry.id
+  `, [season]);
+  const driverNicknamesResult = await client.query(`
+    SELECT id, driver_id, name_ru, name_original, context_ru, source_url, sort_order
+    FROM atlas.driver_nicknames
+    WHERE review_status IN ('reviewed', 'verified', 'published')
+    ORDER BY driver_id, sort_order, id
+  `);
+  const driverQuotesResult = await client.query(`
+    SELECT id, driver_id, quote_ru, quote_original, attribution_ru, context_ru,
+           to_char(quote_date, 'YYYY-MM-DD') AS quote_date, source_url, sort_order
+    FROM atlas.driver_quotes
+    WHERE review_status IN ('reviewed', 'verified', 'published')
+    ORDER BY driver_id, sort_order, id
+  `);
   const teamSeasonHistoryResult = await client.query(`
     WITH final_rounds AS (
       SELECT season_year, max(after_round) AS value
@@ -201,6 +251,13 @@ try {
     return groups;
   }, {});
   const driverHistory = groupRows(driverSeasonHistoryResult.rows, 'driver_id');
+  const driverNumbers = new Map(driverNumberHistoryResult.rows.map((row) => [
+    `${row.driver_id}:${row.season_year}`,
+    (row.car_numbers ?? []).map(Number),
+  ]));
+  const driverNumberEntries = groupRows(driverNumberEntriesResult.rows, 'driver_id');
+  const driverNicknames = groupRows(driverNicknamesResult.rows, 'driver_id');
+  const driverQuotes = groupRows(driverQuotesResult.rows, 'driver_id');
   const teamHistory = groupRows(teamSeasonHistoryResult.rows, 'constructor_id');
 
   const generatedAt = new Date().toISOString();
@@ -212,10 +269,44 @@ try {
       const nameEn = `${row.given_name} ${row.family_name}`;
       return {
         id: row.id,
-        nameRu: nameRuById.get(row.id) ?? nameRuByEnglishName.get(normalize(nameEn)) ?? transliterateDriverName(nameEn),
+        nameRu: row.name_ru ?? nameRuById.get(row.id) ?? nameRuByEnglishName.get(normalize(nameEn)) ?? transliterateDriverName(nameEn),
         nameEn,
         code: row.abbreviation?.trim() ?? null,
-        number: row.permanent_number === null ? null : Number(row.permanent_number),
+        number: row.latest_car_number === null ? null : Number(row.latest_car_number),
+        permanentNumber: row.permanent_number === null ? null : Number(row.permanent_number),
+        numberEntries: (driverNumberEntries[row.id] ?? []).map((entry) => ({
+          raceId: entry.race_id,
+          round: Number(entry.round),
+          raceName: entry.race_name,
+          number: Number(entry.car_number),
+          numberType: entry.number_type,
+          reviewStatus: entry.review_status,
+          team: entry.constructor_id ? { id: entry.constructor_id, name: entry.team_name } : null,
+        })),
+        birthDate: row.date_of_birth ?? null,
+        deathDate: row.death_date ?? null,
+        birthPlace: row.birth_place_ru,
+        heightCm: row.height_cm === null ? null : Number(row.height_cm),
+        weightKg: row.weight_kg === null ? null : Number(row.weight_kg),
+        biography: row.biography_ru,
+        nicknames: (driverNicknames[row.id] ?? []).map((nickname) => ({
+          id: String(nickname.id),
+          nameRu: nickname.name_ru,
+          nameOriginal: nickname.name_original,
+          contextRu: nickname.context_ru,
+          sourceUrl: nickname.source_url,
+          sortOrder: Number(nickname.sort_order),
+        })),
+        quotes: (driverQuotes[row.id] ?? []).map((quote) => ({
+          id: String(quote.id),
+          quoteRu: quote.quote_ru,
+          quoteOriginal: quote.quote_original,
+          attributionRu: quote.attribution_ru,
+          contextRu: quote.context_ru,
+          quoteDate: quote.quote_date,
+          sourceUrl: quote.source_url,
+          sortOrder: Number(quote.sort_order),
+        })),
         nationality: row.nationality,
         position: row.position === null ? null : Number(row.position),
         standingAvailable: row.standing_available,
@@ -236,6 +327,7 @@ try {
           standingAvailable: standing.standing_available,
           points: Number(standing.points),
           wins: Number(standing.wins),
+          numbers: driverNumbers.get(`${row.id}:${standing.season_year}`) ?? [],
         })),
       };
     }),

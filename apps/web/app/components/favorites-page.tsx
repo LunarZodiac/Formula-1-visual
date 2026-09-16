@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { CircuitCatalogItem } from './circuit-catalog';
 import type { DriverCatalogItem } from './driver-catalog';
 import type { TeamCatalogItem } from './team-catalog';
-import { DriverFlag, DriverPortrait, TeamCar, TeamLogo } from './racing-visuals';
+import { countryFlagUrl, DriverFlag, DriverPortrait, TeamCar, TeamLogo } from './racing-visuals';
 import { getTrackGeometry } from '../data/track-geometries';
 
 type FavoriteType = 'all' | 'circuits' | 'drivers' | 'teams';
@@ -43,9 +43,10 @@ function TrackOutline({ geometry }: { geometry: GeoJSON.LineString | null }) {
 }
 
 function FavoriteCircuitFlag({ code }: { code: string }) {
-  // Небольшие внешние SVG-флаги уже используются в каталогах проекта.
+  const source = countryFlagUrl(code);
+  if (!source) return null;
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={`https://flagcdn.com/${code}.svg`} alt="" aria-hidden="true" />;
+  return <img src={source} alt="" aria-hidden="true" />;
 }
 
 export function FavoritesPage({ season, circuits, drivers, teams }: { season: number; circuits: CircuitCatalogItem[]; drivers: DriverCatalogItem[]; teams: TeamCatalogItem[] }) {

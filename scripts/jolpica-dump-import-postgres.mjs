@@ -276,24 +276,39 @@ function normalizeDump(raw, throughSeason) {
     const driverId = driverStableIds.get(teamDriver?.driver_id);
     const constructorId = constructorStableIds.get(teamDriver?.team_id);
     if (!driverId) continue;
-    const result = group.resultMap.get(driverId) ?? {
+    const existingResult = group.resultMap.get(driverId);
+    const result = existingResult ?? {
       sessionId: group.id, driverId, constructorId,
       position: null, positionText: "NC", grid: null, laps: null,
       status: null, points: 0, elapsedMs: null,
       fastestLapRank: null, details: {},
     };
     const position = numberOrNull(row.position);
-    if (position) {
+    const points = numberOrNull(row.points) ?? 0;
+    const isBetterClassification = position && (
+      !result.position
+      || position < result.position
+      || (position === result.position && points > result.points)
+    );
+    if (isBetterClassification) {
       result.position = position;
       result.positionText = String(position);
+      result.constructorId = constructorId;
+      result.grid = numberOrNull(row.grid);
+      result.laps = numberOrNull(row.laps_completed);
+      result.status = row.detail || row.status || null;
+      result.points = points;
+      result.elapsedMs = durationToMilliseconds(row.time);
+      result.fastestLapRank = numberOrNull(row.fastest_lap_rank);
     }
-    result.grid = numberOrNull(row.grid) ?? result.grid;
-    result.laps = numberOrNull(row.laps_completed) ?? result.laps;
-    result.status = row.detail || row.status || result.status;
-    result.points = numberOrNull(row.points) ?? result.points;
-    result.elapsedMs = durationToMilliseconds(row.time) ?? result.elapsedMs;
-    result.fastestLapRank = numberOrNull(row.fastest_lap_rank) ?? result.fastestLapRank;
-    result.details[sourceSession.type.toLowerCase()] = row.time || null;
+    const detailKey = sourceSession.type.toLowerCase();
+    const previousDetail = result.details[detailKey];
+    const currentDetail = row.time || null;
+    result.details[detailKey] = previousDetail === undefined
+      ? currentDetail
+      : Array.isArray(previousDetail)
+        ? [...previousDetail, currentDetail]
+        : [previousDetail, currentDetail];
     group.resultMap.set(driverId, result);
   }
 

@@ -2,14 +2,16 @@
 
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 
 const required = ['PGHOST', 'PGPORT', 'PGDATABASE', 'PGUSER', 'PGPASSWORD'];
 const missing = required.filter((name) => !process.env[name]);
 if (missing.length) throw new Error(`Не заданы параметры базы: ${missing.join(', ')}`);
 
-const outputPath = path.resolve('apps', 'web', 'public', 'data', 'search-index.json');
-const localizations = JSON.parse(await readFile(path.resolve('apps', 'web', 'app', 'data', 'catalogs', 'drivers.json'), 'utf8'));
+const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const outputPath = path.join(repositoryRoot, 'apps', 'web', 'public', 'data', 'search-index.json');
+const localizations = JSON.parse(await readFile(path.join(repositoryRoot, 'apps', 'web', 'app', 'data', 'catalogs', 'drivers.json'), 'utf8'));
 const driverNameRu = new Map(localizations.map((driver) => [driver.id, driver.nameRu]));
 const client = new pg.Client({ application_name: 'f1-geovisual-atlas-search-index-export' });
 

@@ -1,7 +1,8 @@
 {
-  "generatedAt": "2026-08-30T18:43:04.976Z",
+  "generatedAt": "2026-09-12T12:46:48.234Z",
   "circuitId": "spa",
-  "routeCount": 7,
+  "routeCount": 8,
+  "publicationReadyCount": 2,
   "routes": [
     {
       "id": "spa-route-brussels-airport",
@@ -9,12 +10,27 @@
       "route_type": "arrival",
       "review_status": "candidate",
       "distance_m": 141991,
+      "has_geometry": true,
+      "event_only": false,
+      "schedule_notes_ru": "Линия рассчитана OSRM и служит только ориентиром вне схемы движения этапа. В дни Гран-при необходимо использовать Waze-ссылку из парковочного билета и указания организатора; зоны kiss & ride в 2027 году нет.",
+      "source_url": "https://www.spagrandprix.com/en/faqs/cat19_access-to-the-circuit-mobility",
       "route_group": "spa-combes-approach",
       "line_offset_px": -6,
       "min_zoom": 7,
       "max_zoom": 18,
+      "rationale_ru": "Показывает масштаб автомобильного переезда от крупного международного аэропорта. Это предварительный ориентир для планирования, а не разрешённая схема въезда на этап.",
+      "highlights_ru": [
+        "Переезд из региона Брюсселя в Арденны",
+        "Подход к району Франкоршам"
+      ],
+      "practical_notes_ru": "В дни Гран-при выбирайте парковочную зону заранее и следуйте Waze-ссылке из билета: организатор может изменить подъездные дороги.",
+      "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
-      "track_buffer_overlap_m": 0
+      "track_buffer_overlap_m": 0,
+      "publicationBlockers": [
+        "конечная точка не подтверждена как въезд на этап"
+      ],
+      "publicationReady": false
     },
     {
       "id": "spa-route-charleroi-airport",
@@ -22,12 +38,27 @@
       "route_type": "arrival",
       "review_status": "candidate",
       "distance_m": 139373,
+      "has_geometry": true,
+      "event_only": false,
+      "schedule_notes_ru": "Линия рассчитана OSRM и служит только ориентиром вне схемы движения этапа. В дни Гран-при необходимо использовать Waze-ссылку из парковочного билета и указания организатора; зоны kiss & ride в 2027 году нет.",
+      "source_url": "https://www.spagrandprix.com/en/faqs/cat19_access-to-the-circuit-mobility",
       "route_group": "spa-combes-approach",
       "line_offset_px": -3,
       "min_zoom": 7,
       "max_zoom": 18,
+      "rationale_ru": "Даёт предварительное представление о поездке от аэропорта Брюссель-Шарлеруа до региона трассы. Линия не заменяет сезонную схему движения этапа.",
+      "highlights_ru": [
+        "Переезд из Шарлеруа в Арденны",
+        "Подход к району Франкоршам"
+      ],
+      "practical_notes_ru": "Не используйте конечную точку как место высадки. В 2027 году kiss & ride не предусмотрен; въезд определяется парковочным билетом.",
+      "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
-      "track_buffer_overlap_m": 0
+      "track_buffer_overlap_m": 0,
+      "publicationBlockers": [
+        "конечная точка не подтверждена как въезд на этап"
+      ],
+      "publicationReady": false
     },
     {
       "id": "spa-route-cologne-airport",
@@ -35,12 +66,27 @@
       "route_type": "arrival",
       "review_status": "candidate",
       "distance_m": 144351,
+      "has_geometry": true,
+      "event_only": false,
+      "schedule_notes_ru": "Линия рассчитана OSRM и служит только ориентиром вне схемы движения этапа. В дни Гран-при необходимо использовать Waze-ссылку из парковочного билета и указания организатора; зоны kiss & ride в 2027 году нет.",
+      "source_url": "https://www.spagrandprix.com/en/faqs/cat19_access-to-the-circuit-mobility",
       "route_group": "spa-combes-approach",
       "line_offset_px": 0,
       "min_zoom": 7,
       "max_zoom": 18,
+      "rationale_ru": "Показывает трансграничный автомобильный сценарий из аэропорта Кёльн/Бонн и помогает оценить протяжённость поездки до Арденн.",
+      "highlights_ru": [
+        "Трансграничный переезд из Германии",
+        "Подход к району Франкоршам"
+      ],
+      "practical_notes_ru": "Проверьте дорожную обстановку и требования прокатной компании. В дни этапа используйте только назначенный организатором подъезд к своей парковке.",
+      "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
-      "track_buffer_overlap_m": 0
+      "track_buffer_overlap_m": 0,
+      "publicationBlockers": [
+        "конечная точка не подтверждена как въезд на этап"
+      ],
+      "publicationReady": false
     },
     {
       "id": "spa-route-coo-half-day",
@@ -48,12 +94,26 @@
       "route_type": "tourist_half_day",
       "review_status": "candidate",
       "distance_m": 26647,
+      "has_geometry": true,
+      "event_only": false,
+      "schedule_notes_ru": "Туристический сценарий рассчитан для свободного времени вне поездки на этап. Перед выездом проверьте часы работы объектов и дорожную обстановку.",
+      "source_url": "https://visitwallonia.com/en-gb/3/where-to-go/walloon-towns-and-cities/stavelot",
       "route_group": "spa-combes-approach",
       "line_offset_px": 6,
       "min_zoom": 9,
       "max_zoom": 18,
+      "rationale_ru": "Компактный сценарий объединяет исторический Ставло, автомобильный музей в аббатстве и водопад Коо без дальней поездки по региону.",
+      "highlights_ru": [
+        "Аббатство Ставло",
+        "Музей трассы Спа-Франкоршам",
+        "Водопад Коо"
+      ],
+      "practical_notes_ru": "Закладывайте не меньше половины дня и заранее проверяйте часы работы музеев. Не совмещайте маршрут с жёстким временем входа на этап.",
+      "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
-      "track_buffer_overlap_m": 0
+      "track_buffer_overlap_m": 0,
+      "publicationBlockers": [],
+      "publicationReady": true
     },
     {
       "id": "spa-route-high-fens",
@@ -61,12 +121,26 @@
       "route_type": "tourist_full_day",
       "review_status": "candidate",
       "distance_m": 44582,
+      "has_geometry": true,
+      "event_only": false,
+      "schedule_notes_ru": "Туристический сценарий на полный день. Перед выездом проверьте погоду, доступность природных участков и часы посещения замка.",
+      "source_url": "https://visitwallonia.com/en-gb/content/hautes-fagnes-eifel-nature-park",
       "route_group": "spa-combes-approach",
       "line_offset_px": 9,
       "min_zoom": 8,
       "max_zoom": 18,
+      "rationale_ru": "Полный день для знакомства с природным ландшафтом Высоких Фен, высшей точкой Бельгии и историческим замком в долине Варш.",
+      "highlights_ru": [
+        "Maison du Parc-Botrange",
+        "Signal de Botrange",
+        "Замок Рейнхардштайн"
+      ],
+      "practical_notes_ru": "Погода на плато меняется быстро. Проверьте доступность троп и расписание экскурсий в замке; этот сценарий лучше оставить на день без гоночных сессий.",
+      "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
-      "track_buffer_overlap_m": 0
+      "track_buffer_overlap_m": 0,
+      "publicationBlockers": [],
+      "publicationReady": true
     },
     {
       "id": "spa-route-liege-arrival",
@@ -74,12 +148,27 @@
       "route_type": "arrival",
       "review_status": "candidate",
       "distance_m": 55934,
+      "has_geometry": true,
+      "event_only": false,
+      "schedule_notes_ru": "Линия рассчитана OSRM и служит только ориентиром вне схемы движения этапа. В дни Гран-при необходимо использовать Waze-ссылку из парковочного билета и указания организатора; зоны kiss & ride в 2027 году нет.",
+      "source_url": "https://www.spagrandprix.com/en/faqs/cat19_access-to-the-circuit-mobility",
       "route_group": "spa-combes-approach",
       "line_offset_px": -9,
       "min_zoom": 8,
       "max_zoom": 18,
+      "rationale_ru": "Ориентир для зрителей, которые начинают автомобильную часть поездки у вокзала Льеж-Гийемен.",
+      "highlights_ru": [
+        "Вокзал Льеж-Гийемен",
+        "Переезд из Льежа в Арденны"
+      ],
+      "practical_notes_ru": "Сначала сравните этот вариант с официальным City Shuttle из Льежа. В дни этапа автомобильный въезд зависит от выбранной парковочной зоны.",
+      "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
-      "track_buffer_overlap_m": 0
+      "track_buffer_overlap_m": 0,
+      "publicationBlockers": [
+        "конечная точка не подтверждена как въезд на этап"
+      ],
+      "publicationReady": false
     },
     {
       "id": "spa-route-stavelot",
@@ -87,12 +176,56 @@
       "route_type": "arrival",
       "review_status": "candidate",
       "distance_m": 5654,
+      "has_geometry": true,
+      "event_only": false,
+      "schedule_notes_ru": "Обычный дорожный ориентир, не схема въезда на этап. В дни Гран-при следуйте информации организатора и маршруту к парковочной зоне из билета.",
+      "source_url": "https://visitwallonia.com/en-gb/3/where-to-go/walloon-towns-and-cities/stavelot",
       "route_group": "spa-combes-approach",
       "line_offset_px": 3,
       "min_zoom": 9,
       "max_zoom": 18,
+      "rationale_ru": "Короткий ориентир из исторического центра Ставло — удобной базы рядом с трассой и музеем Спа-Франкоршам в аббатстве.",
+      "highlights_ru": [
+        "Исторический центр Ставло",
+        "Аббатство Ставло",
+        "Музей трассы Спа-Франкоршам"
+      ],
+      "practical_notes_ru": "В гоночные дни обычная линия может не соответствовать организации движения. Используйте назначенную парковку и официальную навигацию этапа.",
+      "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
-      "track_buffer_overlap_m": 0
+      "track_buffer_overlap_m": 0,
+      "publicationBlockers": [
+        "конечная точка не подтверждена как въезд на этап"
+      ],
+      "publicationReady": false
+    },
+    {
+      "id": "spa-route-verviers-shuttle",
+      "name_ru": "Вервье-Центральный → трасса",
+      "route_type": "event_shuttle",
+      "review_status": "hidden",
+      "distance_m": null,
+      "has_geometry": false,
+      "event_only": true,
+      "schedule_notes_ru": "Официальный трансфер следует от вокзала Вервье-Центральный до Rue de Sart перед кольцом Trou Hennet. Точная линия движения организатором не опубликована, поэтому геометрия намеренно отсутствует.",
+      "source_url": "https://www.spagrandprix.com/en/faqs/cat19_access-to-the-circuit-mobility",
+      "route_group": "spa-official-shuttle",
+      "line_offset_px": 0,
+      "min_zoom": 8,
+      "max_zoom": 18,
+      "rationale_ru": "Официальный вариант без автомобиля между железнодорожным узлом Вервье и районом трассы.",
+      "highlights_ru": [
+        "Вокзал Вервье-Центральный",
+        "Высадка на Rue de Sart у Trou Hennet"
+      ],
+      "practical_notes_ru": "Билет приобретается отдельно. Проверяйте расписание и стоимость для конкретного года; обычные линии TEC по воскресеньям могут не обслуживать трассу.",
+      "endpoint_event_access_confirmed": false,
+      "endpoint_distance_to_track_m": null,
+      "track_buffer_overlap_m": null,
+      "publicationBlockers": [
+        "отсутствует геометрия"
+      ],
+      "publicationReady": false
     }
   ],
   "overlappingPairsOver100m": [

@@ -7,9 +7,10 @@ export const metadata: Metadata = {
   description: 'Каталог пилотов Formula 1 сезона 2026',
 };
 
-export default async function DriversPage({ searchParams }: { searchParams?: { season?: string } }) {
-  const requestedSeason = Number(searchParams?.season);
+export default async function DriversPage({ searchParams }: { searchParams: Promise<{ season?: string }> }) {
+  const requested = await searchParams;
+  const requestedSeason = Number(requested.season);
   const seasonSelected = Number.isInteger(requestedSeason);
   const catalog = seasonSelected ? await getDriverCatalog(requestedSeason) : getAllDriverCatalog();
-  return <DriverCatalog season={seasonSelected ? requestedSeason : 2026} afterRound={seasonSelected && 'afterRound' in catalog ? catalog.afterRound : 0} drivers={catalog.drivers} seasonSelected={seasonSelected} />;
+  return <DriverCatalog key={seasonSelected ? `season-${requestedSeason}` : 'all-seasons'} season={seasonSelected ? requestedSeason : 2026} afterRound={seasonSelected && 'afterRound' in catalog ? catalog.afterRound : 0} drivers={catalog.drivers} seasonSelected={seasonSelected} />;
 }

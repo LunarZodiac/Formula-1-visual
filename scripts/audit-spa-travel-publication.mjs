@@ -42,10 +42,14 @@ for (const feature of collection.features ?? []) {
   }
 }
 
-const expectedCounts = collection.properties?.expectedCounts ?? { poi: 21, accommodation_zone: 6 };
-for (const [featureType, expectedCount] of Object.entries(expectedCounts)) {
-  if (counts[featureType] !== expectedCount) {
-    errors.push(`${featureType}: ожидалось ${expectedCount}, получено ${counts[featureType] ?? 0}`);
+const declaredCounts = collection.properties?.counts;
+if (declaredCounts) {
+  const countMapping = { poi: 'poi', zones: 'accommodation_zone', routes: 'route' };
+  for (const [declaredType, featureType] of Object.entries(countMapping)) {
+    const declaredCount = declaredCounts[declaredType] ?? 0;
+    if ((counts[featureType] ?? 0) !== declaredCount) {
+      errors.push(`${featureType}: в метаданных указано ${declaredCount}, получено ${counts[featureType] ?? 0}`);
+    }
   }
 }
 

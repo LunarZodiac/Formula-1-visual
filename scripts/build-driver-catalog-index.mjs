@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readdir, readFile, writeFile } from 'node:fs/promises';
+import { readdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const catalogDirectory = path.resolve('apps', 'web', 'app', 'data', 'catalogs');
@@ -20,6 +20,7 @@ for (const fileName of fileNames) {
       nameEn: driver.nameEn,
       code: driver.code,
       number: driver.number,
+      permanentNumber: driver.permanentNumber,
       nationality: driver.nationality,
       position: driver.position,
       points: driver.points,
@@ -39,5 +40,7 @@ const output = {
 };
 
 const outputPath = path.join(catalogDirectory, 'drivers-all.json');
-await writeFile(outputPath, `${JSON.stringify(output, null, 2)}\n`, 'utf8');
+const temporaryPath = `${outputPath}.tmp-${process.pid}`;
+await writeFile(temporaryPath, `${JSON.stringify(output, null, 2)}\n`, 'utf8');
+await rename(temporaryPath, outputPath);
 console.log(`Создан облегчённый индекс: ${output.drivers.length} пилотов`);

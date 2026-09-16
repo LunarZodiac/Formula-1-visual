@@ -1,6 +1,7 @@
 import circuitsGeoJson from './circuits.json';
 import openStreetMapCircuitsGeoJson from './circuits-openstreetmap.json';
 import userDigitizedCircuitsGeoJson from './circuits-user-digitized.json';
+import adminImportedCircuitsGeoJson from './circuits-admin-imported.json';
 import { parseGeoJsonFeatureCollection } from './geojson-contract';
 import { season2024 } from './season-2024';
 import { circuitGeometryRegistry, getCircuitGeometryId } from './track-geometry-registry';
@@ -19,6 +20,7 @@ const trackSources = [
   ['основные трассы', circuitsGeoJson],
   ['трассы OpenStreetMap', openStreetMapCircuitsGeoJson],
   ['оцифрованные трассы', userDigitizedCircuitsGeoJson],
+  ['контуры из админ-панели', adminImportedCircuitsGeoJson],
 ] as const;
 
 const sourceFeatures = trackSources.flatMap(([label, source]) => (

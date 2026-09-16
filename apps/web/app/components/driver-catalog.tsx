@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import type { CSSProperties } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DriverFlag, DriverPortrait, TeamLogo } from './racing-visuals';
+import { DriverNumberMark, resolveDriverNumber } from './driver-number-mark';
 
 import type { DriverListItem } from '../data/competitor-contract';
 export type { DriverCatalogItem } from '../data/competitor-contract';
@@ -31,9 +32,10 @@ function debutSeason(driver: DriverListItem) {
 }
 
 function DriverIdentity({ driver, season, featured = false }: { driver: DriverListItem; season: number; featured?: boolean }) {
+  const number = resolveDriverNumber(driver, season);
   return (
     <div className={featured ? 'driver-showcase-portrait is-featured' : 'driver-showcase-portrait'} aria-hidden="true">
-      <span className="driver-showcase-number">{driver.number === null ? '—' : String(driver.number).padStart(2, '0')}</span>
+      <DriverNumberMark driverId={driver.id} season={season} number={number} className="driver-showcase-number" />
       <DriverPortrait driverId={driver.id} name={driver.nameRu} />
       {driver.team ? <TeamLogo constructorId={driver.team.id} constructorName={driver.team.name} teamColor={driverColor(driver)} season={season} logoUrl={driver.team.logoUrl} /> : null}
     </div>
@@ -59,6 +61,7 @@ export function DriverCatalog({ season, afterRound, drivers, seasonSelected = fa
   const [query, setQuery] = useState('');
   const [team, setTeam] = useState('all');
   const [teamMode, setTeamMode] = useState(false);
+  const [requestedTab, setRequestedTab] = useState<'all' | 'season' | 'teams' | null>(null);
   const [visibleCount, setVisibleCount] = useState(48);
   const teams = useMemo(() => Array.from(new Map(drivers.filter((driver) => driver.team).map((driver) => [driver.team!.id, driver.team!.name])).entries()).sort((left, right) => left[1].localeCompare(right[1], 'ru', { sensitivity: 'base' })), [drivers]);
   const filtered = useMemo(() => {
@@ -74,8 +77,16 @@ export function DriverCatalog({ season, afterRound, drivers, seasonSelected = fa
   }, [drivers, query, seasonSelected, team]);
   const visibleDrivers = seasonSelected ? filtered : filtered.slice(0, visibleCount);
   const [featured, ...rest] = visibleDrivers;
-  const activeTab = teamMode || team !== 'all' ? 'teams' : seasonSelected ? 'season' : 'all';
+  const activeTab = requestedTab ?? (teamMode || team !== 'all' ? 'teams' : seasonSelected ? 'season' : 'all');
   const profileHref = (id: string) => `/drivers/${id}${seasonSelected ? `?season=${season}` : ''}`;
+
+  const navigateCatalog = (tab: 'all' | 'season', href: string) => {
+    setRequestedTab(tab);
+    setTeam('all');
+    setTeamMode(false);
+    setVisibleCount(48);
+    router.push(href, { scroll: false });
+  };
 
   useEffect(() => {
     const target = loadMoreRef.current;
@@ -100,10 +111,10 @@ export function DriverCatalog({ season, afterRound, drivers, seasonSelected = fa
       </header>
 
       <section className="driver-showcase-toolbar" aria-label="Фильтры пилотов">
-        <div className={`driver-showcase-tabs is-${activeTab}`} aria-label="Раздел каталога"><button type="button" className={activeTab === 'all' ? 'is-active' : ''} onClick={() => router.push('/drivers')}>Все пилоты</button><button type="button" className={activeTab === 'season' ? 'is-active' : ''} onClick={() => router.push(`/drivers?season=${season}`)}>Сезон {season}</button><button type="button" className={activeTab === 'teams' ? 'is-active' : ''} onClick={() => { setTeamMode(true); teamSelectRef.current?.focus(); }}>По командам</button></div>
+        <div className={`driver-showcase-tabs is-${activeTab}`} aria-label="Раздел каталога"><button type="button" className={activeTab === 'all' ? 'is-active' : ''} onClick={() => navigateCatalog('all', '/drivers')}>Все пилоты</button><button type="button" className={activeTab === 'season' ? 'is-active' : ''} onClick={() => navigateCatalog('season', `/drivers?season=${season}`)}>Сезон {season}</button><button type="button" className={activeTab === 'teams' ? 'is-active' : ''} onClick={() => { setRequestedTab('teams'); setTeamMode(true); teamSelectRef.current?.focus(); }}>По командам</button></div>
         <label className="driver-showcase-search"><span className="sr-only">Поиск</span><input type="search" value={query} onChange={(event) => { setQuery(event.target.value); setVisibleCount(48); }} placeholder="Поиск пилота…" /></label>
-        <label className="driver-showcase-select"><span className="sr-only">Команда</span><select ref={teamSelectRef} value={team} onChange={(event) => { setTeam(event.target.value); setTeamMode(event.target.value !== 'all'); setVisibleCount(48); }}><option value="all">Все команды</option>{teams.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
-        <button type="button" onClick={() => { setQuery(''); setTeam('all'); setTeamMode(false); setVisibleCount(48); }} disabled={!query && team === 'all' && !teamMode}>Сбросить</button>
+        <label className="driver-showcase-select"><span className="sr-only">Команда</span><select ref={teamSelectRef} value={team} onChange={(event) => { setRequestedTab(null); setTeam(event.target.value); setTeamMode(event.target.value !== 'all'); setVisibleCount(48); }}><option value="all">Все команды</option>{teams.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
+        <button type="button" onClick={() => { setRequestedTab(null); setQuery(''); setTeam('all'); setTeamMode(false); setVisibleCount(48); }} disabled={!query && team === 'all' && !teamMode}>Сбросить</button>
       </section>
       <div className="driver-showcase-count">Найдено пилотов: <strong>{filtered.length}</strong></div>
 
@@ -114,9 +125,9 @@ export function DriverCatalog({ season, afterRound, drivers, seasonSelected = fa
               <div><DriverFlag driverId={featured.id} /><h2>{featured.nameRu}</h2></div>
               <p>{nationalityNames[featured.nationality ?? ''] ?? featured.nationality ?? 'Страна не указана'} · {featured.team?.name ?? 'Команда не указана'}</p>
             </div>
-            <DriverIdentity driver={featured} season={season} featured />
+            <DriverIdentity driver={featured} season={seasonSelected ? season : featured.latestSeason ?? season} featured />
             <div className="driver-featured-data">
-              <h3>{featured.position === 1 ? `Лидер личного зачёта ${season}` : featured.position === null ? `Участник сезона ${season}` : `Позиция ${featured.position} в сезоне ${season}`}</h3>
+              <h3>{featured.position === 1 ? `Лидер личного зачёта ${seasonSelected ? season : featured.latestSeason ?? season}` : featured.position === null ? `Участник сезона ${seasonSelected ? season : featured.latestSeason ?? season}` : `Позиция ${featured.position} в сезоне ${seasonSelected ? season : featured.latestSeason ?? season}`}</h3>
               <p>{featured.points} очков и {featured.wins} {featured.wins === 1 ? 'победа' : featured.wins > 1 && featured.wins < 5 ? 'победы' : 'побед'} в текущем наборе результатов</p>
               <DriverFacts driver={featured} />
               <b>Открыть профиль →</b>
@@ -125,7 +136,7 @@ export function DriverCatalog({ season, afterRound, drivers, seasonSelected = fa
 
           {rest.length > 0 ? <section className="driver-showcase-grid" aria-label="Каталог пилотов">{rest.map((driver) => (
             <Link className="driver-showcase-card" href={profileHref(driver.id)} key={driver.id} style={{ '--entity-color': driverColor(driver) } as CSSProperties}>
-              <DriverIdentity driver={driver} season={season} />
+              <DriverIdentity driver={driver} season={seasonSelected ? season : driver.latestSeason ?? season} />
               <div className="driver-showcase-card-copy">
                 <div className="driver-showcase-card-title"><DriverFlag driverId={driver.id} /><div><h2>{driver.nameRu}</h2><p>{driver.team?.name ?? 'Команда не указана'}</p></div></div>
                 <DriverFacts driver={driver} compact />

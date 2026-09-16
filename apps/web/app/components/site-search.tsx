@@ -10,7 +10,7 @@ import { getTrackGeometry } from '../data/track-geometries';
 import type { CircuitCatalogItem } from './circuit-catalog';
 import type { DriverCatalogItem } from './driver-catalog';
 import type { TeamCatalogItem } from './team-catalog';
-import { DriverFlag, DriverPortrait, TeamCar, TeamLogo } from './racing-visuals';
+import { countryFlagUrl, DriverFlag, DriverPortrait, TeamCar, TeamLogo } from './racing-visuals';
 
 export type SearchIndexItem = {
   id: string;
@@ -52,9 +52,10 @@ function SearchTrackOutline({ geometry }: { geometry: GeoJSON.LineString | null 
 }
 
 function SearchFlag({ code }: { code: string }) {
-  // Компактные внешние SVG-флаги соответствуют остальным каталогам проекта.
+  const source = countryFlagUrl(code);
+  if (!source) return null;
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={`https://flagcdn.com/${code}.svg`} alt="" aria-hidden="true" />;
+  return <img src={source} alt="" aria-hidden="true" />;
 }
 
 function TopMatch({ result }: { result: SearchIndexItem }) {

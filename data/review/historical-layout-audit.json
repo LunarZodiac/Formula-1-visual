@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-04T20:59:34.080Z",
+  "generatedAt": "2026-09-14T06:37:37.491Z",
   "scope": "Исторические конфигурации этапов чемпионата мира Formula 1 в загруженной базе",
   "methodology": [
     "Каждый этап должен ссылаться на конкретную конфигурацию, использовавшуюся в соответствующем сезоне",
@@ -11,16 +11,16 @@
   "summary": {
     "circuits": 78,
     "races": 1172,
-    "assignedRaces": 42,
-    "unassignedRaces": 1130,
-    "databaseLayouts": 23,
+    "assignedRaces": 71,
+    "unassignedRaces": 1101,
+    "databaseLayouts": 98,
     "reviewedDatabaseLayouts": 23,
     "runtimeRegisteredCircuits": 78,
     "runtimeCircuitsWithExplicitPeriods": 8,
-    "circuitsMissingLayoutInventory": 55,
+    "circuitsMissingLayoutInventory": 0,
     "circuitsRequiringRaceAssignments": 77,
-    "invalidAssignedRaces": 0,
-    "ambiguousCandidateRaces": 0
+    "invalidAssignedRaces": 3,
+    "ambiguousCandidateRaces": 3
   },
   "priorityQueue": [
     {
@@ -30,10 +30,24 @@
       "seasons": "1950–1979, 1981–2026",
       "firstSeason": 1950,
       "lastSeason": 2026,
-      "assignedRaces": 1,
-      "unassignedRaces": 75,
+      "assignedRaces": 27,
+      "unassignedRaces": 49,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "it-1922",
+          "name": "Современная конфигурация Монцы",
+          "validFromYear": 2000,
+          "validToYear": 2026,
+          "lengthM": 5793,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "it-1922",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -49,6 +63,20 @@
       "unassignedRaces": 71,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "mc-1929",
+          "name": "Circuit de Monaco",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3337,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "mc-1929",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -64,6 +92,20 @@
       "unassignedRaces": 60,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "gb-1948",
+          "name": "Silverstone Circuit",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5891,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "gb-1948",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -77,8 +119,130 @@
       "lastSeason": 2026,
       "assignedRaces": 20,
       "unassignedRaces": 39,
-      "databaseLayouts": 1,
+      "databaseLayouts": 10,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "be-spa-1970",
+          "name": "Большая конфигурация Спа — версия 1970 года",
+          "validFromYear": 1970,
+          "validToYear": 1970,
+          "lengthM": 14100,
+          "hasGeometry": false,
+          "sourceId": "fia_circuit_history_2019",
+          "provenanceType": "official",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "be-spa-1983",
+          "name": "Сокращённая конфигурация Спа — версия 1983 года",
+          "validFromYear": 1983,
+          "validToYear": 1983,
+          "lengthM": 6949,
+          "hasGeometry": false,
+          "sourceId": "fia_circuit_history_2019",
+          "provenanceType": "official",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "be-spa-1985-1991",
+          "name": "Конфигурация Спа 1985–1991 годов",
+          "validFromYear": 1985,
+          "validToYear": 1991,
+          "lengthM": 6940,
+          "hasGeometry": false,
+          "sourceId": "fia_circuit_history_2019",
+          "provenanceType": "official",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "be-spa-1992-1993",
+          "name": "Конфигурация Спа 1992–1993 годов",
+          "validFromYear": 1992,
+          "validToYear": 1993,
+          "lengthM": 6974,
+          "hasGeometry": false,
+          "sourceId": "fia_circuit_history_2019",
+          "provenanceType": "official",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "be-spa-1994",
+          "name": "Конфигурация Спа 1994 года",
+          "validFromYear": 1994,
+          "validToYear": 1994,
+          "lengthM": 7001,
+          "hasGeometry": false,
+          "sourceId": "fia_circuit_history_2019",
+          "provenanceType": "official",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "be-spa-1995",
+          "name": "Конфигурация Спа 1995 года",
+          "validFromYear": 1995,
+          "validToYear": 1995,
+          "lengthM": 6974,
+          "hasGeometry": false,
+          "sourceId": "fia_circuit_history_2019",
+          "provenanceType": "official",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "be-spa-1996-2001",
+          "name": "Конфигурация Спа 1996–2001 годов",
+          "validFromYear": 1996,
+          "validToYear": 2001,
+          "lengthM": 6968,
+          "hasGeometry": false,
+          "sourceId": "fia_circuit_history_2019",
+          "provenanceType": "official",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "be-spa-2002",
+          "name": "Конфигурация Спа 2002 года",
+          "validFromYear": 2002,
+          "validToYear": 2002,
+          "lengthM": 6963,
+          "hasGeometry": false,
+          "sourceId": "fia_circuit_history_2019",
+          "provenanceType": "official",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "be-spa-2004-2005",
+          "name": "Конфигурация Спа 2004–2005 годов",
+          "validFromYear": 2004,
+          "validToYear": 2005,
+          "lengthM": 6976,
+          "hasGeometry": false,
+          "sourceId": "fia_circuit_history_2019",
+          "provenanceType": "official",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "be-1925",
+          "name": "Современная конфигурация Спа-Франкоршам",
+          "validFromYear": 2007,
+          "validToYear": null,
+          "lengthM": 7004,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "be-1925",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -94,6 +258,20 @@
       "unassignedRaces": 44,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "ca-1978",
+          "name": "Circuit Gilles Villeneuve",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4361,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "ca-1978",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -109,6 +287,20 @@
       "unassignedRaces": 42,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "br-1940",
+          "name": "Autódromo José Carlos Pace",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4309,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "br-1940",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -124,6 +316,20 @@
       "unassignedRaces": 40,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "hu-1986",
+          "name": "Hungaroring",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4381,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "hu-1986",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -137,11 +343,25 @@
       "lastSeason": 2020,
       "assignedRaces": 0,
       "unassignedRaces": 41,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "de-1927",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5148,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "de-1927",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "red_bull_ring",
@@ -154,6 +374,20 @@
       "unassignedRaces": 39,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "at-1969",
+          "name": "Red Bull Ring",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4318,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "at-1969",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -167,11 +401,25 @@
       "lastSeason": 2019,
       "assignedRaces": 0,
       "unassignedRaces": 37,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "de-1932",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4574,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "de-1932",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "catalunya",
@@ -184,6 +432,20 @@
       "unassignedRaces": 35,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "es-1991",
+          "name": "Circuit de Barcelona-Catalunya",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4655,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "es-1991",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -199,6 +461,20 @@
       "unassignedRaces": 35,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "jp-1962",
+          "name": "Suzuka Circuit",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5807,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "jp-1962",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -214,6 +490,20 @@
       "unassignedRaces": 35,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "nl-1948",
+          "name": "Circuit Park Zandvoort",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4259,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "nl-1948",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -227,11 +517,25 @@
       "lastSeason": 2025,
       "assignedRaces": 0,
       "unassignedRaces": 32,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "it-1953",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4909,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "it-1953",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "albert_park",
@@ -244,6 +548,20 @@
       "unassignedRaces": 28,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "au-1953",
+          "name": "Albert Park Grand Prix Circuit",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5278,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "au-1953",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -259,6 +577,20 @@
       "unassignedRaces": 25,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "mx-1962",
+          "name": "Autódromo Hermanos Rodríguez",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4304,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "mx-1962",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -270,10 +602,48 @@
       "seasons": "2004–2010, 2012–2025",
       "firstSeason": 2004,
       "lastSeason": 2025,
-      "assignedRaces": 0,
-      "unassignedRaces": 22,
-      "databaseLayouts": 0,
+      "assignedRaces": 3,
+      "unassignedRaces": 19,
+      "databaseLayouts": 3,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "bh-2002",
+          "name": "Конфигурация Гран-при",
+          "validFromYear": 2004,
+          "validToYear": 2026,
+          "lengthM": 5412,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "bh-bahrain-endurance-2010",
+          "name": "Конфигурация Endurance",
+          "validFromYear": 2010,
+          "validToYear": 2010,
+          "lengthM": 6318,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "bh-2020-outer",
+          "name": "Внешняя конфигурация",
+          "validFromYear": 2020,
+          "validToYear": 2020,
+          "lengthM": 3562,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "bh-2002",
       "runtimeHistoricalPeriods": [
         {
@@ -301,7 +671,7 @@
           "label": "Конфигурация Гран-при"
         }
       ],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "galvez",
@@ -312,11 +682,25 @@
       "lastSeason": 1998,
       "assignedRaces": 0,
       "unassignedRaces": 20,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "ar-1952",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4322,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "ar-1952",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "kyalami",
@@ -327,11 +711,25 @@
       "lastSeason": 1993,
       "assignedRaces": 0,
       "unassignedRaces": 20,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "za-1961",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4529,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "za-1961",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "sepang",
@@ -344,6 +742,20 @@
       "unassignedRaces": 19,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "my-1999",
+          "name": "Sepang International Circuit",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5543,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "my-1999",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -357,11 +769,25 @@
       "lastSeason": 1980,
       "assignedRaces": 0,
       "unassignedRaces": 20,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "us-1956",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5430,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "us-1956",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "indianapolis",
@@ -372,8 +798,34 @@
       "lastSeason": 2007,
       "assignedRaces": 0,
       "unassignedRaces": 19,
-      "databaseLayouts": 0,
+      "databaseLayouts": 2,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "us-1909-indianapolis-oval",
+          "name": "Овал Indianapolis 500",
+          "validFromYear": 1950,
+          "validToYear": 1960,
+          "lengthM": 4071,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "us-1909",
+          "name": "Дорожная конфигурация Formula 1",
+          "validFromYear": 2000,
+          "validToYear": 2007,
+          "lengthM": 4192,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "us-1909",
       "runtimeHistoricalPeriods": [
         {
@@ -389,7 +841,7 @@
           "label": "Дорожная конфигурация Formula 1"
         }
       ],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "shanghai",
@@ -402,6 +854,20 @@
       "unassignedRaces": 18,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "cn-2004",
+          "name": "Shanghai International Circuit",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5451,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "cn-2004",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -415,11 +881,25 @@
       "lastSeason": 2008,
       "assignedRaces": 0,
       "unassignedRaces": 18,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "fr-1960",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4412,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "fr-1960",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "ricard",
@@ -430,11 +910,25 @@
       "lastSeason": 2022,
       "assignedRaces": 0,
       "unassignedRaces": 18,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "fr-1969",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5842,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "fr-1969",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "yas_marina",
@@ -447,6 +941,20 @@
       "unassignedRaces": 17,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "ae-2009",
+          "name": "Yas Marina Circuit",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5281,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "ae-2009",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -462,6 +970,20 @@
       "unassignedRaces": 16,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "sg-2008",
+          "name": "Marina Bay Street Circuit",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4928,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "sg-2008",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -477,6 +999,20 @@
       "unassignedRaces": 13,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "us-2012",
+          "name": "Circuit of the Americas",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5514,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "us-2012",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -490,11 +1026,25 @@
       "lastSeason": 1986,
       "assignedRaces": 0,
       "unassignedRaces": 14,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "gb-1950-brands-hatch-gp",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3895,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "gb-1950-brands-hatch-gp",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "estoril",
@@ -505,11 +1055,25 @@
       "lastSeason": 1996,
       "assignedRaces": 0,
       "unassignedRaces": 13,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "pt-1972",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4349,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "pt-1972",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "adelaide",
@@ -520,11 +1084,25 @@
       "lastSeason": 1995,
       "assignedRaces": 0,
       "unassignedRaces": 11,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "au-adelaide-1985",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3934,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "au-adelaide-1985",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "reims",
@@ -535,8 +1113,46 @@
       "lastSeason": 1966,
       "assignedRaces": 0,
       "unassignedRaces": 11,
-      "databaseLayouts": 0,
+      "databaseLayouts": 3,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "fr-reims-1950",
+          "name": "Конфигурация 1950–1951 годов",
+          "validFromYear": 1950,
+          "validToYear": 1951,
+          "lengthM": 6931,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "fr-1953-reims",
+          "name": "Конфигурация 1953 года",
+          "validFromYear": 1953,
+          "validToYear": 1953,
+          "lengthM": 8258,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "fr-1954-reims",
+          "name": "Конфигурация 1954–1972 годов",
+          "validFromYear": 1954,
+          "validToYear": 1966,
+          "lengthM": 8024,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "fr-1954-reims",
       "runtimeHistoricalPeriods": [
         {
@@ -558,7 +1174,7 @@
           "label": "Конфигурация 1954–1972 годов"
         }
       ],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "baku",
@@ -571,6 +1187,20 @@
       "unassignedRaces": 9,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "az-2016",
+          "name": "Baku City Circuit",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 6003,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "az-2016",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -584,11 +1214,25 @@
       "lastSeason": 1989,
       "assignedRaces": 0,
       "unassignedRaces": 10,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "br-1977",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5031,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "br-1977",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "zolder",
@@ -599,11 +1243,25 @@
       "lastSeason": 1984,
       "assignedRaces": 0,
       "unassignedRaces": 10,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "be-1963-zolder",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4001,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "be-1963-zolder",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "istanbul",
@@ -614,11 +1272,25 @@
       "lastSeason": 2021,
       "assignedRaces": 0,
       "unassignedRaces": 9,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "tr-2005",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5338,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "tr-2005",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "jarama",
@@ -629,11 +1301,25 @@
       "lastSeason": 1981,
       "assignedRaces": 0,
       "unassignedRaces": 9,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "es-1967-jarama",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3906,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "es-1967-jarama",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "long_beach",
@@ -644,8 +1330,46 @@
       "lastSeason": 1983,
       "assignedRaces": 0,
       "unassignedRaces": 8,
-      "databaseLayouts": 0,
+      "databaseLayouts": 3,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "us-long-beach-1976",
+          "name": "Конфигурация 1976–1981 годов",
+          "validFromYear": 1976,
+          "validToYear": 1981,
+          "lengthM": 3698,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "us-long-beach-1982",
+          "name": "Конфигурация 1982 года",
+          "validFromYear": 1982,
+          "validToYear": 1982,
+          "lengthM": 3820,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "us-long-beach-1983",
+          "name": "Конфигурация 1983 года",
+          "validFromYear": 1983,
+          "validToYear": 1983,
+          "lengthM": 4601,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "us-long-beach-1983",
       "runtimeHistoricalPeriods": [
         {
@@ -667,7 +1391,7 @@
           "label": "Конфигурация 1983 года"
         }
       ],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "mosport",
@@ -678,11 +1402,25 @@
       "lastSeason": 1977,
       "assignedRaces": 0,
       "unassignedRaces": 8,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "ca-1961-mosport",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3943,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "ca-1961-mosport",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "sochi",
@@ -693,11 +1431,25 @@
       "lastSeason": 2021,
       "assignedRaces": 0,
       "unassignedRaces": 8,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "ru-2014",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5848,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "ru-2014",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "detroit",
@@ -708,8 +1460,34 @@
       "lastSeason": 1988,
       "assignedRaces": 0,
       "unassignedRaces": 7,
-      "databaseLayouts": 0,
+      "databaseLayouts": 2,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "us-detroit-1982",
+          "name": "Конфигурация 1982 года",
+          "validFromYear": 1982,
+          "validToYear": 1982,
+          "lengthM": 4176,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "us-detroit-1983",
+          "name": "Конфигурация 1983–1988 годов",
+          "validFromYear": 1983,
+          "validToYear": 1988,
+          "lengthM": 4097,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "us-detroit-1983",
       "runtimeHistoricalPeriods": [
         {
@@ -725,7 +1503,7 @@
           "label": "Конфигурация 1983–1988 годов"
         }
       ],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "jerez",
@@ -736,11 +1514,25 @@
       "lastSeason": 1997,
       "assignedRaces": 0,
       "unassignedRaces": 7,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "es-1985-jerez",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4426,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "es-1985-jerez",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "anderstorp",
@@ -751,11 +1543,25 @@
       "lastSeason": 1978,
       "assignedRaces": 0,
       "unassignedRaces": 6,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "se-1968-anderstorp",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4017,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "se-1968-anderstorp",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "dijon",
@@ -766,11 +1572,25 @@
       "lastSeason": 1984,
       "assignedRaces": 0,
       "unassignedRaces": 6,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "fr-1972-dijon",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3723,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "fr-1972-dijon",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "aintree",
@@ -781,11 +1601,25 @@
       "lastSeason": 1962,
       "assignedRaces": 0,
       "unassignedRaces": 5,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "gb-aintree-1955",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4822,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "gb-aintree-1955",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "bremgarten",
@@ -796,11 +1630,25 @@
       "lastSeason": 1954,
       "assignedRaces": 0,
       "unassignedRaces": 5,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "ch-1931-bremgarten",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 7216,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "ch-1931-bremgarten",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "essarts",
@@ -811,8 +1659,34 @@
       "lastSeason": 1968,
       "assignedRaces": 0,
       "unassignedRaces": 5,
-      "databaseLayouts": 0,
+      "databaseLayouts": 2,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "fr-rouen-1952",
+          "name": "Конфигурация 1952 года",
+          "validFromYear": 1952,
+          "validToYear": 1952,
+          "lengthM": 5571,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "fr-rouen-1957",
+          "name": "Конфигурация 1957–1968 годов",
+          "validFromYear": 1957,
+          "validToYear": 1968,
+          "lengthM": 6778,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "fr-rouen-1957",
       "runtimeHistoricalPeriods": [
         {
@@ -828,7 +1702,7 @@
           "label": "Конфигурация 1957–1968 годов"
         }
       ],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "jeddah",
@@ -839,11 +1713,25 @@
       "lastSeason": 2025,
       "assignedRaces": 0,
       "unassignedRaces": 5,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "sa-2021",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 6175,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "sa-2021",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "losail",
@@ -856,6 +1744,20 @@
       "unassignedRaces": 4,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "qa-2004",
+          "name": "Losail International Circuit",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5380,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "qa-2004",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -871,6 +1773,20 @@
       "unassignedRaces": 4,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "us-2022",
+          "name": "Miami International Autodrome",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5412,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "us-2022",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -884,11 +1800,25 @@
       "lastSeason": 2012,
       "assignedRaces": 0,
       "unassignedRaces": 5,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "es-2008-valencia",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5313,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "es-2008-valencia",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "charade",
@@ -899,11 +1829,25 @@
       "lastSeason": 1972,
       "assignedRaces": 0,
       "unassignedRaces": 4,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "fr-charade-1965",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 6375,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "fr-charade-1965",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "fuji",
@@ -914,8 +1858,34 @@
       "lastSeason": 2008,
       "assignedRaces": 0,
       "unassignedRaces": 4,
-      "databaseLayouts": 0,
+      "databaseLayouts": 2,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "jp-fuji-1976",
+          "name": "Историческая конфигурация",
+          "validFromYear": 1976,
+          "validToYear": 1977,
+          "lengthM": 4556,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "jp-2005-fuji",
+          "name": "Конфигурация 2005 года",
+          "validFromYear": 2007,
+          "validToYear": 2008,
+          "lengthM": 4554,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "jp-2005-fuji",
       "runtimeHistoricalPeriods": [
         {
@@ -931,7 +1901,7 @@
           "label": "Конфигурация 2005 года"
         }
       ],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "montjuic",
@@ -942,11 +1912,25 @@
       "lastSeason": 1975,
       "assignedRaces": 0,
       "unassignedRaces": 4,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "es-1933-montjuic",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3787,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "es-1933-montjuic",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "vegas",
@@ -959,6 +1943,20 @@
       "unassignedRaces": 3,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "us-2023",
+          "name": "Las Vegas Street Circuit",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 6201,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "us-2023",
       "runtimeHistoricalPeriods": [],
       "status": "race-layout-assignment-required"
@@ -972,11 +1970,25 @@
       "lastSeason": 2013,
       "assignedRaces": 0,
       "unassignedRaces": 4,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "kr-2010",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5596,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "kr-2010",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "buddh",
@@ -987,11 +1999,25 @@
       "lastSeason": 2013,
       "assignedRaces": 0,
       "unassignedRaces": 3,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "in-2011",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5136,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "in-2011",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "george",
@@ -1002,11 +2028,25 @@
       "lastSeason": 1965,
       "assignedRaces": 0,
       "unassignedRaces": 3,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "za-1934-prince-george",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3900,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "za-1934-prince-george",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "phoenix",
@@ -1017,8 +2057,34 @@
       "lastSeason": 1991,
       "assignedRaces": 0,
       "unassignedRaces": 3,
-      "databaseLayouts": 0,
+      "databaseLayouts": 2,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "us-1989-phoenix",
+          "name": "Конфигурация 1989–1990 годов",
+          "validFromYear": 1989,
+          "validToYear": 1990,
+          "lengthM": 3756,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        },
+        {
+          "id": "us-phoenix-1991",
+          "name": "Конфигурация 1991 года",
+          "validFromYear": 1991,
+          "validToYear": 1991,
+          "lengthM": 3620,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "us-1989-phoenix",
       "runtimeHistoricalPeriods": [
         {
@@ -1034,7 +2100,7 @@
           "label": "Конфигурация 1991 года"
         }
       ],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "boavista",
@@ -1045,11 +2111,25 @@
       "lastSeason": 1960,
       "assignedRaces": 0,
       "unassignedRaces": 2,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "pt-boavista-1958",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 7347,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "pt-boavista-1958",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "las_vegas",
@@ -1060,11 +2140,25 @@
       "lastSeason": 1982,
       "assignedRaces": 0,
       "unassignedRaces": 2,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "us-caesars-palace-1981",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3774,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "us-caesars-palace-1981",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "nivelles",
@@ -1075,11 +2169,25 @@
       "lastSeason": 1974,
       "assignedRaces": 0,
       "unassignedRaces": 2,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "be-nivelles-1972",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 2821,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "be-nivelles-1972",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "okayama",
@@ -1090,11 +2198,25 @@
       "lastSeason": 1995,
       "assignedRaces": 0,
       "unassignedRaces": 2,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "jp-1990",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3700,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "jp-1990",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "pedralbes",
@@ -1105,11 +2227,25 @@
       "lastSeason": 1954,
       "assignedRaces": 0,
       "unassignedRaces": 2,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "es-pedralbes-1951",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 6446,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "es-pedralbes-1951",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "portimao",
@@ -1120,11 +2256,25 @@
       "lastSeason": 2021,
       "assignedRaces": 0,
       "unassignedRaces": 2,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "pt-2008",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4653,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "pt-2008",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "tremblant",
@@ -1135,11 +2285,25 @@
       "lastSeason": 1970,
       "assignedRaces": 0,
       "unassignedRaces": 2,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "ca-1964-mont-tremblant",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4234,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "ca-1964-mont-tremblant",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "ain-diab",
@@ -1150,11 +2314,25 @@
       "lastSeason": 1958,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "ma-ain-diab-1958",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 7558,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "ma-ain-diab-1958",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "avus",
@@ -1165,11 +2343,25 @@
       "lastSeason": 1959,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "de-avus-1959",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3897,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "de-avus-1959",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "dallas",
@@ -1180,11 +2372,25 @@
       "lastSeason": 1984,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "us-dallas-1984",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4081,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "us-dallas-1984",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "donington",
@@ -1195,11 +2401,25 @@
       "lastSeason": 1993,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "gb-1931-donington",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 3995,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "gb-1931-donington",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "lemans",
@@ -1210,11 +2430,25 @@
       "lastSeason": 1967,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "fr-bugatti-1967",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 4165,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "fr-bugatti-1967",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "madring",
@@ -1227,6 +2461,20 @@
       "unassignedRaces": 0,
       "databaseLayouts": 1,
       "reviewedLayouts": 1,
+      "layoutInventory": [
+        {
+          "id": "es-2026",
+          "name": "Madring",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5474,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "reviewed",
+          "verifiedAt": "2026-08-30T17:30:49.254Z"
+        }
+      ],
       "runtimeDefaultGeometryId": "es-2026",
       "runtimeHistoricalPeriods": [],
       "status": "single-layout-reviewed"
@@ -1240,11 +2488,25 @@
       "lastSeason": 1959,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "pt-monsanto-1959",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5354,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "pt-monsanto-1959",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "mugello",
@@ -1255,11 +2517,25 @@
       "lastSeason": 2020,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "it-1914",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5245,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "it-1914",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "pescara",
@@ -1270,11 +2546,25 @@
       "lastSeason": 1957,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "it-pescara-1957",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 25632,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "it-pescara-1957",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "riverside",
@@ -1285,11 +2575,25 @@
       "lastSeason": 1960,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "us-1957-riverside-long",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 5255,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "us-1957-riverside-long",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "sebring",
@@ -1300,11 +2604,25 @@
       "lastSeason": 1959,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "us-1952-sebring",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 8382,
+          "hasGeometry": true,
+          "sourceId": "openstreetmap",
+          "provenanceType": "open_data",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "us-1952-sebring",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     },
     {
       "circuitId": "zeltweg",
@@ -1315,13 +2633,89 @@
       "lastSeason": 1964,
       "assignedRaces": 0,
       "unassignedRaces": 1,
-      "databaseLayouts": 0,
+      "databaseLayouts": 1,
       "reviewedLayouts": 0,
+      "layoutInventory": [
+        {
+          "id": "at-zeltweg-1964",
+          "name": "Основная конфигурация",
+          "validFromYear": null,
+          "validToYear": null,
+          "lengthM": 6189,
+          "hasGeometry": true,
+          "sourceId": "project_digitized_tracks",
+          "provenanceType": "user_digitized",
+          "reviewStatus": "candidate",
+          "verifiedAt": null
+        }
+      ],
       "runtimeDefaultGeometryId": "at-zeltweg-1964",
       "runtimeHistoricalPeriods": [],
-      "status": "missing-layout-inventory"
+      "status": "race-layout-assignment-required"
     }
   ],
-  "invalidAssignments": [],
-  "ambiguousCandidates": []
+  "invalidAssignments": [
+    {
+      "race_id": "2010-01",
+      "season_year": 2010,
+      "circuit_id": "bahrain",
+      "layout_id": "bh-bahrain-endurance-2010",
+      "valid_from_year": 2010,
+      "valid_to_year": 2010,
+      "has_geometry": true,
+      "provenance_type": "user_digitized",
+      "review_status": "candidate"
+    },
+    {
+      "race_id": "2020-15",
+      "season_year": 2020,
+      "circuit_id": "bahrain",
+      "layout_id": "bh-2002",
+      "valid_from_year": 2004,
+      "valid_to_year": 2026,
+      "has_geometry": true,
+      "provenance_type": "user_digitized",
+      "review_status": "candidate"
+    },
+    {
+      "race_id": "2020-16",
+      "season_year": 2020,
+      "circuit_id": "bahrain",
+      "layout_id": "bh-2020-outer",
+      "valid_from_year": 2020,
+      "valid_to_year": 2020,
+      "has_geometry": true,
+      "provenance_type": "open_data",
+      "review_status": "candidate"
+    }
+  ],
+  "ambiguousCandidates": [
+    {
+      "race_id": "2010-01",
+      "season_year": 2010,
+      "circuit_id": "bahrain",
+      "candidate_layout_ids": [
+        "bh-2002",
+        "bh-bahrain-endurance-2010"
+      ]
+    },
+    {
+      "race_id": "2020-15",
+      "season_year": 2020,
+      "circuit_id": "bahrain",
+      "candidate_layout_ids": [
+        "bh-2002",
+        "bh-2020-outer"
+      ]
+    },
+    {
+      "race_id": "2020-16",
+      "season_year": 2020,
+      "circuit_id": "bahrain",
+      "candidate_layout_ids": [
+        "bh-2002",
+        "bh-2020-outer"
+      ]
+    }
+  ]
 }

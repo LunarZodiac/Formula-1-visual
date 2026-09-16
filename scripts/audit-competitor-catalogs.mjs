@@ -1,14 +1,19 @@
 import {readFile,mkdir,writeFile} from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import pg from 'pg';
 import {assertCompetitorCatalog} from '../apps/web/app/data/competitor-contract.ts';
 
 const client=new pg.Client({application_name:'atlas-competitor-audit'});
+const repositoryRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const catalogDirectory=path.join(repositoryRoot,'apps','web','app','data','catalogs');
+const reviewDirectory=path.join(repositoryRoot,'data','review');
 await client.connect();
 try {
   await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
   const {rows:[{season}]}=await client.query('SELECT max(season_year)::integer AS season FROM atlas.driver_standings WHERE season_year IN (SELECT season_year FROM atlas.constructor_standings)');
-  const drivers=JSON.parse(await readFile(`apps/web/app/data/catalogs/drivers-${season}.json`,'utf8'));
-  const teams=JSON.parse(await readFile(`apps/web/app/data/catalogs/teams-${season}.json`,'utf8'));
+  const drivers=JSON.parse(await readFile(path.join(catalogDirectory,`drivers-${season}.json`),'utf8'));
+  const teams=JSON.parse(await readFile(path.join(catalogDirectory,`teams-${season}.json`),'utf8'));
   assertCompetitorCatalog(drivers,'drivers'); assertCompetitorCatalog(teams,'teams');
   const errors=[];
   for(const [kind,catalog] of [['drivers',drivers],['teams',teams]]) for(const item of catalog[kind]) {
@@ -31,8 +36,8 @@ try {
     referenceProfiles:{driver:drivers.drivers.find(d=>d.id==='max_verstappen'),team:teams.teams.find(t=>t.id==='mercedes')},
     warnings:['Показатели отражают импортированный набор, не независимую сверку всех результатов с официальными протоколами','raceEntries — наличие записи результата Гран-при, не подтверждённый старт','Очки из результатов гонок исключают спринты и не заменяют очки чемпионата','В ранних гонках общие места учитываются один раз на команду; результат пилота сохраняется отдельно']};
   await client.query('COMMIT');
-  await mkdir('data/review',{recursive:true});
-  await writeFile('data/review/competitor-catalog-audit.json',JSON.stringify(report,null,2)+'\n');
+  await mkdir(reviewDirectory,{recursive:true});
+  await writeFile(path.join(reviewDirectory,'competitor-catalog-audit.json'),JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify({season,drivers:report.drivers,teams:report.teams,errors,missingResultSources:coverage.rows.reduce((s,r)=>s+r.missing_result_sources,0)},null,2));
   if(errors.length) process.exitCode=1;
 } finally {await client.end();}

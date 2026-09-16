@@ -1,0 +1,2159 @@
+{
+  "generatedAt": "2026-09-12T12:45:58.284Z",
+  "summary": {
+    "circuits": 78,
+    "withPoints": 78,
+    "nearTarget": 78,
+    "empty": 0,
+    "needsRetry": 36,
+    "missingStoredDistances": 0,
+    "invalidDistances": 0,
+    "published": 0
+  },
+  "circuits": [
+    {
+      "id": "adelaide",
+      "name": "Аделаида",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T19:31:04.937Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "ain-diab",
+      "name": "Айн-Диаб",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T18:52:11.374Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "aintree",
+      "name": "Эйнтри",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T18:54:23.993Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "albert_park",
+      "name": "Альберт-Парк",
+      "total": 80,
+      "groups": {
+        "transport": 35,
+        "stay": 0,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay"
+      ],
+      "latestImportAt": "2026-09-09T18:56:46.241Z",
+      "missingGroups": [
+        "stay"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "americas",
+      "name": "Трасса Америк",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T18:57:45.564Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "anderstorp",
+      "name": "Андерсторп",
+      "total": 80,
+      "groups": {
+        "transport": 16,
+        "stay": 20,
+        "explore": 25,
+        "essential": 19
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T19:00:31.874Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "avus",
+      "name": "АФУС",
+      "total": 80,
+      "groups": {
+        "transport": 58,
+        "stay": 2,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T06:26:59.837Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [
+        "stay"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "bahrain",
+      "name": "Бахрейн",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T06:27:24.120Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "baku",
+      "name": "Баку",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T10:44:43.000Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "boavista",
+      "name": "Боавишта",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T19:10:12.184Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "brands_hatch",
+      "name": "Брэндс-Хэтч",
+      "total": 80,
+      "groups": {
+        "transport": 58,
+        "stay": 2,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-09T19:12:49.005Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [
+        "stay"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "bremgarten",
+      "name": "Бремгартен",
+      "total": 80,
+      "groups": {
+        "transport": 27,
+        "stay": 8,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay"
+      ],
+      "latestImportAt": "2026-09-09T19:15:48.299Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "buddh",
+      "name": "Будда",
+      "total": 80,
+      "groups": {
+        "transport": 16,
+        "stay": 20,
+        "explore": 25,
+        "essential": 19
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T06:30:45.385Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "catalunya",
+      "name": "Барселона-Каталунья",
+      "total": 80,
+      "groups": {
+        "transport": 38,
+        "stay": 20,
+        "explore": 2,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T06:32:21.989Z",
+      "missingGroups": [],
+      "lowGroups": [
+        "explore"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "charade",
+      "name": "Шарад",
+      "total": 80,
+      "groups": {
+        "transport": 52,
+        "stay": 0,
+        "explore": 25,
+        "essential": 3
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay",
+        "essential"
+      ],
+      "latestImportAt": "2026-09-09T19:24:38.959Z",
+      "missingGroups": [
+        "stay"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "dallas",
+      "name": "Даллас",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T19:25:55.183Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "detroit",
+      "name": "Детройт",
+      "total": 80,
+      "groups": {
+        "transport": 35,
+        "stay": 0,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay"
+      ],
+      "latestImportAt": "2026-09-10T06:34:26.393Z",
+      "missingGroups": [
+        "stay"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "dijon",
+      "name": "Дижон-Пренуа",
+      "total": 80,
+      "groups": {
+        "transport": 30,
+        "stay": 5,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay"
+      ],
+      "latestImportAt": "2026-09-09T19:30:36.711Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "donington",
+      "name": "Донингтон-Парк",
+      "total": 80,
+      "groups": {
+        "transport": 35,
+        "stay": 0,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay"
+      ],
+      "latestImportAt": "2026-09-09T19:33:07.106Z",
+      "missingGroups": [
+        "stay"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "essarts",
+      "name": "Руан-Лез-Эссар",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T19:35:15.566Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "estoril",
+      "name": "Эшторил",
+      "total": 80,
+      "groups": {
+        "transport": 58,
+        "stay": 2,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T06:37:40.959Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [
+        "stay"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "fuji",
+      "name": "Фудзи",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T19:38:13.023Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "galvez",
+      "name": "Буэнос-Айрес",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T19:39:28.032Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "george",
+      "name": "Принс-Джордж",
+      "total": 80,
+      "groups": {
+        "transport": 30,
+        "stay": 20,
+        "explore": 10,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport"
+      ],
+      "latestImportAt": "2026-09-10T06:38:11.033Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "hockenheimring",
+      "name": "Хоккенхаймринг",
+      "total": 80,
+      "groups": {
+        "transport": 46,
+        "stay": 14,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-09T19:44:21.716Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "hungaroring",
+      "name": "Хунгароринг",
+      "total": 80,
+      "groups": {
+        "transport": 35,
+        "stay": 0,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay"
+      ],
+      "latestImportAt": "2026-09-09T19:46:58.781Z",
+      "missingGroups": [
+        "stay"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "imola",
+      "name": "Имола",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-09T19:49:47.205Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "indianapolis",
+      "name": "Индианаполис",
+      "total": 80,
+      "groups": {
+        "transport": 60,
+        "stay": 0,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T06:42:16.837Z",
+      "missingGroups": [
+        "stay",
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "interlagos",
+      "name": "Интерлагос",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport"
+      ],
+      "latestImportAt": "2026-09-10T06:43:38.293Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "istanbul",
+      "name": "Истанбул-Парк",
+      "total": 80,
+      "groups": {
+        "transport": 17,
+        "stay": 0,
+        "explore": 43,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay"
+      ],
+      "latestImportAt": "2026-09-10T11:55:55.462Z",
+      "missingGroups": [
+        "stay"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "jacarepagua",
+      "name": "Жакарепагуа",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T11:56:21.449Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "jarama",
+      "name": "Харама",
+      "total": 78,
+      "groups": {
+        "transport": 78,
+        "stay": 0,
+        "explore": 0,
+        "essential": 0
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 78,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay",
+        "explore",
+        "essential"
+      ],
+      "latestImportAt": "2026-09-10T06:48:35.173Z",
+      "missingGroups": [
+        "stay",
+        "explore",
+        "essential"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "jeddah",
+      "name": "Джидда",
+      "total": 80,
+      "groups": {
+        "transport": 10,
+        "stay": 20,
+        "explore": 25,
+        "essential": 25
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T06:49:21.727Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "jerez",
+      "name": "Херес",
+      "total": 80,
+      "groups": {
+        "transport": 29,
+        "stay": 0,
+        "explore": 31,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay"
+      ],
+      "latestImportAt": "2026-09-10T11:59:49.306Z",
+      "missingGroups": [
+        "stay"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "kyalami",
+      "name": "Кьялами",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T06:52:26.123Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "las_vegas",
+      "name": "Сизарс-Пэлас",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T06:53:38.626Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "lemans",
+      "name": "Ле-Ман",
+      "total": 80,
+      "groups": {
+        "transport": 23,
+        "stay": 0,
+        "explore": 0,
+        "essential": 57
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T06:55:24.014Z",
+      "missingGroups": [
+        "stay",
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "long_beach",
+      "name": "Лонг-Бич",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:02:08.789Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "losail",
+      "name": "Лусаил",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T06:57:52.738Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "madring",
+      "name": "Мадринг",
+      "total": 80,
+      "groups": {
+        "transport": 60,
+        "stay": 0,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T06:59:42.033Z",
+      "missingGroups": [
+        "stay",
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "magny_cours",
+      "name": "Маньи-Кур",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:05:05.479Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "marina_bay",
+      "name": "Марина-Бей",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport"
+      ],
+      "latestImportAt": "2026-09-10T12:06:30.628Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "miami",
+      "name": "Майами",
+      "total": 80,
+      "groups": {
+        "transport": 40,
+        "stay": 20,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T07:04:22.323Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "monaco",
+      "name": "Монако",
+      "total": 80,
+      "groups": {
+        "transport": 58,
+        "stay": 2,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T12:09:44.823Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [
+        "stay"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "monsanto",
+      "name": "Монсанту",
+      "total": 80,
+      "groups": {
+        "transport": 35,
+        "stay": 0,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay"
+      ],
+      "latestImportAt": "2026-09-10T12:12:26.311Z",
+      "missingGroups": [
+        "stay"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "montjuic",
+      "name": "Монжуик",
+      "total": 80,
+      "groups": {
+        "transport": 34,
+        "stay": 1,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:14:01.106Z",
+      "missingGroups": [],
+      "lowGroups": [
+        "stay"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "monza",
+      "name": "Монца",
+      "total": 80,
+      "groups": {
+        "transport": 40,
+        "stay": 20,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:15:29.256Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "mosport",
+      "name": "Моспорт",
+      "total": 80,
+      "groups": {
+        "transport": 31,
+        "stay": 8,
+        "explore": 25,
+        "essential": 16
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T10:38:57.768Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "mugello",
+      "name": "Муджелло",
+      "total": 80,
+      "groups": {
+        "transport": 57,
+        "stay": 3,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T07:16:01.229Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "nivelles",
+      "name": "Нивель-Болер",
+      "total": 80,
+      "groups": {
+        "transport": 59,
+        "stay": 1,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport"
+      ],
+      "latestImportAt": "2026-09-10T12:18:47.567Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [
+        "stay"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "nurburgring",
+      "name": "Нюрбургринг",
+      "total": 80,
+      "groups": {
+        "transport": 26,
+        "stay": 9,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:20:47.861Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "okayama",
+      "name": "Окаяма",
+      "total": 80,
+      "groups": {
+        "transport": 32,
+        "stay": 20,
+        "explore": 25,
+        "essential": 3
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "essential"
+      ],
+      "latestImportAt": "2026-09-10T07:21:23.023Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "pedralbes",
+      "name": "Педральбес",
+      "total": 80,
+      "groups": {
+        "transport": 40,
+        "stay": 20,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:23:24.335Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "pescara",
+      "name": "Пескара",
+      "total": 80,
+      "groups": {
+        "transport": 54,
+        "stay": 6,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T07:25:02.688Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "phoenix",
+      "name": "Финикс",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T07:26:25.306Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "portimao",
+      "name": "Алгарве",
+      "total": 80,
+      "groups": {
+        "transport": 12,
+        "stay": 20,
+        "explore": 28,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:25:37.584Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "red_bull_ring",
+      "name": "Ред Булл Ринг",
+      "total": 80,
+      "groups": {
+        "transport": 51,
+        "stay": 2,
+        "explore": 0,
+        "essential": 27
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay"
+      ],
+      "latestImportAt": "2026-09-10T12:28:35.227Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [
+        "stay"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "reims",
+      "name": "Реймс-Гё",
+      "total": 80,
+      "groups": {
+        "transport": 25,
+        "stay": 1,
+        "explore": 0,
+        "essential": 54
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T07:33:40.603Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [
+        "stay"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "ricard",
+      "name": "Поль-Рикар",
+      "total": 80,
+      "groups": {
+        "transport": 38,
+        "stay": 22,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:31:45.255Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "riverside",
+      "name": "Риверсайд",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport"
+      ],
+      "latestImportAt": "2026-09-10T07:37:17.917Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "rodriguez",
+      "name": "Эрманос Родригес",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T07:38:12.441Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "sebring",
+      "name": "Себринг",
+      "total": 80,
+      "groups": {
+        "transport": 30,
+        "stay": 15,
+        "explore": 15,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T07:38:55.063Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "sepang",
+      "name": "Сепанг",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T07:39:41.002Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "shanghai",
+      "name": "Шанхай",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:31:53.796Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "silverstone",
+      "name": "Сильверстоун",
+      "total": 80,
+      "groups": {
+        "transport": 40,
+        "stay": 20,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:33:23.092Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "sochi",
+      "name": "Сочи Автодром",
+      "total": 80,
+      "groups": {
+        "transport": 31,
+        "stay": 0,
+        "explore": 29,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "stay"
+      ],
+      "latestImportAt": "2026-09-10T12:34:52.476Z",
+      "missingGroups": [
+        "stay"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "spa",
+      "name": "Спа-Франкоршам",
+      "total": 3833,
+      "groups": {
+        "transport": 293,
+        "stay": 1194,
+        "explore": 2154,
+        "essential": 190
+      },
+      "circuitPoints": 2,
+      "statuses": {
+        "candidate": 3797,
+        "reviewed": 27,
+        "published": 0,
+        "hidden": 9
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": null,
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "suzuka",
+      "name": "Сузука",
+      "total": 80,
+      "groups": {
+        "transport": 33,
+        "stay": 20,
+        "explore": 25,
+        "essential": 2
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "essential"
+      ],
+      "latestImportAt": "2026-09-10T07:46:02.815Z",
+      "missingGroups": [],
+      "lowGroups": [
+        "essential"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "tremblant",
+      "name": "Мон-Тремблан",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:37:10.298Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "valencia",
+      "name": "Валенсия",
+      "total": 80,
+      "groups": {
+        "transport": 37,
+        "stay": 23,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:39:14.308Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "vegas",
+      "name": "Лас-Вегас",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T07:51:04.622Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "villeneuve",
+      "name": "Жиль Вильнёв",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:41:26.799Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "watkins_glen",
+      "name": "Уоткинс-Глен",
+      "total": 80,
+      "groups": {
+        "transport": 37,
+        "stay": 0,
+        "explore": 25,
+        "essential": 18
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:42:45.492Z",
+      "missingGroups": [
+        "stay"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    },
+    {
+      "id": "yas_marina",
+      "name": "Яс-Марина",
+      "total": 80,
+      "groups": {
+        "transport": 11,
+        "stay": 20,
+        "explore": 25,
+        "essential": 24
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:42:51.427Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "yeongam",
+      "name": "Йонам",
+      "total": 80,
+      "groups": {
+        "transport": 15,
+        "stay": 20,
+        "explore": 25,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T07:57:06.745Z",
+      "missingGroups": [],
+      "lowGroups": [],
+      "needsRetry": false
+    },
+    {
+      "id": "zandvoort",
+      "name": "Зандворт",
+      "total": 80,
+      "groups": {
+        "transport": 58,
+        "stay": 2,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 77,
+        "reviewed": 3,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:45:43.098Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [
+        "stay"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "zeltweg",
+      "name": "Цельтвег",
+      "total": 80,
+      "groups": {
+        "transport": 52,
+        "stay": 2,
+        "explore": 0,
+        "essential": 26
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 80,
+        "reviewed": 0,
+        "published": 0,
+        "hidden": 0
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "latestImportAt": "2026-09-10T08:00:54.085Z",
+      "missingGroups": [
+        "explore"
+      ],
+      "lowGroups": [
+        "stay"
+      ],
+      "needsRetry": true
+    },
+    {
+      "id": "zolder",
+      "name": "Золдер",
+      "total": 80,
+      "groups": {
+        "transport": 60,
+        "stay": 0,
+        "explore": 0,
+        "essential": 20
+      },
+      "circuitPoints": 0,
+      "statuses": {
+        "candidate": 72,
+        "reviewed": 7,
+        "published": 0,
+        "hidden": 1
+      },
+      "missingStoredDistance": 0,
+      "invalidDistance": 0,
+      "latestFailedGroups": [],
+      "latestImportAt": "2026-09-10T12:49:56.201Z",
+      "missingGroups": [
+        "stay",
+        "explore"
+      ],
+      "lowGroups": [],
+      "needsRetry": true
+    }
+  ]
+}

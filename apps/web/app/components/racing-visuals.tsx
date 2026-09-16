@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import type { CSSProperties } from 'react';
+import { driverPhotoUrl } from '../data/driver-photo-sources';
 
 const driverCountries: Record<string, string> = {
   max_verstappen: 'nl', lando_norris: 'gb', charles_leclerc: 'mc', oscar_piastri: 'au',
@@ -21,20 +22,6 @@ const driverCountries: Record<string, string> = {
   antonelli: 'it', hadjar: 'fr', bortoleto: 'br', lindblad: 'gb', vettel: 'de', raikkonen: 'fi',
   button: 'gb', m_schumacher: 'de', senna: 'br', prost: 'fr', fangio: 'ar', farina: 'it',
   hunt: 'gb', reutemann: 'ar', mclaren: 'nz', surtees: 'gb',
-};
-
-const driverPhotoTokens: Record<string, string> = {
-  max_verstappen: 'maxver01', lando_norris: 'lannor01', charles_leclerc: 'chalecl01',
-  oscar_piastri: 'oscpia01', carlos_sainz: 'carsai01', george_russell: 'georus01',
-  lewis_hamilton: 'lewham01', fernando_alonso: 'feralo01', pierre_gasly: 'piegas01',
-  yuki_tsunoda: 'yuktsu01', lance_stroll: 'lanstr01', esteban_ocon: 'estoco01',
-  alexander_albon: 'alealb01', oliver_bearman: 'olibea01', liam_lawson: 'lialaw01',
-  andrea_kimi_antonelli: 'andant01', isack_hadjar: 'isahad01', gabriel_bortoleto: 'gabbor01',
-  norris: 'lannor01', leclerc: 'chalecl01', piastri: 'oscpia01', sainz: 'carsai01',
-  russell: 'georus01', hamilton: 'lewham01', alonso: 'feralo01', gasly: 'piegas01',
-  tsunoda: 'yuktsu01', stroll: 'lanstr01', ocon: 'estoco01', albon: 'alealb01',
-  bearman: 'olibea01', lawson: 'lialaw01', antonelli: 'andant01', hadjar: 'isahad01',
-  bortoleto: 'gabbor01',
 };
 
 const teamLogoSlugsByConstructorId: Record<string, string> = {
@@ -133,11 +120,9 @@ export function driverCountryCode(driverId: string | null | undefined, countryCo
   return driverId ? driverCountries[driverId] ?? null : null;
 }
 
-export function driverPhotoUrl(driverId: string | null | undefined) {
-  const token = driverId ? driverPhotoTokens[driverId] : null;
-  return token
-    ? `https://media.formula1.com/image/upload/f_auto,c_limit,q_auto,w_640/content/dam/fom-website/2018-redesign-assets/drivers/2025/${token}.png`
-    : null;
+export function countryFlagUrl(countryCode: string) {
+  const code = countryCode.trim().toLowerCase();
+  return /^[a-z]{2}$/.test(code) ? `/assets/flags/${code}.svg` : null;
 }
 
 export function teamLogoUrl(constructorId?: string | null, constructorName?: string | null, season?: number | null) {
@@ -160,7 +145,7 @@ export function teamCarUrl(season: number, constructorId?: string | null, constr
   return `/assets/f1/teams/${season}/${folder}/${asset.car}`;
 }
 
-function flagFallbackDataUrl(code: string) {
+export function flagFallbackDataUrl(code: string) {
   const label = code.toUpperCase();
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="50" height="34" viewBox="0 0 50 34"><rect width="50" height="34" rx="3" fill="#17232c"/><rect x=".5" y=".5" width="49" height="33" rx="2.5" fill="none" stroke="#718590"/><text x="25" y="22" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#d7e0e5">${label}</text></svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
@@ -180,7 +165,7 @@ export function DriverFlag({
   return (
     <img
       className={`driver-flag ${className}`.trim()}
-      src={`https://flagcdn.com/${code}.svg`}
+      src={countryFlagUrl(code) ?? flagFallbackDataUrl(code)}
       alt=""
       aria-hidden="true"
       onError={(event) => {

@@ -1,31 +1,270 @@
 [
-  { "id": "max_verstappen", "nameRu": "Макс Ферстаппен", "nameEn": "Max Verstappen", "code": "VER", "number": 1, "photo": null, "photoSource": null },
-  { "id": "lando_norris", "nameRu": "Ландо Норрис", "nameEn": "Lando Norris", "code": "NOR", "number": 4, "photo": null, "photoSource": null },
-  { "id": "charles_leclerc", "nameRu": "Шарль Леклер", "nameEn": "Charles Leclerc", "code": "LEC", "number": 16, "photo": null, "photoSource": null },
-  { "id": "oscar_piastri", "nameRu": "Оскар Пиастри", "nameEn": "Oscar Piastri", "code": "PIA", "number": 81, "photo": null, "photoSource": null },
-  { "id": "carlos_sainz", "nameRu": "Карлос Сайнс", "nameEn": "Carlos Sainz", "code": "SAI", "number": 55, "photo": null, "photoSource": null },
-  { "id": "george_russell", "nameRu": "Джордж Расселл", "nameEn": "George Russell", "code": "RUS", "number": 63, "photo": null, "photoSource": null },
-  { "id": "lewis_hamilton", "nameRu": "Льюис Хэмилтон", "nameEn": "Lewis Hamilton", "code": "HAM", "number": 44, "photo": null, "photoSource": null },
-  { "id": "sergio_perez", "nameRu": "Серхио Перес", "nameEn": "Sergio Perez", "code": "PER", "number": 11, "photo": null, "photoSource": null },
-  { "id": "fernando_alonso", "nameRu": "Фернандо Алонсо", "nameEn": "Fernando Alonso", "code": "ALO", "number": 14, "photo": null, "photoSource": null },
-  { "id": "pierre_gasly", "nameRu": "Пьер Гасли", "nameEn": "Pierre Gasly", "code": "GAS", "number": 10, "photo": null, "photoSource": null },
-  { "id": "nico_hulkenberg", "nameRu": "Нико Хюлькенберг", "nameEn": "Nico Hulkenberg", "code": "HUL", "number": 27, "photo": null, "photoSource": null },
-  { "id": "yuki_tsunoda", "nameRu": "Юки Цунода", "nameEn": "Yuki Tsunoda", "code": "TSU", "number": 22, "photo": null, "photoSource": null },
-  { "id": "lance_stroll", "nameRu": "Лэнс Стролл", "nameEn": "Lance Stroll", "code": "STR", "number": 18, "photo": null, "photoSource": null },
-  { "id": "esteban_ocon", "nameRu": "Эстебан Окон", "nameEn": "Esteban Ocon", "code": "OCO", "number": 31, "photo": null, "photoSource": null },
-  { "id": "kevin_magnussen", "nameRu": "Кевин Магнуссен", "nameEn": "Kevin Magnussen", "code": "MAG", "number": 20, "photo": null, "photoSource": null },
-  { "id": "alexander_albon", "nameRu": "Алекс Албон", "nameEn": "Alexander Albon", "code": "ALB", "number": 23, "photo": null, "photoSource": null },
-  { "id": "daniel_ricciardo", "nameRu": "Даниэль Риккардо", "nameEn": "Daniel Ricciardo", "code": "RIC", "number": 3, "photo": null, "photoSource": null },
-  { "id": "oliver_bearman", "nameRu": "Оливер Берман", "nameEn": "Oliver Bearman", "code": "BEA", "number": 50, "photo": null, "photoSource": null },
-  { "id": "franco_colapinto", "nameRu": "Франко Колапинто", "nameEn": "Franco Colapinto", "code": "COL", "number": 43, "photo": null, "photoSource": null },
-  { "id": "zhou_guanyu", "nameRu": "Чжоу Гуаньюй", "nameEn": "Zhou Guanyu", "code": "ZHO", "number": 24, "photo": null, "photoSource": null },
-  { "id": "liam_lawson", "nameRu": "Лиам Лоусон", "nameEn": "Liam Lawson", "code": "LAW", "number": 30, "photo": null, "photoSource": null },
-  { "id": "valtteri_bottas", "nameRu": "Валттери Боттас", "nameEn": "Valtteri Bottas", "code": "BOT", "number": 77, "photo": null, "photoSource": null },
-  { "id": "logan_sargeant", "nameRu": "Логан Сарджент", "nameEn": "Logan Sargeant", "code": "SAR", "number": 2, "photo": null, "photoSource": null },
-  { "id": "jack_doohan", "nameRu": "Джек Дуэн", "nameEn": "Jack Doohan", "code": "DOO", "number": 61, "photo": null, "photoSource": null },
-  { "id": "andrea_kimi_antonelli", "nameRu": "Андреа Кими Антонелли", "nameEn": "Andrea Kimi Antonelli", "code": "ANT", "number": 12, "photo": null, "photoSource": null },
-  { "id": "isack_hadjar", "nameRu": "Исак Хаджар", "nameEn": "Isack Hadjar", "code": "HAD", "number": 6, "photo": null, "photoSource": null },
-  { "id": "gabriel_bortoleto", "nameRu": "Габриэл Бортолето", "nameEn": "Gabriel Bortoleto", "code": "BOR", "number": 5, "photo": null, "photoSource": null },
-  { "id": "arvid_lindblad", "nameRu": "Арвид Линдблад", "nameEn": "Arvid Lindblad", "code": "LIN", "number": 41, "photo": null, "photoSource": null },
-  { "id": "michael_schumacher", "nameRu": "Михаэль Шумахер", "nameEn": "Michael Schumacher", "code": "MSC", "number": null, "photo": null, "photoSource": null }
+  {
+    "id": "max_verstappen",
+    "nameRu": "Макс Ферстаппен",
+    "nameEn": "Max Verstappen",
+    "code": "VER",
+    "number": 1,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "lando_norris",
+    "nameRu": "Ландо Норрис",
+    "nameEn": "Lando Norris",
+    "code": "NOR",
+    "number": 4,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "charles_leclerc",
+    "nameRu": "Шарль Леклер",
+    "nameEn": "Charles Leclerc",
+    "code": "LEC",
+    "number": 16,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "oscar_piastri",
+    "nameRu": "Оскар Пиастри",
+    "nameEn": "Oscar Piastri",
+    "code": "PIA",
+    "number": 81,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "carlos_sainz",
+    "nameRu": "Карлос Сайнс",
+    "nameEn": "Carlos Sainz",
+    "code": "SAI",
+    "number": 55,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "george_russell",
+    "nameRu": "Джордж Расселл",
+    "nameEn": "George Russell",
+    "code": "RUS",
+    "number": 63,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "lewis_hamilton",
+    "nameRu": "Льюис Хэмилтон",
+    "nameEn": "Lewis Hamilton",
+    "code": "HAM",
+    "number": 44,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "sergio_perez",
+    "nameRu": "Серхио Перес",
+    "nameEn": "Sergio Perez",
+    "code": "PER",
+    "number": 11,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "fernando_alonso",
+    "nameRu": "Фернандо Алонсо",
+    "nameEn": "Fernando Alonso",
+    "code": "ALO",
+    "number": 14,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "pierre_gasly",
+    "nameRu": "Пьер Гасли",
+    "nameEn": "Pierre Gasly",
+    "code": "GAS",
+    "number": 10,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "nico_hulkenberg",
+    "nameRu": "Нико Хюлькенберг",
+    "nameEn": "Nico Hulkenberg",
+    "code": "HUL",
+    "number": 27,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "yuki_tsunoda",
+    "nameRu": "Юки Цунода",
+    "nameEn": "Yuki Tsunoda",
+    "code": "TSU",
+    "number": 22,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "lance_stroll",
+    "nameRu": "Лэнс Стролл",
+    "nameEn": "Lance Stroll",
+    "code": "STR",
+    "number": 18,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "esteban_ocon",
+    "nameRu": "Эстебан Окон",
+    "nameEn": "Esteban Ocon",
+    "code": "OCO",
+    "number": 31,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "kevin_magnussen",
+    "nameRu": "Кевин Магнуссен",
+    "nameEn": "Kevin Magnussen",
+    "code": "MAG",
+    "number": 20,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "alexander_albon",
+    "nameRu": "Алекс Албон",
+    "nameEn": "Alexander Albon",
+    "code": "ALB",
+    "number": 23,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "daniel_ricciardo",
+    "nameRu": "Даниэль Риккардо",
+    "nameEn": "Daniel Ricciardo",
+    "code": "RIC",
+    "number": 3,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "oliver_bearman",
+    "nameRu": "Оливер Берман",
+    "nameEn": "Oliver Bearman",
+    "code": "BEA",
+    "number": 50,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "franco_colapinto",
+    "nameRu": "Франко Колапинто",
+    "nameEn": "Franco Colapinto",
+    "code": "COL",
+    "number": 43,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "zhou",
+    "nameRu": "Чжоу Гуаньюй",
+    "nameEn": "Guanyu Zhou",
+    "code": "ZHO",
+    "number": 24,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "liam_lawson",
+    "nameRu": "Лиам Лоусон",
+    "nameEn": "Liam Lawson",
+    "code": "LAW",
+    "number": 30,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "valtteri_bottas",
+    "nameRu": "Валттери Боттас",
+    "nameEn": "Valtteri Bottas",
+    "code": "BOT",
+    "number": 77,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "logan_sargeant",
+    "nameRu": "Логан Сарджент",
+    "nameEn": "Logan Sargeant",
+    "code": "SAR",
+    "number": 2,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "jack_doohan",
+    "nameRu": "Джек Дуэн",
+    "nameEn": "Jack Doohan",
+    "code": "DOO",
+    "number": 61,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "andrea_kimi_antonelli",
+    "nameRu": "Андреа Кими Антонелли",
+    "nameEn": "Andrea Kimi Antonelli",
+    "code": "ANT",
+    "number": 12,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "isack_hadjar",
+    "nameRu": "Исак Хаджар",
+    "nameEn": "Isack Hadjar",
+    "code": "HAD",
+    "number": 6,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "gabriel_bortoleto",
+    "nameRu": "Габриэл Бортолето",
+    "nameEn": "Gabriel Bortoleto",
+    "code": "BOR",
+    "number": 5,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "arvid_lindblad",
+    "nameRu": "Арвид Линдблад",
+    "nameEn": "Arvid Lindblad",
+    "code": "LIN",
+    "number": 41,
+    "photo": null,
+    "photoSource": null
+  },
+  {
+    "id": "michael_schumacher",
+    "nameRu": "Михаэль Шумахер",
+    "nameEn": "Michael Schumacher",
+    "code": "MSC",
+    "number": null,
+    "photo": null,
+    "photoSource": null,
+    "birthDate": "1969-01-03",
+    "deathDate": null,
+    "birthPlace": "Хюрт, Северный Рейн-Вестфалия, Германия",
+    "heightCm": null,
+    "weightKg": null,
+    "biography": "Михаэль Шумахер дебютировал в Formula 1 на Гран-при Бельгии 1991 года и вскоре перешёл из Jordan в Benetton. С этой командой он выиграл чемпионаты 1994 и 1995 годов, а затем присоединился к Ferrari и помог вернуть ей титул пилотов в 2000 году. Пять последовательных чемпионств с Ferrari в 2000–2004 годах довели его общий результат до семи титулов; после первого завершения карьеры Шумахер вернулся и выступал за Mercedes с 2010 по 2012 год.",
+    "photoUrl": null
+  }
 ]

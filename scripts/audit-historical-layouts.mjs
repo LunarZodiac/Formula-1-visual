@@ -52,9 +52,9 @@ try {
     ORDER BY circuit.id
   `);
   const layoutsResult = await client.query(`
-    SELECT id, circuit_id, name, valid_from_year, valid_to_year,
+    SELECT id, circuit_id, name, valid_from_year, valid_to_year, length_m,
            centerline IS NOT NULL AS has_geometry,
-           provenance_type, review_status, verified_at
+           source_id, provenance_type, review_status, verified_at
     FROM atlas.track_layouts
     ORDER BY circuit_id, valid_from_year NULLS FIRST, id
   `);
@@ -105,6 +105,18 @@ try {
       unassignedRaces: raceCount - assignedRaces,
       databaseLayouts: layouts.length,
       reviewedLayouts,
+      layoutInventory: layouts.map((layout) => ({
+        id: layout.id,
+        name: layout.name,
+        validFromYear: layout.valid_from_year,
+        validToYear: layout.valid_to_year,
+        lengthM: layout.length_m,
+        hasGeometry: layout.has_geometry,
+        sourceId: layout.source_id,
+        provenanceType: layout.provenance_type,
+        reviewStatus: layout.review_status,
+        verifiedAt: layout.verified_at,
+      })),
       runtimeDefaultGeometryId: registry.defaults.get(row.id) ?? null,
       runtimeHistoricalPeriods: periods,
       status: layouts.length === 0

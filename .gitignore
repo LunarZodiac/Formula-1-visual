@@ -7,6 +7,7 @@
 # Python environments and caches
 **/.venv/
 **/venv/
+scripts/.venv-rembg/
 **/__pycache__/
 *.py[cod]
 .pytest_cache/
@@ -47,6 +48,14 @@ Desktop.ini
 # Generated media and diagnostic artifacts
 *.mp4
 chrome-devs-trace.json
+
+# Local reference images used for manual circuit digitisation
+local-reference/circuit-layouts/
+local-reference/travel-import/
+
+# Local editorial uploads move to object storage before publication
+apps/web/public/media/drivers/
+apps/web/public/media/constructors/
 
 # Earlier experimental copies are kept locally, but not versioned.
 F1_v1/

@@ -1,9 +1,11 @@
 import allDriversJson from './catalogs/drivers-all.json';
-import type { DriverCatalogData, DriverListItem, TeamCatalogData } from './competitor-contract';
+import allTeamsJson from './catalogs/teams-all.json';
+import type { AllTeamCatalogData, DriverCatalogData, DriverListItem, TeamCatalogData } from './competitor-contract';
 
 const driverCatalogModules = import.meta.glob('./catalogs/drivers-*.json', { import: 'default' }) as Record<string, () => Promise<DriverCatalogData>>;
 const teamCatalogModules = import.meta.glob('./catalogs/teams-*.json', { import: 'default' }) as Record<string, () => Promise<TeamCatalogData>>;
 const allDrivers = allDriversJson as { schemaVersion: number; generatedAt: string; drivers: DriverListItem[] };
+const allTeams = allTeamsJson as AllTeamCatalogData;
 
 function seasonKey(kind: 'drivers' | 'teams', season: number) {
   return `./catalogs/${kind}-${season}.json`;
@@ -16,6 +18,10 @@ export async function getDriverCatalog(season: number): Promise<DriverCatalogDat
 
 export function getAllDriverCatalog() {
   return allDrivers;
+}
+
+export function getAllTeamCatalog() {
+  return allTeams;
 }
 
 export async function getTeamCatalog(season: number): Promise<TeamCatalogData> {

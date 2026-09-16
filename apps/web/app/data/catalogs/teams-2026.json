@@ -1,15 +1,15 @@
 {
   "schemaVersion": 2,
   "season": 2026,
-  "generatedAt": "2026-09-05T01:53:44.804Z",
+  "generatedAt": "2026-09-13T20:26:23.547Z",
   "teams": [
     {
       "id": "mercedes",
       "name": "Mercedes",
       "nationality": "German",
       "position": 1,
-      "points": 425,
-      "wins": 8,
+      "points": 503,
+      "wins": 10,
       "engineName": null,
       "color": null,
       "logoUrl": "/assets/f1/teams/2026/logos/04_mercedes_2026.png",
@@ -18,13 +18,13 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "Mercedes",
           "position": 1,
-          "points": 425,
-          "wins": 8
+          "points": 503,
+          "wins": 10
         },
         {
           "season": 2025,
@@ -188,28 +188,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 353,
-        "wins": 139,
-        "podiums": 326,
-        "points": 8517.64,
-        "circuits": 40,
+        "raceEntries": 355,
+        "wins": 141,
+        "podiums": 329,
+        "points": 8595.64,
+        "circuits": 41,
         "countries": 31,
-        "winningCircuits": 36,
+        "winningCircuits": 37,
         "firstSeason": 1954,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
-        "wins": 8,
-        "podiums": 16,
-        "points": 365,
-        "circuits": 12,
-        "countries": 12,
-        "winningCircuits": 8,
+        "raceEntries": 14,
+        "wins": 10,
+        "podiums": 19,
+        "points": 443,
+        "circuits": 14,
+        "countries": 13,
+        "winningCircuits": 10,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
@@ -228,6 +228,21 @@
           "points": 482.14
         },
         {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 19,
+          "wins": 8,
+          "podiums": 18,
+          "points": 446
+        },
+        {
           "id": "red_bull_ring",
           "name": "Ред Булл Ринг",
           "slug": "red-bull-ring",
@@ -244,8 +259,8 @@
         },
         {
           "id": "sochi",
-          "name": "Sochi Autodrom",
-          "slug": null,
+          "name": "Сочи Автодром",
+          "slug": "sochi",
           "isPublished": false,
           "countryCode": "ru",
           "coordinates": [
@@ -286,21 +301,6 @@
           "wins": 7,
           "podiums": 17,
           "points": 422.5
-        },
-        {
-          "id": "monza",
-          "name": "Монца",
-          "slug": "monza",
-          "isPublished": false,
-          "countryCode": "it",
-          "coordinates": [
-            9.28111,
-            45.6156
-          ],
-          "raceEntries": 18,
-          "wins": 7,
-          "podiums": 16,
-          "points": 403
         },
         {
           "id": "shanghai",
@@ -499,8 +499,8 @@
         },
         {
           "id": "hockenheimring",
-          "name": "Hockenheimring",
-          "slug": null,
+          "name": "Хоккенхаймринг",
+          "slug": "hockenheimring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -514,8 +514,8 @@
         },
         {
           "id": "ricard",
-          "name": "Circuit Paul Ricard",
-          "slug": null,
+          "name": "Поль-Рикар",
+          "slug": "ricard",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -529,8 +529,8 @@
         },
         {
           "id": "portimao",
-          "name": "Autódromo Internacional do Algarve",
-          "slug": null,
+          "name": "Алгарве",
+          "slug": "portimao",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -544,8 +544,8 @@
         },
         {
           "id": "istanbul",
-          "name": "Istanbul Park",
-          "slug": null,
+          "name": "Истанбул-Парк",
+          "slug": "istanbul",
           "isPublished": false,
           "countryCode": "tr",
           "coordinates": [
@@ -559,8 +559,8 @@
         },
         {
           "id": "nurburgring",
-          "name": "Nürburgring",
-          "slug": null,
+          "name": "Нюрбургринг",
+          "slug": "nurburgring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -619,8 +619,8 @@
         },
         {
           "id": "aintree",
-          "name": "Aintree",
-          "slug": null,
+          "name": "Эйнтри",
+          "slug": "aintree",
           "isPublished": false,
           "countryCode": "gb",
           "coordinates": [
@@ -634,8 +634,8 @@
         },
         {
           "id": "imola",
-          "name": "Autodromo Enzo e Dino Ferrari",
-          "slug": null,
+          "name": "Имола",
+          "slug": "imola",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -649,8 +649,8 @@
         },
         {
           "id": "bremgarten",
-          "name": "Circuit Bremgarten",
-          "slug": null,
+          "name": "Бремгартен",
+          "slug": "bremgarten",
           "isPublished": false,
           "countryCode": "ch",
           "coordinates": [
@@ -664,8 +664,8 @@
         },
         {
           "id": "jeddah",
-          "name": "Jeddah Corniche Circuit",
-          "slug": null,
+          "name": "Джидда",
+          "slug": "jeddah",
           "isPublished": false,
           "countryCode": "sa",
           "coordinates": [
@@ -694,8 +694,8 @@
         },
         {
           "id": "mugello",
-          "name": "Autodromo Internazionale del Mugello",
-          "slug": null,
+          "name": "Муджелло",
+          "slug": "mugello",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -709,8 +709,8 @@
         },
         {
           "id": "reims",
-          "name": "Reims-Gueux",
-          "slug": null,
+          "name": "Реймс-Гё",
+          "slug": "reims",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -724,8 +724,8 @@
         },
         {
           "id": "galvez",
-          "name": "Autódromo Juan y Oscar Gálvez",
-          "slug": null,
+          "name": "Буэнос-Айрес",
+          "slug": "galvez",
           "isPublished": false,
           "countryCode": "ar",
           "coordinates": [
@@ -753,9 +753,24 @@
           "points": 67
         },
         {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 1,
+          "podiums": 1,
+          "points": 35
+        },
+        {
           "id": "buddh",
-          "name": "Buddh International Circuit",
-          "slug": null,
+          "name": "Будда",
+          "slug": "buddh",
           "isPublished": false,
           "countryCode": "in",
           "coordinates": [
@@ -769,8 +784,8 @@
         },
         {
           "id": "pedralbes",
-          "name": "Circuit de Pedralbes",
-          "slug": null,
+          "name": "Педральбес",
+          "slug": "pedralbes",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -784,8 +799,8 @@
         },
         {
           "id": "valencia",
-          "name": "Valencia Street Circuit",
-          "slug": null,
+          "name": "Валенсия",
+          "slug": "valencia",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -799,8 +814,8 @@
         },
         {
           "id": "yeongam",
-          "name": "Korean International Circuit",
-          "slug": null,
+          "name": "Йонам",
+          "slug": "yeongam",
           "isPublished": false,
           "countryCode": "kr",
           "coordinates": [
@@ -827,6 +842,13 @@
           "wins": 9
         },
         {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "wins": 8
+        },
+        {
           "id": "red_bull_ring",
           "name": "Ред Булл Ринг",
           "slug": "red-bull-ring",
@@ -835,8 +857,8 @@
         },
         {
           "id": "sochi",
-          "name": "Sochi Autodrom",
-          "slug": null,
+          "name": "Сочи Автодром",
+          "slug": "sochi",
           "isPublished": false,
           "wins": 8
         },
@@ -852,13 +874,6 @@
           "name": "Спа-Франкоршам",
           "slug": "spa",
           "isPublished": true,
-          "wins": 7
-        },
-        {
-          "id": "monza",
-          "name": "Монца",
-          "slug": "monza",
-          "isPublished": false,
           "wins": 7
         },
         {
@@ -882,18 +897,18 @@
           "nameRu": "Андреа Кими Антонелли",
           "code": "ANT",
           "position": 1,
-          "points": 242,
-          "raceEntries": 12,
-          "teamPoints": 216
+          "points": 292,
+          "raceEntries": 14,
+          "teamPoints": 266
         },
         {
           "id": "russell",
           "nameRu": "Джордж Расселл",
           "code": "RUS",
           "position": 2,
-          "points": 183,
-          "raceEntries": 12,
-          "teamPoints": 149
+          "points": 211,
+          "raceEntries": 14,
+          "teamPoints": 177
         }
       ],
       "driverCount": 2
@@ -903,7 +918,7 @@
       "name": "Ferrari",
       "nationality": "Italian",
       "position": 2,
-      "points": 338,
+      "points": 358,
       "wins": 2,
       "engineName": null,
       "color": null,
@@ -913,12 +928,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "Ferrari",
           "position": 2,
-          "points": 338,
+          "points": 358,
           "wins": 2
         },
         {
@@ -1603,28 +1618,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 1136,
+        "raceEntries": 1138,
         "wins": 250,
         "podiums": 844,
-        "points": 11702.94,
-        "circuits": 76,
+        "points": 11722.94,
+        "circuits": 77,
         "countries": 34,
         "winningCircuits": 47,
         "firstSeason": 1950,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 2,
         "podiums": 9,
-        "points": 290,
-        "circuits": 12,
-        "countries": 12,
+        "points": 310,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 2,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
@@ -1637,10 +1652,10 @@
             9.28111,
             45.6156
           ],
-          "raceEntries": 75,
+          "raceEntries": 76,
           "wins": 20,
           "podiums": 72,
-          "points": 819.5
+          "points": 827.5
         },
         {
           "id": "silverstone",
@@ -1674,8 +1689,8 @@
         },
         {
           "id": "nurburgring",
-          "name": "Nürburgring",
-          "slug": null,
+          "name": "Нюрбургринг",
+          "slug": "nurburgring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -1704,8 +1719,8 @@
         },
         {
           "id": "hockenheimring",
-          "name": "Hockenheimring",
-          "slug": null,
+          "name": "Хоккенхаймринг",
+          "slug": "hockenheimring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -1794,8 +1809,8 @@
         },
         {
           "id": "imola",
-          "name": "Autodromo Enzo e Dino Ferrari",
-          "slug": null,
+          "name": "Имола",
+          "slug": "imola",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -1809,8 +1824,8 @@
         },
         {
           "id": "magny_cours",
-          "name": "Circuit de Nevers Magny-Cours",
-          "slug": null,
+          "name": "Маньи-Кур",
+          "slug": "magny-cours",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -1884,8 +1899,8 @@
         },
         {
           "id": "indianapolis",
-          "name": "Indianapolis Motor Speedway",
-          "slug": null,
+          "name": "Индианаполис",
+          "slug": "indianapolis",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -1914,8 +1929,8 @@
         },
         {
           "id": "reims",
-          "name": "Reims-Gueux",
-          "slug": null,
+          "name": "Реймс-Гё",
+          "slug": "reims",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -1959,8 +1974,8 @@
         },
         {
           "id": "zolder",
-          "name": "Zolder",
-          "slug": null,
+          "name": "Золдер",
+          "slug": "zolder",
           "isPublished": false,
           "countryCode": "be",
           "coordinates": [
@@ -1974,8 +1989,8 @@
         },
         {
           "id": "kyalami",
-          "name": "Kyalami",
-          "slug": null,
+          "name": "Кьялами",
+          "slug": "kyalami",
           "isPublished": false,
           "countryCode": "za",
           "coordinates": [
@@ -1989,8 +2004,8 @@
         },
         {
           "id": "galvez",
-          "name": "Autódromo Juan y Oscar Gálvez",
-          "slug": null,
+          "name": "Буэнос-Айрес",
+          "slug": "galvez",
           "isPublished": false,
           "countryCode": "ar",
           "coordinates": [
@@ -2019,8 +2034,8 @@
         },
         {
           "id": "istanbul",
-          "name": "Istanbul Park",
-          "slug": null,
+          "name": "Истанбул-Парк",
+          "slug": "istanbul",
           "isPublished": false,
           "countryCode": "tr",
           "coordinates": [
@@ -2034,8 +2049,8 @@
         },
         {
           "id": "long_beach",
-          "name": "Long Beach",
-          "slug": null,
+          "name": "Лонг-Бич",
+          "slug": "long-beach",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -2049,8 +2064,8 @@
         },
         {
           "id": "watkins_glen",
-          "name": "Watkins Glen",
-          "slug": null,
+          "name": "Уоткинс-Глен",
+          "slug": "watkins-glen",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -2079,8 +2094,8 @@
         },
         {
           "id": "brands_hatch",
-          "name": "Brands Hatch",
-          "slug": null,
+          "name": "Брэндс-Хэтч",
+          "slug": "brands-hatch",
           "isPublished": false,
           "countryCode": "gb",
           "coordinates": [
@@ -2094,8 +2109,8 @@
         },
         {
           "id": "bremgarten",
-          "name": "Circuit Bremgarten",
-          "slug": null,
+          "name": "Бремгартен",
+          "slug": "bremgarten",
           "isPublished": false,
           "countryCode": "ch",
           "coordinates": [
@@ -2109,8 +2124,8 @@
         },
         {
           "id": "estoril",
-          "name": "Autódromo do Estoril",
-          "slug": null,
+          "name": "Эшторил",
+          "slug": "estoril",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -2124,8 +2139,8 @@
         },
         {
           "id": "jarama",
-          "name": "Jarama",
-          "slug": null,
+          "name": "Харама",
+          "slug": "jarama",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -2139,8 +2154,8 @@
         },
         {
           "id": "ricard",
-          "name": "Circuit Paul Ricard",
-          "slug": null,
+          "name": "Поль-Рикар",
+          "slug": "ricard",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -2154,8 +2169,8 @@
         },
         {
           "id": "essarts",
-          "name": "Rouen-Les-Essarts",
-          "slug": null,
+          "name": "Руан-Лез-Эссар",
+          "slug": "essarts",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -2169,8 +2184,8 @@
         },
         {
           "id": "jacarepagua",
-          "name": "Autódromo Internacional Nelson Piquet",
-          "slug": null,
+          "name": "Жакарепагуа",
+          "slug": "jacarepagua",
           "isPublished": false,
           "countryCode": "br",
           "coordinates": [
@@ -2184,8 +2199,8 @@
         },
         {
           "id": "valencia",
-          "name": "Valencia Street Circuit",
-          "slug": null,
+          "name": "Валенсия",
+          "slug": "valencia",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -2199,8 +2214,8 @@
         },
         {
           "id": "adelaide",
-          "name": "Adelaide Street Circuit",
-          "slug": null,
+          "name": "Аделаида",
+          "slug": "adelaide",
           "isPublished": false,
           "countryCode": "au",
           "coordinates": [
@@ -2214,8 +2229,8 @@
         },
         {
           "id": "aintree",
-          "name": "Aintree",
-          "slug": null,
+          "name": "Эйнтри",
+          "slug": "aintree",
           "isPublished": false,
           "countryCode": "gb",
           "coordinates": [
@@ -2229,8 +2244,8 @@
         },
         {
           "id": "anderstorp",
-          "name": "Scandinavian Raceway",
-          "slug": null,
+          "name": "Андерсторп",
+          "slug": "anderstorp",
           "isPublished": false,
           "countryCode": "se",
           "coordinates": [
@@ -2244,8 +2259,8 @@
         },
         {
           "id": "avus",
-          "name": "AVUS",
-          "slug": null,
+          "name": "АФУС",
+          "slug": "avus",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -2259,8 +2274,8 @@
         },
         {
           "id": "jerez",
-          "name": "Circuito de Jerez",
-          "slug": null,
+          "name": "Херес",
+          "slug": "jerez",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -2274,8 +2289,8 @@
         },
         {
           "id": "yeongam",
-          "name": "Korean International Circuit",
-          "slug": null,
+          "name": "Йонам",
+          "slug": "yeongam",
           "isPublished": false,
           "countryCode": "kr",
           "coordinates": [
@@ -2289,8 +2304,8 @@
         },
         {
           "id": "pedralbes",
-          "name": "Circuit de Pedralbes",
-          "slug": null,
+          "name": "Педральбес",
+          "slug": "pedralbes",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -2304,8 +2319,8 @@
         },
         {
           "id": "tremblant",
-          "name": "Circuit Mont-Tremblant",
-          "slug": null,
+          "name": "Мон-Тремблан",
+          "slug": "tremblant",
           "isPublished": false,
           "countryCode": "ca",
           "coordinates": [
@@ -2319,8 +2334,8 @@
         },
         {
           "id": "zeltweg",
-          "name": "Zeltweg",
-          "slug": null,
+          "name": "Цельтвег",
+          "slug": "zeltweg",
           "isPublished": false,
           "countryCode": "at",
           "coordinates": [
@@ -2349,8 +2364,8 @@
         },
         {
           "id": "sochi",
-          "name": "Sochi Autodrom",
-          "slug": null,
+          "name": "Сочи Автодром",
+          "slug": "sochi",
           "isPublished": false,
           "countryCode": "ru",
           "coordinates": [
@@ -2379,8 +2394,8 @@
         },
         {
           "id": "jeddah",
-          "name": "Jeddah Corniche Circuit",
-          "slug": null,
+          "name": "Джидда",
+          "slug": "jeddah",
           "isPublished": false,
           "countryCode": "sa",
           "coordinates": [
@@ -2394,8 +2409,8 @@
         },
         {
           "id": "detroit",
-          "name": "Detroit Street Circuit",
-          "slug": null,
+          "name": "Детройт",
+          "slug": "detroit",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -2409,8 +2424,8 @@
         },
         {
           "id": "dijon",
-          "name": "Dijon-Prenois",
-          "slug": null,
+          "name": "Дижон-Пренуа",
+          "slug": "dijon",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -2424,8 +2439,8 @@
         },
         {
           "id": "fuji",
-          "name": "Fuji Speedway",
-          "slug": null,
+          "name": "Фудзи",
+          "slug": "fuji",
           "isPublished": false,
           "countryCode": "jp",
           "coordinates": [
@@ -2454,8 +2469,8 @@
         },
         {
           "id": "ain-diab",
-          "name": "Ain Diab",
-          "slug": null,
+          "name": "Айн-Диаб",
+          "slug": "ain-diab",
           "isPublished": false,
           "countryCode": "ma",
           "coordinates": [
@@ -2469,8 +2484,8 @@
         },
         {
           "id": "buddh",
-          "name": "Buddh International Circuit",
-          "slug": null,
+          "name": "Будда",
+          "slug": "buddh",
           "isPublished": false,
           "countryCode": "in",
           "coordinates": [
@@ -2499,8 +2514,8 @@
         },
         {
           "id": "boavista",
-          "name": "Circuito da Boavista",
-          "slug": null,
+          "name": "Боавишта",
+          "slug": "boavista",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -2514,8 +2529,8 @@
         },
         {
           "id": "charade",
-          "name": "Charade Circuit",
-          "slug": null,
+          "name": "Шарад",
+          "slug": "charade",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -2529,8 +2544,8 @@
         },
         {
           "id": "dallas",
-          "name": "Fair Park",
-          "slug": null,
+          "name": "Даллас",
+          "slug": "dallas",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -2544,8 +2559,8 @@
         },
         {
           "id": "george",
-          "name": "Prince George Circuit",
-          "slug": null,
+          "name": "Принс-Джордж",
+          "slug": "george",
           "isPublished": false,
           "countryCode": "za",
           "coordinates": [
@@ -2574,8 +2589,8 @@
         },
         {
           "id": "monsanto",
-          "name": "Monsanto Park Circuit",
-          "slug": null,
+          "name": "Монсанту",
+          "slug": "monsanto",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -2589,8 +2604,8 @@
         },
         {
           "id": "montjuic",
-          "name": "Montjuïc",
-          "slug": null,
+          "name": "Монжуик",
+          "slug": "montjuic",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -2604,8 +2619,8 @@
         },
         {
           "id": "mosport",
-          "name": "Mosport International Raceway",
-          "slug": null,
+          "name": "Моспорт",
+          "slug": "mosport",
           "isPublished": false,
           "countryCode": "ca",
           "coordinates": [
@@ -2619,8 +2634,8 @@
         },
         {
           "id": "nivelles",
-          "name": "Nivelles-Baulers",
-          "slug": null,
+          "name": "Нивель-Болер",
+          "slug": "nivelles",
           "isPublished": false,
           "countryCode": "be",
           "coordinates": [
@@ -2634,8 +2649,8 @@
         },
         {
           "id": "okayama",
-          "name": "Okayama International Circuit",
-          "slug": null,
+          "name": "Окаяма",
+          "slug": "okayama",
           "isPublished": false,
           "countryCode": "jp",
           "coordinates": [
@@ -2649,8 +2664,8 @@
         },
         {
           "id": "phoenix",
-          "name": "Phoenix street circuit",
-          "slug": null,
+          "name": "Финикс",
+          "slug": "phoenix",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -2664,8 +2679,8 @@
         },
         {
           "id": "sebring",
-          "name": "Sebring International Raceway",
-          "slug": null,
+          "name": "Себринг",
+          "slug": "sebring",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -2679,8 +2694,8 @@
         },
         {
           "id": "donington",
-          "name": "Donington Park",
-          "slug": null,
+          "name": "Донингтон-Парк",
+          "slug": "donington",
           "isPublished": false,
           "countryCode": "gb",
           "coordinates": [
@@ -2694,8 +2709,8 @@
         },
         {
           "id": "las_vegas",
-          "name": "Las Vegas Street Circuit",
-          "slug": null,
+          "name": "Сизарс-Пэлас",
+          "slug": "caesars-palace",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -2709,8 +2724,8 @@
         },
         {
           "id": "lemans",
-          "name": "Le Mans",
-          "slug": null,
+          "name": "Ле-Ман",
+          "slug": "lemans",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -2723,9 +2738,24 @@
           "points": 0
         },
         {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 12
+        },
+        {
           "id": "mugello",
-          "name": "Autodromo Internazionale del Mugello",
-          "slug": null,
+          "name": "Муджелло",
+          "slug": "mugello",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -2739,8 +2769,8 @@
         },
         {
           "id": "pescara",
-          "name": "Pescara Circuit",
-          "slug": null,
+          "name": "Пескара",
+          "slug": "pescara",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -2754,8 +2784,8 @@
         },
         {
           "id": "portimao",
-          "name": "Autódromo Internacional do Algarve",
-          "slug": null,
+          "name": "Алгарве",
+          "slug": "portimao",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -2797,8 +2827,8 @@
         },
         {
           "id": "nurburgring",
-          "name": "Nürburgring",
-          "slug": null,
+          "name": "Нюрбургринг",
+          "slug": "nurburgring",
           "isPublished": false,
           "wins": 14
         },
@@ -2811,8 +2841,8 @@
         },
         {
           "id": "hockenheimring",
-          "name": "Hockenheimring",
-          "slug": null,
+          "name": "Хоккенхаймринг",
+          "slug": "hockenheimring",
           "isPublished": false,
           "wins": 11
         },
@@ -2837,18 +2867,18 @@
           "nameRu": "Льюис Хэмилтон",
           "code": "HAM",
           "position": 3,
-          "points": 183,
-          "raceEntries": 12,
-          "teamPoints": 163
+          "points": 191,
+          "raceEntries": 14,
+          "teamPoints": 171
         },
         {
           "id": "leclerc",
           "nameRu": "Шарль Леклер",
           "code": "LEC",
           "position": 5,
-          "points": 155,
-          "raceEntries": 12,
-          "teamPoints": 127
+          "points": 167,
+          "raceEntries": 14,
+          "teamPoints": 139
         }
       ],
       "driverCount": 2
@@ -2858,7 +2888,7 @@
       "name": "McLaren",
       "nationality": "British",
       "position": 3,
-      "points": 263,
+      "points": 306,
       "wins": 2,
       "engineName": null,
       "color": null,
@@ -2868,12 +2898,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "McLaren",
           "position": 3,
-          "points": 263,
+          "points": 306,
           "wins": 2
         },
         {
@@ -3418,28 +3448,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 964,
+        "raceEntries": 966,
         "wins": 201,
-        "podiums": 548,
-        "points": 8007.5,
-        "circuits": 61,
+        "podiums": 549,
+        "points": 8050.5,
+        "circuits": 62,
         "countries": 32,
         "winningCircuits": 49,
         "firstSeason": 1968,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 2,
-        "podiums": 6,
-        "points": 210,
-        "circuits": 12,
-        "countries": 12,
+        "podiums": 7,
+        "points": 253,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 2,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
@@ -3455,7 +3485,7 @@
           "raceEntries": 54,
           "wins": 16,
           "podiums": 30,
-          "points": 424.5
+          "points": 426.5
         },
         {
           "id": "hungaroring",
@@ -3512,10 +3542,10 @@
             9.28111,
             45.6156
           ],
-          "raceEntries": 54,
+          "raceEntries": 55,
           "wins": 10,
           "podiums": 32,
-          "points": 435
+          "points": 457
         },
         {
           "id": "interlagos",
@@ -3594,8 +3624,8 @@
         },
         {
           "id": "imola",
-          "name": "Autodromo Enzo e Dino Ferrari",
-          "slug": null,
+          "name": "Имола",
+          "slug": "imola",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -3609,8 +3639,8 @@
         },
         {
           "id": "hockenheimring",
-          "name": "Hockenheimring",
-          "slug": null,
+          "name": "Хоккенхаймринг",
+          "slug": "hockenheimring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -3654,8 +3684,8 @@
         },
         {
           "id": "nurburgring",
-          "name": "Nürburgring",
-          "slug": null,
+          "name": "Нюрбургринг",
+          "slug": "nurburgring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -3669,8 +3699,8 @@
         },
         {
           "id": "adelaide",
-          "name": "Adelaide Street Circuit",
-          "slug": null,
+          "name": "Аделаида",
+          "slug": "adelaide",
           "isPublished": false,
           "countryCode": "au",
           "coordinates": [
@@ -3699,8 +3729,8 @@
         },
         {
           "id": "jacarepagua",
-          "name": "Autódromo Internacional Nelson Piquet",
-          "slug": null,
+          "name": "Жакарепагуа",
+          "slug": "jacarepagua",
           "isPublished": false,
           "countryCode": "br",
           "coordinates": [
@@ -3714,8 +3744,8 @@
         },
         {
           "id": "estoril",
-          "name": "Autódromo do Estoril",
-          "slug": null,
+          "name": "Эшторил",
+          "slug": "estoril",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -3729,8 +3759,8 @@
         },
         {
           "id": "ricard",
-          "name": "Circuit Paul Ricard",
-          "slug": null,
+          "name": "Поль-Рикар",
+          "slug": "ricard",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -3744,8 +3774,8 @@
         },
         {
           "id": "jerez",
-          "name": "Circuito de Jerez",
-          "slug": null,
+          "name": "Херес",
+          "slug": "jerez",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -3774,8 +3804,8 @@
         },
         {
           "id": "mosport",
-          "name": "Mosport International Raceway",
-          "slug": null,
+          "name": "Моспорт",
+          "slug": "mosport",
           "isPublished": false,
           "countryCode": "ca",
           "coordinates": [
@@ -3789,8 +3819,8 @@
         },
         {
           "id": "phoenix",
-          "name": "Phoenix street circuit",
-          "slug": null,
+          "name": "Финикс",
+          "slug": "phoenix",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -3804,8 +3834,8 @@
         },
         {
           "id": "kyalami",
-          "name": "Kyalami",
-          "slug": null,
+          "name": "Кьялами",
+          "slug": "kyalami",
           "isPublished": false,
           "countryCode": "za",
           "coordinates": [
@@ -3864,8 +3894,8 @@
         },
         {
           "id": "detroit",
-          "name": "Detroit Street Circuit",
-          "slug": null,
+          "name": "Детройт",
+          "slug": "detroit",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -3879,8 +3909,8 @@
         },
         {
           "id": "indianapolis",
-          "name": "Indianapolis Motor Speedway",
-          "slug": null,
+          "name": "Индианаполис",
+          "slug": "indianapolis",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -3894,8 +3924,8 @@
         },
         {
           "id": "istanbul",
-          "name": "Istanbul Park",
-          "slug": null,
+          "name": "Истанбул-Парк",
+          "slug": "istanbul",
           "isPublished": false,
           "countryCode": "tr",
           "coordinates": [
@@ -3909,8 +3939,8 @@
         },
         {
           "id": "brands_hatch",
-          "name": "Brands Hatch",
-          "slug": null,
+          "name": "Брэндс-Хэтч",
+          "slug": "brands-hatch",
           "isPublished": false,
           "countryCode": "gb",
           "coordinates": [
@@ -3924,8 +3954,8 @@
         },
         {
           "id": "galvez",
-          "name": "Autódromo Juan y Oscar Gálvez",
-          "slug": null,
+          "name": "Буэнос-Айрес",
+          "slug": "galvez",
           "isPublished": false,
           "countryCode": "ar",
           "coordinates": [
@@ -3954,8 +3984,8 @@
         },
         {
           "id": "watkins_glen",
-          "name": "Watkins Glen",
-          "slug": null,
+          "name": "Уоткинс-Глен",
+          "slug": "watkins-glen",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -3969,8 +3999,8 @@
         },
         {
           "id": "fuji",
-          "name": "Fuji Speedway",
-          "slug": null,
+          "name": "Фудзи",
+          "slug": "fuji",
           "isPublished": false,
           "countryCode": "jp",
           "coordinates": [
@@ -3984,8 +4014,8 @@
         },
         {
           "id": "long_beach",
-          "name": "Long Beach",
-          "slug": null,
+          "name": "Лонг-Бич",
+          "slug": "long-beach",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -3999,8 +4029,8 @@
         },
         {
           "id": "magny_cours",
-          "name": "Circuit de Nevers Magny-Cours",
-          "slug": null,
+          "name": "Маньи-Кур",
+          "slug": "magny-cours",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -4029,8 +4059,8 @@
         },
         {
           "id": "dijon",
-          "name": "Dijon-Prenois",
-          "slug": null,
+          "name": "Дижон-Пренуа",
+          "slug": "dijon",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -4059,8 +4089,8 @@
         },
         {
           "id": "jarama",
-          "name": "Jarama",
-          "slug": null,
+          "name": "Харама",
+          "slug": "jarama",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -4074,8 +4104,8 @@
         },
         {
           "id": "anderstorp",
-          "name": "Scandinavian Raceway",
-          "slug": null,
+          "name": "Андерсторп",
+          "slug": "anderstorp",
           "isPublished": false,
           "countryCode": "se",
           "coordinates": [
@@ -4089,8 +4119,8 @@
         },
         {
           "id": "nivelles",
-          "name": "Nivelles-Baulers",
-          "slug": null,
+          "name": "Нивель-Болер",
+          "slug": "nivelles",
           "isPublished": false,
           "countryCode": "be",
           "coordinates": [
@@ -4119,8 +4149,8 @@
         },
         {
           "id": "donington",
-          "name": "Donington Park",
-          "slug": null,
+          "name": "Донингтон-Парк",
+          "slug": "donington",
           "isPublished": false,
           "countryCode": "gb",
           "coordinates": [
@@ -4134,8 +4164,8 @@
         },
         {
           "id": "jeddah",
-          "name": "Jeddah Corniche Circuit",
-          "slug": null,
+          "name": "Джидда",
+          "slug": "jeddah",
           "isPublished": false,
           "countryCode": "sa",
           "coordinates": [
@@ -4149,8 +4179,8 @@
         },
         {
           "id": "montjuic",
-          "name": "Montjuïc",
-          "slug": null,
+          "name": "Монжуик",
+          "slug": "montjuic",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -4164,8 +4194,8 @@
         },
         {
           "id": "zolder",
-          "name": "Zolder",
-          "slug": null,
+          "name": "Золдер",
+          "slug": "zolder",
           "isPublished": false,
           "countryCode": "be",
           "coordinates": [
@@ -4194,8 +4224,8 @@
         },
         {
           "id": "valencia",
-          "name": "Valencia Street Circuit",
-          "slug": null,
+          "name": "Валенсия",
+          "slug": "valencia",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -4209,8 +4239,8 @@
         },
         {
           "id": "yeongam",
-          "name": "Korean International Circuit",
-          "slug": null,
+          "name": "Йонам",
+          "slug": "yeongam",
           "isPublished": false,
           "countryCode": "kr",
           "coordinates": [
@@ -4224,8 +4254,8 @@
         },
         {
           "id": "buddh",
-          "name": "Buddh International Circuit",
-          "slug": null,
+          "name": "Будда",
+          "slug": "buddh",
           "isPublished": false,
           "countryCode": "in",
           "coordinates": [
@@ -4239,8 +4269,8 @@
         },
         {
           "id": "las_vegas",
-          "name": "Las Vegas Street Circuit",
-          "slug": null,
+          "name": "Сизарс-Пэлас",
+          "slug": "caesars-palace",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -4253,9 +4283,24 @@
           "points": 6
         },
         {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 19
+        },
+        {
           "id": "charade",
-          "name": "Charade Circuit",
-          "slug": null,
+          "name": "Шарад",
+          "slug": "charade",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -4269,8 +4314,8 @@
         },
         {
           "id": "dallas",
-          "name": "Fair Park",
-          "slug": null,
+          "name": "Даллас",
+          "slug": "dallas",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -4284,8 +4329,8 @@
         },
         {
           "id": "mugello",
-          "name": "Autodromo Internazionale del Mugello",
-          "slug": null,
+          "name": "Муджелло",
+          "slug": "mugello",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -4299,8 +4344,8 @@
         },
         {
           "id": "okayama",
-          "name": "Okayama International Circuit",
-          "slug": null,
+          "name": "Окаяма",
+          "slug": "okayama",
           "isPublished": false,
           "countryCode": "jp",
           "coordinates": [
@@ -4314,8 +4359,8 @@
         },
         {
           "id": "portimao",
-          "name": "Autódromo Internacional do Algarve",
-          "slug": null,
+          "name": "Алгарве",
+          "slug": "portimao",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -4329,8 +4374,8 @@
         },
         {
           "id": "sochi",
-          "name": "Sochi Autodrom",
-          "slug": null,
+          "name": "Сочи Автодром",
+          "slug": "sochi",
           "isPublished": false,
           "countryCode": "ru",
           "coordinates": [
@@ -4427,18 +4472,18 @@
           "nameRu": "Ландо Норрис",
           "code": "NOR",
           "position": 4,
-          "points": 159,
-          "raceEntries": 12,
-          "teamPoints": 127
+          "points": 186,
+          "raceEntries": 14,
+          "teamPoints": 154
         },
         {
           "id": "piastri",
           "nameRu": "Оскар Пиастри",
           "code": "PIA",
           "position": 7,
-          "points": 104,
-          "raceEntries": 12,
-          "teamPoints": 83
+          "points": 120,
+          "raceEntries": 14,
+          "teamPoints": 99
         }
       ],
       "driverCount": 2
@@ -4448,7 +4493,7 @@
       "name": "Red Bull",
       "nationality": "Austrian",
       "position": 4,
-      "points": 186,
+      "points": 230,
       "wins": 0,
       "engineName": null,
       "color": null,
@@ -4458,12 +4503,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "Red Bull",
           "position": 4,
-          "points": 186,
+          "points": 230,
           "wins": 0
         },
         {
@@ -4678,28 +4723,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 430,
+        "raceEntries": 432,
         "wins": 130,
-        "podiums": 301,
-        "points": 8257,
-        "circuits": 38,
+        "podiums": 304,
+        "points": 8301,
+        "circuits": 39,
         "countries": 29,
         "winningCircuits": 32,
         "firstSeason": 2005,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 0,
-        "podiums": 4,
-        "points": 174,
-        "circuits": 12,
-        "countries": 12,
+        "podiums": 7,
+        "points": 218,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
@@ -4744,8 +4789,8 @@
           ],
           "raceEntries": 21,
           "wins": 7,
-          "podiums": 15,
-          "points": 429
+          "podiums": 16,
+          "points": 432
         },
         {
           "id": "interlagos",
@@ -4883,6 +4928,21 @@
           "points": 245
         },
         {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 22,
+          "wins": 5,
+          "podiums": 8,
+          "points": 300
+        },
+        {
           "id": "baku",
           "name": "Баку",
           "slug": "baku",
@@ -4896,21 +4956,6 @@
           "wins": 5,
           "podiums": 7,
           "points": 202
-        },
-        {
-          "id": "monza",
-          "name": "Монца",
-          "slug": "monza",
-          "isPublished": false,
-          "countryCode": "it",
-          "coordinates": [
-            9.28111,
-            45.6156
-          ],
-          "raceEntries": 21,
-          "wins": 5,
-          "podiums": 7,
-          "points": 285
         },
         {
           "id": "marina_bay",
@@ -4959,8 +5004,8 @@
         },
         {
           "id": "imola",
-          "name": "Autodromo Enzo e Dino Ferrari",
-          "slug": null,
+          "name": "Имола",
+          "slug": "imola",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -4989,8 +5034,8 @@
         },
         {
           "id": "jeddah",
-          "name": "Jeddah Corniche Circuit",
-          "slug": null,
+          "name": "Джидда",
+          "slug": "jeddah",
           "isPublished": false,
           "countryCode": "sa",
           "coordinates": [
@@ -5004,8 +5049,8 @@
         },
         {
           "id": "yeongam",
-          "name": "Korean International Circuit",
-          "slug": null,
+          "name": "Йонам",
+          "slug": "yeongam",
           "isPublished": false,
           "countryCode": "kr",
           "coordinates": [
@@ -5034,8 +5079,8 @@
         },
         {
           "id": "buddh",
-          "name": "Buddh International Circuit",
-          "slug": null,
+          "name": "Будда",
+          "slug": "buddh",
           "isPublished": false,
           "countryCode": "in",
           "coordinates": [
@@ -5079,8 +5124,8 @@
         },
         {
           "id": "nurburgring",
-          "name": "Nürburgring",
-          "slug": null,
+          "name": "Нюрбургринг",
+          "slug": "nurburgring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -5109,8 +5154,8 @@
         },
         {
           "id": "ricard",
-          "name": "Circuit Paul Ricard",
-          "slug": null,
+          "name": "Поль-Рикар",
+          "slug": "ricard",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -5124,8 +5169,8 @@
         },
         {
           "id": "valencia",
-          "name": "Valencia Street Circuit",
-          "slug": null,
+          "name": "Валенсия",
+          "slug": "valencia",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -5154,8 +5199,8 @@
         },
         {
           "id": "istanbul",
-          "name": "Istanbul Park",
-          "slug": null,
+          "name": "Истанбул-Парк",
+          "slug": "istanbul",
           "isPublished": false,
           "countryCode": "tr",
           "coordinates": [
@@ -5169,8 +5214,8 @@
         },
         {
           "id": "hockenheimring",
-          "name": "Hockenheimring",
-          "slug": null,
+          "name": "Хоккенхаймринг",
+          "slug": "hockenheimring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -5184,8 +5229,8 @@
         },
         {
           "id": "portimao",
-          "name": "Autódromo Internacional do Algarve",
-          "slug": null,
+          "name": "Алгарве",
+          "slug": "portimao",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -5199,8 +5244,8 @@
         },
         {
           "id": "sochi",
-          "name": "Sochi Autodrom",
-          "slug": null,
+          "name": "Сочи Автодром",
+          "slug": "sochi",
           "isPublished": false,
           "countryCode": "ru",
           "coordinates": [
@@ -5213,9 +5258,24 @@
           "points": 109
         },
         {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 26
+        },
+        {
           "id": "mugello",
-          "name": "Autodromo Internazionale del Mugello",
-          "slug": null,
+          "name": "Муджелло",
+          "slug": "mugello",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -5229,8 +5289,8 @@
         },
         {
           "id": "fuji",
-          "name": "Fuji Speedway",
-          "slug": null,
+          "name": "Фудзи",
+          "slug": "fuji",
           "isPublished": false,
           "countryCode": "jp",
           "coordinates": [
@@ -5244,8 +5304,8 @@
         },
         {
           "id": "indianapolis",
-          "name": "Indianapolis Motor Speedway",
-          "slug": null,
+          "name": "Индианаполис",
+          "slug": "indianapolis",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -5259,8 +5319,8 @@
         },
         {
           "id": "magny_cours",
-          "name": "Circuit de Nevers Magny-Cours",
-          "slug": null,
+          "name": "Маньи-Кур",
+          "slug": "magny-cours",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -5342,27 +5402,27 @@
           "nameRu": "Исак Хаджар",
           "code": "HAD",
           "position": 8,
-          "points": 68,
+          "points": 71,
           "raceEntries": 11,
-          "teamPoints": 68
+          "teamPoints": 71
         },
         {
           "id": "lawson",
           "nameRu": "Лиам Лоусон",
           "code": "LAW",
           "position": 9,
-          "points": 49,
-          "raceEntries": 1,
-          "teamPoints": 6
+          "points": 59,
+          "raceEntries": 3,
+          "teamPoints": 14
         },
         {
           "id": "max_verstappen",
           "nameRu": "Макс Ферстаппен",
           "code": "VER",
           "position": 6,
-          "points": 112,
-          "raceEntries": 12,
-          "teamPoints": 100
+          "points": 145,
+          "raceEntries": 14,
+          "teamPoints": 133
         }
       ],
       "driverCount": 3
@@ -5372,7 +5432,7 @@
       "name": "RB F1 Team",
       "nationality": "Italian",
       "position": 5,
-      "points": 66,
+      "points": 77,
       "wins": 0,
       "engineName": null,
       "color": null,
@@ -5382,12 +5442,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "RB F1 Team",
           "position": 5,
-          "points": 66,
+          "points": 77,
           "wins": 0
         },
         {
@@ -5412,28 +5472,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 60,
+        "raceEntries": 62,
         "wins": 0,
         "podiums": 1,
-        "points": 190,
-        "circuits": 24,
+        "points": 201,
+        "circuits": 25,
         "countries": 21,
         "winningCircuits": 0,
         "firstSeason": 2024,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 0,
         "podiums": 0,
-        "points": 62,
-        "circuits": 12,
-        "countries": 12,
+        "points": 73,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
@@ -5543,8 +5603,8 @@
         },
         {
           "id": "imola",
-          "name": "Autodromo Enzo e Dino Ferrari",
-          "slug": null,
+          "name": "Имола",
+          "slug": "imola",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -5573,8 +5633,8 @@
         },
         {
           "id": "jeddah",
-          "name": "Jeddah Corniche Circuit",
-          "slug": null,
+          "name": "Джидда",
+          "slug": "jeddah",
           "isPublished": false,
           "countryCode": "sa",
           "coordinates": [
@@ -5597,6 +5657,21 @@
             25.49
           ],
           "raceEntries": 2,
+          "wins": 0,
+          "podiums": 0,
+          "points": 2
+        },
+        {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
           "wins": 0,
           "podiums": 0,
           "points": 2
@@ -5644,7 +5719,7 @@
           "raceEntries": 3,
           "wins": 0,
           "podiums": 0,
-          "points": 30
+          "points": 34
         },
         {
           "id": "monza",
@@ -5656,10 +5731,10 @@
             9.28111,
             45.6156
           ],
-          "raceEntries": 2,
+          "raceEntries": 3,
           "wins": 0,
           "podiums": 0,
-          "points": 1
+          "points": 6
         },
         {
           "id": "red_bull_ring",
@@ -5809,27 +5884,27 @@
           "nameRu": "Арвид Линдблад",
           "code": "LIN",
           "position": 11,
-          "points": 23,
-          "raceEntries": 12,
-          "teamPoints": 22
+          "points": 31,
+          "raceEntries": 14,
+          "teamPoints": 30
         },
         {
           "id": "lawson",
           "nameRu": "Лиам Лоусон",
           "code": "LAW",
           "position": 9,
-          "points": 49,
+          "points": 59,
           "raceEntries": 11,
-          "teamPoints": 40
+          "teamPoints": 42
         },
         {
           "id": "tsunoda",
           "nameRu": "Юки Цунода",
           "code": "TSU",
           "position": 20,
-          "points": 0,
-          "raceEntries": 1,
-          "teamPoints": 0
+          "points": 1,
+          "raceEntries": 3,
+          "teamPoints": 1
         }
       ],
       "driverCount": 3
@@ -5839,7 +5914,7 @@
       "name": "Alpine F1 Team",
       "nationality": "French",
       "position": 6,
-      "points": 63,
+      "points": 68,
       "wins": 0,
       "engineName": null,
       "color": null,
@@ -5849,12 +5924,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "Alpine F1 Team",
           "position": 6,
-          "points": 63,
+          "points": 68,
           "wins": 0
         },
         {
@@ -5909,28 +5984,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 126,
+        "raceEntries": 128,
         "wins": 1,
-        "podiums": 7,
-        "points": 579,
-        "circuits": 28,
+        "podiums": 6,
+        "points": 584,
+        "circuits": 29,
         "countries": 25,
         "winningCircuits": 1,
         "firstSeason": 2021,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 0,
-        "podiums": 1,
-        "points": 61,
-        "circuits": 12,
-        "countries": 12,
+        "podiums": 0,
+        "points": 66,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
@@ -5964,21 +6039,6 @@
           "points": 61
         },
         {
-          "id": "monaco",
-          "name": "Монако",
-          "slug": "monaco",
-          "isPublished": false,
-          "countryCode": "mc",
-          "coordinates": [
-            7.42056,
-            43.7347
-          ],
-          "raceEntries": 6,
-          "wins": 0,
-          "podiums": 2,
-          "points": 45
-        },
-        {
           "id": "losail",
           "name": "Лусаил",
           "slug": "losail",
@@ -5992,6 +6052,21 @@
           "wins": 0,
           "podiums": 1,
           "points": 41
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 6,
+          "wins": 0,
+          "podiums": 1,
+          "points": 36
         },
         {
           "id": "zandvoort",
@@ -6085,8 +6160,8 @@
         },
         {
           "id": "imola",
-          "name": "Autodromo Enzo e Dino Ferrari",
-          "slug": null,
+          "name": "Имола",
+          "slug": "imola",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -6100,8 +6175,8 @@
         },
         {
           "id": "istanbul",
-          "name": "Istanbul Park",
-          "slug": null,
+          "name": "Истанбул-Парк",
+          "slug": "istanbul",
           "isPublished": false,
           "countryCode": "tr",
           "coordinates": [
@@ -6115,8 +6190,8 @@
         },
         {
           "id": "jeddah",
-          "name": "Jeddah Corniche Circuit",
-          "slug": null,
+          "name": "Джидда",
+          "slug": "jeddah",
           "isPublished": false,
           "countryCode": "sa",
           "coordinates": [
@@ -6127,6 +6202,21 @@
           "wins": 0,
           "podiums": 0,
           "points": 26
+        },
+        {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 6
         },
         {
           "id": "marina_bay",
@@ -6168,15 +6258,15 @@
             9.28111,
             45.6156
           ],
-          "raceEntries": 5,
+          "raceEntries": 6,
           "wins": 0,
           "podiums": 0,
-          "points": 5
+          "points": 13
         },
         {
           "id": "portimao",
-          "name": "Autódromo Internacional do Algarve",
-          "slug": null,
+          "name": "Алгарве",
+          "slug": "portimao",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -6205,8 +6295,8 @@
         },
         {
           "id": "ricard",
-          "name": "Circuit Paul Ricard",
-          "slug": null,
+          "name": "Поль-Рикар",
+          "slug": "ricard",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -6265,8 +6355,8 @@
         },
         {
           "id": "sochi",
-          "name": "Sochi Autodrom",
-          "slug": null,
+          "name": "Сочи Автодром",
+          "slug": "sochi",
           "isPublished": false,
           "countryCode": "ru",
           "coordinates": [
@@ -6374,18 +6464,18 @@
           "nameRu": "Франко Колапинто",
           "code": "COL",
           "position": 12,
-          "points": 19,
-          "raceEntries": 12,
-          "teamPoints": 19
+          "points": 27,
+          "raceEntries": 14,
+          "teamPoints": 27
         },
         {
           "id": "gasly",
           "nameRu": "Пьер Гасли",
           "code": "GAS",
           "position": 10,
-          "points": 44,
-          "raceEntries": 12,
-          "teamPoints": 42
+          "points": 41,
+          "raceEntries": 14,
+          "teamPoints": 39
         }
       ],
       "driverCount": 2
@@ -6405,7 +6495,7 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "Haas F1 Team",
@@ -6515,28 +6605,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 226,
+        "raceEntries": 228,
         "wins": 0,
         "podiums": 0,
         "points": 386,
-        "circuits": 32,
+        "circuits": 33,
         "countries": 27,
         "winningCircuits": 0,
         "firstSeason": 2016,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 0,
         "podiums": 0,
         "points": 20,
-        "circuits": 12,
-        "countries": 12,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
@@ -6616,8 +6706,8 @@
         },
         {
           "id": "hockenheimring",
-          "name": "Hockenheimring",
-          "slug": null,
+          "name": "Хоккенхаймринг",
+          "slug": "hockenheimring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -6646,8 +6736,8 @@
         },
         {
           "id": "imola",
-          "name": "Autodromo Enzo e Dino Ferrari",
-          "slug": null,
+          "name": "Имола",
+          "slug": "imola",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -6676,8 +6766,8 @@
         },
         {
           "id": "istanbul",
-          "name": "Istanbul Park",
-          "slug": null,
+          "name": "Истанбул-Парк",
+          "slug": "istanbul",
           "isPublished": false,
           "countryCode": "tr",
           "coordinates": [
@@ -6691,8 +6781,8 @@
         },
         {
           "id": "jeddah",
-          "name": "Jeddah Corniche Circuit",
-          "slug": null,
+          "name": "Джидда",
+          "slug": "jeddah",
           "isPublished": false,
           "countryCode": "sa",
           "coordinates": [
@@ -6718,6 +6808,21 @@
           "wins": 0,
           "podiums": 0,
           "points": 2
+        },
+        {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
         },
         {
           "id": "marina_bay",
@@ -6774,15 +6879,15 @@
             9.28111,
             45.6156
           ],
-          "raceEntries": 10,
+          "raceEntries": 11,
           "wins": 0,
           "podiums": 0,
           "points": 1
         },
         {
           "id": "mugello",
-          "name": "Autodromo Internazionale del Mugello",
-          "slug": null,
+          "name": "Муджелло",
+          "slug": "mugello",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -6796,8 +6901,8 @@
         },
         {
           "id": "nurburgring",
-          "name": "Nürburgring",
-          "slug": null,
+          "name": "Нюрбургринг",
+          "slug": "nurburgring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -6811,8 +6916,8 @@
         },
         {
           "id": "portimao",
-          "name": "Autódromo Internacional do Algarve",
-          "slug": null,
+          "name": "Алгарве",
+          "slug": "portimao",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -6841,8 +6946,8 @@
         },
         {
           "id": "ricard",
-          "name": "Circuit Paul Ricard",
-          "slug": null,
+          "name": "Поль-Рикар",
+          "slug": "ricard",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -6916,8 +7021,8 @@
         },
         {
           "id": "sochi",
-          "name": "Sochi Autodrom",
-          "slug": null,
+          "name": "Сочи Автодром",
+          "slug": "sochi",
           "isPublished": false,
           "countryCode": "ru",
           "coordinates": [
@@ -7033,7 +7138,7 @@
           "code": "BEA",
           "position": 13,
           "points": 18,
-          "raceEntries": 12,
+          "raceEntries": 14,
           "teamPoints": 17
         },
         {
@@ -7042,7 +7147,7 @@
           "code": "OCO",
           "position": 18,
           "points": 3,
-          "raceEntries": 12,
+          "raceEntries": 14,
           "teamPoints": 3
         }
       ],
@@ -7053,7 +7158,7 @@
       "name": "Audi",
       "nationality": "German",
       "position": 8,
-      "points": 16,
+      "points": 17,
       "wins": 0,
       "engineName": null,
       "color": null,
@@ -7063,38 +7168,38 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "Audi",
           "position": 8,
-          "points": 16,
+          "points": 17,
           "wins": 0
         }
       ],
       "raceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 0,
         "podiums": 0,
-        "points": 16,
-        "circuits": 12,
-        "countries": 12,
+        "points": 17,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 0,
         "podiums": 0,
-        "points": 16,
-        "circuits": 12,
-        "countries": 12,
+        "points": 17,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
@@ -7143,6 +7248,21 @@
           "points": 2
         },
         {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 1
+        },
+        {
           "id": "miami",
           "name": "Майами",
           "slug": "miami",
@@ -7166,6 +7286,21 @@
           "coordinates": [
             7.42056,
             43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
           ],
           "raceEntries": 1,
           "wins": 0,
@@ -7290,7 +7425,7 @@
           "code": "BOR",
           "position": 14,
           "points": 10,
-          "raceEntries": 12,
+          "raceEntries": 14,
           "teamPoints": 10
         },
         {
@@ -7298,9 +7433,9 @@
           "nameRu": "Нико Хюлькенберг",
           "code": "HUL",
           "position": 15,
-          "points": 6,
-          "raceEntries": 12,
-          "teamPoints": 6
+          "points": 7,
+          "raceEntries": 14,
+          "teamPoints": 7
         }
       ],
       "driverCount": 2
@@ -7320,7 +7455,7 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "Williams",
@@ -7820,34 +7955,34 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 877,
+        "raceEntries": 879,
         "wins": 114,
         "podiums": 316,
         "points": 3776,
-        "circuits": 58,
+        "circuits": 59,
         "countries": 32,
         "winningCircuits": 33,
         "firstSeason": 1975,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 0,
         "podiums": 0,
         "points": 11,
-        "circuits": 12,
-        "countries": 12,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
           "id": "hockenheimring",
-          "name": "Hockenheimring",
-          "slug": null,
+          "name": "Хоккенхаймринг",
+          "slug": "hockenheimring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -7876,8 +8011,8 @@
         },
         {
           "id": "imola",
-          "name": "Autodromo Enzo e Dino Ferrari",
-          "slug": null,
+          "name": "Имола",
+          "slug": "imola",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -7929,15 +8064,15 @@
             9.28111,
             45.6156
           ],
-          "raceEntries": 48,
+          "raceEntries": 49,
           "wins": 6,
           "podiums": 19,
           "points": 240
         },
         {
           "id": "estoril",
-          "name": "Autódromo do Estoril",
-          "slug": null,
+          "name": "Эшторил",
+          "slug": "estoril",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -7966,8 +8101,8 @@
         },
         {
           "id": "magny_cours",
-          "name": "Circuit de Nevers Magny-Cours",
-          "slug": null,
+          "name": "Маньи-Кур",
+          "slug": "magny-cours",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -7996,8 +8131,8 @@
         },
         {
           "id": "adelaide",
-          "name": "Adelaide Street Circuit",
-          "slug": null,
+          "name": "Аделаида",
+          "slug": "adelaide",
           "isPublished": false,
           "countryCode": "au",
           "coordinates": [
@@ -8011,8 +8146,8 @@
         },
         {
           "id": "galvez",
-          "name": "Autódromo Juan y Oscar Gálvez",
-          "slug": null,
+          "name": "Буэнос-Айрес",
+          "slug": "galvez",
           "isPublished": false,
           "countryCode": "ar",
           "coordinates": [
@@ -8086,8 +8221,8 @@
         },
         {
           "id": "nurburgring",
-          "name": "Nürburgring",
-          "slug": null,
+          "name": "Нюрбургринг",
+          "slug": "nurburgring",
           "isPublished": false,
           "countryCode": "de",
           "coordinates": [
@@ -8116,8 +8251,8 @@
         },
         {
           "id": "ricard",
-          "name": "Circuit Paul Ricard",
-          "slug": null,
+          "name": "Поль-Рикар",
+          "slug": "ricard",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -8131,8 +8266,8 @@
         },
         {
           "id": "brands_hatch",
-          "name": "Brands Hatch",
-          "slug": null,
+          "name": "Брэндс-Хэтч",
+          "slug": "brands-hatch",
           "isPublished": false,
           "countryCode": "gb",
           "coordinates": [
@@ -8146,8 +8281,8 @@
         },
         {
           "id": "kyalami",
-          "name": "Kyalami",
-          "slug": null,
+          "name": "Кьялами",
+          "slug": "kyalami",
           "isPublished": false,
           "countryCode": "za",
           "coordinates": [
@@ -8161,8 +8296,8 @@
         },
         {
           "id": "jacarepagua",
-          "name": "Autódromo Internacional Nelson Piquet",
-          "slug": null,
+          "name": "Жакарепагуа",
+          "slug": "jacarepagua",
           "isPublished": false,
           "countryCode": "br",
           "coordinates": [
@@ -8191,8 +8326,8 @@
         },
         {
           "id": "jerez",
-          "name": "Circuito de Jerez",
-          "slug": null,
+          "name": "Херес",
+          "slug": "jerez",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -8206,8 +8341,8 @@
         },
         {
           "id": "long_beach",
-          "name": "Long Beach",
-          "slug": null,
+          "name": "Лонг-Бич",
+          "slug": "long-beach",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -8236,8 +8371,8 @@
         },
         {
           "id": "zolder",
-          "name": "Zolder",
-          "slug": null,
+          "name": "Золдер",
+          "slug": "zolder",
           "isPublished": false,
           "countryCode": "be",
           "coordinates": [
@@ -8251,8 +8386,8 @@
         },
         {
           "id": "detroit",
-          "name": "Detroit Street Circuit",
-          "slug": null,
+          "name": "Детройт",
+          "slug": "detroit",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -8266,8 +8401,8 @@
         },
         {
           "id": "watkins_glen",
-          "name": "Watkins Glen",
-          "slug": null,
+          "name": "Уоткинс-Глен",
+          "slug": "watkins-glen",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -8296,8 +8431,8 @@
         },
         {
           "id": "dallas",
-          "name": "Fair Park",
-          "slug": null,
+          "name": "Даллас",
+          "slug": "dallas",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -8311,8 +8446,8 @@
         },
         {
           "id": "dijon",
-          "name": "Dijon-Prenois",
-          "slug": null,
+          "name": "Дижон-Пренуа",
+          "slug": "dijon",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -8326,8 +8461,8 @@
         },
         {
           "id": "las_vegas",
-          "name": "Las Vegas Street Circuit",
-          "slug": null,
+          "name": "Сизарс-Пэлас",
+          "slug": "caesars-palace",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -8356,8 +8491,8 @@
         },
         {
           "id": "donington",
-          "name": "Donington Park",
-          "slug": null,
+          "name": "Донингтон-Парк",
+          "slug": "donington",
           "isPublished": false,
           "countryCode": "gb",
           "coordinates": [
@@ -8371,8 +8506,8 @@
         },
         {
           "id": "okayama",
-          "name": "Okayama International Circuit",
-          "slug": null,
+          "name": "Окаяма",
+          "slug": "okayama",
           "isPublished": false,
           "countryCode": "jp",
           "coordinates": [
@@ -8386,8 +8521,8 @@
         },
         {
           "id": "phoenix",
-          "name": "Phoenix street circuit",
-          "slug": null,
+          "name": "Финикс",
+          "slug": "phoenix",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -8446,8 +8581,8 @@
         },
         {
           "id": "sochi",
-          "name": "Sochi Autodrom",
-          "slug": null,
+          "name": "Сочи Автодром",
+          "slug": "sochi",
           "isPublished": false,
           "countryCode": "ru",
           "coordinates": [
@@ -8476,8 +8611,8 @@
         },
         {
           "id": "anderstorp",
-          "name": "Scandinavian Raceway",
-          "slug": null,
+          "name": "Андерсторп",
+          "slug": "anderstorp",
           "isPublished": false,
           "countryCode": "se",
           "coordinates": [
@@ -8506,8 +8641,8 @@
         },
         {
           "id": "buddh",
-          "name": "Buddh International Circuit",
-          "slug": null,
+          "name": "Будда",
+          "slug": "buddh",
           "isPublished": false,
           "countryCode": "in",
           "coordinates": [
@@ -8521,8 +8656,8 @@
         },
         {
           "id": "fuji",
-          "name": "Fuji Speedway",
-          "slug": null,
+          "name": "Фудзи",
+          "slug": "fuji",
           "isPublished": false,
           "countryCode": "jp",
           "coordinates": [
@@ -8536,8 +8671,8 @@
         },
         {
           "id": "indianapolis",
-          "name": "Indianapolis Motor Speedway",
-          "slug": null,
+          "name": "Индианаполис",
+          "slug": "indianapolis",
           "isPublished": false,
           "countryCode": "us",
           "coordinates": [
@@ -8551,8 +8686,8 @@
         },
         {
           "id": "istanbul",
-          "name": "Istanbul Park",
-          "slug": null,
+          "name": "Истанбул-Парк",
+          "slug": "istanbul",
           "isPublished": false,
           "countryCode": "tr",
           "coordinates": [
@@ -8566,8 +8701,8 @@
         },
         {
           "id": "jarama",
-          "name": "Jarama",
-          "slug": null,
+          "name": "Харама",
+          "slug": "jarama",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -8581,8 +8716,8 @@
         },
         {
           "id": "jeddah",
-          "name": "Jeddah Corniche Circuit",
-          "slug": null,
+          "name": "Джидда",
+          "slug": "jeddah",
           "isPublished": false,
           "countryCode": "sa",
           "coordinates": [
@@ -8593,6 +8728,21 @@
           "wins": 0,
           "podiums": 0,
           "points": 6
+        },
+        {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
         },
         {
           "id": "miami",
@@ -8611,8 +8761,8 @@
         },
         {
           "id": "montjuic",
-          "name": "Montjuïc",
-          "slug": null,
+          "name": "Монжуик",
+          "slug": "montjuic",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -8626,8 +8776,8 @@
         },
         {
           "id": "mugello",
-          "name": "Autodromo Internazionale del Mugello",
-          "slug": null,
+          "name": "Муджелло",
+          "slug": "mugello",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -8641,8 +8791,8 @@
         },
         {
           "id": "portimao",
-          "name": "Autódromo Internacional do Algarve",
-          "slug": null,
+          "name": "Алгарве",
+          "slug": "portimao",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -8671,8 +8821,8 @@
         },
         {
           "id": "valencia",
-          "name": "Valencia Street Circuit",
-          "slug": null,
+          "name": "Валенсия",
+          "slug": "valencia",
           "isPublished": false,
           "countryCode": "es",
           "coordinates": [
@@ -8701,8 +8851,8 @@
         },
         {
           "id": "yeongam",
-          "name": "Korean International Circuit",
-          "slug": null,
+          "name": "Йонам",
+          "slug": "yeongam",
           "isPublished": false,
           "countryCode": "kr",
           "coordinates": [
@@ -8723,8 +8873,8 @@
       "successfulCircuits": [
         {
           "id": "hockenheimring",
-          "name": "Hockenheimring",
-          "slug": null,
+          "name": "Хоккенхаймринг",
+          "slug": "hockenheimring",
           "isPublished": false,
           "wins": 9
         },
@@ -8737,8 +8887,8 @@
         },
         {
           "id": "imola",
-          "name": "Autodromo Enzo e Dino Ferrari",
-          "slug": null,
+          "name": "Имола",
+          "slug": "imola",
           "isPublished": false,
           "wins": 8
         },
@@ -8765,8 +8915,8 @@
         },
         {
           "id": "estoril",
-          "name": "Autódromo do Estoril",
-          "slug": null,
+          "name": "Эшторил",
+          "slug": "estoril",
           "isPublished": false,
           "wins": 6
         },
@@ -8785,7 +8935,7 @@
           "code": "ALB",
           "position": 17,
           "points": 5,
-          "raceEntries": 12,
+          "raceEntries": 14,
           "teamPoints": 5
         },
         {
@@ -8794,7 +8944,7 @@
           "code": "SAI",
           "position": 16,
           "points": 6,
-          "raceEntries": 12,
+          "raceEntries": 14,
           "teamPoints": 6
         }
       ],
@@ -8815,7 +8965,7 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "Aston Martin",
@@ -8875,28 +9025,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 132,
+        "raceEntries": 134,
         "wins": 0,
         "podiums": 9,
         "points": 575,
-        "circuits": 30,
+        "circuits": 31,
         "countries": 25,
         "winningCircuits": 0,
         "firstSeason": 1959,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 0,
         "podiums": 0,
         "points": 3,
-        "circuits": 12,
-        "countries": 12,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
@@ -8961,8 +9111,8 @@
         },
         {
           "id": "jeddah",
-          "name": "Jeddah Corniche Circuit",
-          "slug": null,
+          "name": "Джидда",
+          "slug": "jeddah",
           "isPublished": false,
           "countryCode": "sa",
           "coordinates": [
@@ -9036,8 +9186,8 @@
         },
         {
           "id": "aintree",
-          "name": "Aintree",
-          "slug": null,
+          "name": "Эйнтри",
+          "slug": "aintree",
           "isPublished": false,
           "countryCode": "gb",
           "coordinates": [
@@ -9096,8 +9246,8 @@
         },
         {
           "id": "imola",
-          "name": "Autodromo Enzo e Dino Ferrari",
-          "slug": null,
+          "name": "Имола",
+          "slug": "imola",
           "isPublished": false,
           "countryCode": "it",
           "coordinates": [
@@ -9111,8 +9261,8 @@
         },
         {
           "id": "istanbul",
-          "name": "Istanbul Park",
-          "slug": null,
+          "name": "Истанбул-Парк",
+          "slug": "istanbul",
           "isPublished": false,
           "countryCode": "tr",
           "coordinates": [
@@ -9140,6 +9290,21 @@
           "points": 29
         },
         {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
           "id": "marina_bay",
           "name": "Марина-Бей",
           "slug": "marina-bay",
@@ -9156,8 +9321,8 @@
         },
         {
           "id": "monsanto",
-          "name": "Monsanto Park Circuit",
-          "slug": null,
+          "name": "Монсанту",
+          "slug": "monsanto",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -9179,15 +9344,15 @@
             9.28111,
             45.6156
           ],
-          "raceEntries": 6,
+          "raceEntries": 7,
           "wins": 0,
           "podiums": 0,
           "points": 8
         },
         {
           "id": "portimao",
-          "name": "Autódromo Internacional do Algarve",
-          "slug": null,
+          "name": "Алгарве",
+          "slug": "portimao",
           "isPublished": false,
           "countryCode": "pt",
           "coordinates": [
@@ -9216,8 +9381,8 @@
         },
         {
           "id": "ricard",
-          "name": "Circuit Paul Ricard",
-          "slug": null,
+          "name": "Поль-Рикар",
+          "slug": "ricard",
           "isPublished": false,
           "countryCode": "fr",
           "coordinates": [
@@ -9276,8 +9441,8 @@
         },
         {
           "id": "sochi",
-          "name": "Sochi Autodrom",
-          "slug": null,
+          "name": "Сочи Автодром",
+          "slug": "sochi",
           "isPublished": false,
           "countryCode": "ru",
           "coordinates": [
@@ -9363,7 +9528,7 @@
           "code": "ALO",
           "position": 19,
           "points": 3,
-          "raceEntries": 12,
+          "raceEntries": 14,
           "teamPoints": 3
         },
         {
@@ -9372,7 +9537,7 @@
           "code": "STR",
           "position": 21,
           "points": 0,
-          "raceEntries": 12,
+          "raceEntries": 14,
           "teamPoints": 0
         }
       ],
@@ -9393,7 +9558,7 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 12,
+          "afterRound": 14,
           "status": "active",
           "isFinal": false,
           "name": "Cadillac F1 Team",
@@ -9403,28 +9568,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 0,
         "podiums": 0,
         "points": 0,
-        "circuits": 12,
-        "countries": 12,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "seasonRaceStatistics": {
-        "raceEntries": 12,
+        "raceEntries": 14,
         "wins": 0,
         "podiums": 0,
         "points": 0,
-        "circuits": 12,
-        "countries": 12,
+        "circuits": 14,
+        "countries": 13,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 12
+        "throughRound": 14
       },
       "resultGeography": [
         {
@@ -9473,6 +9638,21 @@
           "points": 0
         },
         {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
           "id": "miami",
           "name": "Майами",
           "slug": "miami",
@@ -9496,6 +9676,21 @@
           "coordinates": [
             7.42056,
             43.7347
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
           ],
           "raceEntries": 1,
           "wins": 0,
@@ -9620,7 +9815,7 @@
           "code": "BOT",
           "position": 22,
           "points": 0,
-          "raceEntries": 12,
+          "raceEntries": 14,
           "teamPoints": 0
         },
         {
@@ -9629,7 +9824,7 @@
           "code": "PER",
           "position": 23,
           "points": 0,
-          "raceEntries": 12,
+          "raceEntries": 14,
           "teamPoints": 0
         }
       ],
@@ -9637,14 +9832,28 @@
     }
   ],
   "seasonStatus": "active",
-  "afterRound": 12,
+  "afterRound": 14,
   "sources": [
+    {
+      "id": "formula1-1951-french-race-result",
+      "name": "Formula 1 — 1951 French Grand Prix race result",
+      "url": "https://www.formula1.com/en/results/1951/races/104/france/race-result",
+      "licence": "Reference only",
+      "retrievedAt": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "id": "formula1-1957-british-race-result",
+      "name": "Formula 1 — 1957 British Grand Prix race result",
+      "url": "https://www.formula1.com/en/results/1957/races/154/great-britain/race-result",
+      "licence": "Reference only",
+      "retrievedAt": "2026-09-10T00:00:00.000Z"
+    },
     {
       "id": "jolpica",
       "name": "Jolpica F1",
       "url": "https://api.jolpi.ca/ergast/f1/",
       "licence": "Jolpica Terms of Use",
-      "retrievedAt": "2026-08-24T23:42:18.035Z"
+      "retrievedAt": "2026-09-13T20:26:21.136Z"
     },
     {
       "id": "jolpica-csv-2026-08-01",

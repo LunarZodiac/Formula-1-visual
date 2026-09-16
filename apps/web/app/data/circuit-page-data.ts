@@ -1,5 +1,7 @@
 import bahrainPageJson from './circuit-pages/bahrain.json';
 import spaPageJson from './circuit-pages/spa.json';
+import circuitCatalogJson from './catalogs/circuits.json';
+import { getTrackGeometry } from './track-geometries';
 
 export type CircuitPageData = {
   schemaVersion: 1;
@@ -46,6 +48,28 @@ export type CircuitPageData = {
     local3dModel: boolean;
     buildings3d: boolean;
   };
+  trackPresentation?: {
+    seasonLayoutIds: Record<string, string>;
+    layouts: Array<{
+      id: string;
+      name: string;
+      validFromYear?: number;
+      validToYear?: number;
+      centerline: GeoJSON.Feature<GeoJSON.LineString>;
+      annotations: Array<{
+        id: string;
+        type: 'sector' | 'turn' | 'straight' | 'timing_line' | 'drs_zone' | 'drs_detection';
+        labelRu?: string;
+        labelOriginal?: string;
+        sequence?: number;
+        descriptionRu?: string;
+        validFromYear?: number;
+        validToYear?: number;
+        geometry: GeoJSON.Point | GeoJSON.LineString;
+        source: { name: string; url?: string };
+      }>;
+    }>;
+  };
   travel: {
     intro: string;
     categories: Array<{ id: string; label: string }>;
@@ -56,6 +80,8 @@ export type CircuitPageData = {
       descriptionRu: string;
       coordinates: [number, number];
       role?: 'transport' | 'stay' | 'explore' | 'essential' | 'circuit';
+      imageUrl?: string;
+      imageAltRu?: string;
     }>;
     story?: {
       stats: Array<{ value: string; label: string }>;
@@ -86,6 +112,9 @@ export type CircuitPageData = {
         duration: string;
         stops: string[];
         description: string;
+        rationale?: string;
+        highlights?: string[];
+        practicalNotes?: string;
         image?: string;
       }>;
       gallery?: Array<{
@@ -121,7 +150,82 @@ export type CircuitPageData = {
 export const bahrainCircuitPage = bahrainPageJson as CircuitPageData;
 export const spaCircuitPage = spaPageJson as CircuitPageData;
 
+type CircuitCatalogRow = (typeof circuitCatalogJson.circuits)[number];
+
+function aroundCoordinate([longitude, latitude]: [number, number]): [[number, number], [number, number]] {
+  const delta = 0.18;
+  return [[longitude - delta, Math.max(-85, latitude - delta)], [longitude + delta, Math.min(85, latitude + delta)]];
+}
+
+/**
+ * Формирует безопасную базовую страницу для трассы, у которой ещё нет полного
+ * редакционного профиля. Здесь используются только поля каталога; пустые
+ * разделы явно показывают, что материалы ожидают проверки, а не имитируют
+ * готовую историю или туристические рекомендации
+ */
+export function buildCircuitPageFromCatalog(circuit: CircuitCatalogRow): CircuitPageData {
+  const seasons = circuit.seasons?.length ? circuit.seasons : [circuitCatalogJson.season];
+  const fallbackFeature = circuit.geometry ? { type: 'Feature' as const, properties: {}, geometry: circuit.geometry } : null;
+  const layoutsById = new Map<string, { id: string; centerline: GeoJSON.Feature<GeoJSON.LineString> }>();
+  const seasonLayoutIds: Record<string, string> = {};
+  for (const season of seasons) {
+    const feature = getTrackGeometry(circuit.id, season);
+    const geometryId = String(feature?.properties.geometryId ?? circuit.id);
+    const layoutId = `${circuit.id}-${geometryId}-catalog-layout`;
+    const centerline = feature ?? fallbackFeature;
+    if (!centerline) continue;
+    seasonLayoutIds[String(season)] = layoutId;
+    if (!layoutsById.has(layoutId)) layoutsById.set(layoutId, { id: layoutId, centerline });
+  }
+  const trackPresentation = layoutsById.size ? {
+    seasonLayoutIds,
+    layouts: [...layoutsById.values()].map(({ id, centerline }) => ({
+      id,
+      name: 'Канонический контур',
+      centerline,
+      annotations: [],
+    })),
+  } : undefined;
+  const metrics = [
+    { label: 'Длина', value: circuit.metrics.length ?? 'Уточняется' },
+    { label: 'Повороты', value: circuit.metrics.turns ?? 'Уточняется' },
+    { label: 'Дебют', value: circuit.metrics.debut ?? 'Уточняется' },
+    { label: 'Рекорд круга', value: circuit.metrics.record ?? 'Уточняется' },
+  ];
+  return {
+    schemaVersion: 1,
+    id: circuit.id,
+    slug: circuit.slug,
+    geometryId: circuit.id,
+    nameRu: circuit.nameRu,
+    officialName: circuit.officialName,
+    location: { cityRu: circuit.cityRu, countryRu: circuit.countryRu, countryCode: circuit.countryCode, coordinates: circuit.coordinates },
+    summary: {
+      description: circuit.summary || 'Публичный редакционный профиль трассы готовится: базовые сведения взяты из каталога, дополнительные факты и источники будут добавлены после проверки',
+      typeRu: circuit.typeRu,
+      metrics,
+      highlights: ['Профиль готовится', circuit.countryRu, circuit.typeRu],
+      statBar: [
+        { label: 'Длина трассы', value: circuit.metrics.length ?? 'Уточняется', icon: 'length' },
+        { label: 'Повороты', value: circuit.metrics.turns ?? 'Уточняется', icon: 'turns' },
+        { label: 'Дебют в F1', value: circuit.metrics.debut ?? 'Уточняется', icon: 'debut' },
+        { label: 'Рекорд круга', value: circuit.metrics.record ?? 'Уточняется', icon: 'record' },
+        { label: 'Перепад высот', value: 'Уточняется', icon: 'elevation' },
+        { label: 'Тип трассы', value: circuit.typeRu, icon: 'type' },
+      ],
+    },
+    map: { trackCamera: { maxZoom: 14.8, pitch: 46, bearing: 0, padding: 92 }, travelBounds: aroundCoordinate(circuit.coordinates), travelZoom: 11 },
+    results: { seasons, defaultSeason: seasons[0] },
+    features: { technicalOverlay: false, travelMode: false, local3dModel: false, buildings3d: false },
+    trackPresentation,
+    travel: { intro: 'Туристический слой для этой трассы будет добавлен после редакционной проверки', categories: [], points: [] },
+  };
+}
+
 export const circuitPageCatalog = new Map<string, CircuitPageData>([
   [bahrainCircuitPage.slug, bahrainCircuitPage],
   [spaCircuitPage.slug, spaCircuitPage],
+  ...circuitCatalogJson.circuits
+    .filter((circuit) => circuit.slug !== bahrainCircuitPage.slug && circuit.slug !== spaCircuitPage.slug)
+    .map((circuit) => [circuit.slug, buildCircuitPageFromCatalog(circuit)] as const),
 ]);

@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 
+import { createHash } from "node:crypto";
+import { mkdir, rename, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 const API_BASE_URL = "https://api.jolpi.ca/ergast/f1";
 const USER_AGENT = "F1-Geovisual-Atlas/0.1 data-preview";
 const PAGE_LIMIT = 100;
 const REQUEST_INTERVAL_MS = 320;
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 4;
+const REQUEST_TIMEOUT_MS = 30_000;
 
 export function readSeason(argv) {
   const inline = argv.find((argument) => argument.startsWith("--season="));
@@ -38,12 +42,23 @@ async function rateLimitedFetch(url, attempt = 1) {
   }
 
   previousRequestAt = Date.now();
-  const response = await fetch(url, {
-    headers: {
-      Accept: "application/json",
-      "User-Agent": USER_AGENT,
-    },
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": USER_AGENT,
+      },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+  } catch (error) {
+    if (attempt < MAX_RETRIES) {
+      await wait(1000 * 2 ** (attempt - 1));
+      return rateLimitedFetch(url, attempt + 1);
+    }
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(`Не удалось обратиться к Jolpica (${url}): ${detail}`);
+  }
 
   if (response.ok) {
     return response;
@@ -146,6 +161,8 @@ function validateSchedule(season, races) {
   const warnings = [];
   const seenRounds = new Set();
 
+  if (races.length === 0) warnings.push(`Jolpica не вернула календарь сезона ${season}.`);
+
   for (const race of races) {
     const round = Number(race.round);
     if (!Number.isInteger(round) || round <= 0) {
@@ -170,14 +187,16 @@ function validateSchedule(season, races) {
 export async function loadSeasonData(season) {
   const endpointPages = {};
   const endpoints = [
-    ["schedule", `${season}/races.json`],
-    ["drivers", `${season}/drivers.json`],
-    ["constructors", `${season}/constructors.json`],
-    ["results", `${season}/results.json`],
-    ["qualifying", `${season}/qualifying.json`],
-    ["sprints", `${season}/sprint.json`],
-    ["driverStandings", `${season}/driverstandings.json`],
-    ["constructorStandings", `${season}/constructorstandings.json`],
+    // Jolpica документирует маршруты с завершающим слешем; в отличие от старых
+    // псевдонимов Ergast с `.json`, они работают и для будущих сезонов.
+    ["schedule", `${season}/races/`],
+    ["drivers", `${season}/drivers/`],
+    ["constructors", `${season}/constructors/`],
+    ["results", `${season}/results/`],
+    ["qualifying", `${season}/qualifying/`],
+    ["sprints", `${season}/sprint/`],
+    ["driverStandings", `${season}/driverstandings/`],
+    ["constructorStandings", `${season}/constructorstandings/`],
   ];
 
   for (const [name, pathname] of endpoints) {
@@ -213,10 +232,22 @@ export async function loadSeasonData(season) {
     constructorStandings,
   };
 
-  return { data, report: buildSeasonReport(season, data) };
+  const fetchedAt = new Date().toISOString();
+  return {
+    data,
+    report: buildSeasonReport(season, data, fetchedAt),
+    snapshot: {
+      schemaVersion: 1,
+      provider: "jolpica",
+      apiBaseUrl: API_BASE_URL,
+      season,
+      fetchedAt,
+      endpoints: Object.fromEntries(endpoints.map(([name, pathname]) => [name, { pathname, pages: endpointPages[name] }])),
+    },
+  };
 }
 
-export function buildSeasonReport(season, data) {
+export function buildSeasonReport(season, data, fetchedAt = new Date().toISOString()) {
   const {
     schedule,
     drivers,
@@ -228,10 +259,26 @@ export function buildSeasonReport(season, data) {
     constructorStandings,
   } = data;
 
+  const warnings = validateSchedule(season, schedule);
+  if (drivers.length === 0) warnings.push('Jolpica не вернула участников сезона.');
+  if (constructors.length === 0) warnings.push('Jolpica не вернула команды сезона.');
+  const hasRaceResults = results.some((race) => race.Results.length > 0);
+  if (hasRaceResults && driverStandings.length === 0) {
+    warnings.push('После проведённых гонок Jolpica не вернула личный зачёт; полный импорт и экспорт остановлены.');
+  }
+  if (hasRaceResults && season >= 1958 && constructorStandings.length === 0) {
+    warnings.push('После проведённых гонок Jolpica не вернула зачёт команд; полный импорт и экспорт остановлены.');
+  }
+  const scheduledRounds = new Set(schedule.map((race) => Number(race.round)));
+  for (const [label, races] of [['результатов', results], ['квалификаций', qualifying], ['спринтов', sprints]]) {
+    const unknown = races.map((race) => Number(race.round)).filter((round) => !scheduledRounds.has(round));
+    if (unknown.length) warnings.push(`В наборе ${label} найдены этапы вне календаря: ${unknown.join(', ')}.`);
+  }
+
   return {
     season,
     mode: "preview-only",
-    fetchedAt: new Date().toISOString(),
+    fetchedAt,
     counts: {
       scheduledRounds: schedule.length,
       drivers: drivers.length,
@@ -248,8 +295,35 @@ export function buildSeasonReport(season, data) {
       driverStandings: driverStandings.length,
       constructorStandings: constructorStandings.length,
     },
-    warnings: validateSchedule(season, schedule),
+    warnings,
   };
+}
+
+async function writeJsonAtomically(filePath, value) {
+  const temporaryPath = `${filePath}.${process.pid}.tmp`;
+  await writeFile(temporaryPath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+  await rename(temporaryPath, filePath);
+}
+
+export async function saveSeasonSnapshot(snapshot, rootDirectory = path.resolve("tmp", "jolpica-api-snapshots")) {
+  const serialized = `${JSON.stringify(snapshot, null, 2)}\n`;
+  const sha256 = createHash("sha256").update(serialized).digest("hex");
+  const seasonDirectory = path.join(rootDirectory, String(snapshot.season));
+  const timestamp = snapshot.fetchedAt.replace(/[:.]/g, "-");
+  const fileName = `${timestamp}-${sha256.slice(0, 12)}.json`;
+  const filePath = path.join(seasonDirectory, fileName);
+  await mkdir(seasonDirectory, { recursive: true });
+  await writeJsonAtomically(filePath, snapshot);
+  await writeFile(path.join(seasonDirectory, "latest.json"), `${JSON.stringify({
+    schemaVersion: 1,
+    provider: snapshot.provider,
+    season: snapshot.season,
+    fetchedAt: snapshot.fetchedAt,
+    fileName,
+    sha256,
+    bytes: Buffer.byteLength(serialized),
+  }, null, 2)}\n`, "utf8");
+  return { filePath, fileName, sha256, bytes: Buffer.byteLength(serialized) };
 }
 
 const isCommandLine =

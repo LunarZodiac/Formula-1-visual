@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-08-30T23:05:16.788Z",
+  "generatedAt": "2026-09-14T06:38:06.673Z",
   "summary": {
     "snapshots": 2,
-    "databaseProfiles": 24,
+    "databaseProfiles": 78,
     "publishedProfiles": 2,
-    "draftProfiles": 22,
+    "draftProfiles": 76,
     "snapshotsWithoutProfile": 0,
     "publishedProfilesWithoutSnapshot": 0,
     "unsourcedStats": 0,
@@ -13,16 +13,52 @@
     "incompleteRuntimeSettings": 0,
     "incompleteTravelEditorial": 0,
     "circuitsInRaceData": 78,
-    "circuitsWithoutPageProfile": 54,
+    "circuitsWithoutPageProfile": 0,
     "circuitsWithoutPublishedPageProfile": 76,
     "latestSeason": 2026,
     "latestSeasonCircuitsWithoutProfile": 0,
     "latestSeasonDraftProfiles": 22,
     "draftProfilesWithGaps": 0,
-    "incompleteTrackProvenance": 0,
-    "incompleteProfileFieldSources": 0
+    "incompleteTrackProvenance": 54,
+    "incompleteProfileFieldSources": 270
   },
   "profiles": [
+    {
+      "circuitId": "adelaide",
+      "slug": "adelaide",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "ain-diab",
+      "slug": "ain-diab",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "aintree",
+      "slug": "aintree",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
     {
       "circuitId": "albert_park",
       "slug": "albert-park",
@@ -44,6 +80,30 @@
       "hasSummary": true,
       "hasCircuitType": true,
       "stats": 11,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "anderstorp",
+      "slug": "anderstorp",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "avus",
+      "slug": "avus",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
       "historyEntries": 0,
       "galleryItems": 0
     },
@@ -72,6 +132,54 @@
       "galleryItems": 0
     },
     {
+      "circuitId": "boavista",
+      "slug": "boavista",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "brands_hatch",
+      "slug": "brands-hatch",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "bremgarten",
+      "slug": "bremgarten",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "buddh",
+      "slug": "buddh",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
       "circuitId": "catalunya",
       "slug": "barcelona-catalunya",
       "editorialStatus": "draft",
@@ -80,6 +188,138 @@
       "hasSummary": true,
       "hasCircuitType": true,
       "stats": 11,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "charade",
+      "slug": "charade",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "dallas",
+      "slug": "dallas",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "detroit",
+      "slug": "detroit",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "dijon",
+      "slug": "dijon",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "donington",
+      "slug": "donington",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "essarts",
+      "slug": "essarts",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "estoril",
+      "slug": "estoril",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "fuji",
+      "slug": "fuji",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "galvez",
+      "slug": "galvez",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "george",
+      "slug": "george",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "hockenheimring",
+      "slug": "hockenheimring",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
       "historyEntries": 0,
       "galleryItems": 0
     },
@@ -96,6 +336,30 @@
       "galleryItems": 0
     },
     {
+      "circuitId": "imola",
+      "slug": "imola",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "indianapolis",
+      "slug": "indianapolis",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
       "circuitId": "interlagos",
       "slug": "interlagos",
       "editorialStatus": "draft",
@@ -104,6 +368,114 @@
       "hasSummary": true,
       "hasCircuitType": true,
       "stats": 11,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "istanbul",
+      "slug": "istanbul",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "jacarepagua",
+      "slug": "jacarepagua",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "jarama",
+      "slug": "jarama",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "jeddah",
+      "slug": "jeddah",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "jerez",
+      "slug": "jerez",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "kyalami",
+      "slug": "kyalami",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "las_vegas",
+      "slug": "caesars-palace",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "lemans",
+      "slug": "lemans",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "long_beach",
+      "slug": "long-beach",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
       "historyEntries": 0,
       "galleryItems": 0
     },
@@ -128,6 +500,18 @@
       "hasSummary": true,
       "hasCircuitType": true,
       "stats": 10,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "magny_cours",
+      "slug": "magny-cours",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
       "historyEntries": 0,
       "galleryItems": 0
     },
@@ -168,6 +552,30 @@
       "galleryItems": 0
     },
     {
+      "circuitId": "monsanto",
+      "slug": "monsanto",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "montjuic",
+      "slug": "montjuic",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
       "circuitId": "monza",
       "slug": "monza",
       "editorialStatus": "draft",
@@ -176,6 +584,114 @@
       "hasSummary": true,
       "hasCircuitType": true,
       "stats": 11,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "mosport",
+      "slug": "mosport",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "mugello",
+      "slug": "mugello",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "nivelles",
+      "slug": "nivelles",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "nurburgring",
+      "slug": "nurburgring",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "okayama",
+      "slug": "okayama",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "pedralbes",
+      "slug": "pedralbes",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "pescara",
+      "slug": "pescara",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "phoenix",
+      "slug": "phoenix",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "portimao",
+      "slug": "portimao",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
       "historyEntries": 0,
       "galleryItems": 0
     },
@@ -192,6 +708,42 @@
       "galleryItems": 0
     },
     {
+      "circuitId": "reims",
+      "slug": "reims",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "ricard",
+      "slug": "ricard",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "riverside",
+      "slug": "riverside",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
       "circuitId": "rodriguez",
       "slug": "hermanos-rodriguez",
       "editorialStatus": "draft",
@@ -200,6 +752,18 @@
       "hasSummary": true,
       "hasCircuitType": true,
       "stats": 11,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "sebring",
+      "slug": "sebring",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
       "historyEntries": 0,
       "galleryItems": 0
     },
@@ -240,6 +804,18 @@
       "galleryItems": 0
     },
     {
+      "circuitId": "sochi",
+      "slug": "sochi",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
       "circuitId": "spa",
       "slug": "spa",
       "editorialStatus": "published",
@@ -260,6 +836,30 @@
       "hasSummary": true,
       "hasCircuitType": true,
       "stats": 12,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "tremblant",
+      "slug": "tremblant",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "valencia",
+      "slug": "valencia",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
       "historyEntries": 0,
       "galleryItems": 0
     },
@@ -288,6 +888,18 @@
       "galleryItems": 0
     },
     {
+      "circuitId": "watkins_glen",
+      "slug": "watkins-glen",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
       "circuitId": "yas_marina",
       "slug": "yas-marina",
       "editorialStatus": "draft",
@@ -296,6 +908,18 @@
       "hasSummary": true,
       "hasCircuitType": true,
       "stats": 11,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "yeongam",
+      "slug": "yeongam",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
       "historyEntries": 0,
       "galleryItems": 0
     },
@@ -310,6 +934,30 @@
       "stats": 12,
       "historyEntries": 0,
       "galleryItems": 0
+    },
+    {
+      "circuitId": "zeltweg",
+      "slug": "zeltweg",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
+    },
+    {
+      "circuitId": "zolder",
+      "slug": "zolder",
+      "editorialStatus": "draft",
+      "sourceId": "project_ru_circuit_editorial",
+      "hasGeometryId": true,
+      "hasSummary": true,
+      "hasCircuitType": true,
+      "stats": 0,
+      "historyEntries": 0,
+      "galleryItems": 0
     }
   ],
   "draftProfileGaps": [],
@@ -320,872 +968,1521 @@
   "duplicateMediaWithinPage": [],
   "incompleteRuntimeSettings": [],
   "incompleteTravelEditorial": [],
-  "incompleteTrackProvenance": [],
-  "incompleteProfileFieldSources": [],
-  "circuitProfileBacklog": [
+  "incompleteTrackProvenance": [
     {
-      "circuitId": "imola",
-      "officialName": "Autodromo Enzo e Dino Ferrari",
-      "locality": "Imola",
-      "countryCode": "IT",
-      "circuitType": "permanent",
-      "sourceId": "jolpica",
-      "firstSeason": 1980,
-      "lastSeason": 2025,
-      "raceCount": 32,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "adelaide",
+      "geometry_id": "au-adelaide-1985",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "jeddah",
-      "officialName": "Jeddah Corniche Circuit",
-      "locality": "Jeddah",
-      "countryCode": "SA",
-      "circuitType": "permanent",
-      "sourceId": "jolpica",
-      "firstSeason": 2021,
-      "lastSeason": 2025,
-      "raceCount": 5,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "ain-diab",
+      "geometry_id": "ma-ain-diab-1958",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "ricard",
-      "officialName": "Circuit Paul Ricard",
-      "locality": "Le Castellet",
-      "countryCode": "FR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1971,
-      "lastSeason": 2022,
-      "raceCount": 18,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "aintree",
+      "geometry_id": "gb-aintree-1955",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "portimao",
-      "officialName": "Autódromo Internacional do Algarve",
-      "locality": "Portimão",
-      "countryCode": "PT",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 2020,
-      "lastSeason": 2021,
-      "raceCount": 2,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "anderstorp",
+      "geometry_id": "se-1968-anderstorp",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "istanbul",
-      "officialName": "Istanbul Park",
-      "locality": "Istanbul",
-      "countryCode": "TR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 2005,
-      "lastSeason": 2021,
-      "raceCount": 9,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "avus",
+      "geometry_id": "de-avus-1959",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "sochi",
-      "officialName": "Sochi Autodrom",
-      "locality": "Sochi",
-      "countryCode": "RU",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 2014,
-      "lastSeason": 2021,
-      "raceCount": 8,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "boavista",
+      "geometry_id": "pt-boavista-1958",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "mugello",
-      "officialName": "Autodromo Internazionale del Mugello",
-      "locality": "Mugello",
-      "countryCode": "IT",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 2020,
-      "lastSeason": 2020,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "brands_hatch",
+      "geometry_id": "gb-1950-brands-hatch-gp",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "nurburgring",
-      "officialName": "Nürburgring",
-      "locality": "Nürburg",
-      "countryCode": "DE",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1951,
-      "lastSeason": 2020,
-      "raceCount": 41,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "bremgarten",
+      "geometry_id": "ch-1931-bremgarten",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "hockenheimring",
-      "officialName": "Hockenheimring",
-      "locality": "Hockenheim",
-      "countryCode": "DE",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1970,
-      "lastSeason": 2019,
-      "raceCount": 37,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "buddh",
+      "geometry_id": "in-2011",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "buddh",
-      "officialName": "Buddh International Circuit",
-      "locality": "Uttar Pradesh",
-      "countryCode": "IN",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 2011,
-      "lastSeason": 2013,
-      "raceCount": 3,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "charade",
+      "geometry_id": "fr-charade-1965",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "yeongam",
-      "officialName": "Korean International Circuit",
-      "locality": "Yeongam County",
-      "countryCode": "KR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 2010,
-      "lastSeason": 2013,
-      "raceCount": 4,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "dallas",
+      "geometry_id": "us-dallas-1984",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "valencia",
-      "officialName": "Valencia Street Circuit",
-      "locality": "Valencia",
-      "countryCode": "ES",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 2008,
-      "lastSeason": 2012,
-      "raceCount": 5,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "detroit",
+      "geometry_id": "us-detroit-1983",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "magny_cours",
-      "officialName": "Circuit de Nevers Magny-Cours",
-      "locality": "Magny Cours",
-      "countryCode": "FR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1991,
-      "lastSeason": 2008,
-      "raceCount": 18,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "dijon",
+      "geometry_id": "fr-1972-dijon",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "fuji",
-      "officialName": "Fuji Speedway",
-      "locality": "Oyama",
-      "countryCode": "JP",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1976,
-      "lastSeason": 2008,
-      "raceCount": 4,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "donington",
+      "geometry_id": "gb-1931-donington",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "indianapolis",
-      "officialName": "Indianapolis Motor Speedway",
-      "locality": "Indianapolis",
-      "countryCode": "US",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1950,
-      "lastSeason": 2007,
-      "raceCount": 19,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "essarts",
+      "geometry_id": "fr-rouen-1957",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "galvez",
-      "officialName": "Autódromo Juan y Oscar Gálvez",
-      "locality": "Buenos Aires",
-      "countryCode": "AR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1953,
-      "lastSeason": 1998,
-      "raceCount": 20,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "estoril",
+      "geometry_id": "pt-1972",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "jerez",
-      "officialName": "Circuito de Jerez",
-      "locality": "Jerez de la Frontera",
-      "countryCode": "ES",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1986,
-      "lastSeason": 1997,
-      "raceCount": 7,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "fuji",
+      "geometry_id": "jp-2005-fuji",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
     },
     {
-      "circuitId": "estoril",
-      "officialName": "Autódromo do Estoril",
-      "locality": "Estoril",
-      "countryCode": "PT",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1984,
-      "lastSeason": 1996,
-      "raceCount": 13,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuit_id": "galvez",
+      "geometry_id": "ar-1952",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "george",
+      "geometry_id": "za-1934-prince-george",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "hockenheimring",
+      "geometry_id": "de-1932",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "imola",
+      "geometry_id": "it-1953",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "indianapolis",
+      "geometry_id": "us-1909",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "istanbul",
+      "geometry_id": "tr-2005",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "jacarepagua",
+      "geometry_id": "br-1977",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "jarama",
+      "geometry_id": "es-1967-jarama",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "jeddah",
+      "geometry_id": "sa-2021",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "jerez",
+      "geometry_id": "es-1985-jerez",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "kyalami",
+      "geometry_id": "za-1961",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "las_vegas",
+      "geometry_id": "us-caesars-palace-1981",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "lemans",
+      "geometry_id": "fr-bugatti-1967",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "long_beach",
+      "geometry_id": "us-long-beach-1983",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "magny_cours",
+      "geometry_id": "fr-1960",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "monsanto",
+      "geometry_id": "pt-monsanto-1959",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "montjuic",
+      "geometry_id": "es-1933-montjuic",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "mosport",
+      "geometry_id": "ca-1961-mosport",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "mugello",
+      "geometry_id": "it-1914",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "nivelles",
+      "geometry_id": "be-nivelles-1972",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "nurburgring",
+      "geometry_id": "de-1927",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "okayama",
+      "geometry_id": "jp-1990",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "pedralbes",
+      "geometry_id": "es-pedralbes-1951",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "pescara",
+      "geometry_id": "it-pescara-1957",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "phoenix",
+      "geometry_id": "us-phoenix-1991",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "portimao",
+      "geometry_id": "pt-2008",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "reims",
+      "geometry_id": "fr-1954-reims",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "ricard",
+      "geometry_id": "fr-1969",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "riverside",
+      "geometry_id": "us-1957-riverside-long",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "sebring",
+      "geometry_id": "us-1952-sebring",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "sochi",
+      "geometry_id": "ru-2014",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "tremblant",
+      "geometry_id": "ca-1964-mont-tremblant",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "valencia",
+      "geometry_id": "es-2008-valencia",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "watkins_glen",
+      "geometry_id": "us-1956",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "yeongam",
+      "geometry_id": "kr-2010",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "zeltweg",
+      "geometry_id": "at-zeltweg-1964",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    },
+    {
+      "circuit_id": "zolder",
+      "geometry_id": "be-1963-zolder",
+      "missing_layout": false,
+      "missing_source": false,
+      "missing_provenance": false,
+      "review_status": "candidate"
+    }
+  ],
+  "incompleteProfileFieldSources": [
+    {
+      "circuitId": "adelaide",
+      "fieldName": "circuit_type_ru"
     },
     {
       "circuitId": "adelaide",
-      "officialName": "Adelaide Street Circuit",
-      "locality": "Adelaide",
-      "countryCode": "AU",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1985,
-      "lastSeason": 1995,
-      "raceCount": 11,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "fieldName": "city_ru"
     },
     {
-      "circuitId": "okayama",
-      "officialName": "Okayama International Circuit",
-      "locality": "Okayama",
-      "countryCode": "JP",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1994,
-      "lastSeason": 1995,
-      "raceCount": 2,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuitId": "adelaide",
+      "fieldName": "geometry_id"
     },
     {
-      "circuitId": "donington",
-      "officialName": "Donington Park",
-      "locality": "Castle Donington",
-      "countryCode": "GB",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1993,
-      "lastSeason": 1993,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuitId": "adelaide",
+      "fieldName": "slug"
     },
     {
-      "circuitId": "kyalami",
-      "officialName": "Kyalami",
-      "locality": "Midrand",
-      "countryCode": "ZA",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1967,
-      "lastSeason": 1993,
-      "raceCount": 20,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "phoenix",
-      "officialName": "Phoenix street circuit",
-      "locality": "Phoenix",
-      "countryCode": "US",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1989,
-      "lastSeason": 1991,
-      "raceCount": 3,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "jacarepagua",
-      "officialName": "Autódromo Internacional Nelson Piquet",
-      "locality": "Rio de Janeiro",
-      "countryCode": "BR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1978,
-      "lastSeason": 1989,
-      "raceCount": 10,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "detroit",
-      "officialName": "Detroit Street Circuit",
-      "locality": "Detroit",
-      "countryCode": "US",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1982,
-      "lastSeason": 1988,
-      "raceCount": 7,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "brands_hatch",
-      "officialName": "Brands Hatch",
-      "locality": "Kent",
-      "countryCode": "GB",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1964,
-      "lastSeason": 1986,
-      "raceCount": 14,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "dijon",
-      "officialName": "Dijon-Prenois",
-      "locality": "Dijon",
-      "countryCode": "FR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1974,
-      "lastSeason": 1984,
-      "raceCount": 6,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "dallas",
-      "officialName": "Fair Park",
-      "locality": "Dallas",
-      "countryCode": "US",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1984,
-      "lastSeason": 1984,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "zolder",
-      "officialName": "Zolder",
-      "locality": "Heusden-Zolder",
-      "countryCode": "BE",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1973,
-      "lastSeason": 1984,
-      "raceCount": 10,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "long_beach",
-      "officialName": "Long Beach",
-      "locality": "California",
-      "countryCode": "US",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1976,
-      "lastSeason": 1983,
-      "raceCount": 8,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "las_vegas",
-      "officialName": "Las Vegas Street Circuit",
-      "locality": "Nevada",
-      "countryCode": "US",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1981,
-      "lastSeason": 1982,
-      "raceCount": 2,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "jarama",
-      "officialName": "Jarama",
-      "locality": "Madrid",
-      "countryCode": "ES",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1968,
-      "lastSeason": 1981,
-      "raceCount": 9,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "watkins_glen",
-      "officialName": "Watkins Glen",
-      "locality": "New York State",
-      "countryCode": "US",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1961,
-      "lastSeason": 1980,
-      "raceCount": 20,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "anderstorp",
-      "officialName": "Scandinavian Raceway",
-      "locality": "Anderstorp",
-      "countryCode": "SE",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1973,
-      "lastSeason": 1978,
-      "raceCount": 6,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "mosport",
-      "officialName": "Mosport International Raceway",
-      "locality": "Ontario",
-      "countryCode": "CA",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1967,
-      "lastSeason": 1977,
-      "raceCount": 8,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "montjuic",
-      "officialName": "Montjuïc",
-      "locality": "Barcelona",
-      "countryCode": "ES",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1969,
-      "lastSeason": 1975,
-      "raceCount": 4,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "nivelles",
-      "officialName": "Nivelles-Baulers",
-      "locality": "Brussels",
-      "countryCode": "BE",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1972,
-      "lastSeason": 1974,
-      "raceCount": 2,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "charade",
-      "officialName": "Charade Circuit",
-      "locality": "Clermont-Ferrand",
-      "countryCode": "FR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1965,
-      "lastSeason": 1972,
-      "raceCount": 4,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "tremblant",
-      "officialName": "Circuit Mont-Tremblant",
-      "locality": "Quebec",
-      "countryCode": "CA",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1968,
-      "lastSeason": 1970,
-      "raceCount": 2,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "essarts",
-      "officialName": "Rouen-Les-Essarts",
-      "locality": "Rouen",
-      "countryCode": "FR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1952,
-      "lastSeason": 1968,
-      "raceCount": 5,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "lemans",
-      "officialName": "Le Mans",
-      "locality": "Le Mans",
-      "countryCode": "FR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1967,
-      "lastSeason": 1967,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "reims",
-      "officialName": "Reims-Gueux",
-      "locality": "Reims",
-      "countryCode": "FR",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1950,
-      "lastSeason": 1966,
-      "raceCount": 11,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "george",
-      "officialName": "Prince George Circuit",
-      "locality": "Eastern Cape Province",
-      "countryCode": "ZA",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1962,
-      "lastSeason": 1965,
-      "raceCount": 3,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "zeltweg",
-      "officialName": "Zeltweg",
-      "locality": "Styria",
-      "countryCode": "AT",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1964,
-      "lastSeason": 1964,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "aintree",
-      "officialName": "Aintree",
-      "locality": "Liverpool",
-      "countryCode": "GB",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1955,
-      "lastSeason": 1962,
-      "raceCount": 5,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "boavista",
-      "officialName": "Circuito da Boavista",
-      "locality": "Oporto",
-      "countryCode": "PT",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1958,
-      "lastSeason": 1960,
-      "raceCount": 2,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "riverside",
-      "officialName": "Riverside International Raceway",
-      "locality": "California",
-      "countryCode": "US",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1960,
-      "lastSeason": 1960,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "avus",
-      "officialName": "AVUS",
-      "locality": "Berlin",
-      "countryCode": "DE",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1959,
-      "lastSeason": 1959,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "monsanto",
-      "officialName": "Monsanto Park Circuit",
-      "locality": "Lisbon",
-      "countryCode": "PT",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1959,
-      "lastSeason": 1959,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
-    },
-    {
-      "circuitId": "sebring",
-      "officialName": "Sebring International Raceway",
-      "locality": "Florida",
-      "countryCode": "US",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1959,
-      "lastSeason": 1959,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuitId": "adelaide",
+      "fieldName": "summary_ru"
     },
     {
       "circuitId": "ain-diab",
-      "officialName": "Ain Diab",
-      "locality": "Casablanca",
-      "countryCode": "MA",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1958,
-      "lastSeason": 1958,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "fieldName": "circuit_type_ru"
     },
     {
-      "circuitId": "pescara",
-      "officialName": "Pescara Circuit",
-      "locality": "Pescara",
-      "countryCode": "IT",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1957,
-      "lastSeason": 1957,
-      "raceCount": 1,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "circuitId": "ain-diab",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "ain-diab",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "ain-diab",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "ain-diab",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "aintree",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "aintree",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "aintree",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "aintree",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "aintree",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "anderstorp",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "anderstorp",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "anderstorp",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "anderstorp",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "anderstorp",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "avus",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "avus",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "avus",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "avus",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "avus",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "boavista",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "boavista",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "boavista",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "boavista",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "boavista",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "brands_hatch",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "brands_hatch",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "brands_hatch",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "brands_hatch",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "brands_hatch",
+      "fieldName": "summary_ru"
     },
     {
       "circuitId": "bremgarten",
-      "officialName": "Circuit Bremgarten",
-      "locality": "Bern",
-      "countryCode": "CH",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1950,
-      "lastSeason": 1954,
-      "raceCount": 5,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "bremgarten",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "bremgarten",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "bremgarten",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "bremgarten",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "buddh",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "buddh",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "buddh",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "buddh",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "buddh",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "charade",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "charade",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "charade",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "charade",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "charade",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "dallas",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "dallas",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "dallas",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "dallas",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "dallas",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "detroit",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "detroit",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "detroit",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "detroit",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "detroit",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "dijon",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "dijon",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "dijon",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "dijon",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "dijon",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "donington",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "donington",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "donington",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "donington",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "donington",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "essarts",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "essarts",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "essarts",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "essarts",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "essarts",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "estoril",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "estoril",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "estoril",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "estoril",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "estoril",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "fuji",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "fuji",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "fuji",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "fuji",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "fuji",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "galvez",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "galvez",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "galvez",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "galvez",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "galvez",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "george",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "george",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "george",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "george",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "george",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "hockenheimring",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "hockenheimring",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "hockenheimring",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "hockenheimring",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "hockenheimring",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "imola",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "imola",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "imola",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "imola",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "imola",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "indianapolis",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "indianapolis",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "indianapolis",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "indianapolis",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "indianapolis",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "istanbul",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "istanbul",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "istanbul",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "istanbul",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "istanbul",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "jacarepagua",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "jacarepagua",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "jacarepagua",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "jacarepagua",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "jacarepagua",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "jarama",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "jarama",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "jarama",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "jarama",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "jarama",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "jeddah",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "jeddah",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "jeddah",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "jeddah",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "jeddah",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "jerez",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "jerez",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "jerez",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "jerez",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "jerez",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "kyalami",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "kyalami",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "kyalami",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "kyalami",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "kyalami",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "las_vegas",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "las_vegas",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "las_vegas",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "las_vegas",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "las_vegas",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "lemans",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "lemans",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "lemans",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "lemans",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "lemans",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "long_beach",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "long_beach",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "long_beach",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "long_beach",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "long_beach",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "magny_cours",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "magny_cours",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "magny_cours",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "magny_cours",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "magny_cours",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "monsanto",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "monsanto",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "monsanto",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "monsanto",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "monsanto",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "montjuic",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "montjuic",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "montjuic",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "montjuic",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "montjuic",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "mosport",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "mosport",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "mosport",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "mosport",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "mosport",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "mugello",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "mugello",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "mugello",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "mugello",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "mugello",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "nivelles",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "nivelles",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "nivelles",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "nivelles",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "nivelles",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "nurburgring",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "nurburgring",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "nurburgring",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "nurburgring",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "nurburgring",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "okayama",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "okayama",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "okayama",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "okayama",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "okayama",
+      "fieldName": "summary_ru"
     },
     {
       "circuitId": "pedralbes",
-      "officialName": "Circuit de Pedralbes",
-      "locality": "Barcelona",
-      "countryCode": "ES",
-      "circuitType": "permanent",
-      "sourceId": "jolpica-csv-2026-08-01",
-      "firstSeason": 1951,
-      "lastSeason": 1954,
-      "raceCount": 2,
-      "layoutCount": 0,
-      "layoutsWithGeometry": 0,
-      "sourcedLayouts": 0,
-      "hasPageProfile": false,
-      "pageProfileStatus": null
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "pedralbes",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "pedralbes",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "pedralbes",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "pedralbes",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "pescara",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "pescara",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "pescara",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "pescara",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "pescara",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "phoenix",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "phoenix",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "phoenix",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "phoenix",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "phoenix",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "portimao",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "portimao",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "portimao",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "portimao",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "portimao",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "reims",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "reims",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "reims",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "reims",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "reims",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "ricard",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "ricard",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "ricard",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "ricard",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "ricard",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "riverside",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "riverside",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "riverside",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "riverside",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "riverside",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "sebring",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "sebring",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "sebring",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "sebring",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "sebring",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "sochi",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "sochi",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "sochi",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "sochi",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "sochi",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "tremblant",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "tremblant",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "tremblant",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "tremblant",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "tremblant",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "valencia",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "valencia",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "valencia",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "valencia",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "valencia",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "watkins_glen",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "watkins_glen",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "watkins_glen",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "watkins_glen",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "watkins_glen",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "yeongam",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "yeongam",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "yeongam",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "yeongam",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "yeongam",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "zeltweg",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "zeltweg",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "zeltweg",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "zeltweg",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "zeltweg",
+      "fieldName": "summary_ru"
+    },
+    {
+      "circuitId": "zolder",
+      "fieldName": "circuit_type_ru"
+    },
+    {
+      "circuitId": "zolder",
+      "fieldName": "city_ru"
+    },
+    {
+      "circuitId": "zolder",
+      "fieldName": "geometry_id"
+    },
+    {
+      "circuitId": "zolder",
+      "fieldName": "slug"
+    },
+    {
+      "circuitId": "zolder",
+      "fieldName": "summary_ru"
     }
-  ]
+  ],
+  "circuitProfileBacklog": []
 }

@@ -1,0 +1,850 @@
+{
+  "startedAt": "2026-09-10T11:44:49.384Z",
+  "finishedAt": "2026-09-10T12:49:57.493Z",
+  "stopReason": null,
+  "limit": 80,
+  "circuits": [
+    {
+      "id": "adelaide",
+      "name": "Аделаида",
+      "status": "imported",
+      "discovered": 76,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-37853e69-9658-4657-94d0-f9aacf31bb42"
+    },
+    {
+      "id": "ain-diab",
+      "name": "Айн-Диаб",
+      "status": "imported",
+      "discovered": 1761,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-dffe8b35-5b6f-48a2-b2c0-a97e86f49e76"
+    },
+    {
+      "id": "aintree",
+      "name": "Эйнтри",
+      "status": "imported",
+      "discovered": 3519,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-93dc2fe4-79ca-464f-be01-c53e0674b007"
+    },
+    {
+      "id": "albert_park",
+      "name": "Альберт-Парк",
+      "status": "imported",
+      "discovered": 3071,
+      "imported": 80,
+      "failedGroups": [
+        "stay"
+      ],
+      "runId": "bulk-fa56b33d-7880-4c78-9812-09f8f5536a46",
+      "lastRetryError": "Источник не вернул кандидатов; группы: stay"
+    },
+    {
+      "id": "americas",
+      "name": "Трасса Америк",
+      "status": "imported",
+      "discovered": 735,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-345b25f8-fe3c-4bbf-8c44-c77e891a2101"
+    },
+    {
+      "id": "anderstorp",
+      "name": "Андерсторп",
+      "status": "imported",
+      "discovered": 209,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-b00f5e6b-2a62-4d56-a7c3-af9053680514"
+    },
+    {
+      "id": "avus",
+      "name": "АФУС",
+      "status": "imported",
+      "discovered": 2615,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-18d85803-bb4f-4619-8999-dbae9b1160ec",
+      "lastRetryError": "Источник не вернул кандидатов; группы: stay, explore"
+    },
+    {
+      "id": "bahrain",
+      "name": "Бахрейн",
+      "status": "imported",
+      "discovered": 96,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-af2efe4c-2bcb-45dd-b293-51f489dcc54c"
+    },
+    {
+      "id": "baku",
+      "name": "Баку",
+      "status": "imported",
+      "discovered": 273,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-30e3034f-bd78-4633-9475-d1ac374de4ef"
+    },
+    {
+      "id": "boavista",
+      "name": "Боавишта",
+      "status": "imported",
+      "discovered": 4075,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-d7e1e4df-75cd-44dc-9b7b-c6c60f378f22"
+    },
+    {
+      "id": "brands_hatch",
+      "name": "Брэндс-Хэтч",
+      "status": "imported",
+      "discovered": 1687,
+      "imported": 80,
+      "failedGroups": [
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-bc50d70d-6306-4fce-814d-78688b27daeb",
+      "lastRetryError": "Источник не вернул кандидатов; группы: stay"
+    },
+    {
+      "id": "bremgarten",
+      "name": "Бремгартен",
+      "status": "imported",
+      "discovered": 3114,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "stay"
+      ],
+      "runId": "bulk-34f8aed9-45c6-49e8-9d58-2022ad175f98"
+    },
+    {
+      "id": "buddh",
+      "name": "Будда",
+      "status": "imported",
+      "discovered": 160,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-54e428dd-8448-484c-bb02-6d72d5a002ec"
+    },
+    {
+      "id": "catalunya",
+      "name": "Барселона-Каталунья",
+      "status": "imported",
+      "discovered": 1804,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "explore"
+      ],
+      "runId": "bulk-58bcd623-ff42-43db-93f8-c556193ffdfd",
+      "lastRetryError": "Источник не вернул кандидатов; группы: explore"
+    },
+    {
+      "id": "charade",
+      "name": "Шарад",
+      "status": "imported",
+      "discovered": 590,
+      "imported": 80,
+      "failedGroups": [
+        "stay",
+        "essential"
+      ],
+      "runId": "bulk-444939bf-e141-407e-ba8e-94c04cb80915",
+      "lastRetryError": "Источник не вернул кандидатов; группы: stay"
+    },
+    {
+      "id": "dallas",
+      "name": "Даллас",
+      "status": "imported",
+      "discovered": 1554,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-8955f4fc-f50b-4564-9352-c1fda8ab3193"
+    },
+    {
+      "id": "detroit",
+      "name": "Детройт",
+      "status": "imported",
+      "discovered": 442,
+      "imported": 80,
+      "failedGroups": [
+        "stay"
+      ],
+      "runId": "bulk-e017638f-7af6-49d9-a11b-8b57dc6b739a",
+      "lastRetryError": "Источник не вернул кандидатов; группы: неизвестно"
+    },
+    {
+      "id": "dijon",
+      "name": "Дижон-Пренуа",
+      "status": "imported",
+      "discovered": 1103,
+      "imported": 80,
+      "failedGroups": [
+        "stay"
+      ],
+      "runId": "bulk-091dfbf9-b4d4-4d27-9fbc-b71a8a9011d0"
+    },
+    {
+      "id": "donington",
+      "name": "Донингтон-Парк",
+      "status": "imported",
+      "discovered": 1213,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "stay"
+      ],
+      "runId": "bulk-3c09c8cf-bf25-4ef7-ba61-eb36b20f88fa",
+      "lastRetryError": "Источник не вернул кандидатов; группы: stay"
+    },
+    {
+      "id": "essarts",
+      "name": "Руан-Лез-Эссар",
+      "status": "imported",
+      "discovered": 1200,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-f9d26da4-1dae-410e-a1f8-f748bdaf7886"
+    },
+    {
+      "id": "estoril",
+      "name": "Эшторил",
+      "status": "imported",
+      "discovered": 143,
+      "imported": 80,
+      "failedGroups": [
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-2955327d-9111-4e3a-a34f-986fed51963b",
+      "lastRetryError": "Источник не вернул кандидатов; группы: stay, explore"
+    },
+    {
+      "id": "fuji",
+      "name": "Фудзи",
+      "status": "imported",
+      "discovered": 2404,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-2ebc3c25-9d3f-43ce-a7ab-5eaa7be2d5a8"
+    },
+    {
+      "id": "galvez",
+      "name": "Буэнос-Айрес",
+      "status": "imported",
+      "discovered": 3765,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-e73a8f4a-3193-4f5d-865f-4d0bb2aefe36"
+    },
+    {
+      "id": "george",
+      "name": "Принс-Джордж",
+      "status": "imported",
+      "discovered": 24,
+      "imported": 80,
+      "failedGroups": [
+        "transport"
+      ],
+      "runId": "bulk-f4cb9071-0365-457d-80f6-22bf4dd5288f"
+    },
+    {
+      "id": "hockenheimring",
+      "name": "Хоккенхаймринг",
+      "status": "imported",
+      "discovered": 1473,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-f932a03c-130e-4388-a68d-d237641e0f51",
+      "lastRetryError": "Источник не вернул кандидатов; группы: неизвестно"
+    },
+    {
+      "id": "hungaroring",
+      "name": "Хунгароринг",
+      "status": "imported",
+      "discovered": 3407,
+      "imported": 80,
+      "failedGroups": [
+        "stay"
+      ],
+      "runId": "bulk-334604d5-1727-4ebb-b900-4c4a2c3892b9",
+      "lastRetryError": "Источник не вернул кандидатов; группы: stay"
+    },
+    {
+      "id": "imola",
+      "name": "Имола",
+      "status": "imported",
+      "discovered": 2747,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-0791f934-b383-4dc4-94f7-4ebdc5512095"
+    },
+    {
+      "id": "indianapolis",
+      "name": "Индианаполис",
+      "status": "imported",
+      "discovered": 965,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-698051f3-ca67-42bd-9b01-1b293cefab71",
+      "lastRetryError": "Источник не вернул кандидатов; группы: stay, explore"
+    },
+    {
+      "id": "interlagos",
+      "name": "Интерлагос",
+      "status": "imported",
+      "discovered": 1815,
+      "imported": 80,
+      "failedGroups": [
+        "transport"
+      ],
+      "runId": "bulk-c826ce4c-bb05-4b43-a17d-8864dafa9edc"
+    },
+    {
+      "id": "istanbul",
+      "name": "Истанбул-Парк",
+      "status": "imported",
+      "discovered": 445,
+      "accumulated": 525,
+      "imported": 80,
+      "failedGroups": [
+        "stay"
+      ],
+      "runId": "bulk-593ce4e3-b308-449d-ab0c-06c915354829"
+    },
+    {
+      "id": "jacarepagua",
+      "name": "Жакарепагуа",
+      "status": "imported",
+      "discovered": 334,
+      "accumulated": 414,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-e4b7f433-5c8a-4f85-8479-8c6d3bae8f9e"
+    },
+    {
+      "id": "jarama",
+      "name": "Харама",
+      "status": "imported",
+      "discovered": 78,
+      "imported": 78,
+      "failedGroups": [
+        "transport",
+        "stay",
+        "explore",
+        "essential"
+      ],
+      "runId": "bulk-14abbe0a-3a54-488e-b565-7c57b6e99661",
+      "lastRetryError": "Источник не вернул кандидатов; группы: stay, essential"
+    },
+    {
+      "id": "jeddah",
+      "name": "Джидда",
+      "status": "imported",
+      "discovered": 913,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-2803a789-1da5-4ef1-aa0c-41a826888e82"
+    },
+    {
+      "id": "jerez",
+      "name": "Херес",
+      "status": "imported",
+      "discovered": 364,
+      "accumulated": 422,
+      "imported": 80,
+      "failedGroups": [
+        "stay"
+      ],
+      "runId": "bulk-60d6553c-e7ea-43f5-8c62-117229c090d3"
+    },
+    {
+      "id": "kyalami",
+      "name": "Кьялами",
+      "status": "imported",
+      "discovered": 1715,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-8b3e4b5d-2aa8-4490-b7d5-57f0f9b8bd7a"
+    },
+    {
+      "id": "las_vegas",
+      "name": "Сизарс-Пэлас",
+      "status": "imported",
+      "discovered": 1481,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-f061ebb0-df12-47a0-9c3c-2ef6e4368218"
+    },
+    {
+      "id": "lemans",
+      "name": "Ле-Ман",
+      "status": "imported",
+      "discovered": 363,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-8cf0b3d6-ede4-448b-980d-5063822d5fb5",
+      "lastRetryError": "Источник не вернул кандидатов; группы: stay, explore"
+    },
+    {
+      "id": "long_beach",
+      "name": "Лонг-Бич",
+      "status": "imported",
+      "discovered": 453,
+      "accumulated": 533,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-c24e5b1c-0da9-4abf-9f21-0ef00ba6d138"
+    },
+    {
+      "id": "losail",
+      "name": "Лусаил",
+      "status": "imported",
+      "discovered": 378,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-c9d5a076-a2cb-471c-b7f1-8b106a745b50"
+    },
+    {
+      "id": "madring",
+      "name": "Мадринг",
+      "status": "imported",
+      "discovered": 2599,
+      "imported": 80,
+      "failedGroups": [
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-f05c3875-3df3-4448-94d1-8b3e198e2db2",
+      "lastRetryError": "Источник не вернул кандидатов; группы: неизвестно"
+    },
+    {
+      "id": "magny_cours",
+      "name": "Маньи-Кур",
+      "status": "imported",
+      "discovered": 282,
+      "accumulated": 362,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-5ebc1cb5-56ea-40c9-9094-aa7e870f5159"
+    },
+    {
+      "id": "marina_bay",
+      "name": "Марина-Бей",
+      "status": "imported",
+      "discovered": 18,
+      "accumulated": 98,
+      "imported": 80,
+      "failedGroups": [
+        "transport"
+      ],
+      "runId": "bulk-f371474b-94b8-49de-b0ba-0458a4984cb1"
+    },
+    {
+      "id": "miami",
+      "name": "Майами",
+      "status": "imported",
+      "discovered": 741,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "explore"
+      ],
+      "runId": "bulk-1c9958b4-f6a2-4ffc-bbd4-9499b2fee9c8",
+      "lastRetryError": "Источник не вернул кандидатов; группы: explore"
+    },
+    {
+      "id": "monaco",
+      "name": "Монако",
+      "status": "imported",
+      "discovered": 190,
+      "accumulated": 270,
+      "imported": 80,
+      "failedGroups": [
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-014b1d00-c642-4555-a97e-d2934f57d3c3"
+    },
+    {
+      "id": "monsanto",
+      "name": "Монсанту",
+      "status": "imported",
+      "discovered": 928,
+      "accumulated": 1008,
+      "imported": 80,
+      "failedGroups": [
+        "stay"
+      ],
+      "runId": "bulk-b533d105-656e-41b7-b969-fdc62b1365c5"
+    },
+    {
+      "id": "montjuic",
+      "name": "Монжуик",
+      "status": "imported",
+      "discovered": 2435,
+      "accumulated": 2515,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-5000bdec-d58b-464b-9131-0a8a52b6b850"
+    },
+    {
+      "id": "monza",
+      "name": "Монца",
+      "status": "imported",
+      "discovered": 1372,
+      "accumulated": 1450,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-eb937808-89b0-4b37-a365-5fa562f0d343"
+    },
+    {
+      "id": "mosport",
+      "name": "Моспорт",
+      "status": "imported",
+      "discovered": 325,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-0c5dd040-b6e9-4320-9a32-c9cbf86d201a"
+    },
+    {
+      "id": "mugello",
+      "name": "Муджелло",
+      "status": "imported",
+      "discovered": 228,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-8499d41b-62e4-4d0b-b455-bbf6f4304819",
+      "lastRetryError": "Источник не вернул кандидатов; группы: неизвестно"
+    },
+    {
+      "id": "nivelles",
+      "name": "Нивель-Болер",
+      "status": "imported",
+      "discovered": 241,
+      "accumulated": 321,
+      "imported": 80,
+      "failedGroups": [
+        "transport"
+      ],
+      "runId": "bulk-b5df6d25-93a3-40dd-8582-d911f764281a"
+    },
+    {
+      "id": "nurburgring",
+      "name": "Нюрбургринг",
+      "status": "imported",
+      "discovered": 2131,
+      "accumulated": 2202,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-18de10d5-b4d2-4310-877c-19bf6f3079c4"
+    },
+    {
+      "id": "okayama",
+      "name": "Окаяма",
+      "status": "imported",
+      "discovered": 1207,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "essential"
+      ],
+      "runId": "bulk-aee515c8-7ad1-47ab-9b5b-ade579c0bcdc"
+    },
+    {
+      "id": "pedralbes",
+      "name": "Педральбес",
+      "status": "imported",
+      "discovered": 1178,
+      "accumulated": 1257,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-ecd25c92-0e39-4934-b78a-c1ce9fd3eb85"
+    },
+    {
+      "id": "pescara",
+      "name": "Пескара",
+      "status": "imported",
+      "discovered": 1345,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-eb1ca1b9-8d7a-44cc-957f-b89994c9586c",
+      "lastRetryError": "Источник не вернул кандидатов; группы: неизвестно"
+    },
+    {
+      "id": "phoenix",
+      "name": "Финикс",
+      "status": "imported",
+      "discovered": 1519,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-d7fce030-6ba5-4d0c-9280-d244562c0650"
+    },
+    {
+      "id": "portimao",
+      "name": "Алгарве",
+      "status": "imported",
+      "discovered": 816,
+      "accumulated": 896,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-d064fac2-5eee-4c70-b4c4-6c5b987a9d4e"
+    },
+    {
+      "id": "red_bull_ring",
+      "name": "Ред Булл Ринг",
+      "status": "imported",
+      "discovered": 51,
+      "accumulated": 131,
+      "imported": 80,
+      "failedGroups": [
+        "stay"
+      ],
+      "runId": "bulk-b9174b4b-333c-454d-8a3d-11e443a4aec0"
+    },
+    {
+      "id": "reims",
+      "name": "Реймс-Гё",
+      "status": "imported",
+      "discovered": 419,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-9a9ada27-402f-434d-a5ef-9c69cd432dd7",
+      "lastRetryError": "Источник не вернул кандидатов; группы: explore"
+    },
+    {
+      "id": "ricard",
+      "name": "Поль-Рикар",
+      "status": "imported",
+      "discovered": 408,
+      "accumulated": 487,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-a59e5a5e-5a8a-403c-a6d2-1ed415a4c4b3"
+    },
+    {
+      "id": "riverside",
+      "name": "Риверсайд",
+      "status": "imported",
+      "discovered": 737,
+      "imported": 80,
+      "failedGroups": [
+        "transport"
+      ],
+      "runId": "bulk-fddaea76-f21c-4a9e-8861-410073fb2958"
+    },
+    {
+      "id": "rodriguez",
+      "name": "Эрманос Родригес",
+      "status": "imported",
+      "discovered": 4055,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-f18f91aa-eacc-4076-b5aa-db420335625f"
+    },
+    {
+      "id": "sebring",
+      "name": "Себринг",
+      "status": "imported",
+      "discovered": 345,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-9502ec50-8482-4dec-a3b1-16ece60fa3fe"
+    },
+    {
+      "id": "sepang",
+      "name": "Сепанг",
+      "status": "imported",
+      "discovered": 1627,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-d0c7156b-97e5-4214-b5ed-4b1e8a1d104a"
+    },
+    {
+      "id": "shanghai",
+      "name": "Шанхай",
+      "status": "imported",
+      "discovered": 564,
+      "accumulated": 643,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-8e939141-c418-4c5f-952a-aa107c5e1142"
+    },
+    {
+      "id": "silverstone",
+      "name": "Сильверстоун",
+      "status": "imported",
+      "discovered": 278,
+      "accumulated": 358,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-4137f902-c33c-4b43-b36b-85d859482463"
+    },
+    {
+      "id": "sochi",
+      "name": "Сочи Автодром",
+      "status": "imported",
+      "discovered": 620,
+      "accumulated": 700,
+      "imported": 80,
+      "failedGroups": [
+        "stay"
+      ],
+      "runId": "bulk-e5f40ddb-ca7b-40fe-a0e0-efec3d8da9d0"
+    },
+    {
+      "id": "suzuka",
+      "name": "Сузука",
+      "status": "imported",
+      "discovered": 1318,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "essential"
+      ],
+      "runId": "bulk-d2f2b3d0-4353-4458-a086-f0ec3ce4cc55",
+      "lastRetryError": "Источник не вернул кандидатов; группы: essential"
+    },
+    {
+      "id": "tremblant",
+      "name": "Мон-Тремблан",
+      "status": "imported",
+      "discovered": 408,
+      "accumulated": 487,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-b7c604ff-2894-47dd-8722-bd54a0f5cb2b"
+    },
+    {
+      "id": "valencia",
+      "name": "Валенсия",
+      "status": "imported",
+      "discovered": 223,
+      "accumulated": 303,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-ab75efc9-3ba3-4318-a611-9173c0c414cc"
+    },
+    {
+      "id": "vegas",
+      "name": "Лас-Вегас",
+      "status": "imported",
+      "discovered": 1476,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-0f913bcd-b854-4aef-9ab9-e57eda1bea08"
+    },
+    {
+      "id": "villeneuve",
+      "name": "Жиль Вильнёв",
+      "status": "imported",
+      "discovered": 472,
+      "accumulated": 551,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-b3bb0500-9095-4fc5-a456-6868896394a5"
+    },
+    {
+      "id": "watkins_glen",
+      "name": "Уоткинс-Глен",
+      "status": "imported",
+      "discovered": 241,
+      "accumulated": 321,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-982d6db1-acfc-474a-864b-cbbecd6126ad"
+    },
+    {
+      "id": "yas_marina",
+      "name": "Яс-Марина",
+      "status": "imported",
+      "discovered": 103,
+      "accumulated": 182,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-6b4f3b76-fd11-4d1f-8e2c-5d7cf25f3df1"
+    },
+    {
+      "id": "yeongam",
+      "name": "Йонам",
+      "status": "imported",
+      "discovered": 1935,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-e18dc57b-8a22-4d90-802c-0cf0338f5cc4"
+    },
+    {
+      "id": "zandvoort",
+      "name": "Зандворт",
+      "status": "imported",
+      "discovered": 288,
+      "accumulated": 368,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-dd97ecd8-b92f-4d48-89b4-314e442f092f"
+    },
+    {
+      "id": "zeltweg",
+      "name": "Цельтвег",
+      "status": "imported",
+      "discovered": 180,
+      "imported": 80,
+      "failedGroups": [
+        "transport",
+        "stay",
+        "explore"
+      ],
+      "runId": "bulk-0a7c8ada-9e81-41ad-8056-dcad76523413",
+      "lastRetryError": "Источник не вернул кандидатов; группы: неизвестно"
+    },
+    {
+      "id": "zolder",
+      "name": "Золдер",
+      "status": "imported",
+      "discovered": 266,
+      "accumulated": 346,
+      "imported": 80,
+      "failedGroups": [],
+      "runId": "bulk-cd37fdbc-9960-43ce-8555-88c52b51ae13"
+    }
+  ],
+  "totals": {
+    "discovered": 86133,
+    "imported": 6158,
+    "failed": 0
+  }
+}

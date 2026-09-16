@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-09-14",
+  "circuitId": "monza",
+  "scope": "Конфигурации этапов чемпионата мира Formula 1 в Монце",
+  "rules": [
+    "Одинаковая опубликованная длина не доказывает одинаковую геометрию",
+    "Период подтверждает назначение этапа, но не заменяет проверку точной линии",
+    "Существующая современная геометрия не назначается этапам до 2000 года"
+  ],
+  "periods": [
+    { "seasons": "1950–1954", "layoutId": "it-monza-1950-1954", "nameRu": "Дорожная трасса образца 1938 года", "lengthM": 6300, "geometryStatus": "missing", "confidence": "high" },
+    { "seasons": "1955–1956", "layoutId": "it-monza-combined-1955-1956", "nameRu": "Комбинированная дорожная трасса и скоростной овал", "lengthM": 10000, "geometryStatus": "missing", "confidence": "high" },
+    { "seasons": "1957–1959", "layoutId": "it-monza-road-1957-1959", "nameRu": "Дорожная трасса с Parabolica без овала и шикан", "lengthM": 5750, "geometryStatus": "missing", "confidence": "high" },
+    { "seasons": "1960–1961", "layoutId": "it-monza-combined-1960-1961", "nameRu": "Комбинированная дорожная трасса и скоростной овал", "lengthM": 10000, "geometryStatus": "missing", "confidence": "high" },
+    { "seasons": "1962–1971", "layoutId": "it-monza-road-1962-1971", "nameRu": "Дорожная трасса с Parabolica без овала и шикан", "lengthM": 5750, "geometryStatus": "missing", "confidence": "high" },
+    { "seasons": "1972–1973", "layoutId": "it-monza-1972-1973", "nameRu": "Дорожная трасса с первыми двумя шиканами", "lengthM": 5775, "geometryStatus": "missing", "confidence": "high" },
+    { "seasons": "1974–1975", "layoutId": "it-monza-1974-1975", "nameRu": "Конфигурация с переработанной Variante Ascari", "lengthM": 5780, "geometryStatus": "missing", "confidence": "high" },
+    { "seasons": "1976–1993", "layoutId": "it-monza-1976-1993", "nameRu": "Конфигурация с Variante del Rettifilo и Variante della Roggia", "lengthM": 5800, "geometryStatus": "missing", "confidence": "high" },
+    { "seasons": "1994", "layoutId": "it-monza-1994", "nameRu": "Конфигурация с замедленной Second Lesmo", "lengthM": 5800, "geometryStatus": "missing", "confidence": "high" },
+    { "seasons": "1995–1999", "layoutId": "it-monza-1995-1999", "nameRu": "Конфигурация после работ 1994–1995 годов", "lengthM": 5770, "geometryStatus": "missing", "confidence": "high" },
+    { "seasons": "2000–2026", "layoutId": "it-1922", "nameRu": "Современная конфигурация Монцы", "lengthM": 5793, "geometryStatus": "reviewed", "confidence": "high" }
+  ],
+  "sources": [
+    { "id": "monza_circuit_official", "url": "https://www.monzanet.it/en/history/", "kind": "operator", "noteRu": "История перестроек и опубликованные длины" },
+    { "id": "monza_layout_official", "url": "https://www.monzanet.it/en/circuit/", "kind": "operator", "noteRu": "Современная длина и характеристики" },
+    { "id": "formula1_monza_banking", "url": "https://www.formula1.com/en/latest/article/high-risk-high-interest-a-brief-history-of-italian-banking.6L8HuEEFfOmwpMc5Y555VJ", "kind": "championship", "noteRu": "Сезоны использования комбинированной десятикилометровой трассы" },
+    { "id": "formula1_imola_safety_legacy", "url": "https://www.formula1.com/en/latest/article/imola-94-and-the-lasting-safety-legacy.5P8zqEzNjKzYw8qdckoYFF", "kind": "championship", "noteRu": "Отдельное изменение Second Lesmo в 1994 году" },
+    { "id": "formula1_monza_event", "url": "https://www.formula1.com/en/information/italy-autodromo-nazionalemonza.FiJN1jnQlRLeHqOxIt13m", "kind": "championship", "noteRu": "Современная длина конфигурации" },
+    { "id": "racingcircuits_monza", "url": "https://www.racingcircuits.info/europe/italy/monza.html", "kind": "historical-database", "noteRu": "Разделение работ 1994 и 1995 годов" }
+  ],
+  "unresolved": [
+    "Точные centerline исторических конфигураций",
+    "Повороты по единой методике для ранних конфигураций",
+    "Направление движения и положение линии старта-финиша для каждого периода",
+    "Геометрическое совпадение повторно использованных дорожной и комбинированной версий"
+  ]
+}

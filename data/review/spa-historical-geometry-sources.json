@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-09-09",
+  "circuitId": "spa",
+  "purpose": "Источники для проверки и ручной геопривязки исторических конфигураций Спа-Франкоршам",
+  "rules": [
+    "SVG с экранными координатами не считается готовой географической геометрией",
+    "Схема используется как подложка или сравнительный источник, а не назначается этапу автоматически",
+    "Перед публикацией контур сверяется минимум с официальной длиной и несколькими устойчивыми ориентирами местности",
+    "Для производной геометрии сохраняются автор, лицензия, URL источника и описание выполненной геопривязки"
+  ],
+  "sources": [
+    {
+      "id": "commons-spa-1947-layout-svg",
+      "periodHint": "1947–1978",
+      "targetLayoutIds": ["be-spa-1970"],
+      "format": "svg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Spa-Francorchamps_1947_layout.svg",
+      "author": "Valentin JJ.",
+      "licence": "CC BY-SA 4.0",
+      "rightsStatus": "verified",
+      "use": "vector_reference",
+      "status": "needs_georeferencing",
+      "notesRu": "Хорошая основа для большого кольца, но заявленный широкий период нужно сверить с официальными изменениями 1953 года и версией конкретного сезона"
+    },
+    {
+      "id": "commons-spa-1950-map-jpg",
+      "periodHint": "1950–1954",
+      "targetLayoutIds": [],
+      "format": "jpg",
+      "dimensions": "583x405",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Spa_1950.jpg",
+      "author": "Jiří Žemlička",
+      "licence": "Public domain",
+      "rightsStatus": "verified",
+      "use": "raster_reference",
+      "status": "needs_period_review",
+      "notesRu": "Схема подходит для сравнения раннего большого кольца; недостаточна для объединения всех этапов 1950–1968 в одну конфигурацию"
+    },
+    {
+      "id": "commons-spa-1979-map-jpg",
+      "periodHint": "1979",
+      "targetLayoutIds": ["be-spa-1983", "be-spa-1985-1991", "be-spa-1992-1993"],
+      "format": "jpg",
+      "dimensions": "595x510",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Spa-Francorchamps_1979.jpg",
+      "author": "Jiří Žemlička; derivative: Micap",
+      "licence": "Public domain",
+      "rightsStatus": "verified",
+      "use": "raster_reference",
+      "status": "comparison_only",
+      "notesRu": "Показывает базовую сокращённую конфигурацию. Для каждой версии 1983–1993 нужны дополнительные схемы зон пит-лейна и изменений трассы"
+    },
+    {
+      "id": "commons-spa-1994-layout-svg",
+      "periodHint": "1994",
+      "targetLayoutIds": ["be-spa-1994"],
+      "format": "svg",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Spa_1994.svg",
+      "author": "Valentin JJ.",
+      "licence": "CC BY-SA 4.0",
+      "rightsStatus": "verified",
+      "use": "vector_reference",
+      "status": "needs_georeferencing",
+      "notesRu": "Точная схема уникальной версии Гран-при 1994 года с шиканой Eau Rouge; требует преобразования экранных координат SVG в WGS84"
+    },
+    {
+      "id": "commons-spa-1995-2001-map-png",
+      "periodHint": "1995–2001",
+      "targetLayoutIds": ["be-spa-1995", "be-spa-1996-2001"],
+      "format": "png",
+      "dimensions": "1879x1176",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Spa_1995-2003.png",
+      "author": "JPDurzel",
+      "licence": "CC BY-SA 4.0",
+      "rightsStatus": "verified",
+      "use": "raster_reference",
+      "status": "needs_georeferencing",
+      "notesRu": "Высокое разрешение удобно для ручной оцифровки; версии 1995 и 1996–2001 остаются разными записями из-за официальных длин"
+    },
+    {
+      "id": "commons-spa-2002-map-jpg",
+      "periodHint": "2002",
+      "targetLayoutIds": ["be-spa-2002"],
+      "format": "jpg",
+      "dimensions": "595x510",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Spa_2002.jpg",
+      "author": "Jiří Žemlička",
+      "licence": "Public domain",
+      "rightsStatus": "verified",
+      "use": "raster_reference",
+      "status": "needs_georeferencing",
+      "notesRu": "Схема непосредственно заявлена для Гран-при 2002 года"
+    },
+    {
+      "id": "commons-spa-2004-map-jpg",
+      "periodHint": "2004–2005",
+      "targetLayoutIds": ["be-spa-2004-2005"],
+      "format": "jpg",
+      "dimensions": "583x405",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Spa_2004.jpg",
+      "author": "Jiří Žemlička",
+      "licence": "Public domain",
+      "rightsStatus": "verified",
+      "use": "raster_reference",
+      "status": "needs_georeferencing",
+      "notesRu": "Схема заявлена для конфигурации Формулы-1 2004–2005 годов"
+    },
+    {
+      "id": "racingcircuits-spa-layout-archive",
+      "periodHint": "1921–present",
+      "targetLayoutIds": [
+        "be-spa-1970",
+        "be-spa-1983",
+        "be-spa-1985-1991",
+        "be-spa-1992-1993",
+        "be-spa-1994",
+        "be-spa-1995",
+        "be-spa-1996-2001",
+        "be-spa-2002",
+        "be-spa-2004-2005"
+      ],
+      "format": "web_reference",
+      "sourcePage": "https://www.racingcircuits.info/europe/belgium/spa-francorchamps.html",
+      "author": "RacingCircuits.info",
+      "licence": "Not verified for redistribution",
+      "rightsStatus": "unknown",
+      "use": "comparison_only",
+      "status": "do_not_import",
+      "notesRu": "Полезен для визуального сравнения изменений по годам, но файлы нельзя переносить в проект до отдельной проверки прав"
+    }
+  ]
+}

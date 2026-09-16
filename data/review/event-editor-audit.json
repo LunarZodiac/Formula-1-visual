@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-09-10T13:00:31.206Z",
+  "counts": {
+    "races": 1172,
+    "sessions": 3524,
+    "results": 39409
+  },
+  "coverage": {
+    "racesWithLayout": 45,
+    "racesWithoutLayout": 1127,
+    "completedSessionsWithoutResultsByType": {
+      "practice_1": 375,
+      "practice_2": 363,
+      "practice_3": 357,
+      "qualifying": 631,
+      "sprint_shootout": 1
+    }
+  },
+  "integrity": {
+    "racesWithoutCircuit": 0,
+    "sessionsWithoutRace": 0,
+    "resultsWithoutSession": 0,
+    "duplicateDriversWithinSession": 0,
+    "resultsWithoutDriver": 0
+  },
+  "raceWinnerIssues": [],
+  "errors": []
+}

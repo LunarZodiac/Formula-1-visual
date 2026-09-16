@@ -27,10 +27,19 @@ try {
       route.route_type,
       route.review_status,
       route.distance_m,
+      route.geometry IS NOT NULL AS has_geometry,
+      route.event_only,
+      route.schedule_notes_ru,
+      source.url AS source_url,
       presentation.route_group,
       presentation.line_offset_px,
       presentation.min_zoom,
       presentation.max_zoom,
+      presentation.rationale_ru,
+      presentation.highlights_ru,
+      presentation.practical_notes_ru,
+      COALESCE((endpoint.properties ->> 'eventAccessConfirmed')::boolean, false)
+        AS endpoint_event_access_confirmed,
       round(ST_Distance(
         ST_EndPoint(route.geometry::geometry)::geography,
         layout.centerline::geography
@@ -42,9 +51,18 @@ try {
     FROM atlas.travel_routes AS route
     LEFT JOIN atlas.travel_route_presentations AS presentation
       ON presentation.route_id = route.id
+    LEFT JOIN atlas.data_sources AS source ON source.id = route.source_id
+    LEFT JOIN LATERAL (
+      SELECT poi.properties
+      FROM atlas.travel_route_stops AS stop
+      LEFT JOIN atlas.tourism_pois AS poi ON poi.id = stop.poi_id
+      WHERE stop.route_id = route.id
+      ORDER BY stop.sequence DESC
+      LIMIT 1
+    ) AS endpoint ON true
     CROSS JOIN layout
     WHERE route.circuit_id = 'spa'
-      AND route.review_status IN ('candidate', 'reviewed', 'published')
+      AND route.review_status IN ('candidate', 'reviewed', 'published', 'hidden')
     ORDER BY route.id
   `);
 
@@ -86,6 +104,20 @@ try {
   }));
   const errors = [];
   for (const route of routes) {
+    const publicationBlockers = [];
+    if (!route.has_geometry) publicationBlockers.push('отсутствует геометрия');
+    if (!route.source_url) publicationBlockers.push('отсутствует проверяемый источник');
+    if (!route.rationale_ru) publicationBlockers.push('не заполнено объяснение выбора маршрута');
+    if (!Array.isArray(route.highlights_ru) || route.highlights_ru.length === 0) publicationBlockers.push('не заполнены точки интереса');
+    if (!route.practical_notes_ru) publicationBlockers.push('не заполнены практические советы');
+    if (route.route_type === 'arrival' && !route.endpoint_event_access_confirmed) {
+      publicationBlockers.push('конечная точка не подтверждена как въезд на этап');
+    }
+    if (route.route_type === 'arrival' && !route.schedule_notes_ru) {
+      publicationBlockers.push('нет предупреждения о сезонной схеме движения');
+    }
+    route.publicationBlockers = publicationBlockers;
+    route.publicationReady = publicationBlockers.length === 0;
     if (!route.route_group) errors.push(`${route.id}: отсутствуют настройки отображения`);
     if (route.track_buffer_overlap_m > 0) {
       errors.push(`${route.id}: центральная часть пересекает буфер трассы на ${route.track_buffer_overlap_m} м`);
@@ -101,6 +133,7 @@ try {
     generatedAt: new Date().toISOString(),
     circuitId: 'spa',
     routeCount: routes.length,
+    publicationReadyCount: routes.filter((route) => route.publicationReady).length,
     routes,
     overlappingPairsOver100m: overlaps,
     errors,
@@ -109,6 +142,7 @@ try {
   await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   console.log(JSON.stringify({
     routeCount: routes.length,
+    publicationReadyCount: routes.filter((route) => route.publicationReady).length,
     overlappingPairsOver100m: overlaps.length,
     errors: errors.length,
     reportPath: path.relative(repositoryRoot, reportPath),

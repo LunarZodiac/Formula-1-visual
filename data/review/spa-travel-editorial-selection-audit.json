@@ -1,0 +1,337 @@
+{
+  "asOf": "2026-09-12",
+  "circuitId": "spa",
+  "scope": "План первой ограниченной редакционной проверки кандидатов без изменения публичных данных и статусов",
+  "inputs": {
+    "coverageAudit": {
+      "path": "data/review/travel-coverage-audit.json",
+      "generatedAt": "2026-09-12T12:45:58.284Z"
+    },
+    "routeAudit": {
+      "path": "data/review/spa-travel-route-audit.json",
+      "generatedAt": "2026-09-10T11:46:00.532Z"
+    },
+    "reviewExport": "data/review/spa-travel-review.geojson",
+    "publicExport": "apps/web/public/data/travel/spa.geojson"
+  },
+  "facts": {
+    "databaseCoverage": {
+      "totalLinkedPoints": 3833,
+      "byGroup": {
+        "transport": 293,
+        "stay": 1194,
+        "explore": 2154,
+        "essential": 190
+      },
+      "byStatus": {
+        "candidate": 3797,
+        "reviewed": 27,
+        "published": 0,
+        "hidden": 9
+      },
+      "missingStoredDistances": 0,
+      "invalidDistances": 0
+    },
+    "currentPublicExport": {
+      "poi": 24,
+      "accommodationZones": 6,
+      "routes": 0,
+      "poiComposition": {
+        "transport": 13,
+        "explore": 10,
+        "essential": 1,
+        "stay": 0,
+        "circuit": 0
+      }
+    },
+    "algorithmicReviewShortlist": {
+      "poi": 60,
+      "candidatePoi": 36,
+      "reviewedPoi": 24,
+      "accommodationZones": 6,
+      "routes": 8,
+      "candidatePoiByRole": {
+        "transport": 4,
+        "stay": 15,
+        "explore": 13,
+        "essential": 4
+      },
+      "candidateStayAlreadyRepeatedAsZoneExamples": 9
+    },
+    "routes": {
+      "total": 8,
+      "technicallyWithoutAuditBlockers": 2,
+      "blocked": 6,
+      "published": 0
+    }
+  },
+  "recommendedEditorialShape": {
+    "note": "Это цель проверки, а не разрешение на публикацию. Районы проживания не входят в лимит POI, отдельные гостиницы остаются только необязательными примерами районов.",
+    "firstVerificationBatchPoiTarget": 9,
+    "byEditorialCategory": {
+      "transport": {
+        "newPoiToVerify": 0,
+        "reason": "Публичный слой уже перегружен 13 транспортными POI; новые P+R и автовокзал не имеют подтверждённой связи с поездкой на этап"
+      },
+      "accommodationAreas": {
+        "areasToKeep": 6,
+        "newAreasToVerify": 0,
+        "individualHotelsToPublishAsPoi": 0,
+        "exampleRecordsToVerifySeparately": 2
+      },
+      "attractionsAndLocalCulture": {
+        "candidateRecordsToVerify": 3
+      },
+      "natureAndVerifiedViewpoints": {
+        "candidateRecordsToVerify": 1
+      },
+      "practicalServices": {
+        "candidateRecordsToVerify": 5
+      },
+      "foodAndLocalCulture": {
+        "candidateRecordsToVerify": 0,
+        "coverageGap": "В связанном кандидатском пуле нет кафе и ресторанов; сначала нужен отдельный небольшой поиск по официальным сайтам и актуальным страницам заведений"
+      },
+      "raceWeekendInfrastructure": {
+        "candidateRecordsToPublish": 0,
+        "coverageGap": "Шесть парковочных зон и подъездные сценарии требуют сезонных официальных карт и точных ссылок из билетов"
+      }
+    }
+  },
+  "verificationQueue": [
+    {
+      "order": 1,
+      "id": "osm-way-300753949",
+      "nameRu": "Больница королевы Астрид в Мальмеди",
+      "category": "practical_services",
+      "locality": "Malmedy",
+      "distanceToCircuitM": 3928,
+      "requiredCheck": "Подтвердить существование учреждения, профиль экстренной помощи, официальный URL и актуальную дату по сайту учреждения или бельгийскому реестру здравоохранения",
+      "publishBeforeCheck": false
+    },
+    {
+      "order": 2,
+      "id": "osm-way-675628459",
+      "nameRu": "Больница Вервье «Ла-Турель»",
+      "category": "practical_services",
+      "locality": "Verviers",
+      "distanceToCircuitM": 17984,
+      "requiredCheck": "Проверить официальную страницу CHR Verviers и не создавать отдельную публичную запись для Urgences La Tourelle как для второго объекта",
+      "publishBeforeCheck": false
+    },
+    {
+      "order": 3,
+      "id": "osm-node-2962221859",
+      "nameRu": "Туристический центр Высоких Фенов",
+      "category": "practical_services",
+      "locality": "Malmedy",
+      "distanceToCircuitM": 4328,
+      "requiredCheck": "Подтвердить официальный операторский URL, название, адрес и актуальность приёма посетителей; расписание хранить как волатильное",
+      "publishBeforeCheck": false
+    },
+    {
+      "order": 4,
+      "id": "osm-way-299127887",
+      "nameOriginal": "Martin",
+      "category": "practical_services",
+      "locality": "Francorchamps",
+      "distanceToCircuitM": 2500,
+      "requiredCheck": "Найти официальную запись аптеки, уточнить полное название и адрес; не переносить часы работы только из OSM",
+      "publishBeforeCheck": false
+    },
+    {
+      "order": 5,
+      "id": "osm-node-2971333911",
+      "nameOriginal": "AD Delhaize",
+      "category": "practical_services",
+      "locality": "Malmedy",
+      "distanceToCircuitM": 3463,
+      "requiredCheck": "Сверить магазин по официальному локатору сети и добавить русское название и населённый пункт; часы работы считать волатильными",
+      "publishBeforeCheck": false
+    },
+    {
+      "order": 6,
+      "id": "osm-way-184798459",
+      "nameRu": "Аллея От-Маре",
+      "nameOriginal": "Charmille du Haut-Marais",
+      "category": "attractions_and_local_culture",
+      "distanceToCircuitM": 14267,
+      "requiredCheck": "Подтвердить объект и реальную доступность для посетителя по официальному туристическому или муниципальному источнику; не переносить утверждение wheelchair=yes без проверки",
+      "publishBeforeCheck": false
+    },
+    {
+      "order": 7,
+      "id": "osm-way-204839264",
+      "nameRu": "Музей Во-Холл",
+      "nameOriginal": "Waux-Hall",
+      "category": "attractions_and_local_culture",
+      "locality": "Spa",
+      "distanceToCircuitM": 9236,
+      "requiredCheck": "Уточнить, является ли объект посещаемым музеем или архитектурно-историческим объектом, и проверить режим доступа по официальному источнику",
+      "publishBeforeCheck": false
+    },
+    {
+      "order": 8,
+      "id": "osm-node-321692478",
+      "nameRu": "Историческая горчичная мельница",
+      "nameOriginal": "Historische Senfmühle",
+      "category": "attractions_and_local_culture",
+      "locality": "Monschau",
+      "distanceToCircuitM": 23540,
+      "requiredCheck": "Подтвердить посещение на официальном сайте и оценить уместность как трансграничной остановки свободного дня, а не основной достопримечательности Спа",
+      "publishBeforeCheck": false
+    },
+    {
+      "order": 9,
+      "id": "osm-node-683268957",
+      "nameRu": "Барак-Мишель",
+      "nameOriginal": "Baraque Michel",
+      "category": "nature_and_verified_viewpoints",
+      "distanceToCircuitM": 11142,
+      "requiredCheck": "Подтвердить самостоятельную посетительскую ценность и доступность по официальному источнику природного парка; не дублировать уже опубликованный Сигнал-де-Ботранж",
+      "publishBeforeCheck": false
+    }
+  ],
+  "accommodationExampleQueue": [
+    {
+      "id": "osm-way-107033102",
+      "nameRu": "Кемпинг «О-Руж»",
+      "use": "Только пример внутри подходящего района после проверки официального сайта, сезонности и связи с гоночным уик-эндом"
+    },
+    {
+      "id": "osm-node-9071203077",
+      "nameRu": "Отель «Теро Лодж»",
+      "use": "Только пример внутри района Франкоршам после проверки официального сайта; не отдельный публичный POI"
+    }
+  ],
+  "duplicatesAndRejections": [
+    {
+      "ids": [
+        "osm-node-196287106",
+        "osm-node-1955780257"
+      ],
+      "names": [
+        "Холм Балтия",
+        "Сигнал-де-Ботранж"
+      ],
+      "distanceBetweenM": 13,
+      "decision": "Не публиковать Холм Балтия отдельной точкой; это фактический дубль уже проверенного объекта"
+    },
+    {
+      "ids": [
+        "osm-way-675628459",
+        "osm-way-696235209"
+      ],
+      "names": [
+        "Больница Вервье «Ла-Турель»",
+        "Urgences La Tourelle"
+      ],
+      "distanceBetweenM": 97,
+      "decision": "Представлять как одно медицинское учреждение, а экстренное отделение хранить как атрибут после официальной проверки"
+    },
+    {
+      "ids": [
+        "osm-way-224352201",
+        "osm-way-622143353",
+        "osm-way-461629720"
+      ],
+      "decision": "Не публиковать как Park & Ride этапа: OSM подтверждает парковку у станции, но не трансфер или реалистичную связь с автодромом"
+    },
+    {
+      "id": "osm-way-27581856",
+      "nameRu": "Автовокзал Ахен-Бушхоф",
+      "decision": "Не повышать без доказанного сценария поездки к Спа-Франкоршам; общий транспортный узел в 38,8 км не является достаточным основанием"
+    },
+    {
+      "category": "individual_accommodation",
+      "decision": "Все 15 объектов размещения из алгоритмического shortlist исключить из лимита публичных POI; 9 уже повторяются как примеры районов"
+    }
+  ],
+  "routeReviewOrder": [
+    {
+      "ids": [
+        "spa-route-coo-half-day",
+        "spa-route-high-fens"
+      ],
+      "decision": "Проверять первыми как туристические сценарии, но не публиковать автоматически: нужны проверка каждого stop, источников, порядка, длительности и сезонных ограничений"
+    },
+    {
+      "ids": [
+        "spa-route-brussels-airport",
+        "spa-route-charleroi-airport",
+        "spa-route-cologne-airport",
+        "spa-route-liege-arrival",
+        "spa-route-stavelot"
+      ],
+      "decision": "Не публиковать до подтверждения конечной точки и сезонной схемы движения"
+    },
+    {
+      "id": "spa-route-verviers-shuttle",
+      "decision": "Оставить скрытым: официальная линия движения не опубликована и геометрия отсутствует"
+    }
+  ],
+  "sourceVerification": {
+    "checkedAt": "2026-09-12",
+    "records": [
+      {
+        "id": "osm-way-300753949",
+        "result": "confirmed",
+        "nameRu": "Центр госпитальер королевы Астрид в Мальмеди",
+        "nameOriginal": "Centre Hospitalier Reine Astrid (Malmedy)",
+        "locality": "Malmedy",
+        "address": "Rue Devant les Religieuses 2, 4960 Malmedy",
+        "sourceUrl": "https://www.chrverviers.be/sites-centre_hospitalier_reine_astrid__malmedy_-4.html",
+        "editorialDecision": "Оставить кандидатом до переноса источника и даты проверки в запись; учреждение и адрес подтверждены официальным сайтом больничной сети"
+      },
+      {
+        "id": "osm-way-675628459",
+        "result": "confirmed_with_merge",
+        "nameRu": "CHR Verviers — комплекс La Tourelle",
+        "nameOriginal": "CHR Verviers — Site La Tourelle",
+        "locality": "Verviers",
+        "address": "Rue du Parc 29, 4800 Verviers",
+        "sourceUrl": "https://www.chrverviers.be/acces-354.html",
+        "editorialDecision": "Представлять одним объектом; Urgences La Tourelle не публиковать отдельной точкой"
+      },
+      {
+        "id": "osm-node-2962221859",
+        "result": "confirmed",
+        "nameRu": "Центр природного парка Ботранж",
+        "nameOriginal": "Nature Park Centre Botrange",
+        "locality": "Waimes",
+        "address": "Route de Botrange 131, 4950 Waimes",
+        "sourceUrl": "https://www.ostbelgien.eu/en/fiche/naturalreserves/nature-park-centre-botrange",
+        "editorialDecision": "Сильный кандидат: официальный туристический источник подтверждает информационный центр, экспозицию, сервисы и посещение круглый год; часы работы считать изменяемыми"
+      },
+      {
+        "id": "osm-way-299127887",
+        "result": "identity_confirmed_metadata_incomplete",
+        "nameRu": "Аптека Martin",
+        "nameOriginal": "Pharmacie Martin",
+        "locality": "Francorchamps",
+        "address": "Rue de Spa 154A, 4970 Francorchamps",
+        "sourceUrl": "https://www.pharmanord.be/fr/store_locator",
+        "editorialDecision": "Оставить кандидатом: название и адрес подтверждены локатором, но перед публикацией нужен устойчивый официальный URL аптеки или запись национального реестра"
+      },
+      {
+        "id": "osm-node-2971333911",
+        "result": "confirmed",
+        "nameRu": "Супермаркет Delhaize Malmedy",
+        "nameOriginal": "Delhaize Malmedy",
+        "locality": "Malmedy",
+        "address": "Avenue des Alliés 98, 4960 Malmedy",
+        "sourceUrl": "https://stores.delhaize.be/fr/delhaize-malmedy",
+        "editorialDecision": "Подходящий практический объект с официальной страницей сети и парковкой; часы работы хранить как изменяемые"
+      }
+    ]
+  },
+  "coverageGaps": [
+    "В публичном слое нет аптек, супермаркетов и медицинской помощи",
+    "В связанном кандидатском пуле нет кафе и ресторанов, поэтому группа еды и местной культуры не сформирована",
+    "Алгоритмический shortlist переоценивает отдельное жильё и общий транспорт за счёт формальной категории и расстояния",
+    "Review-экспорт не переносит original name, locality, source URL, source date, rationale, visit timing и season caveats, поэтому сам по себе не достаточен для редакционного решения",
+    "Публичные 7 аэропортов требуют последующей редакционной приоритизации: число велико относительно полезных локальных сервисов",
+    "Геометрии шести парковочных зон и событийных подъездов нельзя создавать по догадке"
+  ],
+  "publicationRule": "Ни одна запись этой очереди не публикуется до добавления предметного источника, даты проверки, русского и оригинального названия, категории, координат, населённого пункта, краткой причины выбора, реалистичного времени посещения и сезонных оговорок. OSM остаётся источником координат и базовой классификации, но не подтверждает режим работы, трансфер, доступность или пригодность для гоночного уик-энда."
+}

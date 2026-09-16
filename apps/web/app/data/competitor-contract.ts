@@ -15,6 +15,21 @@ export type CompetitorStanding = {
   season: number; position: number | null; points: number; wins: number;
   afterRound: number; isFinal: boolean; status: string;
   standingAvailable?: boolean;
+  numbers?: number[];
+};
+export type DriverNumberEntry = {
+  raceId: string; round: number; raceName: string; number: number;
+  numberType: 'permanent' | 'season' | 'event' | 'champion' | 'shared_car' | 'unknown';
+  reviewStatus: 'imported' | 'candidate' | 'reviewed' | 'verified' | 'rejected';
+  team: { id: string; name: string } | null;
+};
+export type DriverNickname = {
+  id: string; nameRu: string; nameOriginal: string | null; contextRu: string | null;
+  sourceUrl: string; sortOrder: number;
+};
+export type DriverQuote = {
+  id: string; quoteRu: string; quoteOriginal: string | null; attributionRu: string;
+  contextRu: string | null; quoteDate: string | null; sourceUrl: string; sortOrder: number;
 };
 type CompetitorHistory = {
   careerTitles: number; sourceIds: string[];
@@ -24,18 +39,22 @@ type CompetitorHistory = {
 };
 export type DriverCatalogItem = CompetitorHistory & {
   id: string; nameRu: string; nameEn: string; code: string | null; number: number | null;
+  permanentNumber?: number | null;
+  numberEntries?: DriverNumberEntry[];
   nationality: string | null; position: number | null; points: number; wins: number;
   standingAvailable?: boolean;
-  biography?: string | null; birthDate?: string | null; birthPlace?: string | null;
+  biography?: string | null; birthDate?: string | null; deathDate?: string | null; birthPlace?: string | null;
+  nicknames?: DriverNickname[]; quotes?: DriverQuote[];
   heightCm?: number | null; weightKg?: number | null;
+  photoUrl?: string | null;
   team: { id: string; name: string; color: string | null; logoUrl: string | null } | null;
   seasonHistory: (CompetitorStanding & { teams: { id: string; name: string; raceEntries: number; points: number }[] })[];
 };
-export type DriverListItem = Pick<DriverCatalogItem, 'id' | 'nameRu' | 'nameEn' | 'code' | 'number' | 'nationality' | 'position' | 'points' | 'wins' | 'team'> & {
+export type DriverListItem = Pick<DriverCatalogItem, 'id' | 'nameRu' | 'nameEn' | 'code' | 'number' | 'permanentNumber' | 'nationality' | 'position' | 'points' | 'wins' | 'team'> & {
   latestSeason?: number;
   firstSeason?: number;
   seasonCount?: number;
-  seasonHistory?: { season: number }[];
+  seasonHistory?: { season: number; numbers?: number[] }[];
 };
 export type TeamCatalogItem = CompetitorHistory & {
   id: string; name: string; nationality: string | null; position: number; points: number; wins: number;
@@ -47,6 +66,17 @@ export type TeamCatalogItem = CompetitorHistory & {
 type CatalogMetadata = { schemaVersion: 2; season: number; generatedAt: string; seasonStatus: string; afterRound: number; sources: CompetitorSource[] };
 export type DriverCatalogData = CatalogMetadata & { drivers: DriverCatalogItem[] };
 export type TeamCatalogData = CatalogMetadata & { teams: TeamCatalogItem[] };
+export type TeamListItem = {
+  id: string; name: string; nationality: string | null; firstSeason: number; latestSeason: number;
+  seasonCount: number; aliases: string[]; careerTitles: number; raceEntries: number;
+  wins: number; podiums: number; points: number; color: string | null; logoUrl: string | null;
+  carImageUrl: string | null;
+  lineages: { direction: 'predecessor' | 'successor'; teamId: string; teamName: string;
+    relationshipType: 'rename' | 'ownership_change' | 'factory_takeover' | 'licence_transfer' | 'continuation' | 'other';
+    validFromYear: number | null; validToYear: number | null; descriptionRu: string | null; sourceUrl: string }[];
+  seasons: { season: number; name: string; position: number | null; points: number; wins: number; isFinal: boolean }[];
+};
+export type AllTeamCatalogData = { schemaVersion: 1; generatedAt: string; teams: TeamListItem[] };
 
 /** Shared by the exporter and route loaders: fail early instead of rendering misleading data. */
 export function assertCompetitorCatalog(value: unknown, kind: 'drivers' | 'teams'): void {
@@ -163,6 +193,11 @@ export function assertCompetitorCatalog(value: unknown, kind: 'drivers' | 'teams
         if (standing.standingAvailable !== false) fail(`${historyPath}.standingAvailable`);
       } else integer(standing.position, `${historyPath}.position`, 1);
       if (kind === 'drivers' && standing.standingAvailable !== undefined) boolean(standing.standingAvailable, `${historyPath}.standingAvailable`);
+      if (kind === 'drivers' && standing.numbers !== undefined) {
+        const numbers = list(standing.numbers, `${historyPath}.numbers`);
+        for (const number of numbers) integer(number, `${historyPath}.numbers`);
+        if (new Set(numbers).size !== numbers.length) fail(`${historyPath}.numbers: duplicate number`);
+      }
       finite(standing.points, `${historyPath}.points`);
       integer(standing.wins, `${historyPath}.wins`); integer(standing.afterRound, `${historyPath}.afterRound`);
       boolean(standing.isFinal, `${historyPath}.isFinal`); text(standing.status, `${historyPath}.status`);
@@ -182,6 +217,52 @@ export function assertCompetitorCatalog(value: unknown, kind: 'drivers' | 'teams
     if (kind === 'drivers') {
       text(row.nameRu, `${path}.nameRu`); text(row.nameEn, `${path}.nameEn`); nullableText(row.code, `${path}.code`);
       if (row.number !== null) integer(row.number, `${path}.number`);
+      if (row.permanentNumber !== undefined && row.permanentNumber !== null) integer(row.permanentNumber, `${path}.permanentNumber`);
+      if (row.numberEntries !== undefined) {
+        const entries = list(row.numberEntries, `${path}.numberEntries`);
+        entries.forEach((entry, entryIndex) => {
+          const entryPath = `${path}.numberEntries[${entryIndex}]`;
+          const numberEntry = object(entry, entryPath);
+          text(numberEntry.raceId, `${entryPath}.raceId`);
+          integer(numberEntry.round, `${entryPath}.round`, 1);
+          text(numberEntry.raceName, `${entryPath}.raceName`);
+          integer(numberEntry.number, `${entryPath}.number`);
+          if (!['permanent', 'season', 'event', 'champion', 'shared_car', 'unknown'].includes(text(numberEntry.numberType, `${entryPath}.numberType`))) fail(`${entryPath}.numberType`);
+          if (!['imported', 'candidate', 'reviewed', 'verified', 'rejected'].includes(text(numberEntry.reviewStatus, `${entryPath}.reviewStatus`))) fail(`${entryPath}.reviewStatus`);
+          if (numberEntry.team !== null) {
+            const team = object(numberEntry.team, `${entryPath}.team`);
+            text(team.id, `${entryPath}.team.id`);
+            text(team.name, `${entryPath}.team.name`);
+          }
+        });
+      }
+      if (row.photoUrl !== undefined && row.photoUrl !== null && !/^(?:\/|https?:\/\/)/.test(text(row.photoUrl, `${path}.photoUrl`))) fail(`${path}.photoUrl`);
+      if (row.nicknames !== undefined) {
+        const nicknames = list(row.nicknames, `${path}.nicknames`);
+        unique(nicknames, `${path}.nicknames`);
+        nicknames.forEach((entry, nicknameIndex) => {
+          const nicknamePath = `${path}.nicknames[${nicknameIndex}]`;
+          const nickname = object(entry, nicknamePath);
+          text(nickname.id, `${nicknamePath}.id`); text(nickname.nameRu, `${nicknamePath}.nameRu`);
+          nullableText(nickname.nameOriginal, `${nicknamePath}.nameOriginal`); nullableText(nickname.contextRu, `${nicknamePath}.contextRu`);
+          if (!/^https?:\/\//.test(text(nickname.sourceUrl, `${nicknamePath}.sourceUrl`))) fail(`${nicknamePath}.sourceUrl`);
+          integer(nickname.sortOrder, `${nicknamePath}.sortOrder`);
+        });
+      }
+      if (row.quotes !== undefined) {
+        const quotes = list(row.quotes, `${path}.quotes`);
+        unique(quotes, `${path}.quotes`);
+        quotes.forEach((entry, quoteIndex) => {
+          const quotePath = `${path}.quotes[${quoteIndex}]`;
+          const quote = object(entry, quotePath);
+          text(quote.id, `${quotePath}.id`); text(quote.quoteRu, `${quotePath}.quoteRu`);
+          text(quote.attributionRu, `${quotePath}.attributionRu`); nullableText(quote.quoteOriginal, `${quotePath}.quoteOriginal`);
+          nullableText(quote.contextRu, `${quotePath}.contextRu`);
+          if (quote.quoteDate !== null) date(quote.quoteDate, `${quotePath}.quoteDate`);
+          if (!/^https?:\/\//.test(text(quote.sourceUrl, `${quotePath}.sourceUrl`))) fail(`${quotePath}.sourceUrl`);
+          integer(quote.sortOrder, `${quotePath}.sortOrder`);
+        });
+      }
       if (row.team !== null) {
         const team = object(row.team, `${path}.team`);
         text(team.id, `${path}.team.id`); text(team.name, `${path}.team.name`);

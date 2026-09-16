@@ -13,6 +13,7 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { addAtlasMapAttribution } from '../lib/map-attribution';
 import driverCatalog from '../data/catalogs/drivers.json';
 import { circuitPageCatalog } from '../data/circuit-page-data';
 import { season2024, type Circuit } from '../data/season-2024';
@@ -596,17 +597,23 @@ export function AtlasExperience() {
   }, []);
 
   useEffect(() => {
-    const seasonFromUrl = Number(new URLSearchParams(window.location.search).get('season'));
-    if (seasonFromUrl >= 1950 && seasonFromUrl <= 2027 && seasonFromUrl !== selectedSeasonRef.current) {
+    const selectSeason = (season: number) => {
+      if (season < 1950 || season > 2027 || season === selectedSeasonRef.current) return;
       queueMicrotask(() => {
-        selectedSeasonRef.current = seasonFromUrl;
+        selectedSeasonRef.current = season;
         setSeasonDataStatus('loading');
-        setSelectedSeason(seasonFromUrl);
+        setSelectedSeason(season);
       });
-    }
-    if (window.location.hash === '#atlas' || window.location.hash === '#season') {
-      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
-    }
+    };
+    const selectSeasonFromUrl = () => selectSeason(Number(new URLSearchParams(window.location.search).get('season')));
+    const handleSeasonChange = (event: Event) => selectSeason((event as CustomEvent<{ season?: number }>).detail?.season ?? Number.NaN);
+    selectSeasonFromUrl();
+    window.addEventListener('f1-season-change', handleSeasonChange);
+    window.addEventListener('popstate', selectSeasonFromUrl);
+    return () => {
+      window.removeEventListener('f1-season-change', handleSeasonChange);
+      window.removeEventListener('popstate', selectSeasonFromUrl);
+    };
   }, []);
 
   useEffect(() => {
@@ -723,7 +730,7 @@ export function AtlasExperience() {
     mapRef.current = map;
 
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-left');
-    map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+    addAtlasMapAttribution(map);
 
     const updateResponsiveOverview = () => {
       map.resize();
@@ -1064,7 +1071,7 @@ export function AtlasExperience() {
               {countryFlagCode(selectedCircuit.country) && (
                 <img
                   className="circuit-country-flag"
-                  src={`https://flagcdn.com/${countryFlagCode(selectedCircuit.country)}.svg`}
+                  src={`/assets/flags/${countryFlagCode(selectedCircuit.country)}.svg`}
                   alt={`Флаг страны: ${selectedCircuit.country}`}
                   title={selectedCircuit.country}
                 />

@@ -2,16 +2,20 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import * as maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import { getTrackGeometry } from '../data/track-geometries';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { addAtlasMapAttribution } from '../lib/map-attribution';
+import { countryFlagUrl, flagFallbackDataUrl } from './racing-visuals';
 
 export type CircuitCatalogItem = {
   id: string; slug: string; nameRu: string; officialName: string; cityRu: string; countryRu: string;
   countryCode: string; typeRu: string; summary: string; status: 'draft' | 'published';
   competitionStatus?: 'active' | 'historic'; firstRound: number; coordinates: [number, number];
   geometry: GeoJSON.LineString | null; layoutCount?: number; seasons?: number[];
+  imageUrl?: string | null; imageAlt?: string | null;
   metrics: { length: string | null; turns: string | null; debut: string | null; record: string | null };
 };
 
@@ -50,9 +54,13 @@ function metricNumber(value: string | null) { const match = value?.replace(',', 
 function debutEra(year: number) { if (year < 1980) return '1950–1979'; if (year < 2000) return '1980–1999'; if (year < 2015) return '2000–2014'; return '2015–н.в.'; }
 
 function CircuitFlag({ circuit }: { circuit: CircuitCatalogItem }) {
-  // Внешние флаги SVG уже используются в проекте и не требуют растровой оптимизации Next Image.
+  const source = countryFlagUrl(circuit.countryCode);
+  const fallback = flagFallbackDataUrl(circuit.countryCode);
   // eslint-disable-next-line @next/next/no-img-element
-  return <img className="tracks-flag" src={`https://flagcdn.com/${circuit.countryCode}.svg`} alt="" aria-hidden="true" />;
+  return <img className="tracks-flag" src={source ?? fallback} alt="" aria-hidden="true" onError={(event) => {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = fallback;
+  }} />;
 }
 
 function TrackShape({ geometry, compact = false }: { geometry: GeoJSON.LineString | null; compact?: boolean }) {
@@ -82,17 +90,19 @@ function TracksControls(p: ControlsProps) {
 function CircuitMetrics({ circuit }: { circuit: CircuitCatalogItem }) { return <dl className="tracks-metrics"><div><dt>Длина</dt><dd>{circuit.metrics.length ?? '—'}</dd></div><div><dt>Повороты</dt><dd>{circuit.metrics.turns ?? '—'}</dd></div><div><dt>Рекорд круга</dt><dd>{circuit.metrics.record ?? '—'}</dd></div><div><dt>Тип</dt><dd>{trackTypeLabel(circuit.typeRu)}</dd></div></dl>; }
 
 function CircuitCardContent({ circuit, featured = false }: { circuit: CircuitCatalogItem; featured?: boolean }) {
-  return <><div className="tracks-card__placeholder" aria-hidden="true" /><div className="tracks-card__shade" /><div className="tracks-card__heading"><h2>{circuit.nameRu}</h2><div className="tracks-card__country"><CircuitFlag circuit={circuit} /><span>{circuit.countryRu}</span>{featured && <><i>·</i><span>{circuit.cityRu}</span></>}</div></div><div className="tracks-card__opened"><span>Открыта</span><b>{circuit.metrics.debut ?? '—'}</b></div>{featured && <p className="tracks-card__summary">{circuit.summary}</p>}<TrackShape geometry={circuit.geometry} /><CircuitMetrics circuit={circuit} /></>;
+  return <><div className="tracks-card__placeholder" aria-hidden="true">{circuit.imageUrl ? <Image src={circuit.imageUrl} alt="" fill sizes={featured ? '(max-width: 900px) 100vw, 50vw' : '(max-width: 900px) 100vw, 25vw'} /> : null}</div><div className="tracks-card__shade" /><div className="tracks-card__heading"><h2>{circuit.nameRu}</h2><div className="tracks-card__country"><CircuitFlag circuit={circuit} /><span>{circuit.countryRu}</span>{featured && <><i>·</i><span>{circuit.cityRu}</span></>}</div></div><div className="tracks-card__opened"><span>Открыта</span><b>{circuit.metrics.debut ?? '—'}</b></div>{featured && <p className="tracks-card__summary">{circuit.summary}</p>}<TrackShape geometry={circuit.geometry} /><CircuitMetrics circuit={circuit} /></>;
 }
 
 function FeaturedTrackCard({ circuit }: { circuit: CircuitCatalogItem }) {
   const content = <CircuitCardContent circuit={circuit} featured />;
-  return circuit.status === 'published' ? <Link className="tracks-featured" href={`/circuits/${circuit.slug}`}>{content}</Link> : <article className="tracks-featured">{content}</article>;
+  // Все записи каталога ведут на базовый профиль: для черновиков страница
+  // честно показывает, какие редакционные разделы ещё ожидают наполнения
+  return <Link className="tracks-featured" href={`/circuits/${circuit.slug}`}>{content}</Link>;
 }
 
 function TrackCard({ circuit }: { circuit: CircuitCatalogItem }) {
   const content = <CircuitCardContent circuit={circuit} />;
-  return circuit.status === 'published' ? <Link className="tracks-card" href={`/circuits/${circuit.slug}`}>{content}</Link> : <article className="tracks-card">{content}</article>;
+  return <Link className="tracks-card" href={`/circuits/${circuit.slug}`}>{content}</Link>;
 }
 
 function TracksCardsView({ circuits, visibleCount, showMore }: { circuits: CircuitCatalogItem[]; visibleCount: number; showMore: () => void }) {
@@ -127,14 +137,14 @@ function TracksListView({ circuits, season }: { circuits: CircuitCatalogItem[]; 
 
   return <section className="tracks-list" aria-label="Список трасс">{circuits.map((circuit) => {
     const favorite = favorites.has(circuit.id);
-    const hasPhoto = circuit.id === 'spa';
+    const hasPhoto = Boolean(circuit.imageUrl);
     return <article className="tracks-list-row" data-circuit-id={circuit.id} key={circuit.id}>
       <button className={`tracks-list-favorite${favorite ? ' is-active' : ''}`} type="button" aria-label={favorite ? `Удалить ${circuit.nameRu} из избранного` : `Добавить ${circuit.nameRu} в избранное`} aria-pressed={favorite} onClick={() => toggleFavorite(circuit.id)}>{favorite ? '★' : '☆'}</button>
-      <div className={`tracks-list-visual${hasPhoto ? ' has-photo' : ''}`}><span>{hasPhoto ? '' : 'Фото готовится'}</span><b>{trackTypeLabel(circuit.typeRu)}</b></div>
+      <div className={`tracks-list-visual${hasPhoto ? ' has-photo' : ''}`} style={hasPhoto ? { backgroundImage: `linear-gradient(0deg, rgba(2,9,14,.58), rgba(2,9,14,.12)), url(${circuit.imageUrl})` } : undefined}><span>{hasPhoto ? '' : 'Фото готовится'}</span><b>{trackTypeLabel(circuit.typeRu)}</b></div>
       <div className="tracks-list-shape"><TrackShape geometry={circuit.geometry} compact /></div>
       <div className="tracks-list-copy"><h2>{circuit.nameRu}</h2><div><CircuitFlag circuit={circuit} /><span>{circuit.countryRu}</span></div><p>{circuit.summary}</p></div>
       <dl className="tracks-list-stats"><div><dt>Длина трассы</dt><dd>{circuit.metrics.length ?? '—'}</dd></div><div><dt>Повороты</dt><dd>{circuit.metrics.turns ?? '—'}</dd></div><div><dt>Рекорд круга</dt><dd>{circuit.metrics.record ?? '—'}</dd></div><div><dt>Дебют в F1</dt><dd>{circuit.metrics.debut ?? '—'}</dd></div></dl>
-      <div className="tracks-list-actions">{circuit.status === 'published' ? <Link className="is-primary" href={`/circuits/${circuit.slug}`}>Открыть трассу <span>→</span></Link> : <span className="is-disabled">Страница готовится</span>}<Link href={`/?season=${season}&circuit=${encodeURIComponent(circuit.id)}#atlas`}>⌖ На карте</Link></div>
+      <div className="tracks-list-actions"><Link className="is-primary" href={`/circuits/${circuit.slug}`}>Открыть профиль <span>→</span></Link><Link href={`/?season=${season}&circuit=${encodeURIComponent(circuit.id)}#atlas`}>⌖ На карте</Link></div>
     </article>;
   })}</section>;
 }
@@ -143,7 +153,7 @@ function CircuitCatalogMap({ circuits }: { circuits: CircuitCatalogItem[] }) {
   const containerRef = useRef<HTMLDivElement>(null); const mapRef = useRef<MapLibreMap | null>(null); const [selectedId, setSelectedId] = useState<string | null>(circuits[0]?.id ?? null); const selected = circuits.find((circuit) => circuit.id === selectedId) ?? circuits[0] ?? null;
   useEffect(() => {
     if (!containerRef.current) return undefined;
-    const map = new maplibregl.Map({ container: containerRef.current, style: catalogMapStyle, center: [12, 25], zoom: 1.75, minZoom: 1.5, maxZoom: 16, renderWorldCopies: false }); mapRef.current = map; map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+    const map = new maplibregl.Map({ container: containerRef.current, style: catalogMapStyle, center: [12, 25], zoom: 1.75, minZoom: 1.5, maxZoom: 16, renderWorldCopies: false, attributionControl: false }); mapRef.current = map; map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right'); addAtlasMapAttribution(map);
     map.on('load', () => {
       const points: GeoJSON.FeatureCollection<GeoJSON.Point> = { type: 'FeatureCollection', features: circuits.map((circuit) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: circuit.coordinates }, properties: { id: circuit.id, type: trackTypeKey(circuit.typeRu) } })) };
       const lines: GeoJSON.FeatureCollection<GeoJSON.LineString> = { type: 'FeatureCollection', features: circuits.filter((circuit) => circuit.geometry).map((circuit) => ({ type: 'Feature', geometry: circuit.geometry!, properties: { id: circuit.id } })) };
@@ -157,7 +167,7 @@ function CircuitCatalogMap({ circuits }: { circuits: CircuitCatalogItem[] }) {
     return () => { map.remove(); mapRef.current = null; };
   }, [circuits]);
   const focus = (circuit: CircuitCatalogItem) => { setSelectedId(circuit.id); mapRef.current?.easeTo({ center: circuit.coordinates, zoom: 8, duration: 800 }); };
-  return <section className="tracks-map"><div className="tracks-map__canvas-wrap"><div ref={containerRef} className="tracks-map__canvas" /><div className="tracks-map__legend"><span className="is-permanent" /> стационарная <span className="is-street" /> городская <span className="is-mixed" /> смешанная</div>{selected && <div className="tracks-map__popup"><TrackShape geometry={selected.geometry} compact /><div><strong>{selected.nameRu}</strong><span>{selected.countryRu} · {trackTypeLabel(selected.typeRu)}</span>{selected.status === 'published' ? <Link href={`/circuits/${selected.slug}`}>Открыть трассу →</Link> : <small>Страница готовится</small>}</div></div>}</div><aside className="tracks-map__panel"><header><span>Трассы на карте</span><b>{circuits.length}</b></header><div>{circuits.map((circuit) => <button key={circuit.id} className={selected?.id === circuit.id ? 'is-active' : ''} onClick={() => focus(circuit)}><TrackShape geometry={circuit.geometry} compact /><span><strong>{circuit.nameRu}</strong><small>{circuit.countryRu} · {trackTypeLabel(circuit.typeRu)}</small></span></button>)}</div></aside></section>;
+  return <section className="tracks-map"><div className="tracks-map__canvas-wrap"><div ref={containerRef} className="tracks-map__canvas" /><div className="tracks-map__legend"><span className="is-permanent" /> стационарная <span className="is-street" /> городская <span className="is-mixed" /> смешанная</div>{selected && <div className="tracks-map__popup"><TrackShape geometry={selected.geometry} compact /><div><strong>{selected.nameRu}</strong><span>{selected.countryRu} · {trackTypeLabel(selected.typeRu)}</span><Link href={`/circuits/${selected.slug}`}>Открыть профиль →</Link></div></div>}</div><aside className="tracks-map__panel"><header><span>Трассы на карте</span><b>{circuits.length}</b></header><div>{circuits.map((circuit) => <button key={circuit.id} className={selected?.id === circuit.id ? 'is-active' : ''} onClick={() => focus(circuit)}><TrackShape geometry={circuit.geometry} compact /><span><strong>{circuit.nameRu}</strong><small>{circuit.countryRu} · {trackTypeLabel(circuit.typeRu)}</small></span></button>)}</div></aside></section>;
 }
 
 function EmptyState({ reset }: { reset: () => void }) { return <section className="tracks-empty"><span>0 результатов</span><h2>Ничего не найдено</h2><p>Попробуйте изменить фильтры или очистить поисковый запрос</p><button onClick={reset}>Сбросить фильтры</button></section>; }
@@ -172,13 +182,15 @@ function CatalogSummary({ circuits }: { circuits: CircuitCatalogItem[] }) {
 
 export function CircuitCatalog({ season, circuits }: Props) {
   const [view, setView] = useState<ViewMode>('cards'); const [query, setQuery] = useState(''); const [country, setCountry] = useState('all'); const [region, setRegion] = useState('all'); const [status, setStatus] = useState('all'); const [type, setType] = useState('all'); const [era, setEra] = useState('all'); const [layouts, setLayouts] = useState('all'); const [lengthBand, setLengthBand] = useState('all'); const [turnsBand, setTurnsBand] = useState('all'); const [sort, setSort] = useState<SortMode>('priority'); const [visibleCount, setVisibleCount] = useState(PAGE_SIZE); const [ready, setReady] = useState(false);
-  useEffect(() => { const params = new URLSearchParams(window.location.search); queueMicrotask(() => { const mode = params.get('view'); setView(mode === 'map' || mode === 'list' ? mode : 'cards'); setQuery(params.get('q') ?? ''); setCountry(params.get('country') ?? 'all'); setRegion(params.get('region') ?? 'all'); setStatus(params.get('status') ?? 'all'); setType(params.get('type') ?? 'all'); setEra(params.get('era') ?? 'all'); setLayouts(params.get('layouts') ?? 'all'); setLengthBand(params.get('length') ?? 'all'); setTurnsBand(params.get('turns') ?? 'all'); setSort((params.get('sort') as SortMode) ?? 'priority'); setReady(true); }); }, []);
-  useEffect(() => { if (!ready) return; const params = new URLSearchParams(); const values = { view, q: query, country, region, status, type, era, layouts, length: lengthBand, turns: turnsBand, sort }; Object.entries(values).forEach(([key, value]) => { if (value && value !== 'all' && value !== 'cards' && value !== 'priority') params.set(key, value); }); window.history.replaceState(null, '', params.size ? `${window.location.pathname}?${params}` : window.location.pathname); }, [country, era, layouts, lengthBand, query, ready, region, sort, status, turnsBand, type, view]);
-  useEffect(() => { queueMicrotask(() => setVisibleCount(PAGE_SIZE)); }, [country, era, layouts, lengthBand, query, region, sort, status, turnsBand, type]);
+  const [selectedSeason, setSelectedSeason] = useState('all');
+  useEffect(() => { const params = new URLSearchParams(window.location.search); queueMicrotask(() => { const mode = params.get('view'); setView(mode === 'map' || mode === 'list' ? mode : 'cards'); setQuery(params.get('q') ?? ''); setCountry(params.get('country') ?? 'all'); setRegion(params.get('region') ?? 'all'); setStatus(params.get('status') ?? 'all'); setType(params.get('type') ?? 'all'); setEra(params.get('era') ?? 'all'); setLayouts(params.get('layouts') ?? 'all'); setLengthBand(params.get('length') ?? 'all'); setTurnsBand(params.get('turns') ?? 'all'); setSelectedSeason(params.get('season') ?? 'all'); setSort((params.get('sort') as SortMode) ?? 'priority'); setReady(true); }); }, []);
+  useEffect(() => { if (!ready) return; const params = new URLSearchParams(); const values = { view, q: query, country, region, status, type, era, layouts, length: lengthBand, turns: turnsBand, season: selectedSeason, sort }; Object.entries(values).forEach(([key, value]) => { if (value && value !== 'all' && value !== 'cards' && value !== 'priority') params.set(key, value); }); window.history.replaceState(null, '', params.size ? `${window.location.pathname}?${params}` : window.location.pathname); }, [country, era, layouts, lengthBand, query, ready, region, selectedSeason, sort, status, turnsBand, type, view]);
+  useEffect(() => { queueMicrotask(() => setVisibleCount(PAGE_SIZE)); }, [country, era, layouts, lengthBand, query, region, selectedSeason, sort, status, turnsBand, type]);
   const atlasCircuits = useMemo(() => circuits.map((circuit) => ({ ...circuit, geometry: getTrackGeometry(circuit.id, season)?.geometry ?? circuit.geometry })), [circuits, season]);
   const countries = useMemo(() => [...new Set(atlasCircuits.map((item) => item.countryRu))].sort((a, b) => a.localeCompare(b, 'ru')), [atlasCircuits]);
-  const filtered = useMemo(() => atlasCircuits.filter((circuit) => { const haystack = `${circuit.nameRu} ${circuit.officialName} ${circuit.cityRu} ${circuit.countryRu}`.toLocaleLowerCase('ru'); const layoutCount = circuit.layoutCount ?? 1; const length = metricNumber(circuit.metrics.length); const turns = metricNumber(circuit.metrics.turns); const lengthMatch = lengthBand === 'all' || (lengthBand === 'short' && length > 0 && length < 4) || (lengthBand === 'medium' && length >= 4 && length <= 6) || (lengthBand === 'long' && length > 6); const turnsMatch = turnsBand === 'all' || (turnsBand === 'few' && turns > 0 && turns <= 14) || (turnsBand === 'medium' && turns >= 15 && turns <= 18) || (turnsBand === 'many' && turns >= 19); return haystack.includes(query.trim().toLocaleLowerCase('ru')) && (country === 'all' || circuit.countryRu === country) && (region === 'all' || regionByCountry[circuit.countryCode] === region) && (status === 'all' || (circuit.competitionStatus ?? 'active') === status) && (type === 'all' || trackTypeKey(circuit.typeRu) === type) && (era === 'all' || debutEra(metricNumber(circuit.metrics.debut)) === era) && (layouts === 'all' || (layouts === 'multiple' ? layoutCount > 1 : layoutCount <= 1)) && lengthMatch && turnsMatch; }).sort((left, right) => { if (sort === 'alphabet') return left.nameRu.localeCompare(right.nameRu, 'ru'); if (sort === 'country') return left.countryRu.localeCompare(right.countryRu, 'ru') || left.nameRu.localeCompare(right.nameRu, 'ru'); if (sort === 'length') return metricNumber(right.metrics.length) - metricNumber(left.metrics.length); if (sort === 'turns') return metricNumber(right.metrics.turns) - metricNumber(left.metrics.turns); if (sort === 'debut') return metricNumber(left.metrics.debut) - metricNumber(right.metrics.debut); return left.firstRound - right.firstRound; }), [atlasCircuits, country, era, layouts, lengthBand, query, region, sort, status, turnsBand, type]);
-  const reset = () => { setQuery(''); setCountry('all'); setRegion('all'); setStatus('all'); setType('all'); setEra('all'); setLayouts('all'); setLengthBand('all'); setTurnsBand('all'); setSort('priority'); };
-  const hasFilters = Boolean(query || country !== 'all' || region !== 'all' || status !== 'all' || type !== 'all' || era !== 'all' || layouts !== 'all' || lengthBand !== 'all' || turnsBand !== 'all' || sort !== 'priority');
-  return <main className="tracks-page"><TracksHero /><TracksControls query={query} country={country} region={region} status={status} type={type} era={era} layouts={layouts} lengthBand={lengthBand} turnsBand={turnsBand} sort={sort} view={view} countries={countries} count={filtered.length} hasFilters={hasFilters} setQuery={setQuery} setCountry={setCountry} setRegion={setRegion} setStatus={setStatus} setType={setType} setEra={setEra} setLayouts={setLayouts} setLengthBand={setLengthBand} setTurnsBand={setTurnsBand} setSort={setSort} setView={setView} reset={reset} />{filtered.length === 0 ? <EmptyState reset={reset} /> : view === 'cards' ? <TracksCardsView circuits={filtered} visibleCount={visibleCount} showMore={() => setVisibleCount((value) => value + PAGE_SIZE)} /> : view === 'list' ? <TracksListView circuits={filtered} season={season} /> : <CircuitCatalogMap circuits={filtered} />}<CatalogSummary circuits={atlasCircuits} /></main>;
+  const availableSeasons = useMemo(() => [...new Set(atlasCircuits.flatMap((item) => item.seasons ?? []))].sort((a, b) => b - a), [atlasCircuits]);
+  const filtered = useMemo(() => atlasCircuits.filter((circuit) => { const haystack = `${circuit.nameRu} ${circuit.officialName} ${circuit.cityRu} ${circuit.countryRu}`.toLocaleLowerCase('ru'); const layoutCount = circuit.layoutCount ?? 1; const length = metricNumber(circuit.metrics.length); const turns = metricNumber(circuit.metrics.turns); const lengthMatch = lengthBand === 'all' || (lengthBand === 'short' && length > 0 && length < 4) || (lengthBand === 'medium' && length >= 4 && length <= 6) || (lengthBand === 'long' && length > 6); const turnsMatch = turnsBand === 'all' || (turnsBand === 'few' && turns > 0 && turns <= 14) || (turnsBand === 'medium' && turns >= 15 && turns <= 18) || (turnsBand === 'many' && turns >= 19); const seasonMatch = selectedSeason === 'all' || circuit.seasons?.includes(Number(selectedSeason)); return seasonMatch && haystack.includes(query.trim().toLocaleLowerCase('ru')) && (country === 'all' || circuit.countryRu === country) && (region === 'all' || regionByCountry[circuit.countryCode] === region) && (status === 'all' || (circuit.competitionStatus ?? 'active') === status) && (type === 'all' || trackTypeKey(circuit.typeRu) === type) && (era === 'all' || debutEra(metricNumber(circuit.metrics.debut)) === era) && (layouts === 'all' || (layouts === 'multiple' ? layoutCount > 1 : layoutCount <= 1)) && lengthMatch && turnsMatch; }).sort((left, right) => { if (sort === 'alphabet') return left.nameRu.localeCompare(right.nameRu, 'ru'); if (sort === 'country') return left.countryRu.localeCompare(right.countryRu, 'ru') || left.nameRu.localeCompare(right.nameRu, 'ru'); if (sort === 'length') return metricNumber(right.metrics.length) - metricNumber(left.metrics.length); if (sort === 'turns') return metricNumber(right.metrics.turns) - metricNumber(left.metrics.turns); if (sort === 'debut') return metricNumber(left.metrics.debut) - metricNumber(right.metrics.debut); return left.firstRound - right.firstRound; }), [atlasCircuits, country, era, layouts, lengthBand, query, region, selectedSeason, sort, status, turnsBand, type]);
+  const reset = () => { setQuery(''); setCountry('all'); setRegion('all'); setStatus('all'); setType('all'); setEra('all'); setLayouts('all'); setLengthBand('all'); setTurnsBand('all'); setSelectedSeason('all'); setSort('priority'); };
+  const hasFilters = Boolean(query || country !== 'all' || region !== 'all' || status !== 'all' || type !== 'all' || era !== 'all' || layouts !== 'all' || lengthBand !== 'all' || turnsBand !== 'all' || selectedSeason !== 'all' || sort !== 'priority');
+  return <main className="tracks-page"><TracksHero /><section className="tracks-season-filter"><label><span>Сезон Гран-при</span><select value={selectedSeason} onChange={(event) => setSelectedSeason(event.target.value)}><option value="all">Все сезоны</option>{availableSeasons.map((item) => <option key={item} value={item}>{item}</option>)}</select></label><p>{selectedSeason === 'all' ? 'Показаны все трассы чемпионата мира' : `Трассы, принимавшие этапы в сезоне ${selectedSeason}`}</p></section><TracksControls query={query} country={country} region={region} status={status} type={type} era={era} layouts={layouts} lengthBand={lengthBand} turnsBand={turnsBand} sort={sort} view={view} countries={countries} count={filtered.length} hasFilters={hasFilters} setQuery={setQuery} setCountry={setCountry} setRegion={setRegion} setStatus={setStatus} setType={setType} setEra={setEra} setLayouts={setLayouts} setLengthBand={setLengthBand} setTurnsBand={setTurnsBand} setSort={setSort} setView={setView} reset={reset} />{filtered.length === 0 ? <EmptyState reset={reset} /> : view === 'cards' ? <TracksCardsView circuits={filtered} visibleCount={visibleCount} showMore={() => setVisibleCount((value) => value + PAGE_SIZE)} /> : view === 'list' ? <TracksListView circuits={filtered} season={selectedSeason === 'all' ? season : Number(selectedSeason)} /> : <CircuitCatalogMap circuits={filtered} />}<CatalogSummary circuits={atlasCircuits} /></main>;
 }

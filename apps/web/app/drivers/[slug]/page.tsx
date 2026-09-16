@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { DriverProfile } from '../../components/competitor-profile';
 import { getAllDriverCatalog, getDriverCatalog } from '../../data/season-catalogs';
 
-type DriverPageProps = { params: Promise<{ slug: string }>; searchParams?: { season?: string } };
+type DriverPageProps = { params: Promise<{ slug: string }>; searchParams: Promise<{ season?: string }> };
 const allCatalog = getAllDriverCatalog();
 const drivers = allCatalog.drivers;
 
@@ -17,7 +17,8 @@ export async function generateMetadata({ params }: DriverPageProps): Promise<Met
 
 export default async function DriverPage({ params, searchParams }: DriverPageProps) {
   const { slug } = await params;
-  const requestedSeason = Number(searchParams?.season);
+  const requested = await searchParams;
+  const requestedSeason = Number(requested.season);
   const directoryDriver = drivers.find((item) => item.id === slug);
   if (!directoryDriver) notFound();
   const catalog = await getDriverCatalog(Number.isInteger(requestedSeason) ? requestedSeason : directoryDriver.latestSeason ?? 2026);

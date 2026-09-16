@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import pg from "pg";
-import { loadSeasonData, readSeason } from "./jolpica-preview.mjs";
+import { loadSeasonData, readSeason, saveSeasonSnapshot } from "./jolpica-preview.mjs";
 
 const { Client } = pg;
 
@@ -226,6 +226,16 @@ async function importSessions(client, season, races, type, childName, entryIds) 
         ? `${race.date}T${race.time ?? "00:00:00Z"}`
         : null;
 
+    if (type === "race") {
+      // Снимок API считается главным только для созданных им непроверенных строк.
+      // Manually reviewed historical entries must survive a refresh.
+      await client.query(
+        `DELETE FROM atlas.driver_event_entries
+         WHERE race_id = $1 AND source_id = 'jolpica' AND review_status = 'imported'`,
+        [raceId(season, round)],
+      );
+    }
+
     await client.query(
       `INSERT INTO atlas.sessions
          (id, race_id, session_type, name, starts_at, status, source_id, updated_at)
@@ -293,8 +303,55 @@ async function importSessions(client, season, races, type, childName, entryIds) 
           JSON.stringify(details),
         ],
       );
+
+      // A racing number belongs to this event entry. Keeping it separate from
+      // drivers.permanent_number preserves historical changes and champion #1.
+      if (type === "race") {
+        await client.query(
+          `INSERT INTO atlas.driver_event_entries
+             (race_id, driver_id, constructor_entry_id, car_number,
+              number_type, source_id, review_status, updated_at)
+           VALUES ($1, $2, $3, $4, 'event', 'jolpica', 'imported', now())
+           ON CONFLICT ON CONSTRAINT driver_event_entries_identity_unique DO UPDATE SET
+             source_id = EXCLUDED.source_id,
+             review_status = EXCLUDED.review_status,
+             updated_at = now()
+           WHERE atlas.driver_event_entries.source_id = 'jolpica'
+             AND atlas.driver_event_entries.review_status = 'imported'`,
+          [
+            raceId(season, round),
+            row.Driver.driverId,
+            entryIds.get(row.Constructor?.constructorId) ?? null,
+            numberOrNull(row.number),
+          ],
+        );
+      }
     }
   }
+}
+
+async function reconcileJolpicaSeason(client, season, data) {
+  const scheduledRaceIds = data.schedule.map((race) => raceId(season, Number(race.round)));
+  await client.query(
+    `UPDATE atlas.races SET status = 'cancelled', updated_at = now()
+     WHERE season_year = $1 AND source_id = 'jolpica' AND NOT (id = ANY($2::text[]))`,
+    [season, scheduledRaceIds],
+  );
+
+  const expectedSessionIds = [
+    ...data.results.map((race) => sessionId(season, Number(race.round), 'race')),
+    ...data.qualifying.map((race) => sessionId(season, Number(race.round), 'qualifying')),
+    ...data.sprints.map((race) => sessionId(season, Number(race.round), 'sprint')),
+  ];
+  await client.query(
+    `DELETE FROM atlas.sessions AS session
+     USING atlas.races AS race
+     WHERE session.race_id = race.id AND race.season_year = $1
+       AND session.source_id = 'jolpica'
+       AND session.session_type IN ('race', 'qualifying', 'sprint')
+       AND NOT (session.id = ANY($2::text[]))`,
+    [season, expectedSessionIds],
+  );
 }
 
 async function importStandings(client, season, data, entryIds) {
@@ -385,6 +442,7 @@ async function importSeason(client, season, data) {
       entryIds,
     );
     await importSessions(client, season, data.sprints, "sprint", "SprintResults", entryIds);
+    await reconcileJolpicaSeason(client, season, data);
     await importStandings(client, season, data, entryIds);
     await client.query("COMMIT");
   } catch (error) {
@@ -410,7 +468,10 @@ try {
     }
 
     console.log(`Получение и проверка сезона ${season}...`);
-    const { data, report } = await loadSeasonData(season);
+    const { data, report, snapshot } = await loadSeasonData(season);
+    const savedSnapshot = await saveSeasonSnapshot(snapshot);
+    console.log(`Исходный снимок API сохранён: ${savedSnapshot.filePath}`);
+    console.log(`SHA-256: ${savedSnapshot.sha256}`);
     if (report.warnings.length > 0) {
       throw new Error(`Импорт остановлен: ${report.warnings.join(" ")}`);
     }

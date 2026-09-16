@@ -138,6 +138,42 @@ async function readPageData(client, circuitId) {
      ORDER BY season_year DESC`,
     [circuitId],
   );
+  const trackLayoutsResult = await client.query(
+    `SELECT layout.id, layout.name, layout.valid_from_year, layout.valid_to_year,
+            ST_AsGeoJSON(ST_Force2D(layout.centerline))::json AS centerline
+     FROM atlas.track_layouts AS layout
+     WHERE layout.circuit_id = $1
+       AND layout.centerline IS NOT NULL
+       AND layout.review_status IN ('reviewed', 'published')
+     ORDER BY layout.valid_from_year NULLS FIRST, layout.id`,
+    [circuitId],
+  );
+  const trackAnnotationsResult = await client.query(
+    `SELECT annotation.id, annotation.layout_id, annotation.annotation_type,
+            annotation.label_ru, annotation.label_original, annotation.sequence,
+            annotation.description_ru, annotation.valid_from_year, annotation.valid_to_year,
+            ST_AsGeoJSON(annotation.geometry::geometry)::json AS geometry,
+            source.name AS source_name, source.url AS source_url
+     FROM atlas.track_layout_annotations AS annotation
+     JOIN atlas.track_layouts AS layout ON layout.id = annotation.layout_id
+     JOIN atlas.data_sources AS source ON source.id = annotation.source_id
+     WHERE layout.circuit_id = $1
+       AND layout.review_status IN ('reviewed', 'published')
+       AND annotation.review_status = 'published'
+     ORDER BY annotation.layout_id, annotation.annotation_type, annotation.sequence NULLS LAST, annotation.id`,
+    [circuitId],
+  );
+  const seasonLayoutsResult = await client.query(
+    `SELECT DISTINCT ON (race.season_year) race.season_year, race.layout_id
+     FROM atlas.races AS race
+     JOIN atlas.track_layouts AS layout
+       ON layout.id = race.layout_id AND layout.circuit_id = race.circuit_id
+     WHERE race.circuit_id = $1
+       AND layout.centerline IS NOT NULL
+       AND layout.review_status IN ('reviewed', 'published')
+     ORDER BY race.season_year, race.round`,
+    [circuitId],
+  );
   const travelProfileResult = await client.query(
     `SELECT page_intro_ru, source_note_ru, route_note_ru
      FROM atlas.circuit_travel_profiles
@@ -181,6 +217,18 @@ async function readPageData(client, circuitId) {
      ORDER BY presentation.sort_order`,
     [circuitId],
   );
+  const travelRoutesResult = await client.query(
+    `SELECT route.id,route.route_type,route.name_ru,route.summary_ru,route.distance_m,route.duration_minutes,
+            presentation.rationale_ru,presentation.highlights_ru,presentation.practical_notes_ru,
+            COALESCE(array_agg(COALESCE(stop.name_ru,poi.name_ru,poi.name) ORDER BY stop.sequence)
+              FILTER (WHERE stop.sequence IS NOT NULL),ARRAY[]::text[]) AS stops
+     FROM atlas.travel_routes AS route
+     JOIN atlas.travel_route_presentations AS presentation ON presentation.route_id=route.id
+     LEFT JOIN atlas.travel_route_stops AS stop ON stop.route_id=route.id
+     LEFT JOIN atlas.tourism_pois AS poi ON poi.id=stop.poi_id
+     WHERE route.circuit_id=$1 AND route.review_status='published'
+     GROUP BY route.id,presentation.rationale_ru,presentation.highlights_ru,presentation.practical_notes_ru,presentation.sort_order
+     ORDER BY presentation.sort_order`,[circuitId]);
   const travelCategoriesResult = await client.query(
     `SELECT id, name_ru
      FROM atlas.travel_category_groups
@@ -193,7 +241,8 @@ async function readPageData(client, circuitId) {
               profile.summary_ru AS description_ru,
               ST_X(circuit.location::geometry) AS longitude,
               ST_Y(circuit.location::geometry) AS latitude,
-              'circuit'::text AS role, 1000::integer AS priority
+              'circuit'::text AS role, 1000::integer AS priority,
+              NULL::text AS image_url, NULL::text AS image_alt_ru
        FROM atlas.circuit_page_profiles AS profile
        JOIN atlas.circuits AS circuit ON circuit.id = profile.circuit_id
        WHERE profile.circuit_id = $1
@@ -201,10 +250,32 @@ async function readPageData(client, circuitId) {
        SELECT poi.id, COALESCE(poi.name_ru, poi.name), category.name_ru,
               COALESCE(poi.description_ru, travel.editorial_note_ru, category.name_ru),
               ST_X(poi.location::geometry), ST_Y(poi.location::geometry),
-              travel.role, travel.priority
+              travel.role, travel.priority, photo.image_url, photo.image_alt_ru
        FROM atlas.circuit_travel_pois AS travel
        JOIN atlas.tourism_pois AS poi ON poi.id = travel.poi_id
        JOIN atlas.poi_categories AS category ON category.id = poi.category_id
+       LEFT JOIN LATERAL (
+         SELECT
+           COALESCE(
+             (SELECT derivative.url
+              FROM atlas.media_asset_derivatives AS derivative
+              WHERE derivative.media_asset_id = media.id
+              ORDER BY CASE derivative.variant WHEN '640w' THEN 0 WHEN '1280w' THEN 1 ELSE 2 END
+              LIMIT 1),
+             media.url
+           ) AS image_url,
+           media.alt_text_ru AS image_alt_ru
+         FROM atlas.media_assets AS media
+         WHERE media.entity_type = 'tourism_poi'
+           AND media.entity_id = poi.id
+           AND media.media_type = 'image'
+           AND media.rights_status = 'verified'
+           AND media.review_status = 'published'
+         ORDER BY media.is_primary DESC,
+                  CASE media.usage_role WHEN 'card' THEN 0 WHEN 'gallery' THEN 1 ELSE 2 END,
+                  media.id
+         LIMIT 1
+       ) AS photo ON true
        WHERE travel.circuit_id = $1
          AND travel.role <> 'circuit'
          AND travel.is_featured
@@ -240,6 +311,9 @@ async function readPageData(client, circuitId) {
     profile,
     runtimeSettings,
     resultSeasons,
+    trackLayouts: trackLayoutsResult.rows,
+    trackAnnotations: trackAnnotationsResult.rows,
+    seasonLayouts: seasonLayoutsResult.rows,
     highlights: stats.filter((item) => item.section === 'highlight').map((item) => item.label_ru),
     metrics: stats.filter((item) => item.section === 'metric').map((item) => ({
       label: item.label_ru,
@@ -282,6 +356,7 @@ async function readPageData(client, circuitId) {
       chapters: travelChaptersResult.rows,
       planner: travelPlannerResult.rows,
       zones: travelZonesResult.rows,
+      routes: travelRoutesResult.rows,
       categories: travelCategoriesResult.rows,
       points: travelPointsResult.rows,
     },
@@ -290,7 +365,8 @@ async function readPageData(client, circuitId) {
 
 function buildReadModel(existing, databasePage) {
   const {
-    profile, runtimeSettings, resultSeasons, highlights, metrics, statBar, history, gallery, travel,
+    profile, runtimeSettings, resultSeasons, trackLayouts, trackAnnotations, seasonLayouts,
+    highlights, metrics, statBar, history, gallery, travel,
   } = databasePage;
   if (gallery.length > 0 && !existing.travel?.story) {
     throw new Error(`Для медиатеки ${profile.slug} в snapshot отсутствует travel.story`);
@@ -339,11 +415,41 @@ function buildReadModel(existing, databasePage) {
       local3dModel: runtimeSettings.local_3d_model,
       buildings3d: runtimeSettings.buildings_3d,
     },
+    trackPresentation: {
+      seasonLayoutIds: Object.fromEntries(
+        seasonLayouts.map((item) => [String(item.season_year), item.layout_id]),
+      ),
+      layouts: trackLayouts.map((layout) => ({
+        id: layout.id,
+        name: layout.name,
+        ...(layout.valid_from_year ? { validFromYear: Number(layout.valid_from_year) } : {}),
+        ...(layout.valid_to_year ? { validToYear: Number(layout.valid_to_year) } : {}),
+        centerline: { type: 'Feature', properties: { layoutId: layout.id }, geometry: layout.centerline },
+        annotations: trackAnnotations
+          .filter((annotation) => annotation.layout_id === layout.id)
+          .map((annotation) => ({
+            id: annotation.id,
+            type: annotation.annotation_type,
+            ...(annotation.label_ru ? { labelRu: annotation.label_ru } : {}),
+            ...(annotation.label_original ? { labelOriginal: annotation.label_original } : {}),
+            ...(annotation.sequence ? { sequence: Number(annotation.sequence) } : {}),
+            ...(annotation.description_ru ? { descriptionRu: annotation.description_ru } : {}),
+            ...(annotation.valid_from_year ? { validFromYear: Number(annotation.valid_from_year) } : {}),
+            ...(annotation.valid_to_year ? { validToYear: Number(annotation.valid_to_year) } : {}),
+            geometry: annotation.geometry,
+            source: {
+              name: annotation.source_name,
+              ...(annotation.source_url ? { url: annotation.source_url } : {}),
+            },
+          })),
+      })),
+    },
     history,
   };
   if (existing.travel?.story) {
     const existingChapters = new Map(existing.travel.story.chapters.map((item) => [item.id, item]));
     const existingZones = new Map(existing.travel.story.zones.map((item) => [item.id, item]));
+    const existingRoutes = new Map(existing.travel.story.routes.map((item) => [item.id, item]));
     const { markers: _legacyMarkers, ...existingStory } = existing.travel.story;
     readModel.travel = {
       ...existing.travel,
@@ -355,6 +461,8 @@ function buildReadModel(existing, databasePage) {
         descriptionRu: item.description_ru,
         coordinates: [Number(item.longitude), Number(item.latitude)],
         role: item.role,
+        ...(item.image_url ? { imageUrl: item.image_url } : {}),
+        ...(item.image_alt_ru ? { imageAltRu: item.image_alt_ru } : {}),
       })),
       ...(travel.profile?.page_intro_ru ? { intro: travel.profile.page_intro_ru } : {}),
       planner: {
@@ -400,6 +508,15 @@ function buildReadModel(existing, databasePage) {
             ...(previous?.image ? { image: previous.image } : {}),
           };
         }),
+        routes: travel.routes.map((item) => {
+          const previous = existingRoutes.get(item.id);
+          const typeLabels = { arrival: 'Прибытие', race_day: 'Гоночный день', event_shuttle: 'Трансфер', park_and_ride: 'P+R', tourist_half_day: 'Полдня', tourist_full_day: 'Полный день', walking: 'Пешком', scenic_drive: 'Обзорная поездка' };
+          return { id:item.id,type:typeLabels[item.route_type] ?? item.route_type,title:item.name_ru,
+            distance:`${(Number(item.distance_m)/1000).toLocaleString('ru-RU',{maximumFractionDigits:1})} км`,duration:`${item.duration_minutes} мин`,
+            stops:item.stops,description:item.summary_ru ?? item.rationale_ru ?? '',
+            ...(item.rationale_ru?{rationale:item.rationale_ru}:{}),...(item.highlights_ru?.length?{highlights:item.highlights_ru}:{}),
+            ...(item.practical_notes_ru?{practicalNotes:item.practical_notes_ru}:{}),...(previous?.image?{image:previous.image}:{}) };
+        }),
         gallery,
       },
     };
@@ -415,6 +532,8 @@ function buildReadModel(existing, databasePage) {
         descriptionRu: item.description_ru,
         coordinates: [Number(item.longitude), Number(item.latitude)],
         role: item.role,
+        ...(item.image_url ? { imageUrl: item.image_url } : {}),
+        ...(item.image_alt_ru ? { imageAltRu: item.image_alt_ru } : {}),
       })),
     };
   }

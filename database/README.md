@@ -13,8 +13,9 @@ GeoJSON: они будут формироваться импортёром ка�
 ## Основные группы таблиц
 
 - `seasons`, `races` — календарь с 1950 года;
-- `drivers`, `constructors`, `constructor_entries` — участники и сезонные
-  названия команд;
+- `drivers`, `constructors`, `constructor_entries`, `constructor_lineage_links` —
+  участники, сезонные названия команд и отдельно проверяемая преемственность
+  идентичностей без автоматического объединения статистики;
 - `sessions`, `session_results`, `*_standings` — практики, квалификации,
   спринты, гонки и спортивные результаты;
 - `circuits`, `track_layouts`, `track_features` — картографическая основа;
@@ -115,6 +116,7 @@ node --env-file=.env.database.local scripts/apply-database-seed.mjs database/see
 node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/016_team_media_registry.sql --apply
 node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/017_spa_current_layout_period.sql --apply
 node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/018_2026_race_layout_assignments.sql --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/024_circuit_country_names_ru.sql --apply
 node --env-file=.env.database.local scripts/export-circuit-pages.mjs
 node --env-file=.env.database.local scripts/export-circuit-pages.mjs --check
 node --env-file=.env.database.local scripts/export-circuit-catalog.mjs
@@ -130,11 +132,40 @@ read-model для сборки Next.js. Редактировать перене�
 
 ```powershell
 node --env-file=.env.database.local scripts/audit-circuit-page-data.mjs
+node scripts/audit-circuit-catalog.mjs
 node --env-file=.env.database.local scripts/audit-spa-travel-routes.mjs
 node --env-file=.env.database.local scripts/audit-media-registry.mjs
 node --env-file=.env.database.local scripts/audit-historical-layouts.mjs
+node --env-file=.env.database.local scripts/import-runtime-track-layout-inventory.mjs
+node --env-file=.env.database.local scripts/import-runtime-track-layout-inventory.mjs --apply
+node --env-file=.env.database.local scripts/apply-database-seed.mjs database/seeds/021_historic_circuit_russian_names.sql --apply
 node --env-file=.env.database.local scripts/localize-circuit-media.mjs --circuit spa --apply
 ```
+
+Публичный туристический GeoJSON для одной трассы можно пересобрать вручную:
+
+```powershell
+node --env-file=.env.database.local scripts/export-circuit-travel.mjs --circuit spa
+```
+
+Без параметра `--circuit` экспортёр последовательно пересобирает туристические слои всех 78 трасс. В публичные файлы попадают только проверенные или опубликованные точки и зоны, а маршруты — только со статусом `published`.
+
+Пакетный сбор до 80 туристических кандидатов для ещё не заполненных трасс запускается так:
+
+```powershell
+npm --prefix scripts run travel:import:bulk -- --apply --limit=80 --timeout=12
+```
+
+Команда сохраняет только кандидатов, пропускает Спа и другие уже полностью обработанные трассы и может безопасно запускаться повторно для дозаполнения не ответивших групп. Текущий прогресс записывается в `data/review/travel-bulk-import-progress.json`.
+
+После основного прохода неполные группы можно запросить адресно, не повторяя уже успешные категории:
+
+```powershell
+npm --prefix scripts run travel:import:bulk -- --apply --limit=80 --timeout=35 --retry-incomplete
+npm --prefix scripts run travel:audit:coverage
+```
+
+Первой командой выбираются трассы с пустыми, малочисленными или не ответившими группами. Вторая создаёт сводный отчёт `data/review/travel-coverage-audit.json` по всем 78 трассам.
 
 Отчёт сохраняется в `data/review/circuit-page-data-audit.json`. Показатели без
 `source_id` остаются видимым редакционным долгом, а не получают выдуманный
