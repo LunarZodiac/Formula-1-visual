@@ -42,12 +42,12 @@ export default async function AdminTeamsPage({ searchParams }: {
   return <main className="admin-shell"><section className="admin-directory admin-team-directory">
     <header><div><span className="admin-kicker">Историческая медиатека</span><h1>Команды и болиды</h1></div><div className="admin-directory-heading-actions"><p>{season === null ? rows.length + ' команд за 1950–' + currentSeason : rows.length + ' команд в сезоне ' + season} · изображения назначаются отдельно по сезонам</p><Link className="admin-row-action" href="/admin/teams/lineage">Преемственность команд →</Link></div></header>
     {error ? <div className="admin-alert is-error">Локальная база недоступна. Проверьте настройки и перезапустите сайт</div> : null}
-    <form id="team-column-filters" method="get" />
-    <div className="admin-table-wrap"><table><thead className="admin-column-filters"><tr>
-      <th><span>Команда</span><input form="team-column-filters" name="q" type="search" defaultValue={query} placeholder="Название или ID" aria-label="Фильтр по названию или ID команды" /></th>
+    <form className="admin-directory-search admin-team-directory-filters" method="get"><label><span>Название или ID</span><input name="q" type="search" defaultValue={query} placeholder="Найти команду" /></label><label><span>Срез данных</span><select name="season" defaultValue={season === null ? '' : String(season)}><option value="">Все исторические команды</option>{seasonOptions.map((year) => <option value={year} key={year}>Сезон {year}</option>)}</select></label><button type="submit">Применить</button><Link href="/admin/teams">Сбросить</Link></form>
+    <div className="admin-table-wrap"><table><thead><tr>
+      <th>Команда</th>
       <th><span>ID</span></th>
       {season === null ? <><th><span>Период</span></th><th><span>Сезонов</span></th><th><span>Медиа последнего сезона</span></th></> : <><th><span>Модель</span></th><th><span>Двигатель</span></th><th><span>Медиа</span></th></>}
-      <th><span>Режим</span><select form="team-column-filters" name="season" defaultValue={season === null ? '' : String(season)} aria-label="Фильтр каталога команд по сезону"><option value="">Все исторические команды</option>{seasonOptions.map((year) => <option value={year} key={year}>{year}</option>)}</select><span className="admin-filter-actions"><button form="team-column-filters" type="submit">Применить</button><Link href="/admin/teams">Сбросить</Link></span></th>
+      <th><span className="sr-only">Действие</span></th>
     </tr></thead><tbody>
       {season === null ? visibleRows.map((team) => {
         const editSeason = team.latestSeason;

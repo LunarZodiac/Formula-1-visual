@@ -240,6 +240,8 @@ body:has(.admin-login-shell) > .back-to-top { display: none; }
 .admin-directory-search button { border-color: #ff183f; background: #8f0821; }
 .admin-travel-directory-filters { display: grid; grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(140px, 1fr)) auto auto; }
 .admin-travel-directory-filters button, .admin-travel-directory-filters > a { align-self: end; }
+.admin-team-directory-filters { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(190px, 260px) auto auto; }
+.admin-team-directory-filters button, .admin-team-directory-filters > a { align-self: end; }
 .admin-travel-subdirectory table { min-width: 960px; }
 .admin-travel-subdirectory td:first-child { min-width: 230px; white-space: normal; }
 .admin-travel-subdirectory td:first-child small { display: block; margin-top: 5px; color: #718b9a; font-size: 10px; }
@@ -846,7 +848,7 @@ body:has(.admin-login-shell) > .back-to-top { display: none; }
   .admin-file-picker-control strong { justify-content: center; border-right: 0; border-bottom: 1px solid #314856; }
   .admin-file-picker-control em { padding: 12px 14px; text-align: center; }
   .admin-directory-search { align-items: stretch; flex-direction: column; }
-  .admin-travel-directory-filters { display: grid; grid-template-columns: 1fr 1fr; }
+  .admin-travel-directory-filters, .admin-team-directory-filters { display: grid; grid-template-columns: 1fr 1fr; }
   .admin-travel-directory-filters label:first-child { grid-column: 1 / -1; }
   .admin-travel-directory-filters button, .admin-travel-directory-filters > a { width: 100%; }
   .admin-table-toolbar { align-items: stretch; flex-direction: column; }
@@ -867,7 +869,7 @@ body:has(.admin-login-shell) > .back-to-top { display: none; }
 }
 
 @media (max-width: 520px) {
-  .admin-travel-directory-filters { grid-template-columns: 1fr; }
+  .admin-travel-directory-filters, .admin-team-directory-filters { grid-template-columns: 1fr; }
   .admin-travel-directory-filters label:first-child { grid-column: auto; }
   .admin-travel-module-nav a { min-width: 108px; padding-inline: 12px; }
 }
