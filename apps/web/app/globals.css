@@ -1328,12 +1328,13 @@ body {
 .tracks-card__country { display: flex; align-items: center; gap: 7px; margin-top: 8px; color: #e4ecef; font-size: 8px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .tracks-card__country i { color: #667b86; font-style: normal; }
 .tracks-flag { width: 20px; height: 13px; object-fit: cover; border: 1px solid rgba(255,255,255,.25); }
-.tracks-card__opened { position: absolute; top: 10px; right: 10px; display: grid; justify-items: end; padding: 5px 7px 6px; border: 1px solid rgba(255,255,255,.14); border-radius: 2px; background: rgba(2,9,15,.72); box-shadow: 0 4px 16px rgba(0,0,0,.2); text-transform: uppercase; backdrop-filter: blur(5px); }
+.tracks-card__opened { position: absolute; top: 10px; right: 10px; display: grid; justify-items: end; padding: 5px 7px 6px; border: 1px solid rgba(255,255,255,.12); border-radius: 2px; background: rgba(2,9,15,.56); text-transform: uppercase; backdrop-filter: blur(5px); }
 .tracks-card__opened span { color: #c4d0d5; font-size: 6px; letter-spacing: .1em; }
 .tracks-card__opened b { margin-top: 3px; color: #eff4f5; font-family: var(--display); font-size: 15px; font-style: italic; font-weight: 500; }
 .tracks-featured .tracks-card__summary { position: absolute; bottom: 66px; left: 16px; width: 48%; margin: 0; color: #a2b0b6; font-size: 8px; line-height: 1.55; }
 .tracks-featured > .tracks-shape, .tracks-card > .tracks-shape { position: absolute; right: 1%; bottom: 50px; width: 60%; height: 62%; filter: drop-shadow(0 0 7px rgba(255,255,255,.2)); }
 .tracks-featured > .tracks-shape { right: 2%; width: 48%; height: 64%; }
+.tracks-card[data-circuit-id='spa'] > .tracks-shape { right: -7%; }
 .tracks-shape polyline { fill: none; stroke: #f4f7f8; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.2; vector-effect: non-scaling-stroke; }
 .tracks-metrics { position: absolute; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; border-top: 1px solid rgba(112,139,151,.35); background: rgba(3,11,17,.8); backdrop-filter: blur(8px); }
 .tracks-metrics > div { min-width: 0; padding: 9px 9px 8px; border-right: 1px solid rgba(112,139,151,.28); }
@@ -5361,6 +5362,9 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 .spa-poi-extent { position: absolute; top: 16px; left: 16px; z-index: 3; padding: 10px 13px; border: 1px solid var(--line); border-radius: 4px; color: #dce6eb; background: rgba(5,13,21,.86); font-size: 8px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; backdrop-filter: blur(12px); }
 .spa-poi-extent:hover,
 .spa-poi-extent:focus-visible { border-color: rgba(255,32,56,.72); color: #fff; }
+.spa-poi-routes-toggle { position: absolute; top: 62px; left: 16px; z-index: 3; display: flex; min-height: 36px; align-items: center; gap: 9px; padding: 0 12px; border: 1px solid rgba(151,176,188,.34); border-radius: 4px; color: #dbe7eb; background: rgba(5,13,21,.78); font-size: 9px; font-weight: 700; backdrop-filter: blur(10px); cursor: pointer; }
+.spa-poi-routes-toggle input { width: 15px; height: 15px; margin: 0; accent-color: #ff3158; }
+.spa-poi-routes-toggle.is-disabled { color: #71858f; cursor: default; }
 .spa-poi-list-panel { min-width: 0; max-height: 580px; overflow: auto; background: #07131d; }
 .spa-poi-list-heading { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; padding: 18px; border-bottom: 1px solid var(--line); background: rgba(7,19,29,.96); }
 .spa-poi-list-heading strong { color: #e9f0f3; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
@@ -7386,6 +7390,7 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 :root[data-theme='light'] .track-page--spa .track-hero-actions button,
 :root[data-theme='light'] .track-page--spa .spa-poi-basemap,
 :root[data-theme='light'] .track-page--spa .spa-poi-extent,
+:root[data-theme='light'] .track-page--spa .spa-poi-routes-toggle,
 :root[data-theme='light'] .track-page--spa .track-map-label-toggle {
   border-color: var(--atlas-border);
   color: var(--atlas-text);
@@ -7520,7 +7525,7 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 :root[data-theme='light'] .tracks-card__country,
 :root[data-theme='light'] .tracks-featured .tracks-card__summary,
 :root[data-theme='light'] .tracks-metrics dt { color: var(--atlas-text-muted); }
-:root[data-theme='light'] .tracks-card__opened { border-color: rgba(255,255,255,.28); background: rgba(14,25,31,.76); box-shadow: 0 4px 16px rgba(25,39,45,.18); }
+:root[data-theme='light'] .tracks-card__opened { border-color: rgba(255,255,255,.16); background: rgba(14,25,31,.58); }
 :root[data-theme='light'] .tracks-card__opened span { color: #d2dde1; }
 :root[data-theme='light'] .tracks-card__opened b { color: #fff; }
 :root[data-theme='light'] .tracks-featured > .tracks-shape,

@@ -152,12 +152,12 @@ function FeaturedTrackCard({ circuit }: { circuit: CircuitCatalogItem }) {
   const content = <CircuitCardContent circuit={circuit} featured />;
   // Все записи каталога ведут на базовый профиль: для черновиков страница
   // честно показывает, какие редакционные разделы ещё ожидают наполнения
-  return <Link className="tracks-featured" href={`/circuits/${circuit.slug}`}>{content}</Link>;
+  return <Link className="tracks-featured" data-circuit-id={circuit.id} href={`/circuits/${circuit.slug}`}>{content}</Link>;
 }
 
 function TrackCard({ circuit }: { circuit: CircuitCatalogItem }) {
   const content = <CircuitCardContent circuit={circuit} />;
-  return <Link className="tracks-card" href={`/circuits/${circuit.slug}`}>{content}</Link>;
+  return <Link className="tracks-card" data-circuit-id={circuit.id} href={`/circuits/${circuit.slug}`}>{content}</Link>;
 }
 
 function TracksCardsView({ circuits, visibleCount, showMore }: { circuits: CircuitCatalogItem[]; visibleCount: number; showMore: () => void }) {

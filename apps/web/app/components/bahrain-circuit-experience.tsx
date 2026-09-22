@@ -503,8 +503,10 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
   const onSelectRef = useRef(onSelect);
   const [basemap, setBasemap] = useState<DetailBasemap>('dark');
   const [showAllPoints, setShowAllPoints] = useState(true);
+  const [showRoutes, setShowRoutes] = useState(true);
   const [ready, setReady] = useState(false);
   const mapCollections = useMemo(() => travelCollections(collection, roleFilter), [collection, roleFilter]);
+  const routeCount = mapCollections.routes.features.length;
   const visiblePoints = useMemo(() => ({
     ...mapCollections.points,
     features: [
@@ -733,6 +735,12 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
 
   useEffect(() => {
     const map = mapRef.current;
+    if (!ready || !map?.isStyleLoaded() || !map.getLayer('poi-section-routes')) return;
+    map.setLayoutProperty('poi-section-routes', 'visibility', showRoutes ? 'visible' : 'none');
+  }, [ready, showRoutes]);
+
+  useEffect(() => {
+    const map = mapRef.current;
     if (!ready || !map) return;
     const source = map.getSource('poi-section-points') as maplibregl.GeoJSONSource | undefined;
     if (!source) return;
@@ -802,6 +810,10 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
       <button type="button" className="spa-poi-extent" onClick={togglePointExtent}>
         {showAllPoints ? 'К трассе' : 'Показать все точки'}
       </button>
+      <label className={`spa-poi-routes-toggle${routeCount === 0 ? ' is-disabled' : ''}`}>
+        <input type="checkbox" checked={showRoutes && routeCount > 0} disabled={routeCount === 0} onChange={(event) => setShowRoutes(event.currentTarget.checked)} />
+        <span>{routeCount > 0 ? 'Показать маршруты' : 'Маршруты пока не опубликованы'}</span>
+      </label>
     </div>
   );
 }
