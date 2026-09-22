@@ -695,6 +695,10 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
         showFeaturePopup(feature, event.lngLat);
       });
       map.on('click', 'poi-section-zones-fill', (event) => {
+        const pointHit = map.queryRenderedFeatures(event.point, {
+          layers: ['poi-section-clusters', 'poi-section-points', 'poi-section-circuit-point'],
+        });
+        if (pointHit.length > 0) return;
         const feature = event.features?.[0];
         if (!feature) return;
         onSelectRef.current(String(feature.properties?.id ?? ''));
@@ -747,15 +751,7 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
     source.setData(visiblePoints);
     (map.getSource('poi-section-zones') as maplibregl.GeoJSONSource | undefined)?.setData(mapCollections.zones);
     (map.getSource('poi-section-routes') as maplibregl.GeoJSONSource | undefined)?.setData(mapCollections.routes);
-    if (!showAllPoints) return;
-    const allBounds = pointCollectionBounds(visiblePoints);
-    if (!allBounds) return;
-    const frame = window.requestAnimationFrame(() => {
-      map.stop();
-      map.fitBounds(allBounds, { padding: 64, maxZoom: 12.5, duration: 0 });
-    });
-    return () => window.cancelAnimationFrame(frame);
-  }, [mapCollections.routes, mapCollections.zones, ready, showAllPoints, visiblePoints]);
+  }, [mapCollections.routes, mapCollections.zones, ready, visiblePoints]);
 
   useEffect(() => {
     const map = mapRef.current;

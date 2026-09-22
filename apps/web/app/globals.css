@@ -1328,7 +1328,7 @@ body {
 .tracks-card__country { display: flex; align-items: center; gap: 7px; margin-top: 8px; color: #e4ecef; font-size: 8px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .tracks-card__country i { color: #667b86; font-style: normal; }
 .tracks-flag { width: 20px; height: 13px; object-fit: cover; border: 1px solid rgba(255,255,255,.25); }
-.tracks-card__opened { position: absolute; top: 10px; right: 10px; display: grid; justify-items: end; padding: 5px 7px 6px; border: 1px solid rgba(255,255,255,.12); border-radius: 2px; background: rgba(2,9,15,.56); text-transform: uppercase; backdrop-filter: blur(5px); }
+.tracks-card__opened { position: absolute; top: 10px; right: 10px; display: grid; justify-items: end; padding: 5px 7px 6px; border: 1px solid rgba(255,255,255,.09); border-radius: 6px; background: rgba(2,9,15,.38); text-transform: uppercase; backdrop-filter: blur(4px); }
 .tracks-card__opened span { color: #c4d0d5; font-size: 6px; letter-spacing: .1em; }
 .tracks-card__opened b { margin-top: 3px; color: #eff4f5; font-family: var(--display); font-size: 15px; font-style: italic; font-weight: 500; }
 .tracks-featured .tracks-card__summary { position: absolute; bottom: 66px; left: 16px; width: 48%; margin: 0; color: #a2b0b6; font-size: 8px; line-height: 1.55; }
@@ -5316,8 +5316,8 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 }
 .spa-travel-map-column { position: relative; min-width: 0; min-height: 620px; }
 .spa-travel-map-column > .spa-poi-map-shell { position: absolute; inset: 0; min-height: 0; }
-.spa-travel-map-status { position: absolute; right: 18px; bottom: 18px; left: 18px; z-index: 4; display: flex; gap: 8px; padding: 9px; border: 1px solid rgba(151,176,188,.28); border-radius: 4px; background: rgba(4,13,21,.86); backdrop-filter: blur(14px); }
-.spa-travel-map-status span { display: flex; min-width: 0; flex: 1; align-items: baseline; gap: 7px; color: #8fa1aa; font-size: 10px; line-height: 1.35; }
+.spa-travel-map-status { position: absolute; bottom: 18px; left: 50%; z-index: 4; display: flex; width: max-content; max-width: calc(100% - 180px); justify-content: center; gap: 14px; padding: 9px 13px; border: 1px solid rgba(151,176,188,.28); border-radius: 4px; background: rgba(4,13,21,.86); transform: translateX(-50%); backdrop-filter: blur(14px); }
+.spa-travel-map-status span { display: flex; min-width: 0; flex: 0 1 auto; align-items: baseline; gap: 7px; color: #8fa1aa; font-size: 10px; line-height: 1.35; white-space: nowrap; }
 .spa-travel-map-status b { color: #f0f5f7; font-family: var(--brand); font-size: 11px; }
 .spa-travel-sidebar { min-width: 0; max-height: min(680px, calc(100svh - 170px)); border-left: 1px solid var(--line); background: #07131d; }
 .spa-travel-tabs { position: sticky; top: 0; z-index: 4; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); min-height: 54px; border-bottom: 1px solid var(--line); background: rgba(7,19,29,.96); }
@@ -5496,8 +5496,8 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
   .spa-travel-map-column { min-height: 62svh; }
   .spa-travel-sidebar { max-height: none; border-top: 1px solid var(--line); border-left: 0; }
   .spa-travel-panel { height: auto; max-height: 560px; }
-  .spa-travel-map-status { flex-wrap: wrap; }
-  .spa-travel-map-status span { flex: 1 1 130px; }
+  .spa-travel-map-status { width: min(420px, calc(100% - 32px)); max-width: none; flex-wrap: wrap; gap: 7px 14px; }
+  .spa-travel-map-status span { flex: 0 1 auto; }
   .spa-travel-tabs { overflow-x: auto; }
   .spa-poi-filter { grid-template-columns: 1fr; }
   .spa-poi-layout { grid-template-columns: 1fr; }
@@ -7525,7 +7525,7 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 :root[data-theme='light'] .tracks-card__country,
 :root[data-theme='light'] .tracks-featured .tracks-card__summary,
 :root[data-theme='light'] .tracks-metrics dt { color: var(--atlas-text-muted); }
-:root[data-theme='light'] .tracks-card__opened { border-color: rgba(255,255,255,.16); background: rgba(14,25,31,.58); }
+:root[data-theme='light'] .tracks-card__opened { border-color: rgba(255,255,255,.12); background: rgba(14,25,31,.4); }
 :root[data-theme='light'] .tracks-card__opened span { color: #d2dde1; }
 :root[data-theme='light'] .tracks-card__opened b { color: #fff; }
 :root[data-theme='light'] .tracks-featured > .tracks-shape,
@@ -7661,6 +7661,16 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 :root[data-theme='light'] .driver-showcase-card {
   background: linear-gradient(145deg, color-mix(in srgb, var(--entity-color) 7%, transparent), transparent 58%), var(--atlas-surface-raised);
 }
+:root[data-theme='light'] .driver-showcase-count strong { color: var(--accent); }
+:root[data-theme='light'] .driver-featured-data > b { color: #c91535; }
+:root[data-theme='light'] .driver-featured-card:hover .driver-featured-data > b,
+:root[data-theme='light'] .driver-featured-card:focus-visible .driver-featured-data > b { color: #ef163d; }
+:root[data-theme='light'] .driver-showcase-number {
+  color: color-mix(in srgb, var(--entity-color) 62%, #a30e29);
+  opacity: .58;
+  text-shadow: 0 1px 0 rgba(255,255,255,.72), 0 0 8px rgba(139,18,43,.2);
+}
+:root[data-theme='light'] .driver-showcase-number > img { filter: drop-shadow(0 1px 0 rgba(32,45,51,.42)) drop-shadow(0 0 6px rgba(255,32,56,.3)); }
 :root[data-theme='light'] .driver-showcase-portrait,
 :root[data-theme='light'] .driver-profile-portrait,
 :root[data-theme='light'] .team-profile-hero-car,
