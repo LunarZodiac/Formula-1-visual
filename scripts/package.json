@@ -48,6 +48,7 @@
     "travel:audit:spa-routes": "node --env-file=../.env.database.local audit-spa-travel-routes.mjs",
     "travel:review:spa-cultural": "node --env-file=../.env.database.local import-spa-travel-cultural-review.mjs",
     "travel:review:spa-cultural:apply": "node --env-file=../.env.database.local import-spa-travel-cultural-review.mjs --apply",
+    "import:track-annotations": "node --env-file=../.env.database.local import-track-annotations.mjs",
     "verify": "node verify-database.mjs"
   },
   "dependencies": {

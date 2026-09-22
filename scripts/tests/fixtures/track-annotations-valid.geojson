@@ -1,0 +1,22 @@
+{
+  "type": "FeatureCollection",
+  "circuitId": "test-circuit",
+  "layoutId": "test-layout",
+  "sourceUrl": "https://example.com/verified-track-document",
+  "sourceName": "Тестовый источник",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "test-turn-1",
+        "annotationType": "turn",
+        "sequence": 1,
+        "validFromYear": 2025
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0, 0]
+      }
+    }
+  ]
+}
