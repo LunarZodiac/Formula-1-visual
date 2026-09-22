@@ -166,6 +166,12 @@ body:has(.admin-login-shell) > .back-to-top { display: none; }
 .history-era-chapter h2 { margin: 16px 0 24px; font-family: var(--display); font-size: clamp(34px, 5vw, 68px); font-style: italic; font-weight: 500; line-height: .98; text-transform: uppercase; }
 .history-era-chapter p { max-width: 650px; margin: 0; color: var(--atlas-text-muted); font-size: 17px; line-height: 1.7; }
 .history-era-placeholder { aspect-ratio: 4 / 3; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; border: 1px solid var(--atlas-border); background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 11%, var(--atlas-surface-raised)), var(--atlas-surface)); color: var(--atlas-text-muted); }
+.history-era-media { position: relative; min-height: 360px; margin: 0; overflow: hidden; border: 1px solid var(--atlas-border); background: var(--atlas-surface); }
+.history-era-media img { object-fit: cover; }
+.history-era-chapter-left .history-era-media { order: 2; }
+.history-era-chapter-wide { grid-template-columns: 1fr; }
+.history-era-chapter-wide .history-era-media { min-height: 520px; order: 2; }
+.history-era-block-quote blockquote { margin: 18px 0 0; color: var(--atlas-text); font-family: var(--display); font-size: clamp(26px, 3vw, 46px); font-style: italic; line-height: 1.2; }
 .history-era-placeholder span { font-family: var(--display); font-size: 54px; font-style: italic; opacity: .25; }
 .history-era-placeholder small { font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .history-era-chapter-3 { grid-template-columns: 1fr; }
@@ -6840,6 +6846,10 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 .driver-showcase-page,
 .entity-catalog-page,
 .tracks-page,
+.history-page,
+.history-era-page,
+.project-page,
+.av-page,
 .favorites-page,
 .search-page,
 .games-page { padding-right: var(--atlas-page-gutter); padding-left: var(--atlas-page-gutter); }
@@ -6882,6 +6892,7 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
 .team-profile-page > .breadcrumbs,
 .driver-profile-page > .breadcrumbs,
 .history-page > .breadcrumbs,
+.history-era-page > .breadcrumbs,
 .project-page > .breadcrumbs,
 .av-page > .breadcrumbs,
 .favorites-page > .breadcrumbs,
@@ -6892,6 +6903,9 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
   padding-top: 24px;
   margin-bottom: 0;
 }
+.history-page > *,
+.history-era-page > *,
+.project-page > * { max-width: none; }
 .constructors-hero > div:first-child,
 .driver-showcase-hero > div:first-child { padding-top: 24px; }
 .constructors-hero .breadcrumbs,
@@ -6963,6 +6977,7 @@ a.tracks-card:hover, a.tracks-card:focus-visible { border-color: rgba(255, 32, 5
   .team-profile-page > .breadcrumbs,
   .driver-profile-page > .breadcrumbs,
   .history-page > .breadcrumbs,
+  .history-era-page > .breadcrumbs,
   .project-page > .breadcrumbs,
   .av-page > .breadcrumbs,
   .favorites-page > .breadcrumbs,

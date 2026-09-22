@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '../../components/breadcrumbs';
@@ -31,11 +32,15 @@ export default async function HistoryEraPage({ params }: HistoryEraPageProps) {
     </header>
 
     <article className="history-era-story">
+      {era.blocks.length ? era.blocks.map((block, index) => <section className={`history-era-chapter history-era-chapter-${block.mediaPosition ?? 'right'} history-era-block-${block.type}`} key={block.id}>
+        {block.media ? <figure className="history-era-media"><Image src={block.media.url} alt={block.media.altTextRu} fill sizes={block.mediaPosition === 'wide' ? '100vw' : '(max-width: 800px) 100vw, 50vw'} /></figure> : null}
+        <div><span>{block.eyebrowRu || `${String(index + 1).padStart(2, '0')} / ${String(era.blocks.length).padStart(2, '0')}`}</span>{block.titleRu ? <h2>{block.titleRu}</h2> : null}{block.bodyRu ? block.type === 'quote' ? <blockquote>{block.bodyRu}</blockquote> : <p>{block.bodyRu}</p> : null}</div>
+      </section>) : <>
       <p className="history-era-lead">Страница подготовлена как редакционный каркас. Исторические факты, подписи и фотографии будут добавляться только вместе с источниками и сведениями о правах</p>
       {era.chapters.map((chapter, index) => <section className={`history-era-chapter history-era-chapter-${index + 1}`} key={chapter}>
         <div className="history-era-placeholder" role="img" aria-label={`Место для проверенной иллюстрации раздела «${chapter}»`}><span>{String(index + 1).padStart(2, '0')}</span><small>Иллюстрация и подпись</small></div>
         <div><span>{String(index + 1).padStart(2, '0')} / {String(era.chapters.length).padStart(2, '0')}</span><h2>{chapter}</h2><p>Содержательный блок будет собран из проверяемых событий, пространственных изменений и связанных материалов атласа. Такая структура позволяет чередовать текст с изображениями разного масштаба, не превращая страницу в сплошную статью</p></div>
-      </section>)}
+      </section>)}</>}
     </article>
 
     <nav className="history-era-pagination" aria-label="Навигация между эпохами">

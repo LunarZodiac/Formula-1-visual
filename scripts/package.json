@@ -10,6 +10,7 @@
     "export:web": "node export-web-snapshots.mjs",
     "export:circuit-pages": "node export-circuit-pages.mjs",
     "export:circuit-catalog": "node export-circuit-catalog.mjs",
+    "export:history-eras": "node --env-file=../.env.database.local export-history-eras.mjs",
     "export:competitor-catalogs": "node --env-file=../.env.database.local export-competitor-catalogs.mjs",
     "build:team-index": "node --env-file=../.env.database.local build-team-catalog-index.mjs",
     "audit:competitors": "node --env-file=../.env.database.local audit-competitor-catalogs.mjs",

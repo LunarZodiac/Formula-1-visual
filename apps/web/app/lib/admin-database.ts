@@ -136,6 +136,50 @@ export type AdminConstructorIdentity = {
   latestSeason: number | null;
 };
 
+export type AdminHistoryEraStatus = 'draft' | 'review' | 'published';
+export type AdminHistoryEraBlockType = 'text' | 'media' | 'quote' | 'timeline' | 'entities';
+export type AdminHistoryEraMediaPosition = 'left' | 'right' | 'wide';
+
+export type AdminHistoryEraSummary = {
+  slug: string;
+  startYear: number;
+  endYear: number | null;
+  yearsLabel: string;
+  titleRu: string;
+  summaryRu: string;
+  editorialStatus: AdminHistoryEraStatus;
+  heroMediaAssetId: string | null;
+  blockCount: number;
+  publishedBlockCount: number;
+  updatedAt: string;
+};
+
+export type AdminHistoryEraBlock = {
+  id: number;
+  eraSlug: string;
+  sortOrder: number;
+  blockType: AdminHistoryEraBlockType;
+  eyebrowRu: string | null;
+  titleRu: string | null;
+  bodyRu: string | null;
+  mediaAssetId: string | null;
+  mediaPosition: AdminHistoryEraMediaPosition;
+  sourceUrl: string | null;
+  editorialStatus: AdminHistoryEraStatus;
+  updatedAt: string;
+};
+
+export type AdminHistoryEraDetail = {
+  era: AdminHistoryEraSummary;
+  blocks: AdminHistoryEraBlock[];
+};
+
+export type AdminHistoryEraInput = Pick<AdminHistoryEraSummary,
+  'yearsLabel' | 'titleRu' | 'summaryRu' | 'editorialStatus' | 'heroMediaAssetId'
+>;
+
+export type AdminHistoryEraBlockInput = Omit<AdminHistoryEraBlock, 'id' | 'eraSlug' | 'updatedAt'>;
+
 export type AdminDriverListItem = {
   id: string;
   nameRu: string;
@@ -1082,6 +1126,38 @@ export function updateAdminConstructorLineage(id: number, input: AdminConstructo
 
 export function deleteAdminConstructorLineage(id: number) {
   return apiRequest<{ id: number }>(`/constructor-lineages/${id}`, { method: 'DELETE' });
+}
+
+export async function getAdminHistoryEras() {
+  const result = await apiRequest<{ rows: AdminHistoryEraSummary[] }>('/history-eras');
+  if (!result) throw new Error('Редакционный реестр эпох не найден');
+  return result;
+}
+
+export function getAdminHistoryEra(slug: string) {
+  return apiRequest<AdminHistoryEraDetail>(`/history-eras/${encodeURIComponent(slug)}`);
+}
+
+export function updateAdminHistoryEra(slug: string, input: AdminHistoryEraInput) {
+  return apiRequest<{ slug: string; publicDataSynced: boolean }>(`/history-eras/${encodeURIComponent(slug)}`, {
+    method: 'PATCH', body: JSON.stringify(input),
+  });
+}
+
+export function createAdminHistoryEraBlock(eraSlug: string, input: AdminHistoryEraBlockInput) {
+  return apiRequest<{ id: number; publicDataSynced: boolean }>(`/history-eras/${encodeURIComponent(eraSlug)}/blocks`, {
+    method: 'POST', body: JSON.stringify(input),
+  });
+}
+
+export function updateAdminHistoryEraBlock(id: number, input: AdminHistoryEraBlockInput) {
+  return apiRequest<{ id: number; publicDataSynced: boolean }>(`/history-era-blocks/${id}`, {
+    method: 'PATCH', body: JSON.stringify(input),
+  });
+}
+
+export function deleteAdminHistoryEraBlock(id: number) {
+  return apiRequest<{ id: number; publicDataSynced: boolean }>(`/history-era-blocks/${id}`, { method: 'DELETE' });
 }
 
 async function constructorMediaRequest(input: AdminConstructorCarInput, kind: 'car' | 'logo', preview: boolean) {

@@ -3470,6 +3470,172 @@ async function deleteConstructorLineage(linkId) {
   return result.rows[0] ? { id: Number(result.rows[0].id) } : null;
 }
 
+function validHistoryEraSlug(value) {
+  const slug = String(value ?? '').trim();
+  if (!/^(?:\d{4}-\d{4}|\d{4}-present)$/.test(slug)) throw new Error('Некорректный идентификатор эпохи');
+  return slug;
+}
+
+function mapHistoryEra(row) {
+  return {
+    slug: String(row.slug),
+    startYear: Number(row.start_year),
+    endYear: row.end_year === null ? null : Number(row.end_year),
+    yearsLabel: String(row.years_label),
+    titleRu: String(row.title_ru),
+    summaryRu: String(row.summary_ru),
+    editorialStatus: String(row.editorial_status),
+    heroMediaAssetId: row.hero_media_asset_id === null ? null : String(row.hero_media_asset_id),
+    blockCount: Number(row.block_count ?? 0),
+    publishedBlockCount: Number(row.published_block_count ?? 0),
+    updatedAt: new Date(row.updated_at).toISOString(),
+  };
+}
+
+function mapHistoryEraBlock(row) {
+  return {
+    id: Number(row.id),
+    eraSlug: String(row.era_slug),
+    sortOrder: Number(row.sort_order),
+    blockType: String(row.block_type),
+    eyebrowRu: row.eyebrow_ru === null ? null : String(row.eyebrow_ru),
+    titleRu: row.title_ru === null ? null : String(row.title_ru),
+    bodyRu: row.body_ru === null ? null : String(row.body_ru),
+    mediaAssetId: row.media_asset_id === null ? null : String(row.media_asset_id),
+    mediaPosition: row.media_position === null ? 'wide' : String(row.media_position),
+    sourceUrl: row.source_url === null ? null : String(row.source_url),
+    editorialStatus: String(row.editorial_status),
+    updatedAt: new Date(row.updated_at).toISOString(),
+  };
+}
+
+const historyEraSelect = `SELECT era.*,
+  count(block.id)::int AS block_count,
+  count(block.id) FILTER (WHERE block.editorial_status = 'published')::int AS published_block_count
+  FROM atlas.history_eras AS era
+  LEFT JOIN atlas.history_era_blocks AS block ON block.era_slug = era.slug`;
+
+async function getHistoryEras() {
+  const result = await pool.query(`${historyEraSelect}
+    GROUP BY era.slug ORDER BY era.start_year, era.slug`);
+  return { rows: result.rows.map(mapHistoryEra) };
+}
+
+async function getHistoryEra(slugValue) {
+  const slug = validHistoryEraSlug(slugValue);
+  const [eraResult, blockResult] = await Promise.all([
+    pool.query(`${historyEraSelect} WHERE era.slug = $1 GROUP BY era.slug`, [slug]),
+    pool.query(`SELECT block.*, coalesce(block.source_url, source.url) AS source_url
+      FROM atlas.history_era_blocks AS block
+      LEFT JOIN atlas.data_sources AS source ON source.id = block.source_id
+      WHERE block.era_slug = $1 ORDER BY block.sort_order, block.id`, [slug]),
+  ]);
+  if (!eraResult.rows[0]) return null;
+  return { era: mapHistoryEra(eraResult.rows[0]), blocks: blockResult.rows.map(mapHistoryEraBlock) };
+}
+
+function historyEraStatus(value) {
+  const status = String(value ?? '').trim();
+  if (!['draft', 'review', 'published'].includes(status)) throw new Error('Некорректный редакционный статус');
+  return status;
+}
+
+async function syncHistoryEraPublicData() {
+  try {
+    await execFileAsync(process.execPath, [path.join(scriptDirectory, 'export-history-eras.mjs')], {
+      cwd: repositoryRoot, env: process.env, maxBuffer: 8 * 1024 * 1024, windowsHide: true,
+    });
+    return true;
+  } catch (error) {
+    console.error('Историческая эпоха сохранена, но публичный экспорт не обновлён', error);
+    return false;
+  }
+}
+
+async function saveHistoryEra(rawInput, slugValue) {
+  const slug = validHistoryEraSlug(slugValue);
+  const yearsLabel = optionalText(rawInput?.yearsLabel);
+  const titleRu = optionalText(rawInput?.titleRu);
+  const summaryRu = optionalText(rawInput?.summaryRu);
+  const editorialStatus = historyEraStatus(rawInput?.editorialStatus);
+  const heroMediaAssetId = optionalText(rawInput?.heroMediaAssetId);
+  if (!yearsLabel || !titleRu || !summaryRu) throw new Error('Заполните подпись периода, заголовок и аннотацию');
+  if (yearsLabel.length > 80 || titleRu.length > 180 || summaryRu.length > 2_000) throw new Error('Текст эпохи превышает допустимую длину');
+  if (editorialStatus === 'published') {
+    const publishedBlocks = await pool.query(`SELECT count(*)::int AS count FROM atlas.history_era_blocks
+      WHERE era_slug=$1 AND editorial_status='published'`, [slug]);
+    if (Number(publishedBlocks.rows[0]?.count ?? 0) === 0) throw new Error('До публикации эпохи опубликуйте хотя бы один блок');
+  }
+  const result = await pool.query(`UPDATE atlas.history_eras SET
+      years_label=$1,title_ru=$2,summary_ru=$3,editorial_status=$4,hero_media_asset_id=$5,updated_at=now()
+    WHERE slug=$6 RETURNING slug`, [yearsLabel, titleRu, summaryRu, editorialStatus, heroMediaAssetId, slug]);
+  if (!result.rows[0]) return null;
+  return { slug, publicDataSynced: await syncHistoryEraPublicData() };
+}
+
+async function saveHistoryEraBlock(rawInput, eraSlugValue, blockId = null) {
+  const eraSlug = validHistoryEraSlug(eraSlugValue);
+  const sortOrder = optionalInteger(rawInput?.sortOrder, 'порядок блока');
+  if (sortOrder > 9999) throw new Error('Некорректный порядок блока');
+  const blockType = String(rawInput?.blockType ?? '').trim();
+  const editorialStatus = historyEraStatus(rawInput?.editorialStatus);
+  if (!['text', 'media', 'quote', 'timeline', 'entities'].includes(blockType)) throw new Error('Некорректный тип блока');
+  const mediaAssetId = optionalText(rawInput?.mediaAssetId);
+  const mediaPosition = mediaAssetId ? String(rawInput?.mediaPosition ?? '').trim() : null;
+  if (mediaAssetId && !['left', 'right', 'wide'].includes(mediaPosition)) throw new Error('Некорректное положение изображения');
+  const eyebrowRu = optionalText(rawInput?.eyebrowRu);
+  const titleRu = optionalText(rawInput?.titleRu);
+  const bodyRu = optionalText(rawInput?.bodyRu);
+  if (['text', 'quote'].includes(blockType) && !bodyRu) throw new Error('Текст блока обязателен');
+  if (blockType === 'media' && !mediaAssetId) throw new Error('Для медиаблока выберите материал');
+  const sourceValue = optionalText(rawInput?.sourceUrl);
+  if (editorialStatus === 'published' && !sourceValue) throw new Error('Для публикации укажите источник');
+  let sourceUrl = null;
+  let sourceId = null;
+  if (sourceValue) {
+    sourceUrl = new URL(sourceValue);
+    if (!['http:', 'https:'].includes(sourceUrl.protocol) || sourceUrl.username || sourceUrl.password) throw new Error('Некорректный URL источника');
+    sourceId = `history-era-${createHash('sha256').update(sourceUrl.href).digest('hex').slice(0, 24)}`;
+  }
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    if (sourceId) {
+      await client.query(`INSERT INTO atlas.data_sources(id,name,url,retrieved_at,notes)
+        VALUES($1,$2,$3,now(),'Источник редакционного блока исторической эпохи')
+        ON CONFLICT(id) DO UPDATE SET name=EXCLUDED.name,url=EXCLUDED.url,retrieved_at=now()`,
+      [sourceId, sourceUrl.hostname, sourceUrl.href]);
+    }
+    const values = [eraSlug, sortOrder, blockType, eyebrowRu, titleRu, bodyRu, mediaAssetId,
+      mediaPosition, sourceId, sourceUrl?.href ?? null, editorialStatus];
+    let result;
+    if (blockId === null) {
+      result = await client.query(`INSERT INTO atlas.history_era_blocks
+        (era_slug,sort_order,block_type,eyebrow_ru,title_ru,body_ru,media_asset_id,media_position,source_id,source_url,editorial_status)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`, values);
+    } else {
+      result = await client.query(`UPDATE atlas.history_era_blocks SET
+        era_slug=$1,sort_order=$2,block_type=$3,eyebrow_ru=$4,title_ru=$5,body_ru=$6,media_asset_id=$7,
+        media_position=$8,source_id=$9,source_url=$10,editorial_status=$11,updated_at=now()
+        WHERE id=$12 RETURNING id`, [...values, blockId]);
+    }
+    await client.query('COMMIT');
+    if (!result.rows[0]) return null;
+    return { id: Number(result.rows[0].id), publicDataSynced: await syncHistoryEraPublicData() };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function deleteHistoryEraBlock(blockId) {
+  const result = await pool.query('DELETE FROM atlas.history_era_blocks WHERE id=$1 RETURNING id', [blockId]);
+  if (!result.rows[0]) return null;
+  return { id: Number(result.rows[0].id), publicDataSynced: await syncHistoryEraPublicData() };
+}
+
 function validSeason(value) {
   const season = Number(value);
   if (!Number.isInteger(season) || season < 1950 || season > 2100) throw new Error('Некорректный сезон');
@@ -4155,6 +4321,32 @@ const server = createServer(async (request, response) => {
     const circuitCardMatch = url.pathname.match(/^\/circuits\/([A-Za-z0-9_-]+)\/card-image$/);
     if (request.method === 'POST' && circuitCardMatch) {
       const result = await saveCircuitCard(await binaryRequestBody(request), uploadMetadata(request), circuitCardMatch[1]);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    if (request.method === 'GET' && url.pathname === '/history-eras') return json(response, 200, await getHistoryEras());
+    const historyEraMatch = url.pathname.match(/^\/history-eras\/([A-Za-z0-9-]+)$/);
+    if (request.method === 'GET' && historyEraMatch) {
+      const result = await getHistoryEra(historyEraMatch[1]);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    if (request.method === 'PATCH' && historyEraMatch) {
+      const result = await saveHistoryEra(await requestBody(request, 500_000), historyEraMatch[1]);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    const historyEraBlocksMatch = url.pathname.match(/^\/history-eras\/([A-Za-z0-9-]+)\/blocks$/);
+    if (request.method === 'POST' && historyEraBlocksMatch) {
+      const result = await saveHistoryEraBlock(await requestBody(request, 500_000), historyEraBlocksMatch[1]);
+      return result ? json(response, 201, result) : json(response, 404, { error: 'not_found' });
+    }
+    const historyEraBlockMatch = url.pathname.match(/^\/history-era-blocks\/(\d+)$/);
+    if (request.method === 'PATCH' && historyEraBlockMatch) {
+      const current = await pool.query('SELECT era_slug FROM atlas.history_era_blocks WHERE id=$1', [Number(historyEraBlockMatch[1])]);
+      if (!current.rows[0]) return json(response, 404, { error: 'not_found' });
+      const result = await saveHistoryEraBlock(await requestBody(request, 500_000), current.rows[0].era_slug, Number(historyEraBlockMatch[1]));
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    if (request.method === 'DELETE' && historyEraBlockMatch) {
+      const result = await deleteHistoryEraBlock(Number(historyEraBlockMatch[1]));
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
     }
     if (request.method === 'GET' && url.pathname === '/constructor-lineages') return json(response, 200, await getConstructorLineages(url));

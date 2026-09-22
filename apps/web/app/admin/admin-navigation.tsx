@@ -12,10 +12,11 @@ const items = [
   { href: '/admin/events', label: 'Этапы и результаты', note: 'Календарь и сессии', icon: '03' },
   { href: '/admin/teams', label: 'Команды и болиды', note: 'Данные по сезонам', icon: '04' },
   { href: '/admin/games', label: 'Мини-игры', note: 'Логотипы и карточки', icon: '05' },
-  { href: '/admin/media', label: 'Медиатека', note: 'Файлы и права', icon: '06' },
-  { href: '/admin/circuits', label: 'Трассы', note: 'Профили и конфигурации', icon: '07' },
-  { href: '/admin/travel', label: 'Туристические данные', note: 'Точки, районы и маршруты', icon: '08' },
-  { href: '/admin/database', label: 'Все таблицы', note: 'Схема PostgreSQL', icon: '09' },
+  { href: '/admin/history', label: 'История', note: 'Эпохи и редакционные блоки', icon: '06' },
+  { href: '/admin/media', label: 'Медиатека', note: 'Файлы и права', icon: '07' },
+  { href: '/admin/circuits', label: 'Трассы', note: 'Профили и конфигурации', icon: '08' },
+  { href: '/admin/travel', label: 'Туристические данные', note: 'Точки, районы и маршруты', icon: '09' },
+  { href: '/admin/database', label: 'Все таблицы', note: 'Схема PostgreSQL', icon: '10' },
 ];
 
 function isCurrent(pathname: string, href: string) {

@@ -36,10 +36,11 @@ export default async function AdminOverviewPage({ searchParams }: { searchParams
     { href: '/admin/seasons', index: '02', title: 'Сезоны', value: seasonCount || '—', text: 'Статус чемпионата и плановое число этапов' },
     { href: '/admin/events', index: '03', title: 'Этапы и результаты', value: eventCount || '—', text: 'Календарь, привязка конфигураций, сессии и классификация' },
     { href: '/admin/teams', index: '04', title: 'Команды и болиды', value: teamCount || '—', text: 'Сезонные составы, логотипы и изображения машин' },
-    { href: '/admin/media', index: '05', title: 'Медиатека', value: mediaCount || '—', text: 'Источники, лицензии, статусы и публикация файлов' },
-    { href: '/admin/circuits', index: '06', title: 'Трассы', value: circuitCount || '—', text: 'Справочные данные, публичные профили, конфигурации и материалы' },
-    { href: '/admin/travel', index: '07', title: 'Туристические данные', value: travelPointCount || '—', text: 'Точки, районы проживания, маршруты и источники' },
-    { href: '/admin/database', index: '08', title: 'Все таблицы', value: tableCount || '—', text: 'Полный доступ к структуре локальной PostgreSQL' },
+    { href: '/admin/history', index: '05', title: 'История', value: 6, text: 'Эпохи чемпионата, редакционные блоки и источники' },
+    { href: '/admin/media', index: '06', title: 'Медиатека', value: mediaCount || '—', text: 'Источники, лицензии, статусы и публикация файлов' },
+    { href: '/admin/circuits', index: '07', title: 'Трассы', value: circuitCount || '—', text: 'Справочные данные, публичные профили, конфигурации и материалы' },
+    { href: '/admin/travel', index: '08', title: 'Туристические данные', value: travelPointCount || '—', text: 'Точки, районы проживания, маршруты и источники' },
+    { href: '/admin/database', index: '09', title: 'Все таблицы', value: tableCount || '—', text: 'Полный доступ к структуре локальной PostgreSQL' },
   ];
   return <main className="admin-shell admin-overview">
     <header><div><span className="admin-kicker">Главное меню</span><h1>Редакция атласа</h1><p>Выберите раздел для работы с данными и материалами сайта</p></div><span className={`admin-connection-status ${dashboard ? 'is-online' : ''}`}>{dashboard ? 'PostgreSQL подключена' : 'База недоступна'}</span></header>

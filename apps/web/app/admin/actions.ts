@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { clearAdminSession, createAdminSession, getAdminSession, verifyAdminCredentials } from '../lib/admin-auth';
-import { applyAdminTravelImportPreview, applyAdminTravelPointOsmTranslations, applyAdminTravelRouteGenerationPreview, createAdminConstructorLineage, createAdminTravelImportPreview, createAdminTravelRouteGenerationPreview, deleteAdminConstructorLineage, deleteAdminSessionResult, deleteAdminTrackAnnotation, getAdminDriver, importAdminTrackGeometry, inspectAdminTrackGeometry, previewAdminCircuitCardImage, previewAdminConstructorCar, previewAdminConstructorLogo, previewAdminDriverPhoto, previewAdminGameLogo, previewAdminTravelPointPhoto, saveAdminEvent, saveAdminEventSession, saveAdminSeason, saveAdminSessionResult, saveAdminSessionResults, saveAdminTrackLayout, syncAdminSeasonFromJolpica, updateAdminCircuit, updateAdminCircuitMediaOrder, updateAdminConstructorEntry, updateAdminConstructorLineage, updateAdminDriver, updateAdminDriverEditorial, updateAdminMapUiSettings, updateAdminMediaAsset, updateAdminTableRow, updateAdminTrackAnnotation, updateAdminTravelCategoryIcon, updateAdminTravelPoint, updateAdminTravelPointsBulk, updateAdminTravelRoute, updateAdminTravelZone, uploadAdminCircuitCardImage, uploadAdminConstructorCar, uploadAdminConstructorLogo, uploadAdminDriverPhoto, uploadAdminGameLogo, uploadAdminTravelCategoryIcon, uploadAdminTravelPointPhoto, type AdminCircuitCardImageInput, type AdminCircuitInput, type AdminConstructorCarInput, type AdminConstructorLineageInput, type AdminDriverInput, type AdminEventInput, type AdminEventSessionInput, type AdminGameLogoInput, type AdminSeason, type AdminSessionResultInput, type AdminTrackLayoutInput, type AdminTravelPointPhotoInput } from '../lib/admin-database';
+import { applyAdminTravelImportPreview, applyAdminTravelPointOsmTranslations, applyAdminTravelRouteGenerationPreview, createAdminConstructorLineage, createAdminHistoryEraBlock, createAdminTravelImportPreview, createAdminTravelRouteGenerationPreview, deleteAdminConstructorLineage, deleteAdminHistoryEraBlock, deleteAdminSessionResult, deleteAdminTrackAnnotation, getAdminDriver, importAdminTrackGeometry, inspectAdminTrackGeometry, previewAdminCircuitCardImage, previewAdminConstructorCar, previewAdminConstructorLogo, previewAdminDriverPhoto, previewAdminGameLogo, previewAdminTravelPointPhoto, saveAdminEvent, saveAdminEventSession, saveAdminSeason, saveAdminSessionResult, saveAdminSessionResults, saveAdminTrackLayout, syncAdminSeasonFromJolpica, updateAdminCircuit, updateAdminCircuitMediaOrder, updateAdminConstructorEntry, updateAdminConstructorLineage, updateAdminDriver, updateAdminDriverEditorial, updateAdminHistoryEra, updateAdminHistoryEraBlock, updateAdminMapUiSettings, updateAdminMediaAsset, updateAdminTableRow, updateAdminTrackAnnotation, updateAdminTravelCategoryIcon, updateAdminTravelPoint, updateAdminTravelPointsBulk, updateAdminTravelRoute, updateAdminTravelZone, uploadAdminCircuitCardImage, uploadAdminConstructorCar, uploadAdminConstructorLogo, uploadAdminDriverPhoto, uploadAdminGameLogo, uploadAdminTravelCategoryIcon, uploadAdminTravelPointPhoto, type AdminCircuitCardImageInput, type AdminCircuitInput, type AdminConstructorCarInput, type AdminConstructorLineageInput, type AdminDriverInput, type AdminEventInput, type AdminEventSessionInput, type AdminGameLogoInput, type AdminHistoryEraBlockInput, type AdminHistoryEraInput, type AdminSeason, type AdminSessionResultInput, type AdminTrackLayoutInput, type AdminTravelPointPhotoInput } from '../lib/admin-database';
 
 function optionalText(formData: FormData, name: string) {
   const value = String(formData.get(name) ?? '').trim();
@@ -1197,4 +1197,91 @@ export async function uploadTravelCategoryIcon(formData: FormData) {
   catch (error) { console.error('Не удалось загрузить файл значка', error); redirect('/admin/travel?error=category-file'); }
   revalidatePath('/admin/travel');
   redirect(`/admin/travel?categorySaved=${encodeURIComponent(id)}`);
+}
+
+function historyEraDestination(slug: string) {
+  return `/admin/history/${encodeURIComponent(slug)}`;
+}
+
+function historyEraBlockInput(formData: FormData): AdminHistoryEraBlockInput {
+  const sortOrder = Number(formData.get('sortOrder'));
+  const blockType = String(formData.get('blockType') ?? '') as AdminHistoryEraBlockInput['blockType'];
+  const mediaPosition = String(formData.get('mediaPosition') ?? '') as AdminHistoryEraBlockInput['mediaPosition'];
+  const editorialStatus = String(formData.get('editorialStatus') ?? '') as AdminHistoryEraBlockInput['editorialStatus'];
+  if (!Number.isInteger(sortOrder) || sortOrder < 0 || sortOrder > 9999) throw new Error('Некорректный порядок блока');
+  if (!['text', 'media', 'quote', 'timeline', 'entities'].includes(blockType)) throw new Error('Некорректный тип блока');
+  if (!['left', 'right', 'wide'].includes(mediaPosition)) throw new Error('Некорректное положение материала');
+  if (!['draft', 'review', 'published'].includes(editorialStatus)) throw new Error('Некорректный статус блока');
+  return {
+    sortOrder, blockType, mediaPosition, editorialStatus,
+    eyebrowRu: optionalText(formData, 'eyebrowRu'),
+    titleRu: optionalText(formData, 'titleRu'),
+    bodyRu: optionalText(formData, 'bodyRu'),
+    mediaAssetId: optionalText(formData, 'mediaAssetId'),
+    sourceUrl: optionalText(formData, 'sourceUrl'),
+  };
+}
+
+export async function saveHistoryEra(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const slug = String(formData.get('slug') ?? '').trim();
+  const destination = historyEraDestination(slug);
+  try {
+    if (!/^(?:\d{4}-\d{4}|\d{4}-present)$/.test(slug)) throw new Error('Некорректный идентификатор эпохи');
+    const editorialStatus = String(formData.get('editorialStatus') ?? '') as AdminHistoryEraInput['editorialStatus'];
+    if (!['draft', 'review', 'published'].includes(editorialStatus)) throw new Error('Некорректный статус эпохи');
+    const input: AdminHistoryEraInput = {
+      yearsLabel: String(formData.get('yearsLabel') ?? '').trim(),
+      titleRu: String(formData.get('titleRu') ?? '').trim(),
+      summaryRu: String(formData.get('summaryRu') ?? '').trim(),
+      editorialStatus,
+      heroMediaAssetId: optionalText(formData, 'heroMediaAssetId'),
+    };
+    if (!input.yearsLabel || !input.titleRu || !input.summaryRu) throw new Error('Заполните подпись периода, заголовок и аннотацию');
+    const result = await updateAdminHistoryEra(slug, input);
+    revalidatePath('/admin/history'); revalidatePath(destination); revalidatePath('/history'); revalidatePath(`/history/${slug}`);
+    redirect(`${destination}?saved=era${result.publicDataSynced ? '' : '&syncError=1'}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось сохранить эпоху', error);
+    redirect(`${destination}?error=era`);
+  }
+}
+
+export async function saveHistoryEraBlock(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const eraSlug = String(formData.get('eraSlug') ?? '').trim();
+  const destination = historyEraDestination(eraSlug);
+  try {
+    if (!/^(?:\d{4}-\d{4}|\d{4}-present)$/.test(eraSlug)) throw new Error('Некорректный идентификатор эпохи');
+    const blockIdValue = optionalText(formData, 'blockId');
+    const blockId = blockIdValue === null ? null : Number(blockIdValue);
+    if (blockId !== null && (!Number.isInteger(blockId) || blockId <= 0)) throw new Error('Некорректный блок');
+    const result = blockId === null
+      ? await createAdminHistoryEraBlock(eraSlug, historyEraBlockInput(formData))
+      : await updateAdminHistoryEraBlock(blockId, historyEraBlockInput(formData));
+    revalidatePath('/admin/history'); revalidatePath(destination); revalidatePath('/history'); revalidatePath(`/history/${eraSlug}`);
+    redirect(`${destination}?saved=block${result.publicDataSynced ? '' : '&syncError=1'}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось сохранить блок эпохи', error);
+    redirect(`${destination}?error=block`);
+  }
+}
+
+export async function removeHistoryEraBlock(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const eraSlug = String(formData.get('eraSlug') ?? '').trim();
+  const destination = historyEraDestination(eraSlug);
+  try {
+    const blockId = Number(formData.get('blockId'));
+    if (!/^(?:\d{4}-\d{4}|\d{4}-present)$/.test(eraSlug) || !Number.isInteger(blockId) || blockId <= 0) throw new Error('Некорректный блок');
+    const result = await deleteAdminHistoryEraBlock(blockId);
+    revalidatePath('/admin/history'); revalidatePath(destination); revalidatePath('/history'); revalidatePath(`/history/${eraSlug}`);
+    redirect(`${destination}?deleted=1${result.publicDataSynced ? '' : '&syncError=1'}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось удалить блок эпохи', error);
+    redirect(`${destination}?error=delete`);
+  }
 }
