@@ -33,15 +33,15 @@ export default async function AdminEventsPage({ searchParams }: {
   return <main className="admin-shell"><section className="admin-directory admin-event-directory">
     <header><div><span className="admin-kicker">Календарь и результаты</span><h1>Этапы</h1></div><div className="admin-directory-heading-actions"><p>{registry ? `${registry.filteredCount} этапов по текущим фильтрам` : 'Календарные записи чемпионата'}</p><Link className="admin-row-action" href={newEventHref}>Добавить этап</Link></div></header>
     {databaseError ? <div className="admin-alert is-error">Локальная база этапов недоступна</div> : null}
-    <form id="event-column-filters" method="get" />
-    {registry ? <div className="admin-table-wrap"><table><thead className="admin-column-filters"><tr>
-      <th><span>Этап</span><input form="event-column-filters" name="q" defaultValue={state.q ?? ''} placeholder="Название или ID" aria-label="Фильтр по названию или ID этапа" /><select form="event-column-filters" name="season" defaultValue={state.season ?? ''} aria-label="Фильтр по сезону"><option value="">Все сезоны</option>{registry.seasons.map((year) => <option key={year} value={year}>{year}</option>)}</select></th>
-      <th><span>Дата</span></th>
-      <th><span>Трасса</span><select form="event-column-filters" name="circuit" defaultValue={state.circuit ?? ''} aria-label="Фильтр по трассе"><option value="">Все трассы</option>{registry.circuits.map((circuit) => <option key={circuit.id} value={circuit.id}>{circuit.name}</option>)}</select></th>
-      <th><span>Конфигурация</span></th>
-      <th><span>Статус</span><select form="event-column-filters" name="status" defaultValue={state.status ?? ''} aria-label="Фильтр по статусу этапа"><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></th>
-      <th><span>Сессии</span></th><th><span>Победитель</span></th>
-      <th><span className="admin-filter-actions"><button form="event-column-filters" type="submit">Применить</button><Link href="/admin/events">Сбросить</Link></span></th>
+    {registry ? <form className="admin-directory-search admin-event-filters" method="get">
+      <label><span>Сезон</span><select name="season" defaultValue={state.season ?? ''}><option value="">Все сезоны</option>{registry.seasons.map((year) => <option key={year} value={year}>{year}</option>)}</select></label>
+      <label><span>Название или ID</span><input name="q" defaultValue={state.q ?? ''} placeholder="Найти этап" /></label>
+      <label><span>Трасса</span><select name="circuit" defaultValue={state.circuit ?? ''}><option value="">Все трассы</option>{registry.circuits.map((circuit) => <option key={circuit.id} value={circuit.id}>{circuit.name}</option>)}</select></label>
+      <label><span>Статус</span><select name="status" defaultValue={state.status ?? ''}><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+      <button type="submit">Применить</button><Link href="/admin/events">Сбросить</Link>
+    </form> : null}
+    {registry ? <div className="admin-table-wrap"><table><thead><tr>
+      <th>Этап</th><th>Дата</th><th>Трасса</th><th>Конфигурация</th><th>Статус</th><th>Сессии</th><th>Победитель</th><th><span className="sr-only">Действие</span></th>
     </tr></thead><tbody>
       {registry.rows.map((event) => <tr key={event.id}>
         <td><strong>{event.seasonYear} · {event.round.toString().padStart(2, '0')}</strong><small><code>{event.id}</code> · {event.name}</small></td>

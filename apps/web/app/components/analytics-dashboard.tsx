@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import * as maplibregl from "maplibre-gl";
 import type { Map as MapLibreMap } from "maplibre-gl";
@@ -13,7 +13,18 @@ import {
   type DriverMetric,
 } from "../lib/analytics-data";
 import { loadAnalyticsSeasons } from "../lib/analytics-loader";
+import {
+  mergeImportedComparisons,
+  parseAnalyticsComparisonsExport,
+  readSavedComparisons,
+  savedComparisonsKey,
+  savedComparisonsLimit,
+  serializeAnalyticsComparisons,
+  type SavedAnalyticsComparison as SavedComparison,
+} from "../lib/analytics-saved";
 import type { SeasonSnapshot } from "../data/web-snapshots";
+import { useTheme, type AtlasTheme } from "./theme-provider";
+import { Breadcrumbs } from "./breadcrumbs";
 export type { AnalyticsDriverOption } from "../lib/analytics-data";
 
 type Props = {
@@ -22,21 +33,49 @@ type Props = {
   initialSeason: number;
 };
 type Scope = "season" | "career";
-type Metric = "wins" | "poles" | "podiums" | "points";
-type Mode = "shares" | "heat";
+type SessionView = "overview" | "race" | "sprint" | "qualifying";
+type MapMode = "shares" | "heat";
+type Metric =
+  | "wins"
+  | "poles"
+  | "podiums"
+  | "points"
+  | "racePoints"
+  | "sprintWins"
+  | "sprintPodiums"
+  | "sprintPoints"
+  | "qualifyingEntries";
 const colors = ["#ff365c", "#35d5c2", "#ffc857"];
-const choices: Array<{ key: Metric; label: string; unit: string }> = [
+const overviewChoices: Array<{ key: Metric; label: string; unit: string }> = [
   { key: "wins", label: "Победы", unit: "побед" },
   { key: "poles", label: "Поулы", unit: "поулов" },
   { key: "podiums", label: "Подиумы", unit: "подиумов" },
   { key: "points", label: "Очки", unit: "очков" },
 ];
-const compare: Array<{
+const sessionChoices: Record<SessionView, Array<{ key: Metric; label: string; unit: string }>> = {
+  overview: overviewChoices,
+  race: [
+    { key: "wins", label: "Победы", unit: "побед" },
+    { key: "podiums", label: "Подиумы", unit: "подиумов" },
+    { key: "racePoints", label: "Очки", unit: "очков" },
+  ],
+  sprint: [
+    { key: "sprintWins", label: "Победы", unit: "побед" },
+    { key: "sprintPodiums", label: "Подиумы", unit: "подиумов" },
+    { key: "sprintPoints", label: "Очки", unit: "очков" },
+  ],
+  qualifying: [
+    { key: "poles", label: "Поулы", unit: "поулов" },
+    { key: "qualifyingEntries", label: "Участия", unit: "участий" },
+  ],
+};
+type CompareRow = {
   key: keyof DriverMetric;
   label: string;
   hint: string;
   low?: boolean;
-}> = [
+};
+const overviewCompare: CompareRow[] = [
   { key: "wins", label: "Победы", hint: "финиши P1" },
   { key: "poles", label: "Поулы", hint: "P1 в квалификации" },
   { key: "podiums", label: "Подиумы", hint: "финиши P1–P3" },
@@ -49,6 +88,35 @@ const compare: Array<{
     low: true,
   },
 ];
+const sessionCompare: Record<SessionView, CompareRow[]> = {
+  overview: overviewCompare,
+  race: [
+    { key: "wins", label: "Победы", hint: "финиши P1" },
+    { key: "podiums", label: "Подиумы", hint: "финиши P1–P3" },
+    { key: "racePoints", label: "Очки", hint: "начислено в гонках" },
+    { key: "starts", label: "Старты", hint: "без не стартовавших" },
+    { key: "averageFinish", label: "Средняя позиция", hint: "меньше — лучше", low: true },
+  ],
+  sprint: [
+    { key: "sprintWins", label: "Победы", hint: "финиши P1" },
+    { key: "sprintPodiums", label: "Подиумы", hint: "финиши P1–P3" },
+    { key: "sprintPoints", label: "Очки", hint: "начислено в спринтах" },
+    { key: "sprintStarts", label: "Старты", hint: "без не стартовавших" },
+    { key: "sprintAverageFinish", label: "Средняя позиция", hint: "меньше — лучше", low: true },
+  ],
+  qualifying: [
+    { key: "poles", label: "Поулы", hint: "P1 в квалификации" },
+    { key: "qualifyingEntries", label: "Участия", hint: "результаты в базе" },
+    { key: "averageQualifying", label: "Средняя позиция", hint: "меньше — лучше", low: true },
+  ],
+};
+function metricDetails(metric: Metric) {
+  return (
+    Object.values(sessionChoices)
+      .flat()
+      .find((choice) => choice.key === metric) ?? overviewChoices[0]
+  );
+}
 const style: maplibregl.StyleSpecification = {
   version: 8,
   sources: {
@@ -80,6 +148,19 @@ const style: maplibregl.StyleSpecification = {
     },
   ],
 };
+
+function applyAnalyticsMapTheme(map: MapLibreMap, theme: AtlasTheme) {
+  const isLight = theme === "light";
+  const paint = (layerId: string, property: string, value: unknown) => {
+    if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
+  };
+
+  paint("bg", "background-color", isLight ? "#e8efef" : "#050c10");
+  paint("land", "fill-color", isLight ? "#d9e4df" : "#102a2d");
+  paint("water", "fill-color", isLight ? "#b9d6df" : "#02070b");
+  paint("roads", "line-color", isLight ? "#6d838d" : "#577078");
+  paint("roads", "line-opacity", isLight ? 0.3 : 0.18);
+}
 const number = (v: number) =>
   new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 1 }).format(v);
 function grouped(points: CircuitMetric[]) {
@@ -109,7 +190,7 @@ function popup(
   const h = document.createElement("strong");
   h.textContent = group[0]?.name ?? "Трасса";
   const small = document.createElement("small");
-  small.textContent = `${choices.find((item) => item.key === metric)?.label} · ${group[0]?.locality ?? group[0]?.countryCode ?? ""}`;
+  small.textContent = `${metricDetails(metric).label} · ${group[0]?.locality ?? group[0]?.countryCode ?? ""}`;
   root.append(h, small);
   const list = document.createElement("div");
   drivers.forEach((d) => {
@@ -137,14 +218,19 @@ function MapView({
   mode,
   focus,
   label,
+  selectedCircuitId,
+  onSelectCircuit,
 }: {
   points: CircuitMetric[];
   drivers: AnalyticsDriverOption[];
   metric: Metric;
-  mode: Mode;
+  mode: MapMode;
   focus: string;
   label: string;
+  selectedCircuitId: string;
+  onSelectCircuit: (circuitId: string) => void;
 }) {
+  const { theme } = useTheme();
   const node = useRef<HTMLDivElement>(null),
     map = useRef<MapLibreMap | null>(null),
     marks = useRef<maplibregl.Marker[]>([]),
@@ -158,23 +244,41 @@ function MapView({
       style,
       center: [12, 24],
       zoom: 1,
-      minZoom: -2,
+      minZoom: 0,
       maxZoom: 12,
       renderWorldCopies: false,
-      // Permit empty space around the world on tall screens instead of
-      // MapLibre zooming in to fill the viewport and cropping distant circuits.
-      transformConstrain: (center, zoom) => ({
-        center: new maplibregl.LngLat(
-          Math.max(-180, Math.min(180, center.lng)),
-          Math.max(-85, Math.min(85, center.lat)),
-        ),
-        zoom: Math.max(-2, Math.min(12, zoom)),
-      }),
+      transformConstrain: (center, zoom) => {
+        const width = node.current?.clientWidth ?? 0;
+        const height = node.current?.clientHeight ?? 0;
+        const viewportZoom = Math.max(0, Math.log2(Math.max(width, height, 1) / 512));
+        const nextZoom = Math.max(zoom, viewportZoom);
+        const worldSize = 512 * (2 ** nextZoom);
+        const halfX = Math.min(.5, width / (2 * worldSize));
+        const halfY = Math.min(.5, height / (2 * worldSize));
+        const mercatorX = Math.min(1 - halfX, Math.max(halfX, (center.lng + 180) / 360));
+        const latitude = Math.min(85, Math.max(-85, center.lat));
+        const radians = latitude * Math.PI / 180;
+        const rawY = (1 - Math.asinh(Math.tan(radians)) / Math.PI) / 2;
+        const mercatorY = Math.min(1 - halfY, Math.max(halfY, rawY));
+        const constrainedLatitude = Math.atan(Math.sinh(Math.PI * (1 - 2 * mercatorY))) * 180 / Math.PI;
+
+        // Камера учитывает размер viewport, поэтому за его краями не появляется пустое пространство.
+        return {
+          center: new maplibregl.LngLat(mercatorX * 360 - 180, constrainedLatitude),
+          zoom: nextZoom,
+        };
+      },
       attributionControl: false,
     });
     map.current = m;
     addAtlasMapAttribution(m);
-    m.on("load", () => setReady(true));
+    m.on("load", () => {
+      applyAnalyticsMapTheme(
+        m,
+        document.documentElement.dataset.theme === "light" ? "light" : "dark",
+      );
+      setReady(true);
+    });
     m.on("error", () => setFailed(true));
     return () => {
       pops.current.forEach((x) => x.remove());
@@ -183,6 +287,10 @@ function MapView({
       map.current = null;
     };
   }, []);
+  useEffect(() => {
+    const currentMap = map.current;
+    if (currentMap?.isStyleLoaded()) applyAnalyticsMapTheme(currentMap, theme);
+  }, [theme]);
   useEffect(() => {
     const m = map.current;
     if (!m || !ready || !node.current) return;
@@ -204,33 +312,42 @@ function MapView({
     pops.current.forEach((x) => x.remove());
     marks.current.forEach((x) => x.remove());
     pops.current = [];
-    const groups = grouped(points),
-      max = Math.max(
-        0,
-        ...groups.map(
-          (g) => g.find((p) => p.driverId === focus)?.[metric] ?? 0,
-        ),
-      );
+    const groups = grouped(points);
+    const max = Math.max(
+      0,
+      ...groups.map((group) =>
+        mode === "heat"
+          ? (group.find((point) => point.driverId === focus)?.[metric] ?? 0)
+          : group.reduce((sum, point) => sum + point[metric], 0),
+      ),
+    );
     marks.current = groups.map((g) => {
-      const value = g.find((p) => p.driverId === focus)?.[metric] ?? 0,
-        intensity = max ? value / max : 0,
-        total = g.reduce((s, p) => s + p[metric], 0),
+      const total = g.reduce((s, p) => s + p[metric], 0),
+        focusedValue = g.find((point) => point.driverId === focus)?.[metric] ?? 0,
+        displayedValue = mode === "heat" ? focusedValue : total,
+        contributors = g.filter((point) => point[metric] > 0).length,
+        markerSize = displayedValue && max ? 25 + Math.sqrt(displayedValue / max) * 31 : 23,
         button = document.createElement("button");
       button.type = "button";
-      button.className = `av-marker ${mode === "heat" ? "heat" : ""} ${mode === "heat" && !value ? "zero" : ""}`;
+      button.className = `av-marker${mode === "heat" ? " heat" : ""}${displayedValue ? "" : " zero"}${selectedCircuitId === g[0].circuitId ? " is-active" : ""}`;
       button.style.setProperty(
         "--fill",
-        mode === "shares"
-          ? gradient(g, metric)
-          : `rgba(255,54,92,${0.18 + 0.82 * intensity})`,
+        mode === "heat"
+          ? `rgba(255,54,92,${max ? 0.18 + 0.82 * (focusedValue / max) : 0.18})`
+          : gradient(g, metric),
       );
+      button.style.setProperty("--marker-size", `${markerSize}px`);
+      button.dataset.contributors = String(contributors);
       button.setAttribute(
         "aria-label",
-        `${g[0].name}: ${number(mode === "heat" ? value : total)} ${choices.find((x) => x.key === metric)?.unit}`,
+        `${g[0].name}: ${number(displayedValue)} ${metricDetails(metric).unit}; участников с результатом: ${contributors}`,
       );
-      button.append(document.createElement("span"));
+      const valueLabel = document.createElement("span");
+      valueLabel.textContent = number(displayedValue);
+      button.append(valueLabel);
       button.onclick = (e) => {
         e.stopPropagation();
+        onSelectCircuit(g[0].circuitId);
         pops.current.forEach((x) => x.remove());
         const p = new maplibregl.Popup({
           className: "av-map-popup",
@@ -251,7 +368,7 @@ function MapView({
       pops.current = [];
       marks.current = [];
     };
-  }, [drivers, focus, metric, mode, points, ready]);
+  }, [drivers, focus, metric, mode, onSelectCircuit, points, ready, selectedCircuitId]);
   return (
     <div className="av-mapShell">
       <div
@@ -268,27 +385,16 @@ function MapView({
         </p>
       )}
       <div className="av-legend">
-        {mode === "shares" ? (
-          <>
-            <strong>Доля показателя</strong>
-            <span>
-              <i className="donut" />
-              сектор = доля пилота
-            </span>
-            <span>
-              <i />
-              серый = у всех 0
-            </span>
-          </>
-        ) : (
-          <>
-            <strong>Интенсивность пилота</strong>
-            <span className="ramp" />
-            <span>
-              0 <b>в выбранном периоде</b> максимум
-            </span>
-          </>
-        )}
+        {mode === "shares" ? <>
+          <strong>Как читать знак</strong>
+          <span><i className="donut" />цвет = доля пилота</span>
+          <span><i className="size" />размер = сумма</span>
+          <span><i className="count">2</i>бейдж = участников</span>
+        </> : <>
+          <strong>Интенсивность пилота</strong>
+          <span><i className="size" />яркость и размер = результат</span>
+          <span><i />серый = нет результата</span>
+        </>}
       </div>
     </div>
   );
@@ -305,10 +411,22 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
     [error, setError] = useState(""),
     [loaded, setLoaded] = useState(0),
     [retry, setRetry] = useState(0),
+    [sessionView, setSessionView] = useState<SessionView>("overview"),
     [metric, setMetric] = useState<Metric>("wins"),
-    [mode, setMode] = useState<Mode>("shares"),
-    [focusId, setFocus] = useState(fallback?.id ?? "");
-  const request = useRef(0);
+    [mapMode, setMapMode] = useState<MapMode>("shares"),
+    [focusId, setFocusId] = useState(fallback?.id ?? ""),
+    [savedComparisons, setSavedComparisons] = useState<SavedComparison[]>([]),
+    [savedNotice, setSavedNotice] = useState(""),
+    [selectedCircuitId, setSelectedCircuitId] = useState("");
+  const request = useRef(0),
+    importInput = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    let active = true;
+    queueMicrotask(() => {
+      if (active) setSavedComparisons(readSavedComparisons(window.localStorage.getItem(savedComparisonsKey)));
+    });
+    return () => { active = false; };
+  }, []);
   const selected = useMemo(
     () =>
       ids
@@ -337,9 +455,6 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
       : wanted.length
         ? `${wanted.at(-1)}–${wanted[0]}`
         : "карьера";
-  const focus = selected.some((d) => d.id === focusId)
-    ? focusId
-    : (selected[0]?.id ?? "");
   useEffect(() => {
     const id = ++request.current,
       c = new AbortController();
@@ -391,25 +506,40 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
             .slice(0, 10)
         : [];
     }, [drivers, ids, query]);
+  const activeChoices = sessionChoices[sessionView];
+  const compare = sessionCompare[sessionView];
+  const focus = selected.some((driver) => driver.id === focusId)
+    ? focusId
+    : (selected[0]?.id ?? "");
   const rank = useMemo(
     () =>
       grouped(analytics.circuitMetrics)
         .map((group) => ({
           group,
           total:
-            mode === "heat"
+            mapMode === "heat"
               ? (group.find((point) => point.driverId === focus)?.[metric] ?? 0)
               : group.reduce((s, p) => s + p[metric], 0),
         }))
+        .filter((item) => item.total > 0)
         .sort(
           (a, b) =>
             b.total - a.total ||
             a.group[0].name.localeCompare(b.group[0].name, "ru"),
         ),
-    [analytics.circuitMetrics, focus, metric, mode],
+    [analytics.circuitMetrics, focus, mapMode, metric],
   );
-  const active = choices.find((x) => x.key === metric)!,
-    rankMax = Math.max(0, ...rank.map((item) => item.total));
+  const rankedCircuitIds = useMemo(
+    () => new Set(rank.map((item) => item.group[0].circuitId)),
+    [rank],
+  );
+  const mapPoints = useMemo(
+    () => analytics.circuitMetrics.filter((point) => rankedCircuitIds.has(point.circuitId)),
+    [analytics.circuitMetrics, rankedCircuitIds],
+  );
+  const active = activeChoices.find((x) => x.key === metric) ?? activeChoices[0];
+  const selectedCircuit = rank.find((item) => item.group[0].circuitId === selectedCircuitId) ?? rank[0];
+  const selectCircuit = useCallback((circuitId: string) => setSelectedCircuitId(circuitId), []);
   const toggle = (id: string) =>
     setIds((now) =>
       now.includes(id)
@@ -417,9 +547,161 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
         : now.length < 3
           ? [...now, id]
           : now,
+  );
+  const storeSavedComparisons = (next: SavedComparison[]) => {
+    try {
+      window.localStorage.setItem(savedComparisonsKey, JSON.stringify(next));
+      setSavedComparisons(next);
+      setSavedNotice("");
+      return true;
+    } catch {
+      setSavedNotice("Браузер не разрешил сохранить сравнение");
+      return false;
+    }
+  };
+  const currentComparison = (): SavedComparison | null => {
+    if (!selected.length) return null;
+    const fingerprint = JSON.stringify({ scope, season, ids, sessionView, metric, mapMode, focus });
+    const existing = savedComparisons.find((item) =>
+      JSON.stringify({
+        scope: item.scope,
+        season: item.season,
+        ids: item.driverIds,
+        sessionView: item.sessionView,
+        metric: item.metric,
+        mapMode: item.mapMode,
+        focus: item.focusId,
+      }) === fingerprint,
     );
+    const sessionLabel = {
+      overview: "обзор",
+      race: "гонки",
+      sprint: "спринты",
+      qualifying: "квалификации",
+    }[sessionView];
+    return {
+      id: existing?.id ?? `${Date.now()}`,
+      label: `${selected.map((driver) => driver.nameRu).join(" · ")} — ${period}, ${sessionLabel}`,
+      savedAt: new Date().toISOString(),
+      scope,
+      season,
+      driverIds: ids,
+      sessionView,
+      metric,
+      mapMode,
+      focusId: focus,
+    };
+  };
+  const saveComparison = () => {
+    const saved = currentComparison();
+    if (!saved) return;
+    const existing = savedComparisons.find((item) => item.id === saved.id);
+    if (storeSavedComparisons([saved, ...savedComparisons.filter((item) => item.id !== saved.id)].slice(0, savedComparisonsLimit))) {
+      setSavedNotice(existing ? "Сравнение обновлено" : "Сравнение сохранено");
+    }
+  };
+  const downloadComparisons = (items: SavedComparison[], name: string) => {
+    if (!items.length) return;
+    const url = URL.createObjectURL(new Blob([serializeAnalyticsComparisons(items)], { type: "application/json" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    link.click();
+    URL.revokeObjectURL(url);
+    setSavedNotice(items.length === 1 ? "Сравнение экспортировано" : "Сохранённые сравнения экспортированы");
+  };
+  const importComparisons = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      const imported = parseAnalyticsComparisonsExport(
+        await file.text(),
+        new Set(drivers.map((driver) => driver.id)),
+        new Set(years),
+      );
+      const next = mergeImportedComparisons(savedComparisons, imported);
+      const added = next.length - savedComparisons.length;
+      if (!added) {
+        setSavedNotice(savedComparisons.length >= savedComparisonsLimit ? "Лимит из восьми сравнений уже заполнен" : "Все сравнения из файла уже сохранены");
+        return;
+      }
+      if (storeSavedComparisons(next)) setSavedNotice(`Импортировано сравнений: ${added}`);
+    } catch (reason) {
+      setSavedNotice(reason instanceof Error ? reason.message : "Не удалось импортировать сравнения");
+    } finally {
+      if (importInput.current) importInput.current.value = "";
+    }
+  };
+  const loadComparison = (saved: SavedComparison) => {
+    const availableIds = saved.driverIds.filter((id) => drivers.some((driver) => driver.id === id));
+    if (!availableIds.length) {
+      setSavedNotice("Пилоты этого сравнения отсутствуют в каталоге");
+      return;
+    }
+    const nextView = saved.sessionView;
+    const nextMetric = sessionChoices[nextView].some((choice) => choice.key === saved.metric)
+      ? saved.metric
+      : sessionChoices[nextView][0].key;
+    setScope(saved.scope);
+    if (years.includes(saved.season)) setSeason(saved.season);
+    setIds(availableIds);
+    setSessionView(nextView);
+    setMetric(nextMetric);
+    setMapMode(saved.mapMode);
+    setFocusId(availableIds.includes(saved.focusId) ? saved.focusId : availableIds[0]);
+    setSelectedCircuitId("");
+    setSavedNotice("Сравнение восстановлено");
+  };
+  const removeComparison = (id: string) => {
+    storeSavedComparisons(savedComparisons.filter((item) => item.id !== id));
+  };
+  const cardContent = (driver: DriverMetric) => {
+    if (sessionView === "race")
+      return {
+        lead: driver.wins,
+        unit: "побед",
+        rows: [
+          ["Старты", driver.starts],
+          ["Подиумы", driver.podiums],
+          ["Очки", number(driver.racePoints)],
+          ["Средняя позиция", driver.averageFinish === null ? "—" : number(driver.averageFinish)],
+        ],
+      };
+    if (sessionView === "sprint")
+      return {
+        lead: driver.sprintWins,
+        unit: "побед",
+        rows: [
+          ["Старты", driver.sprintStarts],
+          ["Подиумы", driver.sprintPodiums],
+          ["Очки", number(driver.sprintPoints)],
+          ["Средняя позиция", driver.sprintAverageFinish === null ? "—" : number(driver.sprintAverageFinish)],
+        ],
+      };
+    if (sessionView === "qualifying")
+      return {
+        lead: driver.poles,
+        unit: "поулов",
+        rows: [
+          ["Участия", driver.qualifyingEntries],
+          ["Средняя позиция", driver.averageQualifying === null ? "—" : number(driver.averageQualifying)],
+        ],
+      };
+    return {
+      lead: driver.wins,
+      unit: "побед",
+      rows: [
+        ["Старты", driver.starts],
+        ["Подиумы", driver.podiums],
+        ["Поулы", driver.poles],
+        ["Очки", number(driver.points)],
+        ["Спринт-победы", driver.sprintWins],
+        ["Средняя позиция", driver.averageFinish === null ? "—" : number(driver.averageFinish)],
+      ],
+    };
+  };
   return (
     <main className="av-page">
+      <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Аналитика" }]} />
       <header className="av-hero">
         <div>
           <span>F1 / сравнительный атлас</span>
@@ -522,6 +804,68 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
           </small>
         </div>
       </section>
+      <nav className="av-sessionModes" aria-label="Тип сессии">
+        {([
+          ["overview", "Обзор"],
+          ["race", "Гонки"],
+          ["sprint", "Спринты"],
+          ["qualifying", "Квалификации"],
+        ] as Array<[SessionView, string]>).map(([key, label]) => (
+          <button
+            type="button"
+            key={key}
+            className={sessionView === key ? "active" : ""}
+            aria-pressed={sessionView === key}
+            onClick={() => {
+              setSessionView(key);
+              setMetric(sessionChoices[key][0].key);
+              setSelectedCircuitId("");
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+      <section className="av-savedComparisons" aria-label="Сохранённые сравнения">
+        <header>
+          <div>
+            <span>Личная подборка</span>
+            <strong>Сохранённые сравнения</strong>
+          </div>
+          <div className="av-savedComparisons__actions">
+            <button type="button" onClick={saveComparison} disabled={!selected.length}>Сохранить текущее</button>
+            <button type="button" onClick={() => {
+              const current = currentComparison();
+              if (current) downloadComparisons([current], "f1-atlas-comparison.json");
+            }} disabled={!selected.length}>Экспорт текущего</button>
+            <button type="button" onClick={() => downloadComparisons(savedComparisons, "f1-atlas-comparisons.json")} disabled={!savedComparisons.length}>Экспорт сохранённых</button>
+            <button type="button" onClick={() => importInput.current?.click()}>Импорт JSON</button>
+            <input
+              ref={importInput}
+              type="file"
+              accept="application/json,.json"
+              className="av-savedComparisons__file"
+              onChange={(event) => void importComparisons(event.target.files?.[0])}
+            />
+          </div>
+        </header>
+        {savedComparisons.length ? (
+          <div className="av-savedComparisons__list">
+            {savedComparisons.map((saved) => (
+              <article key={saved.id}>
+                <button type="button" onClick={() => loadComparison(saved)}>
+                  <strong>{saved.label}</strong>
+                  <small>{metricDetails(saved.metric).label} · {saved.mapMode === "heat" ? "тепло" : "доли"}</small>
+                </button>
+                <button type="button" onClick={() => removeComparison(saved.id)} aria-label={`Удалить сравнение ${saved.label}`}>×</button>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p>Сохраните текущую настройку, чтобы вернуться к ней одним нажатием</p>
+        )}
+        <span className="av-savedComparisons__notice" aria-live="polite">{savedNotice}</span>
+      </section>
       {status === "loading" && (
         <section className="av-status" aria-live="polite">
           <i
@@ -569,7 +913,9 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
             </p>
           </section>
           <section className="av-cards">
-            {analytics.metrics.map((m, i) => (
+            {analytics.metrics.map((m, i) => {
+              const content = cardContent(m);
+              return (
               <article
                 key={m.driver.id}
                 style={
@@ -587,21 +933,11 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
                   </div>
                 </header>
                 <strong>
-                  {m.wins}
-                  <small>побед</small>
+                  {content.lead}
+                  <small>{content.unit}</small>
                 </strong>
                 <dl>
-                  {[
-                    ["Старты", m.starts],
-                    ["Подиумы", m.podiums],
-                    ["Поулы", m.poles],
-                    ["Очки", number(m.points)],
-                    ["Спринт-победы", m.sprintWins],
-                    [
-                      "Средняя позиция",
-                      m.averageFinish === null ? "—" : number(m.averageFinish),
-                    ],
-                  ].map(([k, v]) => (
+                  {content.rows.map(([k, v]) => (
                     <div key={k}>
                       <dt>{k}</dt>
                       <dd>{v}</dd>
@@ -609,7 +945,8 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
                   ))}
                 </dl>
               </article>
-            ))}
+              );
+            })}
           </section>
           {analytics.metrics.length > 1 && (
             <section className="av-compare">
@@ -630,7 +967,7 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
                     ),
                     valid = vals.filter((v): v is number => v !== null),
                     max = Math.max(0, ...valid),
-                    min = Math.min(...valid),
+                    min = valid.length ? Math.min(...valid) : 0,
                     best = row.low ? min : max;
                   return (
                     <section key={row.label}>
@@ -678,9 +1015,9 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
                 <h2>{active.label} по географии</h2>
               </div>
               <p>
-                {mode === "shares"
-                  ? "Сектор пилота пропорционален его вкладу в сумму на трассе"
-                  : "Яркость нормирована от нуля до максимума пилота в выбранном периоде"}
+                {mapMode === "shares"
+                  ? "Диаметр показывает абсолютное значение, цветные сектора — вклад каждого пилота, число в центре — сумму по трассе"
+                  : "Яркость и размер нормированы от нуля до максимального результата выбранного пилота"}
               </p>
             </header>
             <div className="av-driverLegend" aria-label="Цвета пилотов">
@@ -691,9 +1028,9 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
                 </span>
               ))}
             </div>
-            <div className="av-toolbar">
+            <div className="av-toolbar" aria-label="Показатель карты">
               <div className="av-tabs">
-                {choices.map((c) => (
+                {activeChoices.map((c) => (
                   <button
                     aria-pressed={metric === c.key}
                     className={metric === c.key ? "active" : ""}
@@ -706,66 +1043,69 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
               </div>
               <div className="av-tabs modes">
                 <button
-                  aria-pressed={mode === "shares"}
-                  className={mode === "shares" ? "active" : ""}
-                  onClick={() => setMode("shares")}
+                  type="button"
+                  aria-pressed={mapMode === "shares"}
+                  className={mapMode === "shares" ? "active" : ""}
+                  onClick={() => setMapMode("shares")}
                 >
                   Доли
                 </button>
                 <button
-                  aria-pressed={mode === "heat"}
-                  className={mode === "heat" ? "active" : ""}
-                  onClick={() => setMode("heat")}
+                  type="button"
+                  aria-pressed={mapMode === "heat"}
+                  className={mapMode === "heat" ? "active" : ""}
+                  onClick={() => setMapMode("heat")}
                 >
                   Тепло
                 </button>
               </div>
-              {mode === "heat" && (
+              {mapMode === "heat" && (
                 <label>
                   Пилот
-                  <select
-                    value={focus}
-                    onChange={(e) => setFocus(e.target.value)}
-                  >
-                    {selected.map((d) => (
-                      <option value={d.id} key={d.id}>
-                        {d.nameRu}
-                      </option>
+                  <select value={focus} onChange={(event) => setFocusId(event.target.value)}>
+                    {selected.map((driver) => (
+                      <option value={driver.id} key={driver.id}>{driver.nameRu}</option>
                     ))}
                   </select>
                 </label>
               )}
             </div>
-            <MapView
-              points={analytics.circuitMetrics}
-              drivers={selected}
-              metric={metric}
-              mode={mode}
-              focus={focus}
-              label={period}
-            />
-          </section>
-          <section className="av-ranking">
-            <header>
-              <div>
-                <span>Рейтинг трасс</span>
-                <h2>Где набрано больше</h2>
-              </div>
-              <b>{rank.length} трасс</b>
-            </header>
-            {rank.length ? (
-              <ol>
+            <div className="av-explorer">
+              <MapView
+                points={mapPoints}
+                drivers={selected}
+                metric={metric}
+                mode={mapMode}
+                focus={focus}
+                label={period}
+                selectedCircuitId={selectedCircuit?.group[0].circuitId ?? ""}
+                onSelectCircuit={selectCircuit}
+              />
+              <aside className="av-ranking" aria-label="Связанный рейтинг трасс">
+                <header>
+                  <div><span>Связанный рейтинг</span><h3>Трассы</h3></div>
+                  <b>{rank.length}</b>
+                </header>
+                {selectedCircuit ? <section className="av-circuitPassport">
+                  <small>Выбранная трасса</small>
+                  <strong>{selectedCircuit.group[0].name}</strong>
+                  <span>{selectedCircuit.group[0].locality ?? selectedCircuit.group[0].countryCode}</span>
+                  <dl>{selected.map((driver) => {
+                    const point = selectedCircuit.group.find((item) => item.driverId === driver.id);
+                    return <div key={driver.id}><dt><i style={{ background: palette.get(driver.id) }} />{driver.nameRu}</dt><dd>{number(point?.[metric] ?? 0)}</dd></div>;
+                  })}</dl>
+                </section> : null}
+                {rank.length ? <ol>
                 {rank.map(({ group, total }, i) => (
-                  <li key={group[0].circuitId}>
+                  <li className={group[0].circuitId === selectedCircuit?.group[0].circuitId ? "is-active" : ""} key={group[0].circuitId}>
+                    <button type="button" onClick={() => selectCircuit(group[0].circuitId)} aria-label={`Выбрать трассу ${group[0].name}`}>
                     <span>{String(i + 1).padStart(2, "0")}</span>
                     <div>
                       <strong>{group[0].name}</strong>
                       <small>{group[0].locality ?? group[0].countryCode}</small>
                     </div>
                     <div className="bars">
-                      {selected
-                        .filter((d) => mode === "shares" || d.id === focus)
-                        .map((d) => {
+                      {selected.map((d) => {
                           const p = group.find((x) => x.driverId === d.id);
                           return (
                             <i
@@ -774,7 +1114,7 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
                               style={
                                 {
                                   "--driver": palette.get(d.id),
-                                  "--share": `${mode === "heat" ? (rankMax ? (total / rankMax) * 100 : 0) : total ? ((p?.[metric] ?? 0) / total) * 100 : 0}%`,
+                                  "--share": `${total ? ((p?.[metric] ?? 0) / total) * 100 : 0}%`,
                                 } as CSSProperties
                               }
                             />
@@ -785,26 +1125,24 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
                       {number(total)}
                       <small>{active.unit}</small>
                     </b>
+                    </button>
                   </li>
                 ))}
-              </ol>
-            ) : (
-              <div className="av-empty">Для показателя нет результатов</div>
-            )}
+              </ol> : <div className="av-empty">Для показателя нет результатов</div>}
+              </aside>
+            </div>
           </section>
           <aside className="av-method">
             <strong>Как считаем</strong>
             <p>
-              Поул — P1 в квалификации, а не стартовая позиция в гонке. Старт —
-              фактический старт, записи DNS, DNQ и DNPQ исключены. Средняя
-              позиция в классификации включает классифицированные позиции, в том
-              числе у сошедших, если позиция присвоена. Доступность квалификаций
-              особенно различается для ранних сезонов: в периоде нет данных для{" "}
-              {analytics.coverage.missingQualifyingRounds} из{" "}
-              {analytics.coverage.raceRounds} гоночных раундов. Очки в карточках
-              — сумма официальных сезонных итогов; на карте — сумма очков гонок
-              и спринтов по трассе. Они могут различаться из-за исторических
-              правил и отброшенных результатов
+              Гонки, спринты и квалификации считаются раздельно. Поул — P1 в
+              квалификации, а не стартовая позиция в гонке. Старт — фактический
+              старт, записи DNS, DNQ и DNPQ исключены. Средняя позиция использует
+              только строки с числовой классификацией. Для ранних сезонов нет
+              квалификационных данных в {analytics.coverage.missingQualifyingRounds} из{" "}
+              {analytics.coverage.raceRounds} гоночных раундов. В общем обзоре
+              очки карточек берутся из официальных сезонных итогов; в отдельных
+              режимах и на карте показывается сумма начисленных очков сессий
             </p>
           </aside>
         </>

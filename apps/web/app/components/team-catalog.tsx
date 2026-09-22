@@ -4,6 +4,7 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { TeamCar, TeamLogo } from './racing-visuals';
+import { Breadcrumbs } from './breadcrumbs';
 
 import type { TeamCatalogItem, TeamListItem } from '../data/competitor-contract';
 export type { TeamCatalogItem } from '../data/competitor-contract';
@@ -21,7 +22,7 @@ export function AllTeamCatalog({ teams }: { teams: TeamListItem[] }) {
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase('ru');
-    return teams.filter((team) => !needle || [team.name, team.nationality ?? '', ...team.aliases]
+    return teams.filter((team) => !needle || [team.name, team.nameRu ?? '', team.nationality ?? '', ...team.aliases]
       .some((value) => value.toLocaleLowerCase('ru').includes(needle)));
   }, [query, teams]);
   const visible = filtered.slice(0, visibleCount);
@@ -38,10 +39,9 @@ export function AllTeamCatalog({ teams }: { teams: TeamListItem[] }) {
   }, [filtered.length, hasMore]);
 
   return <main className="constructors-page">
-    <nav className="constructors-breadcrumbs" aria-label="Хлебные крошки"><Link href="/">Главная</Link><span>›</span><b>Команды</b></nav>
-    <header className="constructors-hero"><div><span>Исторический каталог</span><h1>Все команды Formula 1</h1><p>{teams.length} конструкторов и участников чемпионата по доступным сезонам базы</p></div></header>
+    <header className="constructors-hero"><div><Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'Команды' }]} /><span>Исторический каталог</span><h1>Все команды Formula 1</h1><p>{teams.length} конструкторов и участников чемпионата по доступным сезонам базы</p></div></header>
     <section className="constructors-toolbar" aria-label="Поиск по историческому каталогу"><label><span>Найти команду</span><input type="search" value={query} onChange={(event) => { setQuery(event.target.value); setVisibleCount(36); }} placeholder="Название, прежнее имя или страна" /></label><output>{filtered.length} из {teams.length} команд</output><Link href="/teams?season=2026">Кубок конструкторов 2026 →</Link></section>
-    <section className="constructors-history" aria-labelledby="all-constructors-title"><header><span>1950–2026</span><h2 id="all-constructors-title">История участников</h2></header><div>{visible.map((team) => <Link href={`/teams/${team.id}?season=${team.latestSeason}`} key={team.id} style={{ '--team-color': teamColor(team) } as CSSProperties}><header><TeamLogo constructorId={team.id} constructorName={team.name} teamColor={teamColor(team)} season={team.latestSeason} logoUrl={team.logoUrl} /><div><strong>{team.name}</strong><small>{team.firstSeason === team.latestSeason ? team.latestSeason : `${team.firstSeason}–${team.latestSeason}`} · {team.seasonCount} сезонов</small></div></header>{team.aliases.length > 1 ? <p>{team.aliases.join(' · ')}</p> : null}<dl><div><dt>Гран-при</dt><dd>{team.raceEntries}</dd></div><div><dt>Победы</dt><dd>{team.wins}</dd></div><div><dt>Титулы</dt><dd>{team.careerTitles}</dd></div></dl></Link>)}</div></section>
+    <section className="constructors-history" aria-labelledby="all-constructors-title"><header><span>1950–2026</span><h2 id="all-constructors-title">История участников</h2></header><div>{visible.map((team) => <Link href={`/teams/${team.id}?season=${team.latestSeason}`} key={team.id} style={{ '--team-color': teamColor(team) } as CSSProperties}><header><TeamLogo constructorId={team.id} constructorName={team.name} teamColor={teamColor(team)} season={team.latestSeason} logoUrl={team.logoUrl} /><div><strong>{team.name}</strong>{team.nameRu && team.nameRu !== team.name ? <small>{team.nameRu}</small> : null}<small>{team.firstSeason === team.latestSeason ? team.latestSeason : `${team.firstSeason}–${team.latestSeason}`} · {team.seasonCount} сезонов</small></div></header>{team.aliases.length > 1 ? <p>{team.aliases.join(' · ')}</p> : null}<dl><div><dt>Гран-при</dt><dd>{team.raceEntries}</dd></div><div><dt>Победы</dt><dd>{team.wins}</dd></div><div><dt>Титулы</dt><dd>{team.careerTitles}</dd></div></dl></Link>)}</div></section>
     {hasMore ? <div className="constructors-load-sentinel" ref={loadMoreRef} aria-live="polite">Подгружаем следующие команды…</div> : null}
     <p className="constructors-note">Переименования внутри одного идентификатора показаны как варианты названия. Преемственность разных конструкторов будет добавляться только подтверждёнными связями</p>
   </main>;
@@ -65,9 +65,8 @@ export function TeamCatalog({ season, afterRound, teams }: { season: number; aft
   const mostExperienced = [...ordered].sort((a, b) => b.seasonHistory.length - a.seasonHistory.length)[0];
 
   return <main className="constructors-page">
-    <nav className="constructors-breadcrumbs" aria-label="Хлебные крошки"><Link href="/">Главная</Link><span>›</span><b>Кубок конструкторов</b></nav>
     <header className="constructors-hero">
-      <div><span>Сезон {season}</span><h1>Кубок конструкторов</h1><p>Команды Formula 1, их составы и положение в чемпионате · зачёт после этапа {afterRound}</p></div>
+      <div><Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'Команды', href: '/teams' }, { label: 'Кубок конструкторов' }]} /><span>Сезон {season}</span><h1>Кубок конструкторов</h1><p>Команды Formula 1, их составы и положение в чемпионате · зачёт после этапа {afterRound}</p></div>
       {leader ? <div className="constructors-hero-car" style={{ '--team-color': teamColor(leader) } as CSSProperties}><TeamCar season={season} constructorId={leader.id} constructorName={leader.name} carImageUrl={leader.carImageUrl} /><small>Лидер чемпионата</small><strong>{leader.name}</strong></div> : null}
     </header>
     <section className="constructors-toolbar" aria-label="Поиск по турнирной таблице"><label><span>Поиск в таблице</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Команда, мотор или страна" /></label><output>{filtered.length} из {teams.length} в таблице</output></section>

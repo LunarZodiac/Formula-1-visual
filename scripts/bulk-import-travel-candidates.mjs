@@ -84,14 +84,16 @@ async function saveCandidates(client, circuitId, candidates, discoveredCount, fa
     for (const candidate of candidates) {
       await client.query(
         `INSERT INTO atlas.tourism_pois
-         (id,category_id,name,location,address,website_url,opening_hours,importance,wheelchair_access,review_status,source_id,properties,updated_at)
-         VALUES($1,$2,$3,ST_SetSRID(ST_MakePoint($4,$5),4326)::geography,$6,$7,$8,$9,'unknown','candidate','openstreetmap',$10::jsonb,now())
+         (id,category_id,name,name_ru,location,address,website_url,opening_hours,importance,wheelchair_access,review_status,source_id,properties,updated_at)
+         VALUES($1,$2,$3,$4,ST_SetSRID(ST_MakePoint($5,$6),4326)::geography,$7,$8,$9,$10,'unknown','candidate','openstreetmap',$11::jsonb,now())
          ON CONFLICT(id) DO UPDATE SET
-           category_id=EXCLUDED.category_id,name=EXCLUDED.name,location=EXCLUDED.location,address=EXCLUDED.address,
+           category_id=EXCLUDED.category_id,name=EXCLUDED.name,
+           name_ru=coalesce(nullif(atlas.tourism_pois.name_ru,''),EXCLUDED.name_ru),
+           location=EXCLUDED.location,address=EXCLUDED.address,
            website_url=EXCLUDED.website_url,opening_hours=EXCLUDED.opening_hours,importance=EXCLUDED.importance,
            properties=EXCLUDED.properties,updated_at=now()
          WHERE atlas.tourism_pois.review_status='candidate'`,
-        [candidate.id, candidate.categoryId, candidate.name, candidate.longitude, candidate.latitude,
+        [candidate.id, candidate.categoryId, candidate.name, candidate.nameRu, candidate.longitude, candidate.latitude,
           candidate.address, candidate.websiteUrl, candidate.openingHours, candidate.importance,
           JSON.stringify({ osm: candidate.externalId, tags: candidate.tags, importedVia: 'bulk-travel-wizard-v1' })],
       );

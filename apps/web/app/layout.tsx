@@ -2,7 +2,23 @@ import type { Metadata } from 'next';
 import { BackToTop } from './components/back-to-top';
 import { SiteHeader } from './components/site-header';
 import { SiteFooter } from './components/site-footer';
+import { ThemeProvider } from './components/theme-provider';
+import '@fontsource-variable/golos-text';
+import '@fontsource-variable/unbounded';
 import './globals.css';
+
+const themeInitializationScript = `
+(() => {
+  let saved;
+  try { saved = localStorage.getItem('f1-atlas-theme'); } catch {}
+  let prefersLight = false;
+  try { prefersLight = matchMedia('(prefers-color-scheme: light)').matches; } catch {}
+  const theme = saved === 'light' || saved === 'dark'
+    ? saved
+    : prefersLight ? 'light' : 'dark';
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
+})();`;
 
 export const metadata: Metadata = {
   title: 'География скорости — интерактивный атлас Formula 1',
@@ -23,12 +39,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang="ru" data-theme="dark" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitializationScript }} />
+      </head>
       <body>
-        <SiteHeader />
-        {children}
-        <SiteFooter />
-        <BackToTop />
+        <ThemeProvider>
+          <SiteHeader />
+          {children}
+          <SiteFooter />
+          <BackToTop />
+        </ThemeProvider>
       </body>
     </html>
   );

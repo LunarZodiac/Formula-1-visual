@@ -1,10 +1,11 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T20:26:23.908Z",
+  "generatedAt": "2026-09-21T18:29:53.242Z",
   "teams": [
     {
       "id": "alpine",
       "name": "Alpine F1 Team",
+      "nameRu": "Альпин",
       "nationality": "French",
       "firstSeason": 2021,
       "latestSeason": 2026,
@@ -75,6 +76,7 @@
     {
       "id": "aston_martin",
       "name": "Aston Martin",
+      "nameRu": "Астон Мартин",
       "nationality": "British",
       "firstSeason": 1959,
       "latestSeason": 2026,
@@ -90,7 +92,18 @@
       "color": null,
       "logoUrl": "/assets/f1/teams/2026/logos/05_aston_martin_2026.png",
       "carImageUrl": "/assets/f1/teams/2026/cars/cars2026/2026astonmartincarright.avif",
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "racing_point",
+          "teamName": "Racing Point",
+          "relationshipType": "rename",
+          "validFromYear": 2021,
+          "validToYear": null,
+          "descriptionRu": "С сезона 2021 года Racing Point выступает под именем Aston Martin.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 1959,
@@ -176,7 +189,18 @@
       "color": null,
       "logoUrl": "/assets/f1/teams/2026/logos/10_audi_2026.png",
       "carImageUrl": "/assets/f1/teams/2026/cars/cars2026/2026audicarright.avif",
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "sauber",
+          "teamName": "Sauber",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2026,
+          "validToYear": null,
+          "descriptionRu": "После полного приобретения Sauber компания Audi преобразовала коллектив в свою заводскую команду с сезона 2026 года.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 2026,
@@ -221,6 +245,7 @@
     {
       "id": "ferrari",
       "name": "Ferrari",
+      "nameRu": "Феррари",
       "nationality": "Italian",
       "firstSeason": 1950,
       "latestSeason": 2026,
@@ -859,6 +884,7 @@
     {
       "id": "haas",
       "name": "Haas F1 Team",
+      "nameRu": "Хаас",
       "nationality": "American",
       "firstSeason": 2016,
       "latestSeason": 2026,
@@ -969,6 +995,7 @@
     {
       "id": "mclaren",
       "name": "McLaren",
+      "nameRu": "Макларен",
       "nationality": "British",
       "firstSeason": 1968,
       "latestSeason": 2026,
@@ -1447,6 +1474,7 @@
     {
       "id": "mercedes",
       "name": "Mercedes",
+      "nameRu": "Мерседес",
       "nationality": "German",
       "firstSeason": 1954,
       "latestSeason": 2026,
@@ -1636,7 +1664,18 @@
       "color": null,
       "logoUrl": "/assets/f1/teams/2026/logos/09_racing_bulls_2026.png",
       "carImageUrl": "/assets/f1/teams/2026/cars/cars2026/2026racingbullscarright.avif",
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "alphatauri",
+          "teamName": "AlphaTauri",
+          "relationshipType": "rename",
+          "validFromYear": 2024,
+          "validToYear": null,
+          "descriptionRu": "В 2024 году AlphaTauri сменила название на RB; последующие сезонные варианты названия относятся к той же идентичности в базе.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 2024,
@@ -1667,6 +1706,7 @@
     {
       "id": "red_bull",
       "name": "Red Bull",
+      "nameRu": "Ред Булл",
       "nationality": "Austrian",
       "firstSeason": 2005,
       "latestSeason": 2026,
@@ -1682,7 +1722,18 @@
       "color": null,
       "logoUrl": "/assets/f1/teams/2026/logos/03_red_bull_racing_2026.png",
       "carImageUrl": "/assets/f1/teams/2026/cars/cars2026/2026redbullracingcarright.avif",
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "jaguar",
+          "teamName": "Jaguar",
+          "relationshipType": "ownership_change",
+          "validFromYear": 2005,
+          "validToYear": null,
+          "descriptionRu": "После ухода Ford команда Jaguar была продана Red Bull и с 2005 года выступает как Red Bull Racing.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 2005,
@@ -1865,6 +1916,7 @@
     {
       "id": "williams",
       "name": "Williams",
+      "nameRu": "Уильямс",
       "nationality": "British",
       "firstSeason": 1975,
       "latestSeason": 2026,
@@ -2295,6 +2347,7 @@
     {
       "id": "sauber",
       "name": "Sauber",
+      "nameRu": "Заубер",
       "nationality": "Swiss",
       "firstSeason": 1993,
       "latestSeason": 2025,
@@ -2310,7 +2363,18 @@
       "color": "#01C00E",
       "logoUrl": "/assets/f1/teams/2025/logos/10_kick_sauber_2025.png",
       "carImageUrl": "/assets/f1/teams/2025/cars/10_kick_sauber_c45_2025_fixed_wheels.png",
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "successor",
+          "teamId": "audi",
+          "teamName": "Audi",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2026,
+          "validToYear": null,
+          "descriptionRu": "После полного приобретения Sauber компания Audi преобразовала коллектив в свою заводскую команду с сезона 2026 года.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 1993,
@@ -2509,6 +2573,7 @@
     {
       "id": "alfa",
       "name": "Alfa Romeo",
+      "nameRu": "Альфа Ромео",
       "nationality": "Swiss",
       "firstSeason": 1950,
       "latestSeason": 2023,
@@ -2674,7 +2739,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "toro_rosso",
+          "teamName": "Toro Rosso",
+          "relationshipType": "rename",
+          "validFromYear": 2020,
+          "validToYear": null,
+          "descriptionRu": "С сезона 2020 года Toro Rosso выступала под именем AlphaTauri.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        },
+        {
+          "direction": "successor",
+          "teamId": "rb",
+          "teamName": "RB F1 Team",
+          "relationshipType": "rename",
+          "validFromYear": 2024,
+          "validToYear": null,
+          "descriptionRu": "В 2024 году AlphaTauri сменила название на RB; последующие сезонные варианты названия относятся к той же идентичности в базе.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 2020,
@@ -2728,7 +2814,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "force_india",
+          "teamName": "Force India",
+          "relationshipType": "licence_transfer",
+          "validFromYear": 2019,
+          "validToYear": null,
+          "descriptionRu": "После покупки активов Force India консорциумом Лоуренса Стролла команда продолжила выступления как отдельная идентичность Racing Point.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        },
+        {
+          "direction": "successor",
+          "teamId": "aston_martin",
+          "teamName": "Aston Martin",
+          "relationshipType": "rename",
+          "validFromYear": 2021,
+          "validToYear": null,
+          "descriptionRu": "С сезона 2021 года Racing Point выступает под именем Aston Martin.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 2019,
@@ -2751,6 +2858,7 @@
     {
       "id": "renault",
       "name": "Renault",
+      "nameRu": "Рено",
       "nationality": "French",
       "firstSeason": 1977,
       "latestSeason": 2020,
@@ -2965,6 +3073,7 @@
     {
       "id": "toro_rosso",
       "name": "Toro Rosso",
+      "nameRu": "Торо Россо",
       "nationality": "Italian",
       "firstSeason": 2006,
       "latestSeason": 2019,
@@ -2980,7 +3089,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "minardi",
+          "teamName": "Minardi",
+          "relationshipType": "ownership_change",
+          "validFromYear": 2006,
+          "validToYear": null,
+          "descriptionRu": "После приобретения Minardi компанией Red Bull команда была переименована в Toro Rosso.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        },
+        {
+          "direction": "successor",
+          "teamId": "alphatauri",
+          "teamName": "AlphaTauri",
+          "relationshipType": "rename",
+          "validFromYear": 2020,
+          "validToYear": null,
+          "descriptionRu": "С сезона 2020 года Toro Rosso выступала под именем AlphaTauri.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 2006,
@@ -3099,6 +3229,7 @@
     {
       "id": "force_india",
       "name": "Force India",
+      "nameRu": "Форс Индия",
       "nationality": "Indian",
       "firstSeason": 2008,
       "latestSeason": 2018,
@@ -3114,7 +3245,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "spyker",
+          "teamName": "Spyker",
+          "relationshipType": "ownership_change",
+          "validFromYear": 2008,
+          "validToYear": null,
+          "descriptionRu": "После смены владельца команда Spyker была переименована в Force India.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        },
+        {
+          "direction": "successor",
+          "teamId": "racing_point",
+          "teamName": "Racing Point",
+          "relationshipType": "licence_transfer",
+          "validFromYear": 2019,
+          "validToYear": null,
+          "descriptionRu": "После покупки активов Force India консорциумом Лоуренса Стролла команда продолжила выступления как отдельная идентичность Racing Point.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 2008,
@@ -3599,6 +3751,7 @@
     {
       "id": "toyota",
       "name": "Toyota",
+      "nameRu": "Тойота",
       "nationality": "Japanese",
       "firstSeason": 2002,
       "latestSeason": 2009,
@@ -3832,7 +3985,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "spyker_mf1",
+          "teamName": "Spyker MF1",
+          "relationshipType": "rename",
+          "validFromYear": 2007,
+          "validToYear": null,
+          "descriptionRu": "После переходного сезона под именем Spyker MF1 команда продолжила выступления как Spyker.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        },
+        {
+          "direction": "successor",
+          "teamId": "force_india",
+          "teamName": "Force India",
+          "relationshipType": "ownership_change",
+          "validFromYear": 2008,
+          "validToYear": null,
+          "descriptionRu": "После смены владельца команда Spyker была переименована в Force India.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 2007,
@@ -3892,7 +4066,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "jordan",
+          "teamName": "Jordan",
+          "relationshipType": "ownership_change",
+          "validFromYear": 2006,
+          "validToYear": null,
+          "descriptionRu": "Команда Jordan была продана Midland Group; в базе сезон 2006 года представлен идентичностью Spyker MF1.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        },
+        {
+          "direction": "successor",
+          "teamId": "spyker",
+          "teamName": "Spyker",
+          "relationshipType": "rename",
+          "validFromYear": 2007,
+          "validToYear": null,
+          "descriptionRu": "После переходного сезона под именем Spyker MF1 команда продолжила выступления как Spyker.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 2006,
@@ -3907,6 +4102,7 @@
     {
       "id": "bar",
       "name": "BAR",
+      "nameRu": "BAR",
       "nationality": "British",
       "firstSeason": 1999,
       "latestSeason": 2005,
@@ -3985,6 +4181,7 @@
     {
       "id": "jordan",
       "name": "Jordan",
+      "nameRu": "Джордан",
       "nationality": "Irish",
       "firstSeason": 1991,
       "latestSeason": 2005,
@@ -4000,7 +4197,18 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "successor",
+          "teamId": "spyker_mf1",
+          "teamName": "Spyker MF1",
+          "relationshipType": "ownership_change",
+          "validFromYear": 2006,
+          "validToYear": null,
+          "descriptionRu": "Команда Jordan была продана Midland Group; в базе сезон 2006 года представлен идентичностью Spyker MF1.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 1991,
@@ -4127,6 +4335,7 @@
     {
       "id": "minardi",
       "name": "Minardi",
+      "nameRu": "Минарди",
       "nationality": "Italian",
       "firstSeason": 1985,
       "latestSeason": 2005,
@@ -4142,7 +4351,18 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "successor",
+          "teamId": "toro_rosso",
+          "teamName": "Toro Rosso",
+          "relationshipType": "ownership_change",
+          "validFromYear": 2006,
+          "validToYear": null,
+          "descriptionRu": "После приобретения Minardi компанией Red Bull команда была переименована в Toro Rosso.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 1985,
@@ -4332,7 +4552,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "stewart",
+          "teamName": "Stewart",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2000,
+          "validToYear": null,
+          "descriptionRu": "Ford приобрёл Stewart Grand Prix и преобразовал команду в заводскую Jaguar Racing.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        },
+        {
+          "direction": "successor",
+          "teamId": "red_bull",
+          "teamName": "Red Bull",
+          "relationshipType": "ownership_change",
+          "validFromYear": 2005,
+          "validToYear": null,
+          "descriptionRu": "После ухода Ford команда Jaguar была продана Red Bull и с 2005 года выступает как Red Bull Racing.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 2000,
@@ -4379,6 +4620,7 @@
     {
       "id": "arrows",
       "name": "Arrows",
+      "nameRu": "Эрроуз",
       "nationality": "British",
       "firstSeason": 1978,
       "latestSeason": 2002,
@@ -4553,6 +4795,7 @@
     {
       "id": "benetton",
       "name": "Benetton",
+      "nameRu": "Бенеттон",
       "nationality": "Italian",
       "firstSeason": 1986,
       "latestSeason": 2001,
@@ -4780,7 +5023,18 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "successor",
+          "teamId": "jaguar",
+          "teamName": "Jaguar",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2000,
+          "validToYear": null,
+          "descriptionRu": "Ford приобрёл Stewart Grand Prix и преобразовал команду в заводскую Jaguar Racing.",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq"
+        }
+      ],
       "seasons": [
         {
           "season": 1997,
@@ -4811,6 +5065,7 @@
     {
       "id": "tyrrell",
       "name": "Tyrrell",
+      "nameRu": "Тиррелл",
       "nationality": "British",
       "firstSeason": 1970,
       "latestSeason": 1998,
@@ -5173,6 +5428,7 @@
     {
       "id": "ligier",
       "name": "Ligier",
+      "nameRu": "Лижье",
       "nationality": "French",
       "firstSeason": 1976,
       "latestSeason": 1996,
@@ -5439,6 +5695,7 @@
     {
       "id": "larrousse",
       "name": "Larrousse",
+      "nameRu": "Ларрусс",
       "nationality": "French",
       "firstSeason": 1987,
       "latestSeason": 1994,
@@ -5525,6 +5782,7 @@
     {
       "id": "team_lotus",
       "name": "Team Lotus",
+      "nameRu": "Лотус",
       "nationality": "British",
       "firstSeason": 1958,
       "latestSeason": 1994,
@@ -5911,6 +6169,7 @@
     {
       "id": "brabham",
       "name": "Brabham",
+      "nameRu": "Брэбем",
       "nationality": "British",
       "firstSeason": 1962,
       "latestSeason": 1992,
@@ -6209,6 +6468,7 @@
     {
       "id": "march",
       "name": "March",
+      "nameRu": "Марч",
       "nationality": "British",
       "firstSeason": 1970,
       "latestSeason": 1992,
@@ -6549,6 +6809,7 @@
     {
       "id": "osella",
       "name": "Osella",
+      "nameRu": "Озелла",
       "nationality": "Italian",
       "firstSeason": 1980,
       "latestSeason": 1990,
@@ -6959,6 +7220,7 @@
     {
       "id": "ats",
       "name": "ATS",
+      "nameRu": "ATS",
       "nationality": "Italian",
       "firstSeason": 1963,
       "latestSeason": 1984,
@@ -7201,6 +7463,7 @@
     {
       "id": "fittipaldi",
       "name": "Fittipaldi",
+      "nameRu": "Фиттипальди",
       "nationality": "Brazilian",
       "firstSeason": 1975,
       "latestSeason": 1982,
@@ -7687,6 +7950,7 @@
     {
       "id": "surtees",
       "name": "Surtees",
+      "nameRu": "Сёртис",
       "nationality": "British",
       "firstSeason": 1970,
       "latestSeason": 1978,
@@ -7819,6 +8083,7 @@
     {
       "id": "brm",
       "name": "BRM",
+      "nameRu": "BRM",
       "nationality": "British",
       "firstSeason": 1951,
       "latestSeason": 1977,

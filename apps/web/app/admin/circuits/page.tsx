@@ -39,16 +39,17 @@ export default async function AdminCircuitsPage({ searchParams }: {
       <Link href="/admin/circuits?gap=assignments"><strong>{registry.summary.circuits - registry.summary.assignedCalendars}</strong><span>С непривязанными этапами</span><small>Нужно назначить конфигурации календарю</small></Link>
       <Link href="/admin/circuits?gap=annotations"><strong>{registry.summary.circuits - registry.summary.withAnnotations}</strong><span>Без разметки</span><small>Нет поворотов, секторов или DRS</small></Link>
     </section> : null}
-    <form id="circuit-column-filters" method="get" />
-    {registry ? <div className="admin-table-wrap"><table><thead className="admin-column-filters"><tr>
-      <th><span>Трасса</span><input form="circuit-column-filters" name="q" defaultValue={state.q ?? ''} placeholder="Название, город или ID" aria-label="Фильтр по названию, городу или ID трассы" /></th>
-      <th><span>Место</span><select form="circuit-column-filters" name="country" defaultValue={state.country ?? ''} aria-label="Фильтр по стране"><option value="">Все страны</option>{registry.countries.map((country) => <option key={country} value={country}>{country.toUpperCase()}</option>)}</select></th>
-      <th><span>Тип</span><select form="circuit-column-filters" name="type" defaultValue={state.type ?? ''} aria-label="Фильтр по типу трассы"><option value="">Все типы</option>{Object.entries(typeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></th>
-      <th><span>Сезоны</span></th>
-      <th><span>Конфигурации</span><select form="circuit-column-filters" name="layout" defaultValue={state.layout ?? ''} aria-label="Фильтр по конфигурациям"><option value="">Любое состояние</option><option value="ready">Есть проверенная</option><option value="review">Требует проверки</option><option value="missing">Не добавлены</option></select></th>
-      <th><span>Наполнение</span><select form="circuit-column-filters" name="gap" defaultValue={state.gap ?? ''} aria-label="Фильтр по недостающему разделу"><option value="">Все уровни</option><option value="ready">Полностью заполнено</option>{Object.entries(gapLabels).map(([value, label]) => <option key={value} value={value}>Нет: {label.toLowerCase()}</option>)}</select></th>
-      <th><span>Профиль</span><select form="circuit-column-filters" name="status" defaultValue={state.status ?? ''} aria-label="Фильтр по состоянию профиля"><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></th>
-      <th><span className="admin-filter-actions"><button form="circuit-column-filters" type="submit">Применить</button><Link href="/admin/circuits">Сбросить</Link></span></th>
+    {registry ? <form className="admin-directory-search admin-circuit-filters" method="get">
+      <label><span>Название, город или ID</span><input name="q" defaultValue={state.q ?? ''} placeholder="Найти трассу" /></label>
+      <label><span>Страна</span><select name="country" defaultValue={state.country ?? ''}><option value="">Все страны</option>{registry.countries.map((country) => <option key={country} value={country}>{country.toUpperCase()}</option>)}</select></label>
+      <label><span>Тип</span><select name="type" defaultValue={state.type ?? ''}><option value="">Все типы</option>{Object.entries(typeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+      <label><span>Конфигурации</span><select name="layout" defaultValue={state.layout ?? ''}><option value="">Любое состояние</option><option value="ready">Есть проверенная</option><option value="review">Требует проверки</option><option value="missing">Не добавлены</option></select></label>
+      <label><span>Наполнение</span><select name="gap" defaultValue={state.gap ?? ''}><option value="">Все уровни</option><option value="ready">Полностью заполнено</option>{Object.entries(gapLabels).map(([value, label]) => <option key={value} value={value}>Нет: {label.toLowerCase()}</option>)}</select></label>
+      <label><span>Публичный профиль</span><select name="status" defaultValue={state.status ?? ''}><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+      <button type="submit">Применить</button><Link href="/admin/circuits">Сбросить</Link>
+    </form> : null}
+    {registry ? <div className="admin-table-wrap"><table><thead><tr>
+      <th>Трасса</th><th>Место</th><th>Тип</th><th>Сезоны</th><th>Конфигурации</th><th>Наполнение</th><th>Профиль</th><th><span className="sr-only">Действие</span></th>
     </tr></thead><tbody>
       {registry.rows.map((circuit) => <tr key={circuit.id}>
         <td><Link href={`/admin/circuits/${encodeURIComponent(circuit.id)}`}><strong>{circuit.nameRu ?? circuit.officialName}</strong></Link><small><code>{circuit.id}</code>{circuit.nameRu ? ` · ${circuit.officialName}` : ''}</small></td>

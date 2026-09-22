@@ -28,6 +28,7 @@ import {
   type SeasonSnapshot,
 } from '../data/web-snapshots';
 import { DriverFlag, TeamCar, TeamLogo } from './racing-visuals';
+import { useTheme, type AtlasTheme } from './theme-provider';
 
 type Basemap = 'dark' | 'satellite';
 type ResultView = 'sprintQualifying' | 'sprint' | 'qualifying' | 'race';
@@ -310,6 +311,57 @@ const darkBasemapLayerIds = [
   'earth-dark-roads',
 ] as const;
 
+function applyAtlasMapTheme(map: MapLibreMap, theme: AtlasTheme, basemap: Basemap) {
+  const isLight = theme === 'light';
+  const paint = (layerId: string, property: string, value: unknown) => {
+    if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
+  };
+
+  paint('space', 'background-color', isLight ? '#dfe8eb' : '#02070d');
+  paint('earth-dark', 'background-color', isLight ? '#d9e4e7' : '#071017');
+  paint('earth-dark-land', 'fill-color', isLight
+    ? ['match', ['get', 'class'], 'wood', '#c9d8cf', 'grass', '#d7e1cf', '#dfe5df']
+    : ['match', ['get', 'class'], 'wood', '#0b1717', 'grass', '#101b19', '#101a20']);
+  paint('earth-dark-water', 'fill-color', isLight ? '#b8d4de' : '#02080e');
+  paint('earth-dark-boundaries', 'line-color', isLight ? '#526d78' : '#78909c');
+  paint('earth-dark-boundaries', 'line-opacity', isLight ? .42 : .22);
+  paint('earth-dark-roads', 'line-color', isLight ? '#6d838d' : '#6a7d87');
+  paint('earth-dark-roads', 'line-opacity', isLight ? .3 : .2);
+  paint('graticule', 'line-color', isLight ? '#4d7180' : '#9ec8dd');
+  paint('graticule', 'line-opacity', isLight ? .22 : .18);
+  paint('season-route', 'line-color', isLight ? '#334b56' : '#f3f8fb');
+  paint('season-route', 'line-opacity', isLight ? .5 : .46);
+  paint('selected-track', 'line-color', isLight ? '#172128' : '#f6fbff');
+  paint('circuit-order', 'text-color', isLight ? '#172128' : '#ffffff');
+  paint('circuit-order', 'text-halo-color', isLight ? '#f7faf8' : '#06101a');
+
+  map.setSky(isLight ? {
+    'sky-color': '#dce9ed',
+    'horizon-color': '#f8fbfa',
+    'fog-color': '#c7dce3',
+    'fog-ground-blend': basemap === 'satellite' ? 0.24 : 0.38,
+    'horizon-fog-blend': 0.18,
+    'sky-horizon-blend': 0.22,
+    'atmosphere-blend': 0.88,
+  } : basemap === 'satellite' ? {
+    'sky-color': '#01060a',
+    'horizon-color': '#8bb4c4',
+    'fog-color': '#31596d',
+    'fog-ground-blend': 0.32,
+    'horizon-fog-blend': 0.18,
+    'sky-horizon-blend': 0.22,
+    'atmosphere-blend': 0.94,
+  } : {
+    'sky-color': '#01070d',
+    'horizon-color': '#3d7890',
+    'fog-color': '#123246',
+    'fog-ground-blend': 0.42,
+    'horizon-fog-blend': 0.22,
+    'sky-horizon-blend': 0.28,
+    'atmosphere-blend': 0.9,
+  });
+}
+
 function makeGraticule(): GeoJSON.FeatureCollection<GeoJSON.LineString> {
   const features: GeoJSON.Feature<GeoJSON.LineString>[] = [];
   for (let longitude = -150; longitude <= 180; longitude += 30) {
@@ -365,10 +417,12 @@ function makeRouteGeoJson(circuits: Circuit[]): GeoJSON.FeatureCollection<GeoJSO
 }
 
 export function AtlasExperience() {
+  const { theme } = useTheme();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const raceListRef = useRef<HTMLOListElement>(null);
   const sectionNavigationLockRef = useRef(0);
   const mapRef = useRef<MapLibreMap | null>(null);
+  const themeRef = useRef<AtlasTheme>(theme);
   const circuitsRef = useRef<Circuit[]>(fallbackCircuits);
   const selectedSeasonRef = useRef(2026);
   const nextCircuitIdRef = useRef<string | null>(null);
@@ -387,6 +441,8 @@ export function AtlasExperience() {
   const [mapReady, setMapReady] = useState(false);
   const [resultView, setResultView] = useState<ResultView>('race');
   const [mapLegendOpen, setMapLegendOpen] = useState(false);
+
+  useEffect(() => { themeRef.current = theme; }, [theme]);
 
   const orderedCircuits = useMemo(() => [...circuits].sort((left, right) => left.order - right.order), [circuits]);
   const circuitGeoJson = useMemo(() => makeCircuitGeoJson(orderedCircuits), [orderedCircuits]);
@@ -577,24 +633,14 @@ export function AtlasExperience() {
       if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
     });
     map.setLayoutProperty('earth-satellite', 'visibility', nextBasemap === 'satellite' ? 'visible' : 'none');
-    map.setSky(nextBasemap === 'satellite' ? {
-      'sky-color': '#01060a',
-      'horizon-color': '#8bb4c4',
-      'fog-color': '#31596d',
-      'fog-ground-blend': 0.32,
-      'horizon-fog-blend': 0.18,
-      'sky-horizon-blend': 0.22,
-      'atmosphere-blend': 0.94,
-    } : {
-      'sky-color': '#01070d',
-      'horizon-color': '#3d7890',
-      'fog-color': '#123246',
-      'fog-ground-blend': 0.42,
-      'horizon-fog-blend': 0.22,
-      'sky-horizon-blend': 0.28,
-      'atmosphere-blend': 0.9,
-    });
-  }, []);
+    applyAtlasMapTheme(map, theme, nextBasemap);
+  }, [theme]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!mapReady || !map?.isStyleLoaded()) return;
+    applyAtlasMapTheme(map, theme, basemap);
+  }, [basemap, mapReady, theme]);
 
   useEffect(() => {
     const selectSeason = (season: number) => {
@@ -891,6 +937,7 @@ export function AtlasExperience() {
         const circuit = circuitsRef.current.find((item) => item.id === id);
         if (circuit) focusCircuit(circuit);
       });
+      applyAtlasMapTheme(map, themeRef.current, 'dark');
       setMapReady(true);
     });
 

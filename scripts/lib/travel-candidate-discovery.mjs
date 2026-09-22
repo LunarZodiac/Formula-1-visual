@@ -189,6 +189,9 @@ export async function discoverTravelCandidates(client, {
       categoryId,
       role,
       name: String(element.tags.name),
+      nameRu: typeof element.tags['name:ru'] === 'string' && element.tags['name:ru'].trim()
+        ? element.tags['name:ru'].trim()
+        : null,
       latitude: point.latitude,
       longitude: point.longitude,
       distanceToCircuitM: distanceMetres(circuit, point),

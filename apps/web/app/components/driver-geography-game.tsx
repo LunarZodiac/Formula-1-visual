@@ -3,8 +3,10 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { awardSession, emptyProgress, rankForXp, readProgress, shuffled, type Progress } from "../lib/games-engine";
+import { awardSession, emptyProgress, rankForXp, readProgress, shuffled, xpForScore, type Progress } from "../lib/games-engine";
 import { DriverCountryMap } from "./driver-country-map";
+import { Breadcrumbs } from "./breadcrumbs";
+import { GameSessionSummary } from "./game-session-summary";
 import "./driver-geography-game.css";
 
 const STORAGE_KEY = "f1-atlas-games-progress-v1";
@@ -37,7 +39,10 @@ export function DriverGeographyGame({ drivers }: { drivers: DriverQuestion[] }) 
     setRound((value) => value + 1); setSelected(null);
   }
   const rank = rankForXp(progress.xp);
-  if (!rounds.length || finished) return <main className="driver-game-page"><nav><Link href="/games">← Все игры</Link></nav><section className="driver-game-intro"><span>03 / География пилотов</span><h1>Где началась<br/><em>история пилота?</em></h1><p>Выберите на карте страну рождения. После ответа страна будет полностью выделена, а правильный полигон показан бирюзовым</p><dl><div><dt>Раундов</dt><dd>5</dd></div><div><dt>Текущее звание</dt><dd>{rank.name}</dd></div><div><dt>Результат</dt><dd>{finished ? `${scores.reduce((a, b) => a + b, 0)} / 5 000` : "Новый заезд"}</dd></div></dl><button type="button" onClick={start}>{finished ? "Сыграть ещё раз →" : "Начать сессию →"}</button></section></main>;
+  const totalScore = scores.reduce((sum, score) => sum + score, 0);
+  const recordKey = "driver-geography-standard";
+  if (!rounds.length) return <main className="driver-game-page"><Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Мини-игры", href: "/games" }, { label: "География пилотов" }]} /><section className="driver-game-intro"><span>03 / География пилотов</span><h1>Где началась<br/><em>история пилота?</em></h1><p>Выберите на карте страну рождения. После ответа страна будет полностью выделена, а правильный полигон показан бирюзовым</p><dl><div><dt>Раундов</dt><dd>5</dd></div><div><dt>Текущее звание</dt><dd>{rank.name}</dd></div><div><dt>Результат</dt><dd>Новый заезд</dd></div></dl><button type="button" onClick={start}>Начать сессию →</button></section></main>;
+  if (finished) return <main className="driver-game-page"><Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Мини-игры", href: "/games" }, { label: "География пилотов" }]} /><GameSessionSummary description="География пилотов · пять стран рождения" score={totalScore} gainedXp={xpForScore(totalScore)} record={progress.records[recordKey] ?? totalScore} rank={rank} xp={progress.xp} metrics={[{ label: "Точных ответов", value: `${scores.filter((score) => score === 1000).length} / 5` }]} actions={<><button type="button" onClick={start}>Сыграть ещё раз</button><Link className="is-primary" href="/games">К играм →</Link></>} /></main>;
   return <main className="driver-game-page is-playing"><header className="driver-game-head"><Link href="/games">← К играм</Link><div><b>Раунд {round + 1}</b><i><span style={{ width: `${((round + (revealed ? 1 : 0)) / 5) * 100}%` }} /></i><small>{round + 1} / 5</small></div><strong>{scores.reduce((a, b) => a + b, 0)} очков</strong></header>
     <section className="driver-game-arena"><div className="driver-map-panel"><DriverCountryMap selected={selected?.code ?? null} answer={current.countryCode} revealed={revealed} onSelect={(code, name) => setSelected({ code, name })} /></div><aside>
       <span>Где родился пилот?</span><div className="driver-question-person">{current.photoUrl ? <img src={current.photoUrl} alt="" /> : <b>{current.code ?? current.name.slice(0, 2)}</b>}<div><h1>{current.name}</h1><p>{current.code ?? "Formula 1"}</p></div></div>

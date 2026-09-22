@@ -79,6 +79,14 @@ export type AdminConstructorEntry = {
     rightsStatus: string;
     reviewStatus: string;
   } | null;
+  logoMedia: {
+    altTextRu: string;
+    author: string;
+    licence: string;
+    sourceUrl: string;
+    rightsStatus: string;
+    reviewStatus: string;
+  } | null;
 };
 
 export type AdminConstructorCarInput = {
@@ -341,7 +349,7 @@ export type AdminTravelImportPreview = {
   radii: { airport: number; regionalTransport: number; stay: number; explore: number; essential: number };
   failedGroups: string[];
   candidates: Array<{
-    id: string; name: string; categoryId: string; role: string;
+    id: string; name: string; nameRu: string | null; categoryId: string; role: string;
     latitude: number; longitude: number; distanceToCircuitM: number; importance: number;
     websiteUrl: string | null; openingHours: string | null; address: string | null;
   }>;
@@ -355,13 +363,14 @@ export type AdminTravelPoint = {
   openingHours: string | null; importance: number; distanceToCircuitM: number; reviewStatus: 'candidate' | 'reviewed' | 'published' | 'hidden';
   priority: number; isFeatured: boolean; editorialNoteRu: string | null;
   sourceName: string | null; sourceUrl: string | null;
-  photo: null | { id: string; url: string; altTextRu: string | null; reviewStatus: string; rightsStatus: string };
+  photo: null | { id: string; url: string; altTextRu: string | null; author: string | null; licence: string | null;
+    sourceUrl: string | null; reviewStatus: string; rightsStatus: string };
 };
 
 export type AdminTravelPointRegistry = {
   circuit: { id: string; name: string; latitude: number; longitude: number };
   rows: Array<Pick<AdminTravelPoint, 'id' | 'name' | 'nameRu' | 'categoryId' | 'categoryName' | 'role' | 'importance' | 'distanceToCircuitM' | 'reviewStatus' | 'isFeatured' | 'photo'>>;
-  mapPoints: Array<{ id: string; name: string; categoryId: string; categoryIcon: string; role: string; latitude: number; longitude: number; distanceToCircuitM: number; reviewStatus: string }>;
+  mapPoints: Array<{ id: string; name: string; nameRu: string | null; originalName: string; categoryId: string; categoryIcon: string; role: string; latitude: number; longitude: number; distanceToCircuitM: number; reviewStatus: string }>;
   mapPointsTruncated: boolean; mapPointLimit: number;
   categories: Array<{ id: string; name: string; groupId: string }>;
   filteredCount: number; page: number; limit: number;
@@ -374,6 +383,7 @@ export type AdminTravelPointInput = Pick<AdminTravelPoint,
 export type AdminTravelPointPhotoInput = {
   circuitId: string; pointId: string; fileName: string; mimeType: string; bytes: ArrayBuffer;
   altTextRu: string; author: string; licence: string; sourceUrl: string;
+  previewToken: string; cropZoom: number; cropX: number; cropY: number;
 };
 
 export type AdminTravelZoneRegistry = {
@@ -732,7 +742,7 @@ export async function applyAdminTravelImportPreview(token: string, selectedIds: 
 
 export async function getAdminTravelPoints(circuitId: string, filters: {
   page?: number; limit?: number; query?: string; status?: string; category?: string; role?: string;
-  photo?: string; featured?: string; distanceMin?: string; distanceMax?: string;
+  photo?: string; featured?: string; translation?: string; distanceMin?: string; distanceMax?: string;
   importanceMin?: string; importanceMax?: string;
 } = {}) {
   const search = new URLSearchParams({ page: String(filters.page ?? 1), limit: String(filters.limit ?? 30) });
@@ -742,6 +752,7 @@ export async function getAdminTravelPoints(circuitId: string, filters: {
   if (filters.role) search.set('role', filters.role);
   if (filters.photo) search.set('photo', filters.photo);
   if (filters.featured) search.set('featured', filters.featured);
+  if (filters.translation) search.set('translation', filters.translation);
   if (filters.distanceMin) search.set('distanceMin', filters.distanceMin);
   if (filters.distanceMax) search.set('distanceMax', filters.distanceMax);
   if (filters.importanceMin) search.set('importanceMin', filters.importanceMin);
@@ -802,15 +813,28 @@ export async function updateAdminTravelPointsBulk(input: {
   return result;
 }
 
-export async function uploadAdminTravelPointPhoto(input: AdminTravelPointPhotoInput) {
+export async function applyAdminTravelPointOsmTranslations(circuitId: string) {
+  const result = await apiRequest<{ circuitId: string; updated: number; publicDataSynced: boolean }>(
+    `/travel/circuits/${encodeURIComponent(circuitId)}/translations/osm`,
+    { method: 'POST' }, 60_000,
+  );
+  if (!result) throw new Error('Трасса не найдена');
+  return result;
+}
+
+async function travelPointPhotoRequest(input: AdminTravelPointPhotoInput, preview: boolean) {
   const config = apiConfiguration();
   if (!config) throw new Error('Локальный API базы данных для админки не настроен');
-  const metadata = Buffer.from(JSON.stringify({
+  const metadata = Buffer.from(JSON.stringify(preview ? {
+    fileName: input.fileName, mimeType: input.mimeType,
+  } : {
     fileName: input.fileName, mimeType: input.mimeType, altTextRu: input.altTextRu,
     author: input.author, licence: input.licence, sourceUrl: input.sourceUrl,
-    cropZoom: 1, cropX: 0, cropY: 0,
+    previewToken: input.previewToken,
+    cropZoom: input.cropZoom, cropX: input.cropX, cropY: input.cropY,
   }), 'utf8').toString('base64url');
-  const response = await fetch(`${config.baseUrl}/travel/circuits/${encodeURIComponent(input.circuitId)}/points/${encodeURIComponent(input.pointId)}/photo`, {
+  const suffix = preview ? '/preview' : '';
+  const response = await fetch(`${config.baseUrl}/travel/circuits/${encodeURIComponent(input.circuitId)}/points/${encodeURIComponent(input.pointId)}/photo${suffix}`, {
     method: 'POST', body: input.bytes, cache: 'no-store', signal: AbortSignal.timeout(120_000),
     headers: { authorization: `Bearer ${config.token}`, 'content-type': input.mimeType, 'x-upload-metadata': metadata },
   });
@@ -818,7 +842,16 @@ export async function uploadAdminTravelPointPhoto(input: AdminTravelPointPhotoIn
     const details = await response.json().catch(() => null) as { message?: string } | null;
     throw new Error(details?.message || `Не удалось загрузить фотографию: ${response.status}`);
   }
-  return response.json() as Promise<{ id: string; url: string; circuitId: string; pointId: string; publicDataSynced: boolean; variants: Record<string, string> }>;
+  return response.json() as Promise<{ token?: string; imageDataUrl?: string; expiresInMinutes?: number;
+    id?: string; url?: string; circuitId?: string; pointId?: string; publicDataSynced?: boolean; variants?: Record<string, string> }>;
+}
+
+export function previewAdminTravelPointPhoto(input: AdminTravelPointPhotoInput) {
+  return travelPointPhotoRequest(input, true);
+}
+
+export function uploadAdminTravelPointPhoto(input: AdminTravelPointPhotoInput) {
+  return travelPointPhotoRequest(input, false);
 }
 
 export function getAdminTravelZones(circuitId: string) {

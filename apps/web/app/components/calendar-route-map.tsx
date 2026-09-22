@@ -5,6 +5,7 @@ import * as maplibregl from "maplibre-gl";
 import type { GeoJSONSource, Map as MapLibreMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { answerNearGuess } from "../lib/games-engine";
+import { useTheme, type AtlasTheme } from "./theme-provider";
 
 type Stage = { id: string; name: string; coordinates: [number, number] };
 function routeData(stages: Stage[]) {
@@ -28,7 +29,27 @@ const mapStyle: maplibregl.StyleSpecification = { version: 8, glyphs: "https://t
   { id: "calendar-labels", type: "symbol", source: "labels", "source-layer": "place", minzoom: .6, layout: { "text-field": ["coalesce", ["get", "name:ru"], ["get", "name"]], "text-font": ["Noto Sans Regular"], "text-size": 10 }, paint: { "text-color": "#f4f7f8", "text-halo-color": "#071014", "text-halo-width": 1.5 } },
 ] };
 
+function applyCalendarMapTheme(map: MapLibreMap, theme: AtlasTheme) {
+  const isLight = theme === "light";
+  const paint = (layerId: string, property: string, value: unknown) => {
+    if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
+  };
+
+  paint("calendar-bg", "background-color", isLight ? "#e8efef" : "#02090d");
+  paint("calendar-satellite", "raster-brightness-max", isLight ? .82 : .5);
+  paint("calendar-satellite", "raster-saturation", isLight ? -.18 : -.35);
+  paint("calendar-satellite", "raster-contrast", isLight ? -.08 : .12);
+  paint("calendar-boundaries", "line-color", isLight ? "#526d78" : "#dce7ea");
+  paint("calendar-boundaries", "line-opacity", isLight ? .48 : .35);
+  paint("calendar-labels", "text-color", isLight ? "#263b44" : "#f4f7f8");
+  paint("calendar-labels", "text-halo-color", isLight ? "#f7faf8" : "#071014");
+  paint("calendar-route-line-shadow", "line-color", isLight ? "#dce7e7" : "#030b0f");
+  paint("calendar-route-line", "line-color", isLight ? "#263b44" : "#ffffff");
+  paint("calendar-route-points", "circle-stroke-color", isLight ? "#f7faf8" : "#edf6f7");
+}
+
 export function CalendarRouteMap({ stages }: { stages: Stage[] }) {
+  const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null); const mapRef = useRef<MapLibreMap | null>(null); const readyRef = useRef(false); const initialStagesRef = useRef(stages);
   useEffect(() => {
     if (!containerRef.current) return undefined;
@@ -39,9 +60,16 @@ export function CalendarRouteMap({ stages }: { stages: Stage[] }) {
       map.addLayer({ id: "calendar-route-line-shadow", type: "line", source: "calendar-route", filter: ["==", ["geometry-type"], "MultiLineString"], paint: { "line-color": "#030b0f", "line-width": 4.5, "line-opacity": .7 } });
       map.addLayer({ id: "calendar-route-line", type: "line", source: "calendar-route", filter: ["==", ["geometry-type"], "MultiLineString"], paint: { "line-color": "#ffffff", "line-width": 2.25, "line-opacity": .92 } });
       map.addLayer({ id: "calendar-route-points", type: "circle", source: "calendar-route", filter: ["==", ["geometry-type"], "Point"], paint: { "circle-color": "#ff365c", "circle-radius": 7, "circle-stroke-color": "#edf6f7", "circle-stroke-width": 1.5 } });
-      map.addLayer({ id: "calendar-route-order", type: "symbol", source: "calendar-route", filter: ["==", ["geometry-type"], "Point"], layout: { "text-field": ["to-string", ["get", "order"]], "text-font": ["Noto Sans Regular"], "text-size": 9 }, paint: { "text-color": "#fff" } }); readyRef.current = true; });
+      map.addLayer({ id: "calendar-route-order", type: "symbol", source: "calendar-route", filter: ["==", ["geometry-type"], "Point"], layout: { "text-field": ["to-string", ["get", "order"]], "text-font": ["Noto Sans Regular"], "text-size": 9 }, paint: { "text-color": "#fff" } });
+      applyCalendarMapTheme(map, document.documentElement.dataset.theme === "light" ? "light" : "dark");
+      readyRef.current = true;
+    });
     return () => { map.remove(); mapRef.current = null; };
   }, []);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map?.isStyleLoaded()) applyCalendarMapTheme(map, theme);
+  }, [theme]);
   useEffect(() => { if (!readyRef.current) return; (mapRef.current?.getSource("calendar-route") as GeoJSONSource | undefined)?.setData(routeData(stages)); }, [stages]);
   return <div ref={containerRef} className="calendar-route-map" aria-label="Маршрут календаря на карте мира" />;
 }

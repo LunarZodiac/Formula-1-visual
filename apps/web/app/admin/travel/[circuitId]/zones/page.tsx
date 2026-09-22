@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../../lib/admin-auth';
 import { getAdminTravelZones, isAdminDatabaseConfigured } from '../../../../lib/admin-database';
+import { TravelModuleNav } from '../travel-module-nav';
 
 const typeLabels: Record<string,string> = { accommodation:'Размещение',parking:'Парковка',park_and_ride:'P+R',access:'Доступ',restricted:'Ограничение',walking:'Пешеходная',travel_time:'Время в пути' };
 const statusLabels: Record<string,string> = { candidate:'Кандидат',reviewed:'Проверена',published:'Опубликована',hidden:'Скрыта' };
@@ -30,18 +31,12 @@ export default async function AdminTravelZonesPage({ params, searchParams }: {
     && (!status || zone.reviewStatus === status)
     && (!geometry || (geometry === 'yes' ? zone.hasGeometry : !zone.hasGeometry))
   ));
-  return <main className="admin-shell"><section className="admin-directory">
+  return <main className="admin-shell"><section className="admin-directory admin-travel-subdirectory">
     <Link className="admin-back-link" href={`/admin/travel/${encodeURIComponent(circuitId)}`}>← Вернуться к точкам</Link>
-    <header><div><span className="admin-kicker">Районы и зоны</span><h1>{registry.circuit.name}</h1></div><p>{rows.length} из {registry.rows.length} зон · жильё раскрывается при приближении к району<br/><Link href={`/admin/travel/${encodeURIComponent(circuitId)}/zones/new`}>Добавить район →</Link></p></header>
-    <form id="zone-column-filters" method="get" />
-    <div className="admin-table-wrap"><table><thead className="admin-column-filters"><tr>
-      <th><span>Район</span><input form="zone-column-filters" name="q" defaultValue={state.q ?? ''} placeholder="Название или ID" aria-label="Фильтр районов по названию или ID" /></th>
-      <th><span>Тип</span><select form="zone-column-filters" name="type" defaultValue={type} aria-label="Фильтр по типу района"><option value="">Все типы</option>{Object.entries(typeLabels).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></th>
-      <th><span>Граница</span><select form="zone-column-filters" name="geometry" defaultValue={geometry} aria-label="Фильтр по наличию границы"><option value="">Любое состояние</option><option value="yes">Есть</option><option value="no">Не задана</option></select></th>
-      <th><span>Объекты</span></th><th><span>Приоритет</span></th>
-      <th><span>Статус</span><select form="zone-column-filters" name="status" defaultValue={status} aria-label="Фильтр по статусу района"><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></th>
-      <th><span className="admin-filter-actions"><button form="zone-column-filters" type="submit">Применить</button><Link href={`/admin/travel/${encodeURIComponent(circuitId)}/zones`}>Сбросить</Link></span></th>
-    </tr></thead><tbody>
+    <header><div><span className="admin-kicker">Районы и зоны</span><h1>{registry.circuit.name}</h1><p>{rows.length} из {registry.rows.length} зон по текущему фильтру</p></div><div className="admin-directory-header-actions"><Link href={`/admin/travel/${encodeURIComponent(circuitId)}/zones/new`}>Добавить район</Link></div></header>
+    <TravelModuleNav circuitId={circuitId} active="zones" />
+    <form className="admin-directory-search admin-travel-directory-filters" method="get"><label><span>Название или ID</span><input name="q" defaultValue={state.q ?? ''} placeholder="Найти район" /></label><label><span>Тип</span><select name="type" defaultValue={type}><option value="">Все типы</option>{Object.entries(typeLabels).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label><label><span>Граница</span><select name="geometry" defaultValue={geometry}><option value="">Любое состояние</option><option value="yes">Есть</option><option value="no">Не задана</option></select></label><label><span>Статус</span><select name="status" defaultValue={status}><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label><button type="submit">Применить</button><Link href={`/admin/travel/${encodeURIComponent(circuitId)}/zones`}>Сбросить</Link></form>
+    <div className="admin-table-wrap"><table><thead><tr><th>Район</th><th>Тип</th><th>Граница</th><th>Объекты</th><th>Приоритет</th><th>Статус</th><th><span className="sr-only">Действие</span></th></tr></thead><tbody>
       {rows.map((zone) => <tr key={zone.id}><td><strong>{zone.nameRu}</strong><small><code>{zone.id}</code></small></td><td>{typeLabels[zone.zoneType] ?? zone.zoneType}</td>
         <td>{zone.hasGeometry ? 'Есть' : 'Не задана'}</td><td>{zone.pointCount}<small>{zone.exampleCount} характерных</small></td><td>{zone.priority}</td>
         <td><span className={`admin-status is-${zone.reviewStatus}`}>{statusLabels[zone.reviewStatus] ?? zone.reviewStatus}</span></td>

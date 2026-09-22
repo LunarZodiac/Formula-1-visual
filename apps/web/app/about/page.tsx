@@ -3,6 +3,7 @@ import Link from 'next/link';
 import circuitsJson from '../data/catalogs/circuits.json';
 import driversJson from '../data/catalogs/drivers-2026.json';
 import teamsJson from '../data/catalogs/teams-2026.json';
+import { Breadcrumbs } from '../components/breadcrumbs';
 
 export const metadata: Metadata = {
   title: 'О проекте — География скорости',
@@ -28,7 +29,7 @@ export default function AboutPage() {
   const countries = new Set(circuitsJson.circuits.map((item) => item.countryRu)).size;
   return (
     <main className="project-page">
-      <nav className="page-breadcrumbs" aria-label="Хлебные крошки"><Link href="/">Главная</Link><span>›</span><b>О проекте</b></nav>
+      <Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'О проекте' }]} />
       <header className="project-hero"><div><span>Исследовательский проект</span><h1>О проекте</h1><h2>Интерактивный атлас мира Formula 1</h2><p>«География скорости» объединяет места, время и результаты чемпионата. Здесь трассы, сезоны, пилоты и команды можно исследовать как связанную систему, а не набор отдельных карточек</p></div><div className="project-map" aria-hidden="true"><i /><i /><i /><i /><i /><i /></div></header>
       <section className="project-stats" aria-label="Охват атласа"><div><strong>{circuitsJson.circuits.length}</strong><span>трасс в общем каталоге</span></div><div><strong>{countries}</strong><span>стран в каталоге трасс</span></div><div><strong>{driversJson.drivers.length}</strong><span>пилота сезона 2026</span></div><div><strong>{teamsJson.teams.length}</strong><span>команд сезона 2026</span></div></section>
       <section className="project-block project-pillars"><header><span>01</span><h2>Идея проекта</h2></header><div><article><b>◎</b><strong>География в деталях</strong><p>Каждая трасса связана с местом, страной, конфигурацией и сезоном</p></article><article><b>◷</b><strong>История и контекст</strong><p>Данные читаются во времени и не смешивают разные эпохи и версии объектов</p></article><article><b>▥</b><strong>Данные и аналитика</strong><p>Показатели сопровождаются происхождением, статусом и датой проверки</p></article></div></section>
@@ -37,7 +38,6 @@ export default function AboutPage() {
       <section className="project-block project-study"><header><span>04</span><h2>Что можно изучать</h2></header><div><Link href="/circuits"><span aria-hidden="true">01</span><strong>Трассы</strong><p>Контуры, параметры, карта и история конфигураций</p><em>Открыть раздел →</em></Link><Link href="/?season=2026#season"><span aria-hidden="true">02</span><strong>Сезоны</strong><p>Календарь, результаты и география чемпионата</p><em>Открыть сезон →</em></Link><Link href="/drivers"><span aria-hidden="true">03</span><strong>Пилоты</strong><p>Карьера, команды и спортивный срез сезона</p><em>Открыть раздел →</em></Link><Link href="/history"><span aria-hidden="true">04</span><strong>История</strong><p>Эпохи и развитие календаря в доступных данных</p><em>Открыть хронологию →</em></Link></div></section>
       <section className="project-block project-method" id="method"><header><span>05</span><h2>Как создаётся атлас</h2></header><ol>{pipeline.map(([number, title, text]) => <li key={number}><b>{number}</b><strong>{title}</strong><p>{text}</p></li>)}</ol></section>
       <section className="project-block project-sources" id="sources"><header><span>06</span><h2>Источники и ограничения</h2></header><div><article><strong>Спортивные данные</strong><p>Календарь, участники и результаты загружаются из Jolpica F1 API. Снимок сохраняется до импорта и сопровождается контрольной суммой</p><a href="https://api.jolpi.ca/ergast/f1/" target="_blank" rel="noreferrer">Jolpica F1 API ↗</a></article><article><strong>Картография</strong><p>PostgreSQL и PostGIS хранят точки, линии и конфигурации. Векторная подложка использует данные OpenStreetMap через OpenFreeMap</p><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">Условия OpenStreetMap ↗</a></article><article><strong>Медиа и права</strong><p>Происхождение изображения, авторство и право использования фиксируются отдельно. Неподтверждённые материалы не считаются готовыми</p></article><article><strong>Статус материала</strong><p>Черновик означает, что сведения или медиа ещё требуют редакционной проверки. Отсутствующие факты не заменяются догадками</p></article></div></section>
-      <section className="project-cta"><div><span>Готовы к путешествию?</span><h2>Откройте географию скорости</h2><p>Начните с карты трасс или найдите конкретный объект в едином индексе</p></div><nav><Link href="/#atlas">Открыть атлас →</Link><Link href="/search">Перейти к поиску</Link></nav></section>
     </main>
   );
 }

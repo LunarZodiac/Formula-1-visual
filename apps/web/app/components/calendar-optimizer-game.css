@@ -1,1 +1,96 @@
 .calendar-game-page{--red:#ff365c;--teal:#35d5c2;--line:#284149;min-height:100vh;padding:112px max(4vw,22px) 80px;background:#030b0f;color:#edf6f7}.calendar-game-page>nav,.calendar-game-hero,.calendar-game-layout,.calendar-game-actions{max-width:1480px;margin:auto}.calendar-game-page>nav{display:flex;justify-content:space-between;margin-bottom:28px;color:#7f989f;font-size:12px;text-transform:uppercase;letter-spacing:.1em}.calendar-game-page a{color:inherit;text-decoration:none}.calendar-game-hero{display:grid;grid-template-columns:1.25fr 1fr;border:1px solid var(--line);background:linear-gradient(120deg,#071218,#08181c)}.calendar-game-hero>div{padding:50px}.calendar-season-picker{display:flex;align-items:center;gap:10px;color:var(--red);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}.calendar-season-picker select{min-width:104px;border:1px solid #3d5961;background:#061116;color:#edf6f7;padding:9px 34px 9px 12px;font:inherit}.calendar-season-picker span{color:#78929a;font-weight:600}.calendar-game-hero h1{font-size:clamp(50px,5.5vw,88px);font-weight:300;line-height:.86;letter-spacing:-.05em;text-transform:uppercase;margin:22px 0}.calendar-game-hero h1 em{color:var(--teal);font-style:italic}.calendar-game-hero p{color:#8ea7ae;line-height:1.55;max-width:640px}.calendar-game-hero dl{margin:0;padding:42px;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}.calendar-game-hero dl div{background:#09171c;padding:22px}.calendar-game-hero dt{font-size:10px;color:#78929a;text-transform:uppercase}.calendar-game-hero dd{font-size:23px;margin:8px 0 0}.calendar-game-hero dd.is-good{color:var(--teal)}.calendar-game-hero dd.is-bad{color:var(--red)}.calendar-game-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(400px,.75fr);min-height:700px;border:1px solid var(--line);border-top:0}.calendar-map-column{position:sticky;top:80px;align-self:start}.calendar-route-map{height:650px}.calendar-map-legend{display:flex;justify-content:space-between;padding:17px 22px;border-top:1px solid var(--line);color:#819aa1}.calendar-map-legend strong{color:var(--teal)}.calendar-game-layout>aside{border-left:1px solid var(--line);background:#07141a;max-height:718px;overflow:auto}.calendar-game-layout>aside>header{position:sticky;top:0;z-index:2;padding:22px;background:#09171c;border-bottom:1px solid var(--line)}.calendar-game-layout>aside>header>div{display:flex;justify-content:space-between}.calendar-game-layout>aside>header span{color:var(--red);font-size:11px;text-transform:uppercase}.calendar-game-layout>aside>header p{color:#78929a;font-size:12px;margin:8px 0 0}.calendar-game-layout ol{list-style:none;margin:0;padding:0}.calendar-game-layout li{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid #1b3037;cursor:grab}.calendar-game-layout li>b{color:#617982;font-weight:400}.calendar-game-layout li span{display:grid;gap:3px}.calendar-game-layout li small{color:#718a92}.calendar-game-layout li div{display:flex}.calendar-game-layout li button{width:34px;height:34px;border:1px solid var(--line);background:transparent;color:#dbe8ea;cursor:pointer}.calendar-game-layout li button:disabled{opacity:.25}.calendar-game-actions{display:flex;justify-content:space-between;align-items:center;gap:30px;border:1px solid var(--line);border-top:0;background:#09171c;padding:30px}.calendar-game-actions>div{display:grid;grid-template-columns:auto auto;gap:6px 22px;align-items:center}.calendar-game-actions span{color:var(--red);font-size:11px;text-transform:uppercase}.calendar-game-actions strong{font-size:26px}.calendar-game-actions p{grid-column:1/-1;margin:0;color:#78929a}.calendar-game-actions>button{border:1px solid var(--red);background:var(--red);color:#fff;padding:17px 24px;font-weight:800;text-transform:uppercase;cursor:pointer}@media(max-width:980px){.calendar-game-hero{grid-template-columns:1fr}.calendar-game-hero>div,.calendar-game-hero dl{padding:30px}.calendar-game-layout{grid-template-columns:1fr}.calendar-map-column{position:static}.calendar-game-layout>aside{border-left:0;border-top:1px solid var(--line);max-height:none}.calendar-game-actions{align-items:stretch;flex-direction:column}.calendar-game-actions>button{width:100%}}@media(max-width:600px){.calendar-route-map{height:430px}.calendar-game-hero dl{grid-template-columns:1fr}.calendar-season-picker{align-items:flex-start;flex-direction:column}.calendar-game-actions>div{grid-template-columns:1fr}.calendar-game-actions p{grid-column:auto}}
+
+:root[data-theme='light'] .calendar-game-page {
+  --line: var(--atlas-border);
+  color: var(--atlas-text);
+  background: var(--atlas-shell);
+}
+:root[data-theme='light'] .calendar-game-page > nav,
+:root[data-theme='light'] .calendar-season-picker span,
+:root[data-theme='light'] .calendar-game-hero p,
+:root[data-theme='light'] .calendar-game-hero dt,
+:root[data-theme='light'] .calendar-map-legend,
+:root[data-theme='light'] .calendar-game-layout > aside > header p,
+:root[data-theme='light'] .calendar-game-layout li > b,
+:root[data-theme='light'] .calendar-game-layout li small,
+:root[data-theme='light'] .calendar-game-actions p {
+  color: var(--atlas-text-muted);
+}
+:root[data-theme='light'] .calendar-game-page a:hover,
+:root[data-theme='light'] .calendar-game-page a:focus-visible { color: var(--atlas-text); }
+:root[data-theme='light'] .calendar-game-hero {
+  background: linear-gradient(120deg, var(--atlas-surface-raised), var(--atlas-surface));
+}
+:root[data-theme='light'] .calendar-season-picker select {
+  border-color: var(--atlas-border);
+  color: var(--atlas-text);
+  background: var(--atlas-surface-raised);
+}
+:root[data-theme='light'] .calendar-season-picker select:disabled {
+  color: var(--atlas-text-muted);
+  background: var(--atlas-surface-soft);
+  opacity: .72;
+}
+:root[data-theme='light'] .calendar-game-hero dl { background: var(--atlas-border); }
+:root[data-theme='light'] .calendar-game-hero dl div,
+:root[data-theme='light'] .calendar-game-layout > aside,
+:root[data-theme='light'] .calendar-game-actions { background: var(--atlas-surface-raised); }
+:root[data-theme='light'] .calendar-game-layout > aside > header {
+  background: var(--atlas-surface-soft);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--atlas-shadow) 42%, transparent);
+}
+:root[data-theme='light'] .calendar-game-layout li { border-color: var(--atlas-border); }
+:root[data-theme='light'] .calendar-game-layout li:hover,
+:root[data-theme='light'] .calendar-game-layout li:focus-within {
+  background: color-mix(in srgb, var(--atlas-text) 5%, transparent);
+}
+:root[data-theme='light'] .calendar-game-layout li button {
+  border-color: var(--atlas-border);
+  color: var(--atlas-text);
+  background: var(--atlas-surface);
+}
+:root[data-theme='light'] .calendar-game-layout li button:hover:not(:disabled) {
+  border-color: var(--red);
+  color: var(--red);
+}
+:root[data-theme='light'] .calendar-game-layout li button:disabled {
+  color: var(--atlas-text-muted);
+  background: var(--atlas-surface-soft);
+  opacity: .5;
+}
+:root[data-theme='light'] .calendar-game-page button:focus-visible,
+:root[data-theme='light'] .calendar-game-page a:focus-visible,
+:root[data-theme='light'] .calendar-game-page select:focus-visible {
+  outline: 2px solid var(--atlas-text);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--red) 18%, transparent);
+}
+:root[data-theme='light'] .calendar-game-actions > button:hover {
+  border-color: color-mix(in srgb, var(--red) 78%, var(--atlas-text));
+  background: color-mix(in srgb, var(--red) 86%, var(--atlas-text));
+}
+
+/* Вводная сцена игры следует общей сетке атласа. */
+.calendar-game-page { padding: 0 var(--atlas-page-gutter, clamp(24px, 4vw, 72px)) 80px; }
+.calendar-game-page > .breadcrumbs { min-height: 60px; box-sizing: border-box; padding-top: 24px; margin: 0; }
+.calendar-game-page .calendar-game-hero,
+.calendar-game-page .calendar-game-layout,
+.calendar-game-page .calendar-game-actions { max-width: none; margin-right: 0; margin-left: 0; }
+.calendar-game-page .calendar-game-hero h1 { font-size: clamp(58px, 6vw, 92px); letter-spacing: -.045em; line-height: .9; }
+@media (max-width: 720px) {
+  .calendar-game-page { padding-inline: 14px; }
+  .calendar-game-page > .breadcrumbs { min-height: 46px; padding-top: 18px; }
+}
+
+@media (max-width: 600px) {
+  .calendar-game-hero > div,
+  .calendar-game-hero dl {
+    min-width: 0;
+    padding: 24px 16px;
+  }
+  .calendar-game-page .calendar-game-hero h1 {
+    overflow-wrap: anywhere;
+    font-size: clamp(36px, 11vw, 46px);
+  }
+  .calendar-season-picker { min-width: 0; }
+}

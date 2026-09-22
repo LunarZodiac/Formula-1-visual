@@ -64,7 +64,7 @@ try {
           ON CONFLICT (driver_id) DO UPDATE SET
             name_ru = EXCLUDED.name_ru,
             birth_place_ru = EXCLUDED.birth_place_ru,
-            death_date = EXCLUDED.death_date,
+            death_date = COALESCE(EXCLUDED.death_date, atlas.driver_profiles.death_date),
             biography_ru = EXCLUDED.biography_ru,
             source_id = EXCLUDED.source_id,
             review_status = EXCLUDED.review_status,

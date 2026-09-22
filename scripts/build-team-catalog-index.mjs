@@ -1,13 +1,30 @@
 #!/usr/bin/env node
 
-import { mkdir, rename, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import pg from 'pg';
 
 const outputDirectory = path.resolve(import.meta.dirname, '..', 'apps', 'web', 'app', 'data', 'catalogs');
+const localizationPath = path.resolve(import.meta.dirname, '..', 'data', 'editorial', 'team-localizations.json');
+const preview = process.argv.includes('--preview');
 const required = ['PGHOST', 'PGPORT', 'PGDATABASE', 'PGUSER', 'PGPASSWORD'];
 const missing = required.filter((name) => !process.env[name]);
 if (missing.length) throw new Error(`Не заданы параметры базы: ${missing.join(', ')}`);
+
+const localizationRegistry = JSON.parse(await readFile(localizationPath, 'utf8'));
+const localizations = Array.isArray(localizationRegistry.localizations) ? localizationRegistry.localizations : [];
+const duplicateLocalizationIds = localizations.map((item) => item.id)
+  .filter((id, index, ids) => ids.indexOf(id) !== index);
+if (duplicateLocalizationIds.length) {
+  throw new Error(`Повторяющиеся локализации команд: ${[...new Set(duplicateLocalizationIds)].join(', ')}`);
+}
+const invalidLocalizations = localizations.filter((item) => !item.id || !item.officialName || !item.nameRu
+  || !item.sourceUrl || !item.sourceTitle || !/^\d{4}-\d{2}-\d{2}$/.test(item.accessedAt)
+  || !['high', 'medium', 'low'].includes(item.confidence));
+if (invalidLocalizations.length) {
+  throw new Error(`Некорректные локализации команд: ${invalidLocalizations.map((item) => item.id || '?').join(', ')}`);
+}
+const localizationById = new Map(localizations.map((item) => [item.id, item]));
 
 const client = new pg.Client({ application_name: 'f1-geovisual-atlas-all-team-index' });
 await client.connect();
@@ -68,7 +85,12 @@ try {
       return { season:Number(entry.season),name:entry.name,position:standing?.position??null,
         points:Number(standing?.points??0),wins:Number(standing?.wins??0),isFinal:Boolean(standing?.is_final) };
     });
-    return { id:row.id,name:latestEntry?.name??row.name,nationality:row.nationality,
+    const localization = localizationById.get(row.id);
+    const officialName = latestEntry?.name ?? row.name;
+    if (localization && ![row.name, ...entries.map((entry) => entry.name)].includes(localization.officialName)) {
+      throw new Error(`Локализация ${row.id} относится к неизвестному официальному названию ${localization.officialName}`);
+    }
+    return { id:row.id,name:officialName,...(localization ? { nameRu:localization.nameRu } : {}),nationality:row.nationality,
       firstSeason:Number(row.first_season),latestSeason:Number(row.latest_season),seasonCount:Number(row.season_count),
       aliases:[...new Set([row.name,...entries.map((entry)=>entry.name)].filter(Boolean))].sort((a,b)=>a.localeCompare(b)),
       careerTitles:seasons.filter((season)=>season.isFinal&&season.position===1).length,
@@ -76,11 +98,21 @@ try {
       color:latestEntry?.color??null,logoUrl:latestEntry?.logo_url??null,carImageUrl:latestEntry?.car_image_url??null,
       lineages:lineagesByTeam.get(row.id)??[],seasons };
   });
+  const unknownLocalizationIds = localizations.map((item) => item.id)
+    .filter((id) => !teams.some((team) => team.id === id));
+  if (unknownLocalizationIds.length) {
+    throw new Error(`Локализации без команды в каталоге: ${unknownLocalizationIds.join(', ')}`);
+  }
   const index = { schemaVersion:1,generatedAt:new Date().toISOString(),teams };
-  await mkdir(outputDirectory,{recursive:true});
-  const outputPath=path.join(outputDirectory,'teams-all.json'),temporaryPath=`${outputPath}.tmp-${process.pid}`;
-  await writeFile(temporaryPath,`${JSON.stringify(index,null,2)}\n`,'utf8');await rename(temporaryPath,outputPath);
-  console.log(`Сформирован общий каталог: ${teams.length} команд из результатов ${Math.min(...teams.map((team)=>team.firstSeason))}–${Math.max(...teams.map((team)=>team.latestSeason))}`);
+  if (!preview) {
+    await mkdir(outputDirectory,{recursive:true});
+    const outputPath=path.join(outputDirectory,'teams-all.json'),temporaryPath=`${outputPath}.tmp-${process.pid}`;
+    await writeFile(temporaryPath,`${JSON.stringify(index,null,2)}\n`,'utf8');await rename(temporaryPath,outputPath);
+  }
+  console.log(JSON.stringify({ mode: preview ? 'preview' : 'write', teamCount: teams.length,
+    firstSeason:Math.min(...teams.map((team)=>team.firstSeason)),latestSeason:Math.max(...teams.map((team)=>team.latestSeason)),
+    localizedTeamCount:teams.filter((team)=>team.nameRu).length,
+    localizedTeams:teams.filter((team)=>team.nameRu).map((team)=>({id:team.id,name:team.name,nameRu:team.nameRu})) },null,2));
 } finally {
   await client.end();
 }

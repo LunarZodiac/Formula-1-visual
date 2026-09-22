@@ -44,7 +44,7 @@ export default async function AdminConstructorCarPage({ params, searchParams }: 
       </div></fieldset>
       <div className="admin-form-actions"><span>Изменения относятся только к сезону {season}</span><button type="submit">Сохранить сведения</button></div>
     </form>
-    <ConstructorLogoForm season={season} constructorId={entry.constructorId} teamName={entry.displayName} currentImage={entry.logoImageUrl} />
+    <ConstructorLogoForm season={season} constructorId={entry.constructorId} teamName={entry.displayName} currentImage={entry.logoImageUrl} currentMedia={entry.logoMedia} />
     <ConstructorCarForm season={season} constructorId={entry.constructorId} teamName={entry.displayName} currentImage={entry.carImageUrl} currentMedia={entry.carMedia} />
   </section></main>;
 }

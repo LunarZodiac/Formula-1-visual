@@ -10,6 +10,7 @@ import {
   readProgress,
   emptyProgress,
   awardSession,
+  xpForScore,
   outlinePoints,
 } from "./games-engine.ts";
 
@@ -52,8 +53,15 @@ test("progress validates corrupt storage, keeps records and awards session once"
   assert.equal(p.xp, 190);
   assert.deepEqual(readProgress(JSON.stringify(p)), p);
   assert.equal(rankForXp(0).name, "Новичок");
+  assert.equal(rankForXp(0).badge, "01");
+  assert.equal(rankForXp(499).next, 500);
   assert.equal(rankForXp(500).name, "Маршал");
+  assert.equal(rankForXp(1500).reward, "Бирюзовая метка звания");
   assert.equal(rankForXp(7000).next, null);
+  assert.equal(rankForXp(7000).level, 5);
+  assert.equal(xpForScore(0), 25);
+  assert.equal(xpForScore(5000), 125);
+  assert.equal(xpForScore(Number.NaN), 25);
 });
 test("shuffle preserves unique candidates and does not mutate source", () => {
   const input = ["a", "b", "c", "d", "e"];

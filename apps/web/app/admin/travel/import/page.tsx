@@ -44,7 +44,7 @@ export default async function AdminTravelImportPage({ searchParams }: {
       <input type="hidden" name="token" value={preview.token} />
       <section className="admin-travel-preview-summary"><div><span>Трасса</span><strong>{preview.circuit.name}</strong></div><div><span>Найдено</span><strong>{preview.candidates.length}</strong></div><div><span>Предложено</span><strong>{Math.min(80, preview.candidates.length)}</strong></div><div><span>Предпросмотр действует до</span><strong>{new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit' }).format(new Date(preview.expiresAt))}</strong></div></section>
       {preview.failedGroups.length ? <div className="admin-alert">Некоторые группы получены не полностью: {preview.failedGroups.join(', ')}</div> : null}
-      <div className="admin-travel-preview-toolbar"><div><strong>Выберите кандидатов</strong><span>Первые 80 отмечены по рейтингу. Импорт присвоит статус «Кандидат»</span></div><Link className="admin-row-action" href={`/admin/travel/import?circuit=${encodeURIComponent(preview.circuit.id)}`}>Новый поиск</Link></div>
+      <div className="admin-travel-preview-toolbar"><div><strong>Выберите кандидатов</strong><span>Первые 80 отмечены по рейтингу. Русское название из OpenStreetMap подставится автоматически, а исходное сохранится для проверки</span></div><Link className="admin-row-action" href={`/admin/travel/import?circuit=${encodeURIComponent(preview.circuit.id)}`}>Новый поиск</Link></div>
       <TravelCandidatePreview preview={preview} />
       <div className="admin-form-actions"><span>После импорта точки будут доступны для дальнейшей проверки, но не появятся на сайте</span><button type="submit">Импортировать выбранные</button></div>
     </form>}

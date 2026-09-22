@@ -5,6 +5,7 @@ import * as maplibregl from "maplibre-gl";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { addAtlasMapAttribution } from "../lib/map-attribution";
+import { useTheme, type AtlasTheme } from "./theme-provider";
 
 const COUNTRIES_URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson";
 const codeExpression: maplibregl.ExpressionSpecification = ["upcase", ["case",
@@ -26,9 +27,26 @@ const style: maplibregl.StyleSpecification = {
   ],
 };
 
+function applyDriverMapTheme(map: MapLibreMap, theme: AtlasTheme) {
+  const isLight = theme === "light";
+  const paint = (layerId: string, property: string, value: unknown) => {
+    if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
+  };
+
+  paint("driver-map-bg", "background-color", isLight ? "#e8efef" : "#02090d");
+  paint("driver-map-water", "fill-color", isLight ? "#b9d6df" : "#02090d");
+  paint("driver-map-labels", "text-color", isLight ? "#334d58" : "#9ebcc1");
+  paint("driver-map-labels", "text-halo-color", isLight ? "#f7faf8" : "#061015");
+  paint("driver-country-base", "fill-color", isLight ? "#d9e4df" : "#173238");
+  paint("driver-country-outline", "line-color", isLight ? "#526d78" : "#668087");
+  paint("driver-country-outline", "line-opacity", isLight ? .72 : .65);
+  paint("driver-country-selection-outline", "line-color", isLight ? "#263b44" : "#ffffff");
+}
+
 export function DriverCountryMap({ selected, answer, revealed, onSelect }: {
   selected: string | null; answer: string; revealed: boolean; onSelect: (code: string, name: string) => void;
 }) {
+  const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const onSelectRef = useRef(onSelect);
@@ -57,6 +75,7 @@ export function DriverCountryMap({ selected, answer, revealed, onSelect }: {
         paint: { "fill-color": "#f5c555", "fill-opacity": 0.8 } }, "driver-map-labels");
       map.addLayer({ id: "driver-country-selection-outline", type: "line", source: "driver-countries", filter: ["==", codeExpression, "__NONE__"],
         paint: { "line-color": "#ffffff", "line-width": 2.2 } }, "driver-map-labels");
+      applyDriverMapTheme(map, document.documentElement.dataset.theme === "light" ? "light" : "dark");
       setAvailable(true); setReady(true);
     });
     map.on("error", () => setAvailable(false));
@@ -72,6 +91,11 @@ export function DriverCountryMap({ selected, answer, revealed, onSelect }: {
     });
     return () => { map.remove(); mapRef.current = null; };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map?.isStyleLoaded()) applyDriverMapTheme(map, theme);
+  }, [theme]);
 
   useEffect(() => {
     const map = mapRef.current;

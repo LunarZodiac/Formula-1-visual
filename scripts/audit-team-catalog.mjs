@@ -48,21 +48,31 @@ try {
   const withoutLogo = teams.filter((team) => !team.logoUrl).map((team) => team.id);
   const withoutCar = teams.filter((team) => !team.carImageUrl).map((team) => team.id);
   const withoutNationality = teams.filter((team) => !team.nationality).map((team) => team.id);
+  const withoutRussianName = teams.filter((team) => typeof team.nameRu !== 'string' || !team.nameRu.trim()).map((team) => team.id);
+  const invalidRussianNames = teams.filter((team) => typeof team.nameRu === 'string'
+    && (!team.nameRu.trim() || team.nameRu.length > 120)).map((team) => team.id);
   if (withoutLogo.length) warnings.push(`Без логотипа: ${withoutLogo.length}`);
   if (withoutCar.length) warnings.push(`Без изображения болида: ${withoutCar.length}`);
   if (withoutNationality.length) warnings.push(`Без страны: ${withoutNationality.length}`);
+  if (withoutRussianName.length) warnings.push(`Без отдельного русского названия: ${withoutRussianName.length}`);
+  if (invalidRussianNames.length) errors.push(`Некорректные русские названия: ${invalidRussianNames.join(', ')}`);
 
   const report = {
     generatedAt: new Date().toISOString(), teamCount: teams.length, databaseParticipantCount: expectedIds.length,
     lineageCount: lineageResult.rows.length,
     publishedLineageCount: lineageResult.rows.filter((row) => row.review_status === 'published').length,
     errors, warnings,
-    editorialDebt: { withoutLogo, withoutCar, withoutNationality },
+    editorialDebt: { withoutLogo, withoutCar, withoutNationality, withoutRussianName },
+    localizationQueue: teams.filter((team) => withoutRussianName.includes(team.id)).map((team) => ({
+      id: team.id, officialName: team.name, aliases: team.aliases ?? [],
+      firstSeason: team.firstSeason, latestSeason: team.latestSeason,
+    })),
   };
   await mkdir(path.dirname(reportPath), { recursive: true });
   await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   console.log(JSON.stringify({ teamCount: report.teamCount, lineageCount: report.lineageCount,
     errors: errors.length, withoutLogo: withoutLogo.length, withoutCar: withoutCar.length,
+    withoutRussianName: withoutRussianName.length,
     reportPath: path.relative(repositoryRoot, reportPath) }, null, 2));
   if (errors.length) process.exitCode = 1;
 } finally {

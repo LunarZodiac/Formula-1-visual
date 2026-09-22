@@ -67,7 +67,7 @@ type CatalogMetadata = { schemaVersion: 2; season: number; generatedAt: string; 
 export type DriverCatalogData = CatalogMetadata & { drivers: DriverCatalogItem[] };
 export type TeamCatalogData = CatalogMetadata & { teams: TeamCatalogItem[] };
 export type TeamListItem = {
-  id: string; name: string; nationality: string | null; firstSeason: number; latestSeason: number;
+  id: string; name: string; nameRu?: string; nationality: string | null; firstSeason: number; latestSeason: number;
   seasonCount: number; aliases: string[]; careerTitles: number; raceEntries: number;
   wins: number; podiums: number; points: number; color: string | null; logoUrl: string | null;
   carImageUrl: string | null;

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Breadcrumbs } from './breadcrumbs';
 import type { CSSProperties } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import type { CircuitCatalogItem } from './circuit-catalog';
@@ -86,7 +87,7 @@ export function FavoritesPage({ season, circuits, drivers, teams }: { season: nu
   const labels: Record<FavoriteType, string> = { all: 'Все', circuits: 'Трассы', drivers: 'Пилоты', teams: 'Команды' };
 
   return <main className="favorites-page">
-    <nav className="favorites-breadcrumbs" aria-label="Хлебные крошки"><Link href="/">Главная</Link><span>›</span><b>Избранное</b></nav>
+    <Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'Избранное' }]} />
     <header className="favorites-hero"><span>Личная коллекция</span><h1>Избранное</h1><p>Сохранённые трассы, пилоты и команды для быстрого возвращения к важному</p></header>
     <section className="favorites-toolbar" aria-label="Фильтры избранного">
       <div className="favorites-tabs">{(Object.keys(labels) as FavoriteType[]).map((type) => <button className={active === type ? 'is-active' : ''} type="button" onClick={() => setActive(type)} key={type}>{labels[type]} <span>{counts[type]}</span></button>)}</div>

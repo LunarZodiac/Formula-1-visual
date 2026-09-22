@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../../lib/admin-auth';
 import { getAdminTravelRoutes, isAdminDatabaseConfigured } from '../../../../lib/admin-database';
+import { TravelModuleNav } from '../travel-module-nav';
 
 const typeLabels: Record<string, string> = {
   arrival: 'Прибытие', race_day: 'Гоночный день', event_shuttle: 'Трансфер', park_and_ride: 'P+R',
@@ -9,6 +10,10 @@ const typeLabels: Record<string, string> = {
 };
 const statusLabels: Record<string, string> = {
   candidate: 'Кандидат', reviewed: 'Проверен', published: 'Опубликован', hidden: 'Скрыт',
+};
+const modeLabels: Record<string, string> = {
+  car: 'Автомобиль', transit: 'Общественный транспорт', shuttle: 'Трансфер',
+  walk: 'Пешком', bicycle: 'Велосипед', mixed: 'Смешанный',
 };
 
 export default async function AdminTravelRoutesPage({ params, searchParams }: {
@@ -37,21 +42,15 @@ export default async function AdminTravelRoutesPage({ params, searchParams }: {
     && (!geometry || (geometry === 'yes' ? route.hasGeometry : !route.hasGeometry))
   ));
 
-  return <main className="admin-shell"><section className="admin-directory">
+  return <main className="admin-shell"><section className="admin-directory admin-travel-subdirectory">
     <Link className="admin-back-link" href={'/admin/travel/' + encodeURIComponent(circuitId)}>← Вернуться к точкам</Link>
-    <header><div><span className="admin-kicker">Маршруты</span><h1>{registry.circuit.name}</h1></div><p>{rows.length} из {registry.rows.length} маршрутов<br/><Link href={'/admin/travel/' + encodeURIComponent(circuitId) + '/routes/generate'}>Предложить автоматически →</Link><br/><Link href={'/admin/travel/' + encodeURIComponent(circuitId) + '/routes/new'}>Добавить вручную →</Link></p></header>
+    <header><div><span className="admin-kicker">Маршруты</span><h1>{registry.circuit.name}</h1><p>{rows.length} из {registry.rows.length} маршрутов по текущему фильтру</p></div><div className="admin-directory-header-actions"><Link href={'/admin/travel/' + encodeURIComponent(circuitId) + '/routes/generate'}>Предложить автоматически</Link><Link href={'/admin/travel/' + encodeURIComponent(circuitId) + '/routes/new'}>Добавить вручную</Link></div></header>
+    <TravelModuleNav circuitId={circuitId} active="routes" />
     {state.generated ? <div className="admin-alert is-success">Создано черновиков маршрутов: {state.generated}</div> : null}
-    <form id="route-column-filters" method="get" />
-    <div className="admin-table-wrap"><table><thead className="admin-column-filters"><tr>
-      <th><span>Маршрут</span><input form="route-column-filters" name="q" defaultValue={state.q ?? ''} placeholder="Название или ID" aria-label="Фильтр маршрутов по названию или ID" /></th>
-      <th><span>Тип</span><select form="route-column-filters" name="type" defaultValue={type} aria-label="Фильтр по типу маршрута"><option value="">Все типы</option>{Object.entries(typeLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></th>
-      <th><span>Режим</span></th><th><span>Расстояние</span></th><th><span>Время</span></th>
-      <th><span>Линия</span><select form="route-column-filters" name="geometry" defaultValue={geometry} aria-label="Фильтр по наличию линии"><option value="">Любое состояние</option><option value="yes">Есть</option><option value="no">Нет</option></select></th>
-      <th><span>Статус</span><select form="route-column-filters" name="status" defaultValue={status} aria-label="Фильтр по статусу маршрута"><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></th>
-      <th><span className="admin-filter-actions"><button form="route-column-filters" type="submit">Применить</button><Link href={'/admin/travel/' + encodeURIComponent(circuitId) + '/routes'}>Сбросить</Link></span></th>
-    </tr></thead><tbody>{rows.map((route) => <tr key={route.id}>
+    <form className="admin-directory-search admin-travel-directory-filters" method="get"><label><span>Название или ID</span><input name="q" defaultValue={state.q ?? ''} placeholder="Найти маршрут" /></label><label><span>Тип</span><select name="type" defaultValue={type}><option value="">Все типы</option>{Object.entries(typeLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><label><span>Линия</span><select name="geometry" defaultValue={geometry}><option value="">Любое состояние</option><option value="yes">Есть</option><option value="no">Нет</option></select></label><label><span>Статус</span><select name="status" defaultValue={status}><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><button type="submit">Применить</button><Link href={'/admin/travel/' + encodeURIComponent(circuitId) + '/routes'}>Сбросить</Link></form>
+    <div className="admin-table-wrap"><table><thead><tr><th>Маршрут</th><th>Тип</th><th>Способ</th><th>Расстояние</th><th>Время</th><th>Линия</th><th>Статус</th><th><span className="sr-only">Действие</span></th></tr></thead><tbody>{rows.map((route) => <tr key={route.id}>
       <td><strong>{route.nameRu}</strong><small>{route.id} · {route.stopCount} остановок</small></td>
-      <td>{typeLabels[route.routeType] ?? route.routeType}</td><td>{route.travelMode}</td>
+      <td>{typeLabels[route.routeType] ?? route.routeType}</td><td>{modeLabels[route.travelMode] ?? route.travelMode}</td>
       <td>{(route.distanceM / 1000).toLocaleString('ru-RU')} км</td><td>{route.durationMinutes} мин</td>
       <td>{route.hasGeometry ? 'Есть' : 'Нет'}</td>
       <td><span className={'admin-status is-' + route.reviewStatus}>{statusLabels[route.reviewStatus] ?? route.reviewStatus}</span></td>

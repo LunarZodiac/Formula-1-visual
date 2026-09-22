@@ -1,7 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 
-import type { CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { driverPhotoUrl } from '../data/driver-photo-sources';
 
 const driverCountries: Record<string, string> = {
@@ -147,7 +147,7 @@ export function teamCarUrl(season: number, constructorId?: string | null, constr
 
 export function flagFallbackDataUrl(code: string) {
   const label = code.toUpperCase();
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="50" height="34" viewBox="0 0 50 34"><rect width="50" height="34" rx="3" fill="#17232c"/><rect x=".5" y=".5" width="49" height="33" rx="2.5" fill="none" stroke="#718590"/><text x="25" y="22" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#d7e0e5">${label}</text></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="50" height="34" viewBox="0 0 50 34"><rect width="50" height="34" rx="3" fill="#17232c"/><rect x=".5" y=".5" width="49" height="33" rx="2.5" fill="none" stroke="#718590"/><text x="25" y="22" text-anchor="middle" font-family="Golos Text Variable,sans-serif" font-size="13" font-weight="700" fill="#d7e0e5">${label}</text></svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
@@ -192,10 +192,15 @@ export function TeamLogo({
   className?: string;
 }) {
   const source = logoUrl ?? teamLogoUrl(constructorId, constructorName, season);
+  const [mediaFailed, setMediaFailed] = useState(false);
   const initials = (constructorName ?? 'F1').split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+
+  useEffect(() => setMediaFailed(false), [source]);
+
+  const hasLogo = Boolean(source) && !mediaFailed;
   return (
-    <span className={`team-logo ${className}`.trim()} style={{ '--team-logo-color': teamColor ?? '#718590' } as CSSProperties} aria-hidden="true">
-      {source ? <img src={source} alt="" loading="lazy" decoding="async" onError={(event) => { event.currentTarget.hidden = true; }} /> : null}
+    <span className={`team-logo${hasLogo ? '' : ' is-fallback'} ${className}`.trim()} style={{ '--team-logo-color': teamColor ?? '#718590' } as CSSProperties} aria-hidden="true">
+      {hasLogo ? <img src={source ?? undefined} alt="" loading="lazy" decoding="async" onError={() => setMediaFailed(true)} /> : null}
       <i>{initials}</i>
     </span>
   );
@@ -203,12 +208,45 @@ export function TeamLogo({
 
 export function TeamCar({ season, constructorId, constructorName, carImageUrl }: { season: number; constructorId?: string | null; constructorName?: string | null; carImageUrl?: string | null }) {
   const source = carImageUrl ?? teamCarUrl(season, constructorId, constructorName);
-  return source ? <img className="team-car-image" src={source} alt="" aria-hidden="true" loading="lazy" decoding="async" /> : <span className="team-car-mark" aria-hidden="true"><i /><i /></span>;
+  const [mediaFailed, setMediaFailed] = useState(false);
+  const [placeholderFailed, setPlaceholderFailed] = useState(false);
+  const placeholder = '/assets/f1/teams/placeholders/unbranded-car.png';
+
+  useEffect(() => {
+    setMediaFailed(false);
+    setPlaceholderFailed(false);
+  }, [source]);
+
+  if (placeholderFailed) return <span className="team-car-mark" aria-hidden="true"><i /><i /></span>;
+
+  const shownSource = source && !mediaFailed ? source : placeholder;
+  const isPlaceholder = shownSource === placeholder;
+  return <img
+    className={`team-car-image${isPlaceholder ? ' is-placeholder' : ''}`}
+    src={shownSource}
+    alt=""
+    aria-hidden="true"
+    loading="lazy"
+    decoding="async"
+    onError={() => isPlaceholder ? setPlaceholderFailed(true) : setMediaFailed(true)}
+  />;
 }
 
 export function DriverPortrait({ driverId, name }: { driverId?: string | null; name: string }) {
   const source = driverPhotoUrl(driverId);
-  return source ? (
-    <img className="driver-photo" src={source} alt={name} onError={(event) => { event.currentTarget.hidden = true; }} />
-  ) : null;
+  const placeholder = '/assets/f1/drivers/driver-placeholder.png';
+  return (
+    <img
+      className={`driver-photo${source ? '' : ' is-placeholder'}`}
+      src={source ?? placeholder}
+      alt={name}
+      loading="lazy"
+      decoding="async"
+      onError={(event) => {
+        if (event.currentTarget.src.endsWith(placeholder)) return;
+        event.currentTarget.src = placeholder;
+        event.currentTarget.classList.add('is-placeholder');
+      }}
+    />
+  );
 }

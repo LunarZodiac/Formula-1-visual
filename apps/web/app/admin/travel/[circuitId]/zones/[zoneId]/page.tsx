@@ -21,22 +21,24 @@ export default async function AdminTravelZonePage({ params,searchParams }: { par
         <label><span>Исходное название</span><input name="name" defaultValue={zone.name} required/></label><label><span>Название на русском</span><input name="nameRu" defaultValue={zone.nameRu} required/></label>
         <label><span>Тип зоны</span><select name="zoneType" defaultValue={zone.zoneType}>{Object.entries(typeLabels).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>
         <label><span>Приоритет</span><input type="number" name="priority" min="0" max="100" defaultValue={zone.priority} required/></label>
-        <label><span>Ценовой диапазон</span><select name="priceBand" defaultValue={zone.priceBand ?? ''}><option value="">Не указан</option>{[1,2,3,4].map(value=><option key={value} value={value}>{'₽'.repeat(value)}</option>)}</select></label>
         <label><span>Статус</span><select name="reviewStatus" defaultValue={zone.reviewStatus}><option value="candidate">Кандидат</option><option value="reviewed">Проверена</option><option value="published">Опубликована</option><option value="hidden">Скрыта</option></select></label>
         <label className="is-wide"><span>Описание</span><textarea name="descriptionRu" rows={4} defaultValue={zone.descriptionRu ?? ''}/></label>
-        <label><span>Подходит для — по одному пункту в строке</span><textarea name="bestFor" rows={5} defaultValue={lines(zone.bestFor)}/></label><label><span>Преимущества</span><textarea name="advantagesRu" rows={5} defaultValue={lines(zone.advantagesRu)}/></label>
-        <label className="is-wide"><span>Недостатки</span><textarea name="disadvantagesRu" rows={4} defaultValue={lines(zone.disadvantagesRu)}/></label>
       </div></fieldset>
       <fieldset><legend>Публичное представление</legend><div className="admin-form-grid">
         <label><span>Характер района</span><input name="characterRu" defaultValue={zone.characterRu} required/></label><label><span>Время до трассы</span><input name="travelTimeRu" defaultValue={zone.travelTimeRu} required/></label>
-        <label><span>Порядок</span><input type="number" name="sortOrder" min="0" defaultValue={zone.sortOrder}/></label><label><span>Цвет</span><input type="color" name="tone" defaultValue={zone.tone}/></label>
+        <label><span>Ценовой диапазон</span><select name="priceBand" defaultValue={zone.priceBand ?? ''}><option value="">Не указан</option>{[1,2,3,4].map(value=><option key={value} value={value}>{'₽'.repeat(value)}</option>)}</select></label>
+        <label><span>Подходит для — по одному пункту в строке</span><textarea name="bestFor" rows={5} defaultValue={lines(zone.bestFor)}/></label><label><span>Преимущества</span><textarea name="advantagesRu" rows={5} defaultValue={lines(zone.advantagesRu)}/></label>
+        <label className="is-wide"><span>Недостатки</span><textarea name="disadvantagesRu" rows={4} defaultValue={lines(zone.disadvantagesRu)}/></label>
         <label className="admin-rights-confirmation is-wide"><input type="checkbox" name="eventOnly" value="yes" defaultChecked={zone.eventOnly}/><span><strong>Только во время этапа</strong><small>Используйте для временных парковок, ограничений и сезонной инфраструктуры</small></span></label>
       </div></fieldset>
-      <fieldset><legend>Граница и источник</legend><div className="admin-form-grid"><label className="is-wide"><span>GeoJSON Polygon или MultiPolygon</span><textarea name="geometryGeoJson" rows={9} defaultValue={zone.geometryGeoJson ?? ''}/><small>Кандидат можно сохранить без границы; для проверки и публикации она обязательна</small></label>
-        <label className="is-wide"><span>Страница источника</span><input type="url" name="sourceUrl" defaultValue={zone.sourceUrl ?? ''} required/></label></div></fieldset>
       <fieldset><legend>Жильё в районе</legend><p className="admin-field-note">Отмеченные объекты появляются при приближении к району. «Характерные» можно использовать в краткой карточке района</p>
         <div className="admin-zone-point-list">{points.map((point)=><div key={point.id} className="admin-zone-point-row"><label><input type="checkbox" name="selectedPoint" value={point.id} defaultChecked={point.selected}/><span><strong>{point.name}</strong><small>{point.categoryName} · {point.id}</small></span></label><label><input type="checkbox" name="examplePoint" value={point.id} defaultChecked={point.isExample}/><span>Характерный вариант</span></label></div>)}</div>
         {!points.length?<p className="admin-directory-empty">Сначала импортируйте точки из группы «Размещение»</p>:null}</fieldset>
+      <details className="admin-editor-disclosure" open={!zone.id || !zone.sourceUrl}><summary><span><strong>Граница и технические настройки</strong><small>GeoJSON, источник, порядок и цвет района на карте</small></span></summary><fieldset><legend className="sr-only">Граница и технические настройки района</legend><div className="admin-form-grid">
+        <label className="is-wide"><span>GeoJSON Polygon или MultiPolygon</span><textarea name="geometryGeoJson" rows={9} defaultValue={zone.geometryGeoJson ?? ''}/><small>Кандидат можно сохранить без границы; для проверки и публикации она обязательна</small></label>
+        <label className="is-wide"><span>Страница источника</span><input type="url" name="sourceUrl" defaultValue={zone.sourceUrl ?? ''} required/></label>
+        <label><span>Порядок</span><input type="number" name="sortOrder" min="0" defaultValue={zone.sortOrder}/></label><label><span>Цвет</span><input type="color" name="tone" defaultValue={zone.tone}/></label>
+      </div></fieldset></details>
       <div className="admin-form-actions"><span>{points.filter(point=>point.selected).length} объектов связано сейчас</span><button type="submit">Сохранить район</button></div>
     </form>
   </section></main>;

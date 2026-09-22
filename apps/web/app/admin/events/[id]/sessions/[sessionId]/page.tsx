@@ -39,16 +39,21 @@ function ResultFields({ result, sourceUrl, constructors }: {
     <label><span>Круги</span><input name="laps" type="number" min="0" defaultValue={result?.laps ?? ''} /></label>
     <label><span>Очки</span><input name="points" type="number" min="0" max="100" step="0.01" defaultValue={result?.points ?? 0} /></label>
     <label><span>Статус финиша</span><input name="resultStatus" defaultValue={result?.status ?? ''} placeholder="Finished, Retired…" /></label>
-    <label><span>Общее время</span><input name="elapsedTime" defaultValue={formatDuration(result?.elapsedMs ?? null)} placeholder="1:32:15.456" /></label>
-    <label><span>Отставание по времени</span><input name="gapTime" defaultValue={formatDuration(result?.gapMs ?? null)} placeholder="0:05.123" /></label>
-    <label><span>Отображаемое отставание</span><input name="gapText" defaultValue={result?.gapText ?? ''} placeholder="+5.123, +1 круг" /></label>
-    <label><span>Место быстрого круга</span><input name="fastestLapRank" type="number" min="1" defaultValue={result?.fastestLapRank ?? ''} /></label>
-    <label><span>Номер быстрого круга</span><input name="fastestLapNumber" type="number" min="1" defaultValue={result?.fastestLapNumber ?? ''} /></label>
-    <label><span>Время быстрого круга</span><input name="fastestLapTime" defaultValue={formatDuration(result?.fastestLapMs ?? null)} placeholder="1:47.263" /></label>
-    <label><span>Q1</span><input name="q1Time" defaultValue={formatDuration(result?.q1Ms ?? null)} placeholder="1:21.456" /></label>
-    <label><span>Q2</span><input name="q2Time" defaultValue={formatDuration(result?.q2Ms ?? null)} placeholder="1:20.987" /></label>
-    <label><span>Q3</span><input name="q3Time" defaultValue={formatDuration(result?.q3Ms ?? null)} placeholder="1:20.321" /></label>
-    <label className="is-wide"><span>Штраф или примечание</span><textarea name="penaltyNote" rows={2} defaultValue={result?.penaltyNote ?? ''} placeholder="Штраф на стартовой решётке, добавленное время или причина исключения" /></label>
+    <details className="admin-result-advanced">
+      <summary><span><strong>Дополнительные показатели</strong><small>Время, отставание, быстрый круг, квалификация и штрафы</small></span></summary>
+      <div className="admin-result-advanced-grid">
+        <label><span>Общее время</span><input name="elapsedTime" defaultValue={formatDuration(result?.elapsedMs ?? null)} placeholder="1:32:15.456" /></label>
+        <label><span>Отставание по времени</span><input name="gapTime" defaultValue={formatDuration(result?.gapMs ?? null)} placeholder="0:05.123" /></label>
+        <label><span>Отображаемое отставание</span><input name="gapText" defaultValue={result?.gapText ?? ''} placeholder="+5.123, +1 круг" /></label>
+        <label><span>Место быстрого круга</span><input name="fastestLapRank" type="number" min="1" defaultValue={result?.fastestLapRank ?? ''} /></label>
+        <label><span>Номер быстрого круга</span><input name="fastestLapNumber" type="number" min="1" defaultValue={result?.fastestLapNumber ?? ''} /></label>
+        <label><span>Время быстрого круга</span><input name="fastestLapTime" defaultValue={formatDuration(result?.fastestLapMs ?? null)} placeholder="1:47.263" /></label>
+        <label><span>Q1</span><input name="q1Time" defaultValue={formatDuration(result?.q1Ms ?? null)} placeholder="1:21.456" /></label>
+        <label><span>Q2</span><input name="q2Time" defaultValue={formatDuration(result?.q2Ms ?? null)} placeholder="1:20.987" /></label>
+        <label><span>Q3</span><input name="q3Time" defaultValue={formatDuration(result?.q3Ms ?? null)} placeholder="1:20.321" /></label>
+        <label className="is-wide"><span>Штраф или примечание</span><textarea name="penaltyNote" rows={2} defaultValue={result?.penaltyNote ?? ''} placeholder="Штраф на стартовой решётке, добавленное время или причина исключения" /></label>
+      </div>
+    </details>
     <label className="is-wide"><span>Источник результата</span><input name="sourceUrl" type="url" defaultValue={result?.sourceUrl ?? sourceUrl} required /></label>
     <label className="admin-rights-confirmation"><input type="checkbox" name="sourceVerified" value="yes" required /><span><strong>Источник проверен</strong><small>Результат публикуется только с подтверждённым источником</small></span></label>
   </div>;

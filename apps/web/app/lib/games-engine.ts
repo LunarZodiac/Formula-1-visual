@@ -34,18 +34,48 @@ export const emptyProgress = (): Progress => ({
   completed: [],
 });
 const ranks = [
-  { name: "Новичок", min: 0 },
-  { name: "Маршал", min: 500 },
-  { name: "Стратег", min: 1500 },
-  { name: "Эксперт", min: 3500 },
-  { name: "Географ скорости", min: 7000 },
+  {
+    name: "Новичок",
+    min: 0,
+    badge: "01",
+    accent: "#78929a",
+    reward: "Базовая рамка профиля",
+  },
+  {
+    name: "Маршал",
+    min: 500,
+    badge: "02",
+    accent: "#ff365c",
+    reward: "Красный акцент интерфейса",
+  },
+  {
+    name: "Стратег",
+    min: 1500,
+    badge: "03",
+    accent: "#00c9c3",
+    reward: "Бирюзовая метка звания",
+  },
+  {
+    name: "Эксперт",
+    min: 3500,
+    badge: "04",
+    accent: "#4d8fe6",
+    reward: "Двойная рамка профиля",
+  },
+  {
+    name: "Географ скорости",
+    min: 7000,
+    badge: "05",
+    accent: "#ff7b63",
+    reward: "Финальный градиент профиля",
+  },
 ];
 export function rankForXp(xp: number) {
   const index = Math.max(
     0,
     ranks.findLastIndex((rank) => xp >= rank.min),
   );
-  return { ...ranks[index], next: ranks[index + 1]?.min ?? null };
+  return { ...ranks[index], level: index + 1, next: ranks[index + 1]?.min ?? null };
 }
 export function shuffled<T>(items: readonly T[]): T[] {
   const result = [...items];
@@ -138,13 +168,19 @@ export function awardSession(
     ? Math.round(Math.max(0, Math.min(5000, score)))
     : 0;
   return {
-    xp: progress.xp + 25 + Math.floor(safeScore / 50),
+    xp: progress.xp + xpForScore(safeScore),
     records: {
       ...progress.records,
       [key]: Math.max(progress.records[key] ?? 0, safeScore),
     },
     completed: [...progress.completed, sessionId].slice(-100),
   };
+}
+export function xpForScore(score: number): number {
+  const safeScore = Number.isFinite(score)
+    ? Math.round(Math.max(0, Math.min(5000, score)))
+    : 0;
+  return 25 + Math.floor(safeScore / 50);
 }
 /** Локальная равнопромежуточная проекция сохраняет форму и пропорции без упрощения контура. */
 export function outlinePoints(coordinates: readonly number[][]): string {

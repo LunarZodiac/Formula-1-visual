@@ -128,10 +128,10 @@ export function DriverPhotoForm({ driverId, driverName, currentPhoto }: {
         </div> : null}
         {previewError ? <div className="admin-alert is-error is-wide" role="alert">{previewError}</div> : null}
         <div className="admin-preview-actions is-wide"><button type="button" onClick={createPreview} disabled={!sourcePreview || isPreviewing}>{isPreviewing ? 'Обработка…' : processedPreview ? 'Обновить предпросмотр' : 'Создать предпросмотр'}</button><span>Предпросмотр хранится 15 минут и не записывается в базу</span></div>
-        <label className="is-wide"><span>Описание для доступности</span><input name="photoAltTextRu" defaultValue={`${driverName}, фотография пилота`} required /></label>
-        <label><span>Автор или правообладатель</span><input name="photoAuthor" required placeholder="Имя фотографа или организация" /></label>
-        <label><span>Лицензия или разрешение</span><input name="photoLicence" required placeholder="Например: CC BY 4.0" /></label>
-        <label className="is-wide"><span>Страница-источник</span><input name="photoSourceUrl" type="url" required placeholder="https://…" /><small>Укажите страницу, где опубликована фотография и описаны условия использования</small></label>
+        <label className="is-wide"><span>Описание для доступности</span><input name="photoAltTextRu" defaultValue={currentPhoto?.altTextRu || `${driverName}, фотография пилота`} required /></label>
+        <label><span>Автор или правообладатель</span><input name="photoAuthor" defaultValue={currentPhoto?.author || ''} required placeholder="Имя фотографа или организация" /></label>
+        <label><span>Лицензия или разрешение</span><input name="photoLicence" defaultValue={currentPhoto?.licence || ''} required placeholder="Например: CC BY 4.0" /></label>
+        <label className="is-wide"><span>Страница-источник</span><input name="photoSourceUrl" type="url" defaultValue={currentPhoto?.sourceUrl || ''} required placeholder="https://…" /><small>Укажите страницу, где опубликована фотография и описаны условия использования</small></label>
         <label className="is-wide admin-rights-confirmation"><input name="rightsConfirmed" type="checkbox" value="yes" required /><span>Я проверил право использовать эту фотографию на сайте и корректно указал автора и лицензию</span></label>
       </div>
     </fieldset>

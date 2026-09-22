@@ -57,12 +57,15 @@ export default async function AdminCircuitPage({ params, searchParams }: {
         <label className="is-wide"><span>Краткое описание</span><textarea name="summaryRu" rows={5} defaultValue={profile?.summaryRu ?? ''} /></label>
         <label><span>Статус</span>{profile?.editorialStatus === 'published' ? <><input type="hidden" name="editorialStatus" value="published" /><select value="published" disabled><option value="published">Опубликована</option></select></> : <select name="editorialStatus" defaultValue={profile?.editorialStatus ?? 'draft'}><option value="draft">Черновик</option><option value="review">На проверке</option><option value="published">Опубликована</option></select>}<small>{profile?.editorialStatus === 'published' ? 'Снятие с публикации появится вместе с динамическим реестром страниц' : 'Публикация доступна только для подключённого шаблона и проверенной геометрии'}</small></label>
       </div></fieldset>
-      <fieldset><legend>Источник изменений</legend><div className="admin-form-grid">
-        <label><span>Название источника</span><input name="sourceName" placeholder="Официальный сайт трассы" /></label>
-        <label><span>URL источника</span><input name="sourceUrl" type="url" required defaultValue={profile?.sourceUrl ?? circuit.websiteUrl ?? ''} placeholder="https://…" /></label>
-        <label className="is-wide"><span>Редакторская заметка</span><textarea name="sourceNotes" rows={3} placeholder="Что именно подтверждает источник" /></label>
-        <label className="admin-rights-confirmation"><input type="checkbox" name="sourceVerified" value="yes" /><span><strong>Источник проверен</strong><small>Отметьте только если ссылка действительно подтверждает изменяемые факты. Иначе новые полевые источники сохранятся как кандидаты, а опубликованный профиль изменить нельзя</small></span></label>
-      </div></fieldset>
+      <details className="admin-editor-disclosure" open={!profile?.sourceUrl && !circuit.websiteUrl}>
+        <summary><span><strong>Источник и проверка изменений</strong><small>Ссылка, редакторская заметка и подтверждение фактов</small></span></summary>
+        <fieldset><legend className="sr-only">Источник изменений</legend><div className="admin-form-grid">
+          <label><span>Название источника</span><input name="sourceName" placeholder="Официальный сайт трассы" /></label>
+          <label><span>URL источника</span><input name="sourceUrl" type="url" required defaultValue={profile?.sourceUrl ?? circuit.websiteUrl ?? ''} placeholder="https://…" /></label>
+          <label className="is-wide"><span>Редакторская заметка</span><textarea name="sourceNotes" rows={3} placeholder="Что именно подтверждает источник" /></label>
+          <label className="admin-rights-confirmation"><input type="checkbox" name="sourceVerified" value="yes" /><span><strong>Источник проверен</strong><small>Отметьте только если ссылка действительно подтверждает изменяемые факты. Иначе новые полевые источники сохранятся как кандидаты, а опубликованный профиль изменить нельзя</small></span></label>
+        </div></fieldset>
+      </details>
       <div className="admin-form-actions"><span>Координаты и факты сохраняются только вместе с источником</span><button type="submit">Сохранить трассу</button></div>
     </form>
     <CircuitCardImageForm circuitId={circuit.id} circuitName={profile?.nameRu ?? circuit.officialName} currentImage={circuit.cardImage} />

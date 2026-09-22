@@ -1,0 +1,52 @@
+{
+  "title": "Редакционная проверка культурных и природных кандидатов Спа",
+  "circuitId": "spa",
+  "checkedAt": "2026-09-21",
+  "publicationStatus": "review_only",
+  "records": [
+    {
+      "candidateId": "osm-way-184798459",
+      "decision": "accept",
+      "nameRu": "Аллея От-Маре",
+      "nameOriginal": "Charmille du Haut-Marais",
+      "category": "attractions_and_local_culture",
+      "descriptionRu": "Историческая грабовая аллея в Ла-Рейд, доступная как самостоятельная прогулочная достопримечательность региона Спа",
+      "sourceUrl": "https://lareid.be/la-charmille/the-charmille-in-english/",
+      "sourceDate": "2026-09-21",
+      "riskNotes": "Официальный туристический офис подтверждает посещение, но написание Haut-Marais/Haut-Maret различается между источниками. Не переносить из OSM сведения о доступности для маломобильных посетителей и не фиксировать режим доступа без повторной проверки"
+    },
+    {
+      "candidateId": "osm-way-204839264",
+      "decision": "defer",
+      "nameRu": "Во-Холл в Спа",
+      "nameOriginal": "Waux-Hall de Spa",
+      "category": "attractions_and_local_culture",
+      "descriptionRu": "Историческое здание эпохи расцвета курорта Спа, которое сохраняет общественная организация и открывает для отдельных экскурсий и событий",
+      "sourceUrl": "https://wauxhall.be/",
+      "sourceDate": "2026-09-21",
+      "riskNotes": "Это памятник, а не постоянно действующий музей. Официальный сайт подтверждает событийные открытия, но не даёт устойчивого общего режима посещения; перед публикацией нужен актуальный сценарий доступа"
+    },
+    {
+      "candidateId": "osm-node-321692478",
+      "decision": "accept",
+      "nameRu": "Историческая горчичная мельница Моншау",
+      "nameOriginal": "Historische Senfmühle Monschau",
+      "category": "attractions_and_local_culture",
+      "descriptionRu": "Семейная горчичная мельница в Моншау, где историческое оборудование и действующее производство показывают во время согласованных посещений",
+      "sourceUrl": "https://www.senfmuehle.de/start/index.html",
+      "sourceDate": "2026-09-21",
+      "riskNotes": "Трансграничная остановка подходит для свободного дня, а не как основная достопримечательность Спа. Экскурсии зависят от предварительного согласования; расписание и цены волатильны и в запись не перенесены"
+    },
+    {
+      "candidateId": "osm-node-683268957",
+      "decision": "accept",
+      "nameRu": "Барак-Мишель",
+      "nameOriginal": "Baraque Michel",
+      "category": "nature_and_verified_viewpoints",
+      "descriptionRu": "Историческое убежище и заметная отправная точка для пеших и велосипедных маршрутов на плато Высоких Фенов",
+      "sourceUrl": "https://botrange.be/le-parc/notre-territoire/",
+      "sourceDate": "2026-09-21",
+      "riskNotes": "Не позиционировать как замену или дубль Сигнал-де-Ботранж и не обещать отдельную оборудованную смотровую площадку. Доступ к природной территории зависит от погоды, природных ограничений и действующих правил парка"
+    }
+  ]
+}

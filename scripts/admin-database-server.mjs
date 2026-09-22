@@ -1674,6 +1674,9 @@ function travelPointPhoto(row) {
   return row.photo_id === null ? null : {
     id: String(row.photo_id), url: String(row.photo_url),
     altTextRu: row.photo_alt_text_ru === null ? null : String(row.photo_alt_text_ru),
+    author: row.photo_author == null ? null : String(row.photo_author),
+    licence: row.photo_licence == null ? null : String(row.photo_licence),
+    sourceUrl: row.photo_source_url == null ? null : String(row.photo_source_url),
     reviewStatus: String(row.photo_review_status), rightsStatus: String(row.photo_rights_status),
   };
 }
@@ -1692,6 +1695,8 @@ async function getTravelPoints(circuitId, url) {
   const photo = ['yes', 'no'].includes(requestedPhoto) ? requestedPhoto : '';
   const requestedFeatured = url.searchParams.get('featured');
   const featured = ['yes', 'no'].includes(requestedFeatured) ? requestedFeatured : '';
+  const requestedTranslation = url.searchParams.get('translation');
+  const translation = ['ready', 'missing'].includes(requestedTranslation) ? requestedTranslation : '';
   const optionalNumber = (name, maximum = Number.POSITIVE_INFINITY) => {
     const raw = String(url.searchParams.get(name) ?? '').trim().replace(',', '.');
     if (!raw) return null;
@@ -1710,8 +1715,10 @@ async function getTravelPoints(circuitId, url) {
     AND ($10::float8 IS NULL OR coalesce(link.distance_to_circuit_m, ST_Distance(poi.location, circuit.location)) >= $10 * 1000)
     AND ($11::float8 IS NULL OR coalesce(link.distance_to_circuit_m, ST_Distance(poi.location, circuit.location)) <= $11 * 1000)
     AND ($12::float8 IS NULL OR poi.importance >= $12)
-    AND ($13::float8 IS NULL OR poi.importance <= $13)`;
-  const parameters = [circuitId, limit, search, status, offset, category, role, photo, featured, distanceMin, distanceMax, importanceMin, importanceMax];
+    AND ($13::float8 IS NULL OR poi.importance <= $13)
+    AND ($14='' OR ($14='missing' AND nullif(trim(coalesce(poi.name_ru,'')),'') IS NULL)
+      OR ($14='ready' AND nullif(trim(coalesce(poi.name_ru,'')),'') IS NOT NULL))`;
+  const parameters = [circuitId, limit, search, status, offset, category, role, photo, featured, distanceMin, distanceMax, importanceMin, importanceMax, translation];
   const [circuitResult, rowsResult, countResult, mapResult, categories] = await Promise.all([
     pool.query(`SELECT circuit.id, coalesce(profile.name_ru, circuit.short_name, circuit.name) AS name,
         ST_Y(circuit.location::geometry)::float8 AS latitude, ST_X(circuit.location::geometry)::float8 AS longitude
@@ -1721,6 +1728,7 @@ async function getTravelPoints(circuitId, url) {
         link.role, poi.importance, poi.review_status, link.is_featured,
         round(coalesce(link.distance_to_circuit_m, ST_Distance(poi.location, circuit.location)))::int AS distance_to_circuit_m,
         photo.id AS photo_id, coalesce(thumb.url, photo.url) AS photo_url, photo.alt_text_ru AS photo_alt_text_ru,
+        photo.author AS photo_author, photo.licence AS photo_licence, photo.source_url AS photo_source_url,
         photo.review_status AS photo_review_status, photo.rights_status AS photo_rights_status
       FROM atlas.circuit_travel_pois AS link
       JOIN atlas.tourism_pois AS poi ON poi.id=link.poi_id
@@ -1743,7 +1751,9 @@ async function getTravelPoints(circuitId, url) {
         ORDER BY media.is_primary DESC, media.id LIMIT 1) AS photo ON true
       WHERE ${filterSql}
         AND $2::int >= 1 AND $5::int >= 0`, parameters),
-    pool.query(`SELECT poi.id, coalesce(poi.name_ru,poi.name) AS name, poi.category_id, category.icon AS category_icon, link.role,
+    pool.query(`SELECT poi.id, coalesce(nullif(trim(poi.name_ru),''),poi.name) AS name,
+        poi.name AS original_name, nullif(trim(poi.name_ru),'') AS name_ru,
+        poi.category_id, category.icon AS category_icon, link.role,
         ST_Y(poi.location::geometry)::float8 AS latitude, ST_X(poi.location::geometry)::float8 AS longitude,
         round(coalesce(link.distance_to_circuit_m, ST_Distance(poi.location, circuit.location)))::int AS distance_to_circuit_m,
         poi.review_status, photo.id AS photo_id
@@ -1763,8 +1773,10 @@ async function getTravelPoints(circuitId, url) {
         AND ($9::float8 IS NULL OR coalesce(link.distance_to_circuit_m, ST_Distance(poi.location, circuit.location)) <= $9 * 1000)
         AND ($10::float8 IS NULL OR poi.importance >= $10)
         AND ($11::float8 IS NULL OR poi.importance <= $11)
+        AND ($12='' OR ($12='missing' AND nullif(trim(coalesce(poi.name_ru,'')),'') IS NULL)
+          OR ($12='ready' AND nullif(trim(coalesce(poi.name_ru,'')),'') IS NOT NULL))
       ORDER BY link.priority DESC, poi.id
-      LIMIT 2001`, [circuitId, search, status, category, role, photo, featured, distanceMin, distanceMax, importanceMin, importanceMax]),
+      LIMIT 2001`, [circuitId, search, status, category, role, photo, featured, distanceMin, distanceMax, importanceMin, importanceMax, translation]),
     travelPointCategories(),
   ]);
   if (!circuitResult.rows.length) return null;
@@ -1779,7 +1791,8 @@ async function getTravelPoints(circuitId, url) {
       photo: travelPointPhoto(row),
     })),
     mapPoints: mapResult.rows.slice(0, 2000).map((row) => ({
-      id: String(row.id), name: String(row.name), categoryId: String(row.category_id), categoryIcon: String(row.category_icon), role: String(row.role),
+      id: String(row.id), name: String(row.name), nameRu: row.name_ru === null ? null : String(row.name_ru),
+      originalName: String(row.original_name), categoryId: String(row.category_id), categoryIcon: String(row.category_icon), role: String(row.role),
       latitude: Number(row.latitude), longitude: Number(row.longitude), distanceToCircuitM: Number(row.distance_to_circuit_m),
       reviewStatus: String(row.review_status),
     })),
@@ -1799,6 +1812,7 @@ async function getTravelPoint(circuitId, pointId) {
         round(coalesce(link.distance_to_circuit_m, ST_Distance(poi.location, circuit.location)))::int AS distance_to_circuit_m,
         source.name AS source_name, source.url AS source_url,
         photo.id AS photo_id, coalesce(thumb.url,photo.url) AS photo_url, photo.alt_text_ru AS photo_alt_text_ru,
+        photo.author AS photo_author, photo.licence AS photo_licence, photo.source_url AS photo_source_url,
         photo.review_status AS photo_review_status, photo.rights_status AS photo_rights_status
       FROM atlas.circuit_travel_pois AS link
       JOIN atlas.tourism_pois AS poi ON poi.id=link.poi_id
@@ -1910,13 +1924,58 @@ async function saveTravelPointsBulk(rawInput, circuitId) {
   return { circuitId, updated, publicDataSynced };
 }
 
+async function applyStoredOsmRussianNames(circuitId) {
+  if (!/^[A-Za-z0-9_-]+$/.test(circuitId)) throw new Error('Некорректный ID трассы');
+  const result = await pool.query(`UPDATE atlas.tourism_pois AS poi
+    SET name_ru = nullif(trim(coalesce(
+      poi.properties #>> '{tags,name:ru}',
+      poi.properties #>> '{osm,tags,name:ru}'
+    )), ''), updated_at = now()
+    FROM atlas.circuit_travel_pois AS link
+    WHERE link.circuit_id = $1 AND link.poi_id = poi.id
+      AND nullif(trim(coalesce(poi.name_ru, '')), '') IS NULL
+      AND nullif(trim(coalesce(
+        poi.properties #>> '{tags,name:ru}',
+        poi.properties #>> '{osm,tags,name:ru}'
+      )), '') IS NOT NULL
+    RETURNING poi.id`, [circuitId]);
+  let publicDataSynced = true;
+  if (result.rowCount) {
+    try { await runCircuitExports(circuitId, 'published'); }
+    catch (error) { publicDataSynced = false; console.error('Названия из OSM сохранены, но публичные данные не обновлены', error); }
+  }
+  return { circuitId, updated: result.rowCount, publicDataSynced };
+}
+
+async function createTravelPointPhotoPreview(buffer, metadata, circuitId, pointId) {
+  if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(pointId)) {
+    throw new Error('Некорректный ID туристической точки');
+  }
+  imageFormat(buffer, metadata.mimeType);
+  const processed = await processTravelPointPhoto(buffer);
+  const hash = createHash('sha256').update(buffer).update(`:travel-point:${pointId}`).digest('hex');
+  const token = randomUUID();
+  pruneDriverPhotoPreviews();
+  driverPhotoPreviews.set(token, {
+    driverId: `travel:${circuitId}:${pointId}`, hash, preparedBuffer: buffer,
+    sourceMetadata: processed.sourceMetadata, variants: processed.variants,
+    expiresAt: Date.now() + previewLifetimeMs,
+  });
+  const card = processed.variants.find((variant) => variant.name === '640w') ?? processed.variants[0];
+  return { token, imageDataUrl: `data:image/webp;base64,${card.bytes.toString('base64')}`,
+    expiresInMinutes: previewLifetimeMs / 60_000 };
+}
+
 async function saveTravelPointPhoto(buffer, metadata, circuitId, pointId) {
   if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(pointId)) {
     throw new Error('Некорректный ID туристической точки');
   }
   const format = imageFormat(buffer, metadata.mimeType);
-  const { sourceMetadata, variants } = await processTravelPointPhoto(buffer, metadata.crop);
   const hash = createHash('sha256').update(buffer).update(`:travel-point:${pointId}`).digest('hex');
+  const cachedPreview = consumeDriverPhotoPreview(metadata.previewToken, `travel:${circuitId}:${pointId}`, hash);
+  if (!cachedPreview) throw new Error('Сначала создайте предпросмотр фотографии');
+  const { sourceMetadata } = cachedPreview;
+  const { variants } = await processTravelPointPhoto(cachedPreview.preparedBuffer, metadata.crop);
   const assetId = `travel-point-${pointId}-${hash.slice(0, 16)}`;
   const sourceId = `media-${createHash('sha256').update(metadata.sourceUrl).digest('hex').slice(0, 16)}`;
   const originalUrl = `/media/travel/points/${pointId}/original-${hash.slice(0, 16)}.${format.extension}`;
@@ -2322,7 +2381,7 @@ function travelPreviewPayload(preview) {
     radii: preview.result.radii,
     failedGroups: preview.result.failedGroups,
     candidates: preview.result.candidates.map((candidate) => ({
-      id: candidate.id, name: candidate.name, categoryId: candidate.categoryId, role: candidate.role,
+      id: candidate.id, name: candidate.name, nameRu: candidate.nameRu, categoryId: candidate.categoryId, role: candidate.role,
       latitude: candidate.latitude, longitude: candidate.longitude,
       distanceToCircuitM: candidate.distanceToCircuitM, importance: candidate.importance,
       websiteUrl: candidate.websiteUrl, openingHours: candidate.openingHours, address: candidate.address,
@@ -2380,13 +2439,14 @@ async function applyTravelImportPreview(token, rawInput) {
     for (const candidate of selected) {
       await client.query(
         'INSERT INTO atlas.tourism_pois '
-        + '(id, category_id, name, location, address, website_url, opening_hours, importance, wheelchair_access, review_status, source_id, properties, updated_at) '
-        + "VALUES ($1, $2, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326)::geography, $6, $7, $8, $9, 'unknown', 'candidate', 'openstreetmap', $10::jsonb, now()) "
+        + '(id, category_id, name, name_ru, location, address, website_url, opening_hours, importance, wheelchair_access, review_status, source_id, properties, updated_at) '
+        + "VALUES ($1, $2, $3, $4, ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography, $7, $8, $9, $10, 'unknown', 'candidate', 'openstreetmap', $11::jsonb, now()) "
         + 'ON CONFLICT (id) DO UPDATE SET category_id=EXCLUDED.category_id, name=EXCLUDED.name, location=EXCLUDED.location, '
+        + "name_ru=coalesce(nullif(atlas.tourism_pois.name_ru,''),EXCLUDED.name_ru), "
         + 'address=EXCLUDED.address, website_url=EXCLUDED.website_url, opening_hours=EXCLUDED.opening_hours, '
         + 'importance=EXCLUDED.importance, properties=EXCLUDED.properties, updated_at=now() '
         + "WHERE atlas.tourism_pois.review_status = 'candidate'",
-        [candidate.id, candidate.categoryId, candidate.name, candidate.longitude, candidate.latitude,
+        [candidate.id, candidate.categoryId, candidate.name, candidate.nameRu, candidate.longitude, candidate.latitude,
           candidate.address, candidate.websiteUrl, candidate.openingHours, candidate.importance,
           JSON.stringify({ osm: candidate.externalId, tags: candidate.tags, importedVia: 'admin-travel-wizard' })],
       );
@@ -3515,8 +3575,12 @@ async function getConstructorEntries(url) {
   const result = await pool.query(`
     SELECT entry.season_year, entry.constructor_id, entry.display_name, entry.engine_name,
            entry.team_colour, entry.car_model, entry.car_image_url, entry.logo_image_url,
-           asset.author, asset.licence, asset.source_url, asset.alt_text_ru,
-           asset.rights_status, asset.review_status,
+           car_asset.author AS car_author, car_asset.licence AS car_licence,
+           car_asset.source_url AS car_source_url, car_asset.alt_text_ru AS car_alt_text_ru,
+           car_asset.rights_status AS car_rights_status, car_asset.review_status AS car_review_status,
+           logo_asset.author AS logo_author, logo_asset.licence AS logo_licence,
+           logo_asset.source_url AS logo_source_url, logo_asset.alt_text_ru AS logo_alt_text_ru,
+           logo_asset.rights_status AS logo_rights_status, logo_asset.review_status AS logo_review_status,
            editorial.source_url AS editorial_source_url
     FROM atlas.constructor_entries AS entry
     LEFT JOIN LATERAL (
@@ -3528,7 +3592,17 @@ async function getConstructorEntries(url) {
         AND media.season_year = entry.season_year AND media.is_primary
       ORDER BY media.verified_at DESC NULLS LAST, media.id
       LIMIT 1
-    ) AS asset ON true
+    ) AS car_asset ON true
+    LEFT JOIN LATERAL (
+      SELECT media.author, media.licence, media.source_url, media.alt_text_ru,
+             media.rights_status, media.review_status
+      FROM atlas.media_assets AS media
+      WHERE media.entity_type = 'constructor' AND media.entity_id = entry.constructor_id
+        AND media.media_type = 'image' AND media.usage_role = 'team_logo'
+        AND media.season_year = entry.season_year AND media.is_primary
+      ORDER BY media.verified_at DESC NULLS LAST, media.id
+      LIMIT 1
+    ) AS logo_asset ON true
     LEFT JOIN LATERAL (
       SELECT source.source_url
       FROM atlas.constructor_entry_field_sources AS source
@@ -3551,9 +3625,13 @@ function mapConstructorEntry(row) {
     teamColour: row.team_colour?.trim() ?? null, carModel: row.car_model ?? null,
     carImageUrl: row.car_image_url ?? null, logoImageUrl: row.logo_image_url ?? null,
     editorialSourceUrl: row.editorial_source_url ?? null,
-    carMedia: row.source_url ? {
-      altTextRu: row.alt_text_ru ?? '', author: row.author ?? '', licence: row.licence ?? '',
-      sourceUrl: row.source_url, rightsStatus: row.rights_status, reviewStatus: row.review_status,
+    carMedia: row.car_source_url ? {
+      altTextRu: row.car_alt_text_ru ?? '', author: row.car_author ?? '', licence: row.car_licence ?? '',
+      sourceUrl: row.car_source_url, rightsStatus: row.car_rights_status, reviewStatus: row.car_review_status,
+    } : null,
+    logoMedia: row.logo_source_url ? {
+      altTextRu: row.logo_alt_text_ru ?? '', author: row.logo_author ?? '', licence: row.logo_licence ?? '',
+      sourceUrl: row.logo_source_url, rightsStatus: row.logo_rights_status, reviewStatus: row.logo_review_status,
     } : null,
   };
 }
@@ -3937,6 +4015,10 @@ const server = createServer(async (request, response) => {
       const result = await saveTravelPointsBulk(await requestBody(request), travelPointsBulkMatch[1]);
       return json(response, 200, result);
     }
+    const travelPointTranslationsMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/translations\/osm$/);
+    if (request.method === 'POST' && travelPointTranslationsMatch) {
+      return json(response, 200, await applyStoredOsmRussianNames(travelPointTranslationsMatch[1]));
+    }
     const travelPointMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/points\/([A-Za-z0-9_-]+)$/);
     if (request.method === 'GET' && travelPointMatch) {
       const result = await getTravelPoint(travelPointMatch[1], travelPointMatch[2]);
@@ -3945,6 +4027,11 @@ const server = createServer(async (request, response) => {
     if (request.method === 'PATCH' && travelPointMatch) {
       const result = await saveTravelPoint(await requestBody(request), travelPointMatch[1], travelPointMatch[2]);
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    const travelPointPhotoPreviewMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/points\/([A-Za-z0-9_-]+)\/photo\/preview$/);
+    if (request.method === 'POST' && travelPointPhotoPreviewMatch) {
+      const result = await createTravelPointPhotoPreview(await binaryRequestBody(request), previewMetadata(request), travelPointPhotoPreviewMatch[1], travelPointPhotoPreviewMatch[2]);
+      return json(response, 200, result);
     }
     const travelPointPhotoMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/points\/([A-Za-z0-9_-]+)\/photo$/);
     if (request.method === 'POST' && travelPointPhotoMatch) {

@@ -11,6 +11,15 @@ type Row = {
   fastestLapTime: string; q1Time: string; q2Time: string; q3Time: string; penaltyNote: string;
 };
 
+const fieldLabels: Record<keyof Row, string> = {
+  key: 'Ключ строки', isNew: 'Новая строка', originalDriverId: 'Исходный ID пилота', driverId: 'ID пилота',
+  positionOrder: 'Порядок', positionText: 'Отображаемая позиция', constructorEntryId: 'Команда',
+  gridPosition: 'Стартовая позиция', laps: 'Круги', points: 'Очки', status: 'Статус',
+  elapsedTime: 'Итоговое время', gapTime: 'Отставание по времени', gapText: 'Текст отставания',
+  fastestLapRank: 'Место быстрого круга', fastestLapNumber: 'Номер быстрого круга', fastestLapTime: 'Время быстрого круга',
+  q1Time: 'Время Q1', q2Time: 'Время Q2', q3Time: 'Время Q3', penaltyNote: 'Штраф или примечание',
+};
+
 function duration(value: number | null) {
   if (value === null) return '';
   const hours = Math.floor(value / 3_600_000); const minutes = Math.floor((value % 3_600_000) / 60_000);
@@ -57,9 +66,9 @@ export function BulkResultsEditor({ raceId, sessionId, sourceUrl, results, const
         <td><input aria-label="Отображаемая позиция" value={row.positionText} onChange={(event) => update(row.key, 'positionText', event.target.value)} required /></td>
         <td><input aria-label="ID пилота" list="event-driver-options" value={row.driverId} onChange={(event) => update(row.key, 'driverId', event.target.value)} placeholder="driver_id" required /></td>
         <td><select aria-label="Команда" value={row.constructorEntryId} onChange={(event) => update(row.key, 'constructorEntryId', event.target.value)}><option value="">—</option>{constructors.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></td>
-        {(['gridPosition', 'laps', 'points'] as const).map((field) => <td key={field}><input aria-label={field} type="number" min="0" step={field === 'points' ? '0.01' : '1'} value={row[field]} onChange={(event) => update(row.key, field, event.target.value)} /></td>)}
+        {(['gridPosition', 'laps', 'points'] as const).map((field) => <td key={field}><input aria-label={fieldLabels[field]} type="number" min="0" step={field === 'points' ? '0.01' : '1'} value={row[field]} onChange={(event) => update(row.key, field, event.target.value)} /></td>)}
         <td><input aria-label="Статус" value={row.status} onChange={(event) => update(row.key, 'status', event.target.value)} /></td>
-        {(['elapsedTime', 'gapTime', 'gapText', 'fastestLapRank', 'fastestLapNumber', 'fastestLapTime', 'q1Time', 'q2Time', 'q3Time'] as const).map((field) => <td key={field}><input aria-label={field} value={row[field]} onChange={(event) => update(row.key, field, event.target.value)} /></td>)}
+        {(['elapsedTime', 'gapTime', 'gapText', 'fastestLapRank', 'fastestLapNumber', 'fastestLapTime', 'q1Time', 'q2Time', 'q3Time'] as const).map((field) => <td key={field}><input aria-label={fieldLabels[field]} value={row[field]} onChange={(event) => update(row.key, field, event.target.value)} /></td>)}
         <td><input aria-label="Штраф или примечание" value={row.penaltyNote} onChange={(event) => update(row.key, 'penaltyNote', event.target.value)} /></td>
         <td>{row.isNew ? <button type="button" onClick={() => removeNew(row.key)} aria-label="Убрать новую строку">×</button> : null}</td>
       </tr>)}</tbody></table></div>

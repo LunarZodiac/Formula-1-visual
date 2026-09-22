@@ -53,10 +53,13 @@ export default async function AdminEventPage({ params, searchParams }: {
         <label><span>Время старта UTC</span><input name="startTimeUtc" type="time" step="60" defaultValue={event?.startTimeUtc?.slice(0, 5) ?? ''} /></label>
         <label><span>Статус</span><select name="status" defaultValue={event?.status ?? 'scheduled'}>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
       </div></fieldset>
-      <fieldset><legend>Источник</legend><div className="admin-form-grid">
-        <label className="is-wide"><span>URL источника календаря или результата</span><input name="sourceUrl" type="url" defaultValue={event?.sourceUrl ?? ''} placeholder="https://…" required /></label>
-        <label className="admin-rights-confirmation"><input type="checkbox" name="sourceVerified" value="yes" /><span><strong>Источник проверен</strong><small>Обязательно, если этап уже идёт или завершён</small></span></label>
-      </div></fieldset>
+      <details className="admin-editor-disclosure" open={create || !event?.sourceUrl}>
+        <summary><span><strong>Источник и проверка</strong><small>Ссылка на календарь или официальный результат этапа</small></span></summary>
+        <fieldset><legend className="sr-only">Источник этапа</legend><div className="admin-form-grid">
+          <label className="is-wide"><span>URL источника календаря или результата</span><input name="sourceUrl" type="url" defaultValue={event?.sourceUrl ?? ''} placeholder="https://…" required /></label>
+          <label className="admin-rights-confirmation"><input type="checkbox" name="sourceVerified" value="yes" /><span><strong>Источник проверен</strong><small>Обязательно, если этап уже идёт или завершён</small></span></label>
+        </div></fieldset>
+      </details>
       <div className="admin-form-actions"><span>Победитель вычисляется из результатов гонки и здесь не редактируется</span><button type="submit">{create ? 'Добавить этап' : 'Сохранить этап'}</button></div>
     </form>
     {event ? <section className="admin-related-section admin-session-section"><header><div><span className="admin-kicker">Программа этапа</span><h2>Сессии и результаты</h2></div><span>{event.sessionCount} сессий · {event.resultCount} результатов</span></header>

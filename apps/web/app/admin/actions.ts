@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { clearAdminSession, createAdminSession, getAdminSession, verifyAdminCredentials } from '../lib/admin-auth';
-import { applyAdminTravelImportPreview, applyAdminTravelRouteGenerationPreview, createAdminConstructorLineage, createAdminTravelImportPreview, createAdminTravelRouteGenerationPreview, deleteAdminConstructorLineage, deleteAdminSessionResult, deleteAdminTrackAnnotation, getAdminDriver, importAdminTrackGeometry, inspectAdminTrackGeometry, previewAdminCircuitCardImage, previewAdminConstructorCar, previewAdminConstructorLogo, previewAdminDriverPhoto, previewAdminGameLogo, saveAdminEvent, saveAdminEventSession, saveAdminSeason, saveAdminSessionResult, saveAdminSessionResults, saveAdminTrackLayout, syncAdminSeasonFromJolpica, updateAdminCircuit, updateAdminCircuitMediaOrder, updateAdminConstructorEntry, updateAdminConstructorLineage, updateAdminDriver, updateAdminDriverEditorial, updateAdminMapUiSettings, updateAdminMediaAsset, updateAdminTableRow, updateAdminTrackAnnotation, updateAdminTravelCategoryIcon, updateAdminTravelPoint, updateAdminTravelPointsBulk, updateAdminTravelRoute, updateAdminTravelZone, uploadAdminCircuitCardImage, uploadAdminConstructorCar, uploadAdminConstructorLogo, uploadAdminDriverPhoto, uploadAdminGameLogo, uploadAdminTravelCategoryIcon, uploadAdminTravelPointPhoto, type AdminCircuitCardImageInput, type AdminCircuitInput, type AdminConstructorCarInput, type AdminConstructorLineageInput, type AdminDriverInput, type AdminEventInput, type AdminEventSessionInput, type AdminGameLogoInput, type AdminSeason, type AdminSessionResultInput, type AdminTrackLayoutInput } from '../lib/admin-database';
+import { applyAdminTravelImportPreview, applyAdminTravelPointOsmTranslations, applyAdminTravelRouteGenerationPreview, createAdminConstructorLineage, createAdminTravelImportPreview, createAdminTravelRouteGenerationPreview, deleteAdminConstructorLineage, deleteAdminSessionResult, deleteAdminTrackAnnotation, getAdminDriver, importAdminTrackGeometry, inspectAdminTrackGeometry, previewAdminCircuitCardImage, previewAdminConstructorCar, previewAdminConstructorLogo, previewAdminDriverPhoto, previewAdminGameLogo, previewAdminTravelPointPhoto, saveAdminEvent, saveAdminEventSession, saveAdminSeason, saveAdminSessionResult, saveAdminSessionResults, saveAdminTrackLayout, syncAdminSeasonFromJolpica, updateAdminCircuit, updateAdminCircuitMediaOrder, updateAdminConstructorEntry, updateAdminConstructorLineage, updateAdminDriver, updateAdminDriverEditorial, updateAdminMapUiSettings, updateAdminMediaAsset, updateAdminTableRow, updateAdminTrackAnnotation, updateAdminTravelCategoryIcon, updateAdminTravelPoint, updateAdminTravelPointsBulk, updateAdminTravelRoute, updateAdminTravelZone, uploadAdminCircuitCardImage, uploadAdminConstructorCar, uploadAdminConstructorLogo, uploadAdminDriverPhoto, uploadAdminGameLogo, uploadAdminTravelCategoryIcon, uploadAdminTravelPointPhoto, type AdminCircuitCardImageInput, type AdminCircuitInput, type AdminConstructorCarInput, type AdminConstructorLineageInput, type AdminDriverInput, type AdminEventInput, type AdminEventSessionInput, type AdminGameLogoInput, type AdminSeason, type AdminSessionResultInput, type AdminTrackLayoutInput, type AdminTravelPointPhotoInput } from '../lib/admin-database';
 
 function optionalText(formData: FormData, name: string) {
   const value = String(formData.get(name) ?? '').trim();
@@ -1042,29 +1042,69 @@ export async function updateTravelPointsBulk(formData: FormData) {
   }
 }
 
+export async function applyTravelPointOsmTranslations(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const circuitId = String(formData.get('circuitId') ?? '').trim();
+  const fallback = `/admin/travel/${encodeURIComponent(circuitId)}`;
+  const requestedReturnTo = String(formData.get('returnTo') ?? '');
+  const returnTo = requestedReturnTo === fallback || requestedReturnTo.startsWith(`${fallback}?`) ? requestedReturnTo : fallback;
+  try {
+    if (!/^[A-Za-z0-9_-]+$/.test(circuitId)) throw new Error('Некорректный ID трассы');
+    const result = await applyAdminTravelPointOsmTranslations(circuitId);
+    revalidatePath('/admin/travel'); revalidatePath(`/admin/travel/${circuitId}`);
+    const separator = returnTo.includes('?') ? '&' : '?';
+    redirect(`${returnTo}${separator}translated=${result.updated}${result.publicDataSynced ? '' : '&translationSyncError=1'}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось применить русские названия OpenStreetMap', error);
+    const separator = returnTo.includes('?') ? '&' : '?';
+    redirect(`${returnTo}${separator}translationError=1`);
+  }
+}
+
+async function travelPointPhotoInput(formData: FormData, requireRights: boolean): Promise<AdminTravelPointPhotoInput> {
+  const circuitId = String(formData.get('circuitId') ?? '').trim();
+  const pointId = String(formData.get('pointId') ?? '').trim();
+  const file = formData.get('photo');
+  if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(pointId)) throw new Error('Некорректный ID точки');
+  if (!(file instanceof File) || !file.size) throw new Error('Фотография не выбрана');
+  if (file.size > 8 * 1024 * 1024) throw new Error('Фотография больше 8 МБ');
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) throw new Error('Разрешены JPG, PNG и WebP');
+  if (requireRights && formData.get('rightsConfirmed') !== 'yes') throw new Error('Не подтверждены права на использование');
+  const altTextRu = optionalText(formData, 'photoAltTextRu') ?? '';
+  const author = optionalText(formData, 'photoAuthor') ?? '';
+  const licence = optionalText(formData, 'photoLicence') ?? '';
+  const sourceValue = String(formData.get('photoSourceUrl') ?? '').trim();
+  const sourceUrl = requireRights ? new URL(sourceValue) : null;
+  if (sourceUrl && (!['http:', 'https:'].includes(sourceUrl.protocol) || sourceUrl.username || sourceUrl.password)) throw new Error('Некорректный источник фотографии');
+  if (requireRights && (!altTextRu || !author || !licence)) throw new Error('Не заполнены сведения о фотографии');
+  return {
+    circuitId, pointId, fileName: file.name, mimeType: file.type, bytes: await file.arrayBuffer(),
+    altTextRu, author, licence, sourceUrl: sourceUrl?.href ?? 'https://preview.invalid/',
+    previewToken: String(formData.get('previewToken') ?? ''),
+    cropZoom: Number(formData.get('cropZoom') ?? 1), cropX: Number(formData.get('cropX') ?? 0), cropY: Number(formData.get('cropY') ?? 0),
+  };
+}
+
+export async function previewTravelPointPhoto(formData: FormData) {
+  if (!await getAdminSession()) return { ok: false as const, error: 'Сессия завершена. Обновите страницу и войдите снова' };
+  try {
+    const result = await previewAdminTravelPointPhoto(await travelPointPhotoInput(formData, false));
+    if (!result.token || !result.imageDataUrl) throw new Error('Сервер не вернул предпросмотр');
+    return { ok: true as const, token: result.token, imageDataUrl: result.imageDataUrl };
+  } catch (error) {
+    console.error('Не удалось создать предпросмотр фотографии туристической точки', error);
+    return { ok: false as const, error: error instanceof Error ? error.message : 'Не удалось создать предпросмотр' };
+  }
+}
+
 export async function uploadTravelPointPhoto(formData: FormData) {
   if (!await getAdminSession()) redirect('/admin/login');
   const circuitId = String(formData.get('circuitId') ?? '').trim();
   const pointId = String(formData.get('pointId') ?? '').trim();
   const destination = `/admin/travel/${encodeURIComponent(circuitId)}/points/${encodeURIComponent(pointId)}`;
-  const file = formData.get('photo');
   try {
-    if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(pointId)) throw new Error('Некорректный ID точки');
-    if (!(file instanceof File) || !file.size) throw new Error('Фотография не выбрана');
-    if (file.size > 8 * 1024 * 1024) throw new Error('Фотография больше 8 МБ');
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) throw new Error('Разрешены JPG, PNG и WebP');
-    if (formData.get('rightsConfirmed') !== 'yes') throw new Error('Не подтверждены права на использование');
-    const altTextRu = optionalText(formData, 'photoAltTextRu');
-    const author = optionalText(formData, 'photoAuthor');
-    const licence = optionalText(formData, 'photoLicence');
-    const sourceUrl = new URL(String(formData.get('photoSourceUrl') ?? '').trim());
-    if (!altTextRu || !author || !licence || !['http:', 'https:'].includes(sourceUrl.protocol) || sourceUrl.username || sourceUrl.password) {
-      throw new Error('Не заполнены сведения о фотографии');
-    }
-    const result = await uploadAdminTravelPointPhoto({
-      circuitId, pointId, fileName: file.name, mimeType: file.type, bytes: await file.arrayBuffer(),
-      altTextRu, author, licence, sourceUrl: sourceUrl.href,
-    });
+    const result = await uploadAdminTravelPointPhoto(await travelPointPhotoInput(formData, true));
     revalidatePath('/admin/media'); revalidatePath('/admin/travel'); revalidatePath(`/admin/travel/${circuitId}`); revalidatePath(destination);
     redirect(`${destination}?photoSaved=1${result.publicDataSynced ? '' : '&syncError=1'}#photo-upload`);
   } catch (error) {

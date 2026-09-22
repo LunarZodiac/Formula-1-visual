@@ -14,6 +14,12 @@ registerHooks({
   },
 });
 const { buildAnalytics } = await import("./analytics-data.ts");
+const {
+  mergeImportedComparisons,
+  parseAnalyticsComparisonsExport,
+  readSavedComparisons,
+  serializeAnalyticsComparisons,
+} = await import("./analytics-saved.ts");
 const { loadAnalyticsSeasons } = await import("./analytics-loader.ts");
 const driver = { id: "test", nameRu: "Тест", nameEn: "Test", code: "TST" };
 const colors = new Map([["test", "#ff2447"]]);
@@ -63,12 +69,22 @@ test("career deduplicates seasons, keeps round identities, weighted mean and cir
   assert.equal(metric.starts, 3);
   assert.equal(metric.wins, 1);
   assert.equal(metric.sprintWins, 1);
+  assert.equal(metric.sprintStarts, 1);
+  assert.equal(metric.sprintPodiums, 1);
+  assert.equal(metric.sprintPoints, 8);
+  assert.equal(metric.sprintAverageFinish, 1);
+  assert.equal(metric.racePoints, 44);
   assert.equal(metric.podiums, 2);
   assert.equal(metric.poles, 1);
+  assert.equal(metric.qualifyingEntries, 1);
+  assert.equal(metric.averageQualifying, 1);
   assert.equal(metric.averageFinish, 4);
   assert.equal(metric.points, 50);
   assert.equal(value.circuitMetrics.length, 1);
   assert.equal(value.circuitMetrics[0].points, 52);
+  assert.equal(value.circuitMetrics[0].racePoints, 44);
+  assert.equal(value.circuitMetrics[0].sprintPoints, 8);
+  assert.equal(value.circuitMetrics[0].qualifyingEntries, 1);
   assert.equal(value.circuitMetrics[0].name, "Монако");
   assert.deepEqual(value.circuitMetrics[0].coordinates, [7.4, 43.7]);
   assert.equal(value.coverage.missingQualifyingRounds, 2);
@@ -80,6 +96,8 @@ test("no results is not a zero average; qualifying-only result still appears", (
   const value = buildAnalytics([snapshot], [driver], colors);
   assert.equal(value.metrics[0].averageFinish, null);
   assert.equal(value.metrics[0].starts, 0);
+  assert.equal(value.metrics[0].qualifyingEntries, 1);
+  assert.equal(value.metrics[0].averageQualifying, 1);
   assert.equal(value.circuitMetrics[0].poles, 1);
 });
 
@@ -133,6 +151,86 @@ test("actual 2024 snapshot totals agree with independent counting", () => {
     value.metrics[0].podiums,
     rows.filter((row) => row.position <= 3).length,
   );
+});
+
+test("saved comparisons ignore corrupt or incomplete local data", () => {
+  assert.deepEqual(readSavedComparisons("{broken"), []);
+  assert.deepEqual(readSavedComparisons(JSON.stringify([{ id: "missing-fields" }])), []);
+  const valid = {
+    id: "one",
+    label: "Тест",
+    savedAt: "2026-09-20T00:00:00.000Z",
+    scope: "season",
+    season: 2026,
+    driverIds: ["test"],
+    sessionView: "sprint",
+    metric: "sprintPoints",
+    mapMode: "heat",
+    focusId: "test",
+  };
+  assert.deepEqual(readSavedComparisons(JSON.stringify([valid])), [valid]);
+  assert.equal(readSavedComparisons(JSON.stringify(Array(10).fill(valid))).length, 8);
+});
+
+test("portable comparisons survive a versioned JSON round trip", () => {
+  const comparison = {
+    id: "portable",
+    label: "Тестовый экспорт",
+    savedAt: "2026-09-21T10:00:00.000Z",
+    scope: "career",
+    season: 2026,
+    driverIds: ["test"],
+    sessionView: "race",
+    metric: "racePoints",
+    mapMode: "shares",
+    focusId: "test",
+  };
+  const json = serializeAnalyticsComparisons([comparison], "2026-09-21T11:00:00.000Z");
+  assert.deepEqual(parseAnalyticsComparisonsExport(json, new Set(["test"]), new Set([2026])), [comparison]);
+});
+
+test("portable import rejects unknown modes and drivers without changing local comparisons", () => {
+  const existing = {
+    id: "local",
+    label: "Локальное",
+    savedAt: "2026-09-21T10:00:00.000Z",
+    scope: "season",
+    season: 2026,
+    driverIds: ["test"],
+    sessionView: "overview",
+    metric: "wins",
+    mapMode: "shares",
+    focusId: "test",
+  };
+  const envelope = JSON.parse(serializeAnalyticsComparisons([existing]));
+  envelope.comparisons[0].sessionView = "practice";
+  assert.throws(() => parseAnalyticsComparisonsExport(JSON.stringify(envelope), new Set(["test"]), new Set([2026])), /Неизвестный режим сессии: practice/);
+  envelope.comparisons[0].sessionView = "overview";
+  envelope.comparisons[0].driverIds = ["missing"];
+  envelope.comparisons[0].focusId = "missing";
+  assert.throws(() => parseAnalyticsComparisonsExport(JSON.stringify(envelope), new Set(["test"]), new Set([2026])), /Неизвестный пилот: missing/);
+  assert.deepEqual(mergeImportedComparisons([existing], []), [existing]);
+});
+
+test("portable import preserves local comparisons, avoids duplicates and respects the limit", () => {
+  const make = (id) => ({
+    id,
+    label: id,
+    savedAt: "2026-09-21T10:00:00.000Z",
+    scope: "season",
+    season: 2026,
+    driverIds: [id],
+    sessionView: "overview",
+    metric: "wins",
+    mapMode: "shares",
+    focusId: id,
+  });
+  const existing = [make("one"), make("two")];
+  const imported = [make("two"), ...Array.from({ length: 8 }, (_, index) => make(`new-${index}`))];
+  const merged = mergeImportedComparisons(existing, imported);
+  assert.equal(merged.length, 8);
+  assert.deepEqual(merged.slice(0, 2), existing);
+  assert.equal(merged.filter((item) => item.driverIds[0] === "two").length, 1);
 });
 
 test("loader bounds concurrency, reports progress, caches successes and rejects incomplete careers", async () => {

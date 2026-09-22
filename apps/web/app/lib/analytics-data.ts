@@ -21,6 +21,17 @@ export type DriverMetric = {
   poles: number;
   sprintWins: number;
   points: number;
+  racePoints: number;
+  sprintStarts: number;
+  sprintPodiums: number;
+  sprintPoints: number;
+  sprintAverageFinish: number | null;
+  sprintFinishCount: number;
+  sprintFinishSum: number;
+  qualifyingEntries: number;
+  averageQualifying: number | null;
+  qualifyingPositionCount: number;
+  qualifyingPositionSum: number;
   averageFinish: number | null;
   finishCount: number;
   finishSum: number;
@@ -41,6 +52,11 @@ export type CircuitMetric = {
   poles: number;
   sprintWins: number;
   points: number;
+  racePoints: number;
+  sprintStarts: number;
+  sprintPodiums: number;
+  sprintPoints: number;
+  qualifyingEntries: number;
 };
 
 function position(row: SnapshotSessionResult) {
@@ -75,6 +91,17 @@ export function buildAnalytics(
     poles: 0,
     sprintWins: 0,
     points: 0,
+    racePoints: 0,
+    sprintStarts: 0,
+    sprintPodiums: 0,
+    sprintPoints: 0,
+    sprintAverageFinish: null,
+    sprintFinishCount: 0,
+    sprintFinishSum: 0,
+    qualifyingEntries: 0,
+    averageQualifying: null,
+    qualifyingPositionCount: 0,
+    qualifyingPositionSum: 0,
     averageFinish: null,
     finishCount: 0,
     finishSum: 0,
@@ -128,6 +155,11 @@ export function buildAnalytics(
           poles: 0,
           sprintWins: 0,
           points: 0,
+          racePoints: 0,
+          sprintStarts: 0,
+          sprintPodiums: 0,
+          sprintPoints: 0,
+          qualifyingEntries: 0,
         };
         byCircuit.set(key, item);
       }
@@ -158,6 +190,12 @@ export function buildAnalytics(
           if (!circuit) continue;
           const place = position(row);
           if (key === "qualifyingResults") {
+            metric.qualifyingEntries++;
+            circuit.qualifyingEntries++;
+            if (place !== null) {
+              metric.qualifyingPositionSum += place;
+              metric.qualifyingPositionCount++;
+            }
             if (place === 1) {
               metric.poles++;
               circuit.poles++;
@@ -174,12 +212,26 @@ export function buildAnalytics(
           );
           circuit.points += points;
           if (key === "sprintResults") {
+            metric.sprintStarts++;
+            circuit.sprintStarts++;
+            metric.sprintPoints += points;
+            circuit.sprintPoints += points;
+            if (place !== null) {
+              metric.sprintFinishSum += place;
+              metric.sprintFinishCount++;
+            }
             if (place === 1) {
               metric.sprintWins++;
               circuit.sprintWins++;
             }
+            if (place !== null && place <= 3) {
+              metric.sprintPodiums++;
+              circuit.sprintPodiums++;
+            }
             continue;
           }
+          metric.racePoints += points;
+          circuit.racePoints += points;
           metric.starts++;
           circuit.starts++;
           if (place !== null) {
@@ -208,8 +260,16 @@ export function buildAnalytics(
     }
   }
   for (const metric of metrics)
-    metric.averageFinish = metric.finishCount
-      ? metric.finishSum / metric.finishCount
-      : null;
+    {
+      metric.averageFinish = metric.finishCount
+        ? metric.finishSum / metric.finishCount
+        : null;
+      metric.sprintAverageFinish = metric.sprintFinishCount
+        ? metric.sprintFinishSum / metric.sprintFinishCount
+        : null;
+      metric.averageQualifying = metric.qualifyingPositionCount
+        ? metric.qualifyingPositionSum / metric.qualifyingPositionCount
+        : null;
+    }
   return { metrics, circuitMetrics: [...byCircuit.values()], coverage };
 }

@@ -170,6 +170,9 @@ try {
       categoryId,
       role,
       name: element.tags.name,
+      nameRu: typeof element.tags['name:ru'] === 'string' && element.tags['name:ru'].trim()
+        ? element.tags['name:ru'].trim()
+        : null,
       point,
       tags: element.tags,
     };
@@ -187,12 +190,13 @@ try {
           opening_hours, importance, wheelchair_access, review_status,
           source_id, properties, updated_at
        ) VALUES (
-          $1, $2, $3, NULL,
-          ST_SetSRID(ST_MakePoint($4, $5), 4326)::geography,
-          $6, $7, $8, $9, $10, 'candidate', 'openstreetmap', $11::jsonb, now()
+          $1, $2, $3, $4,
+          ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography,
+          $7, $8, $9, $10, $11, 'candidate', 'openstreetmap', $12::jsonb, now()
        ) ON CONFLICT (id) DO UPDATE SET
           category_id = EXCLUDED.category_id,
           name = EXCLUDED.name,
+          name_ru = coalesce(nullif(atlas.tourism_pois.name_ru, ''), EXCLUDED.name_ru),
           location = EXCLUDED.location,
           address = EXCLUDED.address,
           website_url = EXCLUDED.website_url,
@@ -205,6 +209,7 @@ try {
         candidate.id,
         candidate.categoryId,
         candidate.name,
+        candidate.nameRu,
         candidate.point.longitude,
         candidate.point.latitude,
         candidate.tags['addr:full'] ?? candidate.tags['addr:street'] ?? null,

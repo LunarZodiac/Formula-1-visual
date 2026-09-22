@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Breadcrumbs } from './breadcrumbs';
 import type { CSSProperties, FormEvent } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import circuitsJson from '../data/catalogs/circuits.json';
@@ -125,7 +126,7 @@ export function SiteSearch({ initialQuery = '' }: { initialQuery?: string }) {
   const resetFilters = () => { setActiveType('all'); setAvailability('all'); setCountry('all'); setSelectedSeason('all'); setSort('relevance'); };
 
   return <main className="search-page search-experience">
-    <nav className="search-breadcrumbs" aria-label="Хлебные крошки"><Link href="/">Главная</Link><span>›</span><b>Поиск</b></nav>
+    <Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'Поиск' }]} />
     <header className="search-page-hero"><span>Единый индекс атласа</span><h1>Поиск по атласу</h1><p>Трассы, пилоты, команды, сезоны, этапы, конфигурации и география Formula 1</p><i aria-hidden="true" /></header>
     <form className="search-box" onSubmit={submit}><div><span aria-hidden="true">⌕</span><input id="global-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Найдите трассу, пилота, команду или сезон" aria-label="Поиск по атласу" /><button type="button" onClick={() => setQuery('')} disabled={!query} aria-label="Очистить поиск">×</button></div></form>
     <nav className="search-type-tabs" aria-label="Категории поиска">{(['all', ...groupOrder] as SearchType[]).map((type) => <button type="button" className={activeType === type ? 'is-active' : ''} onClick={() => setActiveType(type)} key={type}>{typeLabels[type]}</button>)}</nav>

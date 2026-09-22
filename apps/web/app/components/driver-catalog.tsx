@@ -6,6 +6,7 @@ import type { CSSProperties } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DriverFlag, DriverPortrait, TeamLogo } from './racing-visuals';
 import { DriverNumberMark, resolveDriverNumber } from './driver-number-mark';
+import { Breadcrumbs } from './breadcrumbs';
 
 import type { DriverListItem } from '../data/competitor-contract';
 export type { DriverCatalogItem } from '../data/competitor-contract';
@@ -17,10 +18,15 @@ const teamColors: Record<string, string> = {
 };
 
 const nationalityNames: Record<string, string> = {
-  Argentine: 'Аргентина', Australian: 'Австралия', Brazilian: 'Бразилия', British: 'Великобритания',
-  Canadian: 'Канада', Dutch: 'Нидерланды', Finnish: 'Финляндия', French: 'Франция', German: 'Германия',
-  Italian: 'Италия', Japanese: 'Япония', Mexican: 'Мексика', Monegasque: 'Монако',
-  'New Zealander': 'Новая Зеландия', Spanish: 'Испания', Thai: 'Таиланд',
+  American: 'США', Argentine: 'Аргентина', Australian: 'Австралия', Austrian: 'Австрия', Belgian: 'Бельгия',
+  Brazilian: 'Бразилия', British: 'Великобритания', Canadian: 'Канада', Chilean: 'Чили', Chinese: 'Китай',
+  Colombian: 'Колумбия', Czech: 'Чехия', Danish: 'Дания', Dutch: 'Нидерланды', 'East German': 'ГДР',
+  Finnish: 'Финляндия', French: 'Франция', German: 'Германия', Hungarian: 'Венгрия', Indian: 'Индия',
+  Indonesian: 'Индонезия', Irish: 'Ирландия', Italian: 'Италия', Japanese: 'Япония',
+  Liechtensteiner: 'Лихтенштейн', Malaysian: 'Малайзия', Mexican: 'Мексика', Monegasque: 'Монако',
+  'New Zealander': 'Новая Зеландия', Polish: 'Польша', Portuguese: 'Португалия', Rhodesian: 'Родезия',
+  Russian: 'Россия', 'South African': 'ЮАР', Spanish: 'Испания', Swedish: 'Швеция', Swiss: 'Швейцария',
+  Thai: 'Таиланд', Uruguayan: 'Уругвай', Venezuelan: 'Венесуэла',
 };
 
 function driverColor(driver: DriverListItem) {
@@ -102,7 +108,7 @@ export function DriverCatalog({ season, afterRound, drivers, seasonSelected = fa
     <main className="entity-catalog-page driver-showcase-page">
       <header className="driver-showcase-hero">
         <div>
-          <nav className="driver-showcase-breadcrumbs" aria-label="Хлебные крошки"><Link href="/">Главная</Link><span aria-hidden="true">›</span><b>Пилоты</b></nav>
+          <Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'Пилоты' }]} />
           <small>{seasonSelected ? `Сезон ${season}` : 'Все сезоны'}</small>
           <h1>Пилоты</h1>
           <p>{seasonSelected ? `Пилоты сезона, их команды и путь в Формуле-1 · зачёт после этапа ${afterRound}` : 'Все пилоты чемпионата мира Formula 1 с 1950 года'}</p>

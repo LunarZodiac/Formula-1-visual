@@ -6,6 +6,7 @@ import type { GeoJSONSource, Map as MapLibreMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { addAtlasMapAttribution } from "../lib/map-attribution";
 import { answerNearGuess } from "../lib/games-engine";
+import { useTheme, type AtlasTheme } from "./theme-provider";
 
 type Coordinate = [number, number];
 
@@ -83,6 +84,22 @@ const gameMapStyle: maplibregl.StyleSpecification = {
   ],
 };
 
+function applyGameMapTheme(map: MapLibreMap, theme: AtlasTheme) {
+  const isLight = theme === "light";
+  const paint = (layerId: string, property: string, value: unknown) => {
+    if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
+  };
+
+  paint("game-map-background", "background-color", isLight ? "#e8efef" : "#061015");
+  paint("game-map-land", "fill-color", isLight ? "#d9e4df" : "#173238");
+  paint("game-map-water", "fill-color", isLight ? "#b9d6df" : "#02080d");
+  paint("game-map-boundaries", "line-color", isLight ? "#526d78" : "#668087");
+  paint("game-map-boundaries", "line-opacity", isLight ? .55 : .42);
+  paint("game-map-russian-places", "text-color", isLight ? "#334d58" : "#9ebcc1");
+  paint("game-map-russian-places", "text-halo-color", isLight ? "#f7faf8" : "#061015");
+  paint("game-result-points", "circle-stroke-color", isLight ? "#263b44" : "#f5fbfc");
+}
+
 function resultGeoJson(
   selection: Coordinate | null,
   answer: Coordinate,
@@ -124,6 +141,7 @@ export function GameLocationMap({
   disabled = false,
   onSelect,
 }: GameLocationMapProps) {
+  const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const onSelectRef = useRef(onSelect);
@@ -217,6 +235,7 @@ export function GameLocationMap({
           "circle-stroke-width": 2,
         },
       });
+      applyGameMapTheme(map, document.documentElement.dataset.theme === "light" ? "light" : "dark");
       setReady(true);
     });
     map.on("click", (event) => {
@@ -229,6 +248,11 @@ export function GameLocationMap({
       mapRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map?.isStyleLoaded()) applyGameMapTheme(map, theme);
+  }, [theme]);
 
   useEffect(() => {
     const map = mapRef.current;

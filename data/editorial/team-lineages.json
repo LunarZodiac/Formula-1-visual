@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "formula1-team-family-tree-2026",
+      "name": "Formula 1 — The family tree of F1's 11 teams and how they came to be",
+      "url": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq",
+      "retrievedAt": "2026-09-21T00:00:00Z"
+    }
+  ],
+  "lineages": [
+    {
+      "predecessorId": "jordan",
+      "successorId": "spyker_mf1",
+      "relationshipType": "ownership_change",
+      "validFromYear": 2006,
+      "descriptionRu": "Команда Jordan была продана Midland Group; в базе сезон 2006 года представлен идентичностью Spyker MF1.",
+      "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "spyker_mf1",
+      "successorId": "spyker",
+      "relationshipType": "rename",
+      "validFromYear": 2007,
+      "descriptionRu": "После переходного сезона под именем Spyker MF1 команда продолжила выступления как Spyker.",
+      "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "spyker",
+      "successorId": "force_india",
+      "relationshipType": "ownership_change",
+      "validFromYear": 2008,
+      "descriptionRu": "После смены владельца команда Spyker была переименована в Force India.",
+      "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "force_india",
+      "successorId": "racing_point",
+      "relationshipType": "licence_transfer",
+      "validFromYear": 2019,
+      "descriptionRu": "После покупки активов Force India консорциумом Лоуренса Стролла команда продолжила выступления как отдельная идентичность Racing Point.",
+      "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "racing_point",
+      "successorId": "aston_martin",
+      "relationshipType": "rename",
+      "validFromYear": 2021,
+      "descriptionRu": "С сезона 2021 года Racing Point выступает под именем Aston Martin.",
+      "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "minardi",
+      "successorId": "toro_rosso",
+      "relationshipType": "ownership_change",
+      "validFromYear": 2006,
+      "descriptionRu": "После приобретения Minardi компанией Red Bull команда была переименована в Toro Rosso.",
+      "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "toro_rosso",
+      "successorId": "alphatauri",
+      "relationshipType": "rename",
+      "validFromYear": 2020,
+      "descriptionRu": "С сезона 2020 года Toro Rosso выступала под именем AlphaTauri.",
+      "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "alphatauri",
+      "successorId": "rb",
+      "relationshipType": "rename",
+      "validFromYear": 2024,
+      "descriptionRu": "В 2024 году AlphaTauri сменила название на RB; последующие сезонные варианты названия относятся к той же идентичности в базе.",
+      "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "stewart",
+      "successorId": "jaguar",
+      "relationshipType": "factory_takeover",
+      "validFromYear": 2000,
+      "descriptionRu": "Ford приобрёл Stewart Grand Prix и преобразовал команду в заводскую Jaguar Racing.",
+      "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "jaguar",
+      "successorId": "red_bull",
+      "relationshipType": "ownership_change",
+      "validFromYear": 2005,
+      "descriptionRu": "После ухода Ford команда Jaguar была продана Red Bull и с 2005 года выступает как Red Bull Racing.",
+      "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "sauber",
+      "successorId": "audi",
+      "relationshipType": "factory_takeover",
+      "validFromYear": 2026,
+      "descriptionRu": "После полного приобретения Sauber компания Audi преобразовала коллектив в свою заводскую команду с сезона 2026 года.",
+      "sourceId": "formula1-team-family-tree-2026"
+    }
+  ]
+}

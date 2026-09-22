@@ -12,6 +12,7 @@ import {
 } from "react";
 import { HeaderSearch } from "./header-search";
 import { SiteMenu } from "./site-menu";
+import { useTheme } from "./theme-provider";
 
 type SeasonItem = { year: number };
 
@@ -28,6 +29,8 @@ const navigation = [
   ["О проекте", "/about"],
 ] as const;
 
+const primaryNavigation = navigation.filter(([, href]) => href !== "/games");
+
 function activeHrefForPath(pathname: string) {
   const route = navigation.find(
     ([, href]) =>
@@ -37,6 +40,7 @@ function activeHrefForPath(pathname: string) {
 }
 
 export function SiteHeader() {
+  const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
   const navRef = useRef<HTMLElement>(null);
@@ -119,7 +123,7 @@ export function SiteHeader() {
         : null;
     if (hashHref) {
       activeLockRef.current = hashHref;
-      setActiveHref(hashHref);
+      queueMicrotask(() => setActiveHref(hashHref));
       activeLockTimerRef.current = setTimeout(() => {
         activeLockRef.current = null;
         window.sessionStorage.removeItem("f1-navigation-target");
@@ -209,7 +213,7 @@ export function SiteHeader() {
         </span>
       </Link>
       <nav ref={navRef} className="topnav" aria-label="Основная навигация">
-        {navigation.map(([label, href]) => (
+        {primaryNavigation.map(([label, href]) => (
           <Link
             key={label}
             data-nav-href={href}
@@ -280,6 +284,17 @@ export function SiteHeader() {
             </div>
           )}
         </div>
+        <button
+          type="button"
+          className="theme-toggle"
+          aria-label={`Включить ${theme === "dark" ? "светлую" : "тёмную"} тему`}
+          aria-pressed={theme === "light"}
+          title={`Тема: ${theme === "dark" ? "тёмная" : "светлая"}`}
+          onClick={toggleTheme}
+        >
+          <span aria-hidden="true">{theme === "dark" ? "☾" : "☀"}</span>
+          <b>{theme === "dark" ? "Тёмная" : "Светлая"}</b>
+        </button>
         <SiteMenu />
       </div>
     </header>

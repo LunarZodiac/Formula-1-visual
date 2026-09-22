@@ -94,10 +94,11 @@ export function TravelPointsMap({ circuit, mapPoints }: Pick<AdminTravelPointReg
       const feature = event.features?.[0]; if (!feature || feature.geometry.type !== 'Point') return;
       const content = document.createElement('div'); content.className = 'poi-popup-content';
       const kind = document.createElement('span'); kind.textContent = String(feature.properties?.categoryId ?? 'Точка');
-      const name = document.createElement('strong'); name.textContent = String(feature.properties?.name ?? 'Точка');
+      const name = document.createElement('strong'); name.textContent = String(feature.properties?.nameRu || 'Перевод не заполнен');
+      const original = document.createElement('small'); original.textContent = `Оригинал: ${String(feature.properties?.originalName ?? feature.properties?.name ?? '—')}`;
       const detail = document.createElement('p'); detail.textContent = `${formatDistance(Number(feature.properties?.distanceToCircuitM ?? 0))} от трассы · ${String(feature.properties?.reviewStatus ?? '')}`;
       const link = document.createElement('a'); link.href = `/admin/travel/${encodeURIComponent(circuit.id)}/points/${encodeURIComponent(String(feature.properties?.id ?? ''))}`; link.textContent = 'Редактировать →';
-      content.append(kind, name, detail, link);
+      content.append(kind, name, original, detail, link);
       new maplibregl.Popup({ offset: 14, className: 'atlas-poi-popup' }).setLngLat(feature.geometry.coordinates as [number, number]).setDOMContent(content).addTo(map);
     });
     ['travel-point-clusters', 'travel-point-dots'].forEach((layer) => { map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; }); });

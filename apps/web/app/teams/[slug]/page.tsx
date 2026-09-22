@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { TeamProfile } from '../../components/competitor-profile';
+import { Breadcrumbs } from '../../components/breadcrumbs';
+import { TeamLineageSection, TeamProfile } from '../../components/competitor-profile';
 import { TeamLogo } from '../../components/racing-visuals';
 import { getAllTeamCatalog, getTeamCatalog } from '../../data/season-catalogs';
 
@@ -24,6 +24,6 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
   const requestedSeason = Number(requested.season);
   const selectedCatalog = await getTeamCatalog(Number.isInteger(requestedSeason) ? requestedSeason : indexedTeam.latestSeason);
   const team = selectedCatalog.teams.find((item) => item.id === slug);
-  if (!team) return <main className="constructors-page"><nav className="constructors-breadcrumbs"><Link href="/teams">Все команды</Link><span>›</span><b>{indexedTeam.name}</b></nav><header className="constructors-hero"><div><span>Архивная команда</span><h1>{indexedTeam.name}</h1><p>{indexedTeam.firstSeason === indexedTeam.latestSeason ? `Сезон ${indexedTeam.latestSeason}` : `Сезоны ${indexedTeam.firstSeason}–${indexedTeam.latestSeason}`} · отдельный Кубок конструкторов для этого периода отсутствует в базе</p></div><TeamLogo constructorId={indexedTeam.id} constructorName={indexedTeam.name} season={indexedTeam.latestSeason} logoUrl={indexedTeam.logoUrl} /></header><section className="constructors-history"><header><span>Доступные сведения</span><h2>Участие в Гран-при</h2></header><div><article><dl><div><dt>Сезонов</dt><dd>{indexedTeam.seasonCount}</dd></div><div><dt>Гран-при</dt><dd>{indexedTeam.raceEntries}</dd></div><div><dt>Победы</dt><dd>{indexedTeam.wins}</dd></div></dl></article></div></section><p className="constructors-note">Карточка автоматически собрана из результатов. Историческое описание, преемственность и медиаматериалы будут добавляться только с проверяемыми источниками</p></main>;
+  if (!team) return <main className="constructors-page"><Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'Команды', href: '/teams' }, { label: indexedTeam.name }]} /><header className="constructors-hero"><div><span>Архивная команда</span><h1>{indexedTeam.name}</h1><p>{indexedTeam.firstSeason === indexedTeam.latestSeason ? `Сезон ${indexedTeam.latestSeason}` : `Сезоны ${indexedTeam.firstSeason}–${indexedTeam.latestSeason}`} · отдельный Кубок конструкторов для этого периода отсутствует в базе</p></div><TeamLogo constructorId={indexedTeam.id} constructorName={indexedTeam.name} season={indexedTeam.latestSeason} logoUrl={indexedTeam.logoUrl} /></header><section className="constructors-history"><header><span>Доступные сведения</span><h2>Участие в Гран-при</h2></header><div><article><dl><div><dt>Сезонов</dt><dd>{indexedTeam.seasonCount}</dd></div><div><dt>Гран-при</dt><dd>{indexedTeam.raceEntries}</dd></div><div><dt>Победы</dt><dd>{indexedTeam.wins}</dd></div></dl></article></div></section><TeamLineageSection lineages={indexedTeam.lineages} /><p className="constructors-note">Карточка автоматически собрана из результатов. Историческое описание и медиаматериалы добавляются только с проверяемыми источниками</p></main>;
   return <TeamProfile season={selectedCatalog.season} team={team} lineages={indexedTeam.lineages} />;
 }

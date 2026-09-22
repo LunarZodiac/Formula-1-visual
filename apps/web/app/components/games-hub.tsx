@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   awardSession,
   distanceKm,
@@ -13,6 +13,7 @@ import {
   readProgress,
   scoreRound,
   shuffled,
+  xpForScore,
   type Difficulty,
   type GameEra,
   type GameCircuit,
@@ -20,7 +21,9 @@ import {
   type Progress,
 } from "../lib/games-engine";
 import { GameLocationMap } from "./game-location-map";
+import { GameSessionSummary } from "./game-session-summary";
 import "./games-hub.css";
+import { Breadcrumbs } from "./breadcrumbs";
 
 const STORAGE_KEY = "f1-atlas-games-progress-v1";
 const ROUND_COUNT = 5;
@@ -327,12 +330,13 @@ export function GamesHub({ circuits }: { circuits: GameCircuit[] }) {
     setStartError("");
   };
   const totalScore = results.reduce((sum, item) => sum + item.score, 0);
-  const gainedXp = 100 + Math.floor(totalScore / 10);
+  const gainedXp = xpForScore(totalScore);
   const accurate = results.filter((item) => item.correct).length;
 
   if (!circuits.length)
     return (
       <main className="games-page">
+        <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Мини-игры" }]} />
         <section className="games-empty">
           <span>Мини-игры</span>
           <h1>Трассы пока не готовы</h1>
@@ -346,11 +350,7 @@ export function GamesHub({ circuits }: { circuits: GameCircuit[] }) {
 
   return (
     <main className="games-page">
-      <nav className="games-breadcrumbs" aria-label="Хлебные крошки">
-        <Link href="/">Главная</Link>
-        <span>›</span>
-        <b>Мини-игры</b>
-      </nav>
+      <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Мини-игры" }]} />
       {storageError && (
         <div className="games-storage-warning" role="status">
           Не удалось сохранить прогресс на этом устройстве. Результат текущей
@@ -360,44 +360,9 @@ export function GamesHub({ circuits }: { circuits: GameCircuit[] }) {
 
       {(phase === "idle" || phase === "settings") && (
         <>
-          <header className="games-hero">
-            <div>
-              <span className="games-kicker">Пит-лейн знаний</span>
-              <h1>
-                Пять раундов.
-                <br />
-                <em>Один атлас.</em>
-              </h1>
-              <p>
-                Узнавайте трассы по контуру и проверяйте географическую точность
-                на карте мира
-              </p>
-            </div>
-            <aside aria-label="Игровой прогресс">
-              <span>Текущее звание</span>
-              <strong>{rank.name}</strong>
-              <div className="games-rank-track">
-                <i style={{ width: `${rankProgress}%` }} />
-              </div>
-              <small>
-                {rank.next
-                  ? `${progress.xp} / ${rank.next} XP`
-                  : `${progress.xp} XP · высшее звание`}
-              </small>
-              <dl>
-                <div>
-                  <dt>Личный рекорд</dt>
-                  <dd>{storageReady ? formatScore(bestScore) : "—"}</dd>
-                </div>
-                <div>
-                  <dt>Сессий</dt>
-                  <dd>{progress.completed.length}</dd>
-                </div>
-              </dl>
-            </aside>
-          </header>
-          <section className="games-cards" aria-label="Выбор мини-игры">
-            <article className="games-card games-card--outline">
+          <div className="games-hub-layout">
+            <section className="games-cards" aria-label="Выбор мини-игры">
+              <article className="games-card games-card--outline">
               <div className="games-card-visual">
                 <span>01 / Контур</span>
                 {logos.outline ? <img className="games-card-logo" src={logos.outline} alt="" /> : <Outline circuit={previewOutline} muted />}
@@ -422,8 +387,8 @@ export function GamesHub({ circuits }: { circuits: GameCircuit[] }) {
                   Настроить заезд <span>→</span>
                 </button>
               </div>
-            </article>
-            <article className="games-card games-card--map">
+              </article>
+              <article className="games-card games-card--map">
               <div
                 className="games-card-visual games-card-map-art"
                 aria-hidden="true"
@@ -448,16 +413,54 @@ export function GamesHub({ circuits }: { circuits: GameCircuit[] }) {
                   Настроить заезд <span>→</span>
                 </button>
               </div>
-            </article>
-            <article className="games-card games-card--driver">
+              </article>
+              <article className="games-card games-card--driver">
               <div className="games-card-visual games-card-driver-art" aria-hidden="true"><span>03 / Пилоты</span>{logos["driver-geography"] ? <img className="games-card-logo" src={logos["driver-geography"]} alt="" /> : <><b>01</b><i>⌖</i></>}</div>
               <div className="games-card-copy"><span>Страны рождения</span><h2>География<br />пилотов</h2><p>Определите по карте, в какой стране родился пилот Formula 1</p><ul><li>5 раундов</li><li>векторная карта</li><li>до 5 000 очков</li></ul><Link className="games-card-link" href="/games/driver-geography">Открыть игру <span>→</span></Link></div>
-            </article>
-            <article className="games-card games-card--calendar">
+              </article>
+              <article className="games-card games-card--calendar">
               <div className="games-card-visual games-card-calendar-art" aria-hidden="true"><span>04 / Стратегия</span>{logos["calendar-optimizer"] ? <img className="games-card-logo" src={logos["calendar-optimizer"]} alt="" /> : <><i /><i /><i /><b>↝</b></>}</div>
               <div className="games-card-copy"><span>Логистика сезона</span><h2>Оптимизатор<br />календаря</h2><p>Переставьте реальные этапы и сократите суммарную дистанцию перелётов</p><ul><li>реальный сезон</li><li>маршрут на карте</li><li>очки за экономию</li></ul><Link className="games-card-link" href="/games/calendar-optimizer">Открыть игру <span>→</span></Link></div>
-            </article>
-          </section>
+              </article>
+            </section>
+            <aside
+              className="games-progress-panel"
+              aria-label="Игровой прогресс"
+              style={{ "--rank-accent": rank.accent } as CSSProperties}
+            >
+              <span>Уровень {rank.level} · звание</span>
+              <div className="games-progress-rank">
+                <b aria-hidden="true">{rank.badge}</b>
+                <strong>{rank.name}</strong>
+              </div>
+              <div
+                className="games-rank-track"
+                role="progressbar"
+                aria-label="Прогресс опыта до следующего звания"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(rankProgress)}
+              >
+                <i style={{ width: `${rankProgress}%` }} />
+              </div>
+              <small>
+                {rank.next
+                  ? `Накоплено ${formatScore(progress.xp)} из ${formatScore(rank.next)} XP`
+                  : `Накоплено ${formatScore(progress.xp)} XP · высшее звание`}
+              </small>
+              <small className="games-progress-reward">Открыто: {rank.reward}</small>
+              <dl>
+                <div>
+                  <dt>Личный рекорд</dt>
+                  <dd>{storageReady ? formatScore(bestScore) : "—"}</dd>
+                </div>
+                <div>
+                  <dt>Сессий</dt>
+                  <dd>{storageReady ? progress.completed.length : "—"}</dd>
+                </div>
+              </dl>
+            </aside>
+          </div>
           {phase === "settings" && <div
             className="games-settings-layer"
             role="presentation"
@@ -758,52 +761,21 @@ export function GamesHub({ circuits }: { circuits: GameCircuit[] }) {
       )}
 
       {phase === "finished" && (
-        <section className="games-finish">
-          <span className="games-kicker">Клетчатый флаг</span>
-          <h1>Сессия завершена</h1>
-          <p>
-            {kind === "outline" ? "Контуры трасс" : "География трасс"} ·{" "}
-            {difficulty === "easy"
-              ? "начальная сложность"
-              : "высокая сложность"}{" "}
-            · {timed ? "с таймером" : "без таймера"}
-          </p>
-          <div className="games-finish-score">
-            <div>
-              <small>Итоговый счёт</small>
-              <strong>{formatScore(totalScore)}</strong>
-              <span>из 5 000</span>
-            </div>
-            <dl>
-              <div>
-                <dt>Точных ответов</dt>
-                <dd>
-                  {accurate} / {ROUND_COUNT}
-                </dd>
-              </div>
-              <div>
-                <dt>Получено опыта</dt>
-                <dd>+{gainedXp} XP</dd>
-              </div>
-              <div>
-                <dt>Личный рекорд</dt>
-                <dd>
-                  {formatScore(progress.records[recordKey] ?? totalScore)}
-                </dd>
-              </div>
-            </dl>
-          </div>
-          <div className="games-finish-rank">
-            <span>{rank.name}</span>
-            <div>
-              <i style={{ width: `${rankProgress}%` }} />
-            </div>
-            <small>
-              {rank.next
-                ? `До следующего звания: ${rank.next - progress.xp} XP`
-                : "Высшее звание открыто"}
-            </small>
-          </div>
+        <GameSessionSummary
+          description={`${kind === "outline" ? "Контуры трасс" : "География трасс"} · ${difficulty === "easy" ? "начальная сложность" : "высокая сложность"} · ${timed ? "с таймером" : "без таймера"}`}
+          score={totalScore}
+          gainedXp={gainedXp}
+          record={progress.records[recordKey] ?? totalScore}
+          rank={rank}
+          xp={progress.xp}
+          metrics={[{ label: "Точных ответов", value: `${accurate} / ${ROUND_COUNT}` }]}
+          actions={
+            <>
+              <button type="button" onClick={replay}>Ещё раз</button>
+              <button className="is-primary" type="button" onClick={() => setPhase("idle")}>К играм →</button>
+            </>
+          }
+        >
           <section className="games-results" aria-label="Разбор раундов">
             <h2>Разбор заезда</h2>
             {results.map((item, index) => (
@@ -829,19 +801,7 @@ export function GamesHub({ circuits }: { circuits: GameCircuit[] }) {
               </article>
             ))}
           </section>
-          <div className="games-finish-actions">
-            <button type="button" onClick={replay}>
-              Ещё раз
-            </button>
-            <button
-              className="is-primary"
-              type="button"
-              onClick={() => setPhase("idle")}
-            >
-              К играм →
-            </button>
-          </div>
-        </section>
+        </GameSessionSummary>
       )}
     </main>
   );

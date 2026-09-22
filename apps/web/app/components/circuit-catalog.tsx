@@ -7,8 +7,10 @@ import * as maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import { getTrackGeometry } from '../data/track-geometries';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { Breadcrumbs } from './breadcrumbs';
 import { addAtlasMapAttribution } from '../lib/map-attribution';
 import { countryFlagUrl, flagFallbackDataUrl } from './racing-visuals';
+import { useTheme, type AtlasTheme } from './theme-provider';
 
 export type CircuitCatalogItem = {
   id: string; slug: string; nameRu: string; officialName: string; cityRu: string; countryRu: string;
@@ -33,6 +35,7 @@ const regionByCountry: Record<string, string> = {
 
 const catalogMapStyle: maplibregl.StyleSpecification = {
   version: 8,
+  glyphs: 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
   sources: { streets: { type: 'vector', url: 'https://tiles.openfreemap.org/planet', attribution: '&copy; OpenStreetMap contributors &copy; OpenFreeMap' } },
   layers: [
     { id: 'background', type: 'background', paint: { 'background-color': '#10232d' } },
@@ -42,6 +45,48 @@ const catalogMapStyle: maplibregl.StyleSpecification = {
     { id: 'catalog-roads', type: 'line', source: 'streets', 'source-layer': 'transportation', minzoom: 4, paint: { 'line-color': '#6a7d87', 'line-width': ['interpolate', ['linear'], ['zoom'], 4, .2, 11, 1.1], 'line-opacity': .18 } },
   ],
 };
+
+function catalogMapStyleForTheme(theme: AtlasTheme): maplibregl.StyleSpecification {
+  const style = structuredClone(catalogMapStyle);
+  const isLight = theme === 'light';
+  const setPaint = (layerId: string, property: string, value: unknown) => {
+    const layer = style.layers.find((item) => item.id === layerId);
+    if (layer && 'paint' in layer && layer.paint) (layer.paint as Record<string, unknown>)[property] = value;
+  };
+
+  setPaint('background', 'background-color', isLight ? '#e8efef' : '#10232d');
+  setPaint('catalog-land', 'fill-color', isLight
+    ? ['match', ['get', 'class'], 'wood', '#c8d8cf', 'grass', '#d8e1cf', '#dfe5df']
+    : ['match', ['get', 'class'], 'wood', '#18352f', 'grass', '#1b332d', '#142b33']);
+  setPaint('catalog-water', 'fill-color', isLight ? '#b9d6df' : '#01070c');
+  setPaint('catalog-boundaries', 'line-color', isLight ? '#526d78' : '#7897a5');
+  setPaint('catalog-boundaries', 'line-opacity', isLight ? .42 : .34);
+  setPaint('catalog-roads', 'line-color', isLight ? '#6d838d' : '#6a7d87');
+  setPaint('catalog-roads', 'line-opacity', isLight ? .3 : .18);
+  return style;
+}
+
+function applyCatalogMapTheme(map: MapLibreMap, theme: AtlasTheme) {
+  const isLight = theme === 'light';
+  const paint = (layerId: string, property: string, value: unknown) => {
+    if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
+  };
+
+  paint('background', 'background-color', isLight ? '#e8efef' : '#10232d');
+  paint('catalog-land', 'fill-color', isLight
+    ? ['match', ['get', 'class'], 'wood', '#c8d8cf', 'grass', '#d8e1cf', '#dfe5df']
+    : ['match', ['get', 'class'], 'wood', '#18352f', 'grass', '#1b332d', '#142b33']);
+  paint('catalog-water', 'fill-color', isLight ? '#b9d6df' : '#01070c');
+  paint('catalog-boundaries', 'line-color', isLight ? '#526d78' : '#7897a5');
+  paint('catalog-boundaries', 'line-opacity', isLight ? .42 : .34);
+  paint('catalog-roads', 'line-color', isLight ? '#6d838d' : '#6a7d87');
+  paint('catalog-roads', 'line-opacity', isLight ? .3 : .18);
+  paint('catalog-clusters', 'circle-color', isLight ? '#f7faf8' : '#111d28');
+  paint('catalog-cluster-count', 'text-color', isLight ? '#172128' : '#ffffff');
+  paint('catalog-points-layer', 'circle-stroke-color', isLight ? '#f7faf8' : '#ffffff');
+  paint('catalog-track-shadow', 'line-color', isLight ? '#f7faf8' : '#02070d');
+  paint('catalog-track-shadow', 'line-opacity', isLight ? .82 : .9);
+}
 
 function trackTypeKey(typeRu: string): TrackType {
   const value = typeRu.toLocaleLowerCase('ru');
@@ -65,15 +110,25 @@ function CircuitFlag({ circuit }: { circuit: CircuitCatalogItem }) {
 
 function TrackShape({ geometry, compact = false }: { geometry: GeoJSON.LineString | null; compact?: boolean }) {
   if (!geometry?.coordinates.length) return <div className="tracks-shape tracks-shape--empty">Контур готовится</div>;
-  const xs = geometry.coordinates.map(([x]) => x); const ys = geometry.coordinates.map(([, y]) => y);
+  // Долгота физически сжимается с широтой. Одна общая шкала для обеих осей
+  // сохраняет реальные пропорции трассы и не растягивает её под рамку карточки.
+  const meanLatitude = geometry.coordinates.reduce((sum, [, latitude]) => sum + latitude, 0) / geometry.coordinates.length;
+  const longitudeScale = Math.cos(meanLatitude * Math.PI / 180);
+  const projected = geometry.coordinates.map(([longitude, latitude]) => [longitude * longitudeScale, latitude] as const);
+  const xs = projected.map(([x]) => x); const ys = projected.map(([, y]) => y);
   const minX = Math.min(...xs); const maxX = Math.max(...xs); const minY = Math.min(...ys); const maxY = Math.max(...ys);
   const width = Math.max(maxX - minX, 0.000001); const height = Math.max(maxY - minY, 0.000001);
-  const points = geometry.coordinates.map(([x, y]) => `${8 + ((x - minX) / width) * 144},${76 - ((y - minY) / height) * 68}`).join(' ');
+  const availableWidth = 144; const availableHeight = 68;
+  const scale = Math.min(availableWidth / width, availableHeight / height);
+  const renderedWidth = width * scale; const renderedHeight = height * scale;
+  const offsetX = 8 + (availableWidth - renderedWidth) / 2;
+  const offsetY = 8 + (availableHeight - renderedHeight) / 2;
+  const points = projected.map(([x, y]) => `${offsetX + (x - minX) * scale},${offsetY + renderedHeight - (y - minY) * scale}`).join(' ');
   return <svg className={`tracks-shape${compact ? ' tracks-shape--compact' : ''}`} viewBox="0 0 160 84" role="img" aria-label="Контур трассы"><polyline points={points} /></svg>;
 }
 
 function TracksHero() {
-  return <header className="tracks-hero"><div className="tracks-breadcrumbs"><Link href="/">Главная</Link><span>›</span><Link href="/">Атлас</Link><span>›</span><b>Каталог трасс</b></div><div className="tracks-hero__copy"><span className="tracks-eyebrow">Атлас</span><h1>Каталог трасс</h1><p>Исследуйте легендарные гоночные трассы мира — от современных автодромов Formula 1 до исторических маршрутов, оставивших след в истории автоспорта</p></div><div className="tracks-hero-art" aria-hidden="true" /></header>;
+  return <header className="tracks-hero"><Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'Атлас', href: '/' }, { label: 'Каталог трасс' }]} /><div className="tracks-hero__copy"><span className="tracks-eyebrow">Атлас</span><h1>Каталог трасс</h1><p>Исследуйте легендарные гоночные трассы мира — от современных автодромов Formula 1 до исторических маршрутов, оставивших след в истории автоспорта</p></div><div className="tracks-hero-art" aria-hidden="true" /></header>;
 }
 
 type ControlsProps = {
@@ -140,7 +195,7 @@ function TracksListView({ circuits, season }: { circuits: CircuitCatalogItem[]; 
     const hasPhoto = Boolean(circuit.imageUrl);
     return <article className="tracks-list-row" data-circuit-id={circuit.id} key={circuit.id}>
       <button className={`tracks-list-favorite${favorite ? ' is-active' : ''}`} type="button" aria-label={favorite ? `Удалить ${circuit.nameRu} из избранного` : `Добавить ${circuit.nameRu} в избранное`} aria-pressed={favorite} onClick={() => toggleFavorite(circuit.id)}>{favorite ? '★' : '☆'}</button>
-      <div className={`tracks-list-visual${hasPhoto ? ' has-photo' : ''}`} style={hasPhoto ? { backgroundImage: `linear-gradient(0deg, rgba(2,9,14,.58), rgba(2,9,14,.12)), url(${circuit.imageUrl})` } : undefined}><span>{hasPhoto ? '' : 'Фото готовится'}</span><b>{trackTypeLabel(circuit.typeRu)}</b></div>
+      <div className={`tracks-list-visual${hasPhoto ? ' has-photo' : ''}`} style={hasPhoto ? { backgroundImage: `url(${circuit.imageUrl})` } : undefined}><span>{hasPhoto ? '' : 'Фото готовится'}</span><b>{trackTypeLabel(circuit.typeRu)}</b></div>
       <div className="tracks-list-shape"><TrackShape geometry={circuit.geometry} compact /></div>
       <div className="tracks-list-copy"><h2>{circuit.nameRu}</h2><div><CircuitFlag circuit={circuit} /><span>{circuit.countryRu}</span></div><p>{circuit.summary}</p></div>
       <dl className="tracks-list-stats"><div><dt>Длина трассы</dt><dd>{circuit.metrics.length ?? '—'}</dd></div><div><dt>Повороты</dt><dd>{circuit.metrics.turns ?? '—'}</dd></div><div><dt>Рекорд круга</dt><dd>{circuit.metrics.record ?? '—'}</dd></div><div><dt>Дебют в F1</dt><dd>{circuit.metrics.debut ?? '—'}</dd></div></dl>
@@ -150,22 +205,30 @@ function TracksListView({ circuits, season }: { circuits: CircuitCatalogItem[]; 
 }
 
 function CircuitCatalogMap({ circuits }: { circuits: CircuitCatalogItem[] }) {
+  const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null); const mapRef = useRef<MapLibreMap | null>(null); const [selectedId, setSelectedId] = useState<string | null>(circuits[0]?.id ?? null); const selected = circuits.find((circuit) => circuit.id === selectedId) ?? circuits[0] ?? null;
   useEffect(() => {
     if (!containerRef.current) return undefined;
-    const map = new maplibregl.Map({ container: containerRef.current, style: catalogMapStyle, center: [12, 25], zoom: 1.75, minZoom: 1.5, maxZoom: 16, renderWorldCopies: false, attributionControl: false }); mapRef.current = map; map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right'); addAtlasMapAttribution(map);
+    const initialTheme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+    const map = new maplibregl.Map({ container: containerRef.current, style: catalogMapStyleForTheme(initialTheme), center: [12, 25], zoom: 1.75, minZoom: 1.5, maxZoom: 16, renderWorldCopies: false, attributionControl: false }); mapRef.current = map; map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right'); addAtlasMapAttribution(map);
     map.on('load', () => {
       const points: GeoJSON.FeatureCollection<GeoJSON.Point> = { type: 'FeatureCollection', features: circuits.map((circuit) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: circuit.coordinates }, properties: { id: circuit.id, type: trackTypeKey(circuit.typeRu) } })) };
       const lines: GeoJSON.FeatureCollection<GeoJSON.LineString> = { type: 'FeatureCollection', features: circuits.filter((circuit) => circuit.geometry).map((circuit) => ({ type: 'Feature', geometry: circuit.geometry!, properties: { id: circuit.id } })) };
       map.addSource('catalog-points', { type: 'geojson', data: points, cluster: true, clusterRadius: 44, clusterMaxZoom: 5 }); map.addSource('catalog-tracks', { type: 'geojson', data: lines });
       map.addLayer({ id: 'catalog-clusters', type: 'circle', source: 'catalog-points', filter: ['has', 'point_count'], paint: { 'circle-color': '#111d28', 'circle-radius': ['step', ['get', 'point_count'], 18, 5, 23, 12, 28], 'circle-stroke-color': '#ff2038', 'circle-stroke-width': 2 } });
+      map.addLayer({ id: 'catalog-cluster-count', type: 'symbol', source: 'catalog-points', filter: ['has', 'point_count'], layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-font': ['Noto Sans Regular'], 'text-size': 11, 'text-allow-overlap': true }, paint: { 'text-color': '#ffffff' } });
       map.addLayer({ id: 'catalog-points-layer', type: 'circle', source: 'catalog-points', filter: ['!', ['has', 'point_count']], maxzoom: 8.5, paint: { 'circle-color': ['match', ['get', 'type'], 'street', '#f4a340', 'mixed', '#a47cff', '#ff2038'], 'circle-radius': 7, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.5 } });
       map.addLayer({ id: 'catalog-track-shadow', type: 'line', source: 'catalog-tracks', minzoom: 7.5, paint: { 'line-color': '#02070d', 'line-width': 8, 'line-opacity': 0.9 } }); map.addLayer({ id: 'catalog-track-lines', type: 'line', source: 'catalog-tracks', minzoom: 7.5, paint: { 'line-color': '#ff3150', 'line-width': 3 } });
+      applyCatalogMapTheme(map, initialTheme);
     });
     map.on('click', 'catalog-clusters', async (event) => { const feature = map.queryRenderedFeatures(event.point, { layers: ['catalog-clusters'] })[0]; const source = map.getSource('catalog-points') as maplibregl.GeoJSONSource; const zoom = await source.getClusterExpansionZoom(Number(feature?.properties?.cluster_id)); if (feature?.geometry.type === 'Point') map.easeTo({ center: feature.geometry.coordinates as [number, number], zoom }); });
     map.on('click', 'catalog-points-layer', (event) => { const feature = event.features?.[0]; if (!feature || feature.geometry.type !== 'Point') return; setSelectedId(String(feature.properties?.id)); map.easeTo({ center: feature.geometry.coordinates as [number, number], zoom: 10, duration: 900 }); }); map.on('click', 'catalog-track-lines', (event) => { const id = event.features?.[0]?.properties?.id; if (id) setSelectedId(String(id)); });
     return () => { map.remove(); mapRef.current = null; };
   }, [circuits]);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map?.isStyleLoaded()) applyCatalogMapTheme(map, theme);
+  }, [theme]);
   const focus = (circuit: CircuitCatalogItem) => { setSelectedId(circuit.id); mapRef.current?.easeTo({ center: circuit.coordinates, zoom: 8, duration: 800 }); };
   return <section className="tracks-map"><div className="tracks-map__canvas-wrap"><div ref={containerRef} className="tracks-map__canvas" /><div className="tracks-map__legend"><span className="is-permanent" /> стационарная <span className="is-street" /> городская <span className="is-mixed" /> смешанная</div>{selected && <div className="tracks-map__popup"><TrackShape geometry={selected.geometry} compact /><div><strong>{selected.nameRu}</strong><span>{selected.countryRu} · {trackTypeLabel(selected.typeRu)}</span><Link href={`/circuits/${selected.slug}`}>Открыть профиль →</Link></div></div>}</div><aside className="tracks-map__panel"><header><span>Трассы на карте</span><b>{circuits.length}</b></header><div>{circuits.map((circuit) => <button key={circuit.id} className={selected?.id === circuit.id ? 'is-active' : ''} onClick={() => focus(circuit)}><TrackShape geometry={circuit.geometry} compact /><span><strong>{circuit.nameRu}</strong><small>{circuit.countryRu} · {trackTypeLabel(circuit.typeRu)}</small></span></button>)}</div></aside></section>;
 }
