@@ -26,6 +26,7 @@ function validateGeometry(geometry, expected, index) {
 
 export function validateTrackAnnotationPackage(input) {
   if (!input || input.type !== 'FeatureCollection' || !Array.isArray(input.features)) fail('Ожидается GeoJSON FeatureCollection');
+  if (input.features.length < 1 || input.features.length > 1000) fail('Пакет должен содержать от 1 до 1000 элементов');
   for (const key of ['circuitId', 'layoutId', 'sourceUrl', 'sourceName']) if (typeof input[key] !== 'string' || !input[key].trim()) fail(`Отсутствует обязательное поле коллекции: ${key}`);
   if (!/^[A-Za-z0-9_-]+$/.test(input.circuitId) || !/^[A-Za-z0-9_-]+$/.test(input.layoutId)) fail('circuitId и layoutId содержат недопустимые символы');
   try { const url = new URL(input.sourceUrl); if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) fail('sourceUrl должен быть публичным http/https URL без credentials'); } catch (error) { if (error.message.includes('sourceUrl')) throw error; fail('sourceUrl должен быть корректным URL'); }

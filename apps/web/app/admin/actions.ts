@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { clearAdminSession, createAdminSession, getAdminSession, verifyAdminCredentials } from '../lib/admin-auth';
+import { applyAdminTrackAnnotationImportPreview, createAdminTrackAnnotationImportPreview } from '../lib/admin-database';
 import { applyAdminTravelImportPreview, applyAdminTravelPointOsmTranslations, applyAdminTravelRouteGenerationPreview, createAdminConstructorLineage, createAdminHistoryEraBlock, createAdminTravelImportPreview, createAdminTravelRouteGenerationPreview, deleteAdminConstructorLineage, deleteAdminHistoryEraBlock, deleteAdminSessionResult, deleteAdminTrackAnnotation, getAdminDriver, importAdminTrackGeometry, inspectAdminTrackGeometry, previewAdminCircuitCardImage, previewAdminConstructorCar, previewAdminConstructorLogo, previewAdminDriverPhoto, previewAdminGameLogo, previewAdminTravelPointPhoto, saveAdminEvent, saveAdminEventSession, saveAdminSeason, saveAdminSessionResult, saveAdminSessionResults, saveAdminTrackLayout, syncAdminSeasonFromJolpica, updateAdminCircuit, updateAdminCircuitMediaOrder, updateAdminConstructorEntry, updateAdminConstructorLineage, updateAdminDriver, updateAdminDriverEditorial, updateAdminHistoryEra, updateAdminHistoryEraBlock, updateAdminMapUiSettings, updateAdminMediaAsset, updateAdminTableRow, updateAdminTrackAnnotation, updateAdminTravelCategoryIcon, updateAdminTravelPoint, updateAdminTravelPointsBulk, updateAdminTravelRoute, updateAdminTravelZone, uploadAdminCircuitCardImage, uploadAdminConstructorCar, uploadAdminConstructorLogo, uploadAdminDriverPhoto, uploadAdminGameLogo, uploadAdminTravelCategoryIcon, uploadAdminTravelPointPhoto, type AdminCircuitCardImageInput, type AdminCircuitInput, type AdminConstructorCarInput, type AdminConstructorLineageInput, type AdminDriverInput, type AdminEventInput, type AdminEventSessionInput, type AdminGameLogoInput, type AdminHistoryEraBlockInput, type AdminHistoryEraInput, type AdminSeason, type AdminSessionResultInput, type AdminTrackLayoutInput, type AdminTravelPointPhotoInput } from '../lib/admin-database';
 
 function optionalText(formData: FormData, name: string) {
@@ -439,6 +440,45 @@ export async function removeTrackAnnotation(formData:FormData){
   const destination=`/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`;
   try{if(formData.get('confirmed')!=='yes')throw new Error('Удаление не подтверждено');await deleteAdminTrackAnnotation(circuitId,layoutId,annotationId);}catch(error){console.error('Не удалось удалить разметку конфигурации',error);redirect(`${destination}?error=delete`);}
   revalidatePath(destination);redirect(`${destination}?deleted=1`);
+}
+
+export async function previewTrackAnnotationImport(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const circuitId = String(formData.get('circuitId') ?? '').trim();
+  const layoutId = String(formData.get('layoutId') ?? '').trim();
+  const destination = `/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`;
+  try {
+    if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(layoutId)) throw new Error('Некорректная конфигурация');
+    const file = formData.get('packageFile');
+    if (!(file instanceof File) || !file.size || file.size > 5_000_000) throw new Error('Выберите GeoJSON до 5 МБ');
+    const packageData = JSON.parse(await file.text()) as Record<string, unknown>;
+    if (packageData.circuitId !== circuitId || packageData.layoutId !== layoutId) throw new Error('Пакет относится к другой конфигурации');
+    const preview = await createAdminTrackAnnotationImportPreview(packageData);
+    redirect(`${destination}?importPreview=${encodeURIComponent(preview.token)}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось подготовить пакет разметки', error);
+    redirect(`${destination}?error=import-preview`);
+  }
+}
+
+export async function applyTrackAnnotationImport(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const circuitId = String(formData.get('circuitId') ?? '').trim();
+  const layoutId = String(formData.get('layoutId') ?? '').trim();
+  const token = String(formData.get('token') ?? '').trim();
+  const destination = `/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`;
+  try {
+    if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(layoutId) || !/^[A-Za-z0-9-]+$/.test(token)) throw new Error('Некорректный предпросмотр');
+    const result = await applyAdminTrackAnnotationImportPreview(token);
+    if (result.circuitId !== circuitId || result.layoutId !== layoutId) throw new Error('Предпросмотр относится к другой конфигурации');
+    revalidatePath(destination);
+    redirect(`${destination}?imported=${result.imported}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось применить пакет разметки', error);
+    redirect(`${destination}?importPreview=${encodeURIComponent(token)}&error=import-apply`);
+  }
 }
 
 export async function updateDriver(formData: FormData) {

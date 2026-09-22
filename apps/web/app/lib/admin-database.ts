@@ -321,6 +321,15 @@ export type AdminTrackAnnotationRegistry = {
     centerlineGeoJson:{type:'LineString';coordinates:number[][]}|null};annotations:AdminTrackAnnotation[];
 };
 
+export type AdminTrackAnnotationImportPreview = {
+  token:string;expiresAt:number;
+  circuit:{id:string;name:string};layout:{id:string;name:string};
+  summary:{circuitId:string;layoutId:string;features:number;byType:Record<string,number>};
+  features:Array<{id:string;annotationType:AdminTrackAnnotation['annotationType'];label:string|null;sequence:number|null;
+    validFromYear:number|null;validToYear:number|null;maximumDistanceToTrackM:number;
+    geometry:{type:'Point';coordinates:number[]}|{type:'LineString';coordinates:number[][]}}>;
+};
+
 export type AdminCircuit = {
   id: string; officialName: string; shortName: string | null; locality: string | null;
   countryCode: string; circuitType: string; longitude: number; latitude: number;
@@ -994,6 +1003,9 @@ export async function importAdminTrackGeometry(circuitId: string, layoutId: stri
 export function getAdminTrackAnnotations(circuitId:string,layoutId:string){return apiRequest<AdminTrackAnnotationRegistry>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`);}
 export function updateAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string,input:Record<string,unknown>){return apiRequest<{id:string;circuitId:string;layoutId:string}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'PUT',body:JSON.stringify(input)},60_000);}
 export function deleteAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string){return apiRequest<{id:string;circuitId:string;layoutId:string}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'DELETE'},35_000);}
+export function createAdminTrackAnnotationImportPreview(packageData:unknown){return apiRequest<AdminTrackAnnotationImportPreview>('/track-annotation-import-previews',{method:'POST',body:JSON.stringify(packageData)},60_000);}
+export function getAdminTrackAnnotationImportPreview(token:string){return apiRequest<AdminTrackAnnotationImportPreview>(`/track-annotation-import-previews/${encodeURIComponent(token)}`,{},35_000);}
+export function applyAdminTrackAnnotationImportPreview(token:string){return apiRequest<{imported:number;circuitId:string;layoutId:string}>(`/track-annotation-import-previews/${encodeURIComponent(token)}/apply`,{method:'POST',body:'{}'},120_000);}
 
 export async function updateAdminDriver(input: AdminDriverInput) {
   const result = await apiRequest<{ fields: string[]; publicDataSynced: boolean }>(`/drivers/${encodeURIComponent(input.id)}`, {

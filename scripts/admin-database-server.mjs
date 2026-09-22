@@ -12,6 +12,7 @@ import { processCircuitCard, processConstructorCar, processConstructorLogo, proc
 import { closeDriverBackgroundWorker, removeDriverBackground } from './lib/driver-background-removal.mjs';
 import { publishAdminTrackGeometry } from './lib/track-geometry-public-sync.mjs';
 import { discoverTravelCandidates } from './lib/travel-candidate-discovery.mjs';
+import { applyTrackAnnotationPackage, summarizeTrackAnnotationPackage, validateTrackAnnotationPackage } from './import-track-annotations.mjs';
 
 const host = '127.0.0.1';
 const port = Number(process.env.ADMIN_DATABASE_API_PORT ?? 3102);
@@ -36,6 +37,8 @@ const pool = new pg.Pool({
 const apiToken = createHash('sha256').update(apiSecret).digest('hex');
 const travelImportPreviews = new Map();
 const travelImportPreviewTtlMs = 15 * 60 * 1000;
+const trackAnnotationImportPreviews = new Map();
+const trackAnnotationImportPreviewTtlMs = 20 * 60 * 1000;
 const travelRouteGenerationPreviews = new Map();
 const activeSeasonSyncs = new Set();
 
@@ -1344,6 +1347,85 @@ async function deleteTrackLayoutAnnotation(circuitId,layoutId,annotationId){
   const result=await pool.query(`DELETE FROM atlas.track_layout_annotations AS annotation USING atlas.track_layouts AS layout
     WHERE annotation.id=$1 AND annotation.layout_id=$2 AND layout.id=annotation.layout_id AND layout.circuit_id=$3 RETURNING annotation.id`,
   [annotationId,layoutId,circuitId]);return result.rows.length?{id:annotationId,circuitId,layoutId}:null;
+}
+
+function pruneTrackAnnotationImportPreviews() {
+  const now = Date.now();
+  for (const [token, preview] of trackAnnotationImportPreviews) {
+    if (preview.expiresAt <= now) trackAnnotationImportPreviews.delete(token);
+  }
+  while (trackAnnotationImportPreviews.size >= 20) {
+    trackAnnotationImportPreviews.delete(trackAnnotationImportPreviews.keys().next().value);
+  }
+}
+
+async function createTrackAnnotationImportPreview(rawPackage) {
+  const packageData = validateTrackAnnotationPackage(rawPackage);
+  const layout = await pool.query(`SELECT layout.id, layout.name, circuit.id AS circuit_id,
+      coalesce(profile.name_ru,circuit.short_name,circuit.name) AS circuit_name
+    FROM atlas.track_layouts AS layout
+    JOIN atlas.circuits AS circuit ON circuit.id=layout.circuit_id
+    LEFT JOIN atlas.circuit_page_profiles AS profile ON profile.circuit_id=circuit.id
+    WHERE layout.id=$1 AND circuit.id=$2 AND layout.centerline IS NOT NULL`, [packageData.layoutId, packageData.circuitId]);
+  if (!layout.rows[0]) throw new Error('Конфигурация не найдена или не имеет загруженного контура');
+  const features = [];
+  for (const feature of packageData.features) {
+    const proximity = await pool.query(`WITH input AS (
+        SELECT ST_SetSRID(ST_GeomFromGeoJSON($1),4326) AS geometry
+      ), points AS (
+        SELECT (ST_DumpPoints(input.geometry)).geom AS point FROM input
+      )
+      SELECT round(max(ST_Distance(points.point::geography,ST_Force2D(layout.centerline)::geography)))::int AS distance
+      FROM points CROSS JOIN atlas.track_layouts AS layout WHERE layout.id=$2`,
+    [JSON.stringify(feature.geometry), packageData.layoutId]);
+    const maximumDistanceToTrackM = Number(proximity.rows[0]?.distance ?? Infinity);
+    if (!Number.isFinite(maximumDistanceToTrackM) || maximumDistanceToTrackM > 2000) {
+      throw new Error(`Элемент ${feature.properties.id} удалён от контура более чем на 2 км`);
+    }
+    features.push({
+      id: feature.properties.id,
+      annotationType: feature.properties.annotationType,
+      label: feature.properties.labelRu ?? feature.properties.labelOriginal ?? null,
+      sequence: feature.properties.sequence ?? null,
+      validFromYear: feature.properties.validFromYear,
+      validToYear: feature.properties.validToYear,
+      maximumDistanceToTrackM,
+      geometry: feature.geometry,
+    });
+  }
+  pruneTrackAnnotationImportPreviews();
+  const token = randomUUID();
+  const preview = {
+    token,
+    expiresAt: Date.now() + trackAnnotationImportPreviewTtlMs,
+    circuit: { id: String(layout.rows[0].circuit_id), name: String(layout.rows[0].circuit_name) },
+    layout: { id: String(layout.rows[0].id), name: String(layout.rows[0].name) },
+    summary: summarizeTrackAnnotationPackage(packageData),
+    features,
+    packageData,
+  };
+  trackAnnotationImportPreviews.set(token, preview);
+  return { ...preview, packageData: undefined };
+}
+
+function getTrackAnnotationImportPreview(token) {
+  const preview = trackAnnotationImportPreviews.get(token);
+  if (!preview || preview.expiresAt <= Date.now()) {
+    trackAnnotationImportPreviews.delete(token);
+    return null;
+  }
+  return { ...preview, packageData: undefined };
+}
+
+async function applyTrackAnnotationImportPreview(token) {
+  const preview = trackAnnotationImportPreviews.get(token);
+  if (!preview || preview.expiresAt <= Date.now()) {
+    trackAnnotationImportPreviews.delete(token);
+    return null;
+  }
+  const imported = await applyTrackAnnotationPackage(preview.packageData);
+  trackAnnotationImportPreviews.delete(token);
+  return { imported, circuitId: preview.circuit.id, layoutId: preview.layout.id };
 }
 
 function validateCircuitInput(value, routeId) {
@@ -4288,6 +4370,19 @@ const server = createServer(async (request, response) => {
     }
     if (request.method === 'PUT' && circuitLayoutGeometryMatch) {
       const result = await saveTrackGeometry(await requestBody(request, 2_000_000), circuitLayoutGeometryMatch[1], circuitLayoutGeometryMatch[2]);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    if (request.method === 'POST' && url.pathname === '/track-annotation-import-previews') {
+      return json(response, 201, await createTrackAnnotationImportPreview(await requestBody(request, 5_000_000)));
+    }
+    const trackAnnotationImportPreviewMatch = url.pathname.match(/^\/track-annotation-import-previews\/([A-Za-z0-9-]+)$/);
+    if (request.method === 'GET' && trackAnnotationImportPreviewMatch) {
+      const result = getTrackAnnotationImportPreview(trackAnnotationImportPreviewMatch[1]);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    const trackAnnotationImportApplyMatch = url.pathname.match(/^\/track-annotation-import-previews\/([A-Za-z0-9-]+)\/apply$/);
+    if (request.method === 'POST' && trackAnnotationImportApplyMatch) {
+      const result = await applyTrackAnnotationImportPreview(trackAnnotationImportApplyMatch[1]);
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
     }
     const circuitLayoutAnnotationsMatch = url.pathname.match(/^\/circuits\/([A-Za-z0-9_-]+)\/layouts\/([A-Za-z0-9_-]+)\/annotations$/);
