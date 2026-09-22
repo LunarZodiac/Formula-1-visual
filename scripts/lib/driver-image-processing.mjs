@@ -49,7 +49,7 @@ function normalizedCrop(crop = {}) {
   };
 }
 
-async function processImageVariants(buffer, variantsDefinition, crop = {}) {
+async function processImageVariants(buffer, variantsDefinition, crop = {}, fit = 'contain') {
   const inputOptions = { limitInputPixels: 40_000_000, failOn: 'error' };
   const sourceMetadata = await sharp(buffer, inputOptions).metadata();
   const transform = normalizedCrop(crop);
@@ -60,7 +60,7 @@ async function processImageVariants(buffer, variantsDefinition, crop = {}) {
       .resize({
         width: variant.width,
         height: variant.height,
-        fit: 'contain',
+        fit,
         position: 'centre',
         background: { r: 0, g: 0, b: 0, alpha: 0 },
       })
@@ -110,7 +110,7 @@ export function processConstructorLogo(buffer, crop = {}) {
 }
 
 export function processCircuitCard(buffer, crop = {}) {
-  return processImageVariants(buffer, circuitCardVariants, crop);
+  return processImageVariants(buffer, circuitCardVariants, crop, 'cover');
 }
 
 export function processTravelPointPhoto(buffer, crop = {}) {

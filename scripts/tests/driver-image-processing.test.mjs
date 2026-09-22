@@ -67,6 +67,15 @@ test('карточка трассы преобразуется в три шир�
   }
 });
 
+test('вертикальное фото трассы заполняет кадр 16:9 без прозрачных полей', async () => {
+  const source = await sharp({ create: { width: 600, height: 1200, channels: 3, background: { r: 205, g: 170, b: 45 } } }).jpeg().toBuffer();
+  const result = await processCircuitCard(source);
+  for (const variant of result.variants) {
+    const metadata = await sharp(variant.bytes).metadata();
+    assert.equal(metadata.hasAlpha, false);
+  }
+});
+
 test('кадрирование масштабирует и смещает WebP-портрет без изменения размеров', async () => {
   const source = await sharp({
     create: {
