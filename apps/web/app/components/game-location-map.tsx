@@ -86,7 +86,7 @@ const gameMapStyle: maplibregl.StyleSpecification = {
 
 function applyGameMapTheme(map: MapLibreMap, theme: AtlasTheme) {
   const isLight = theme === "light";
-  const paint = (layerId: string, property: string, value: unknown) => {
+  const paint = (layerId: string, property: Parameters<MapLibreMap['setPaintProperty']>[1], value: Parameters<MapLibreMap['setPaintProperty']>[2]) => {
     if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
   };
 
@@ -105,7 +105,7 @@ function resultGeoJson(
   answer: Coordinate,
   revealed: boolean,
 ): GeoData {
-  const features: Array<Record<string, unknown>> = [];
+  const features: Array<GeoJSON.Feature<GeoJSON.Point | GeoJSON.LineString, { kind: string }>> = [];
   if (selection)
     features.push({
       type: "Feature",
@@ -131,7 +131,7 @@ function resultGeoJson(
         },
       });
   }
-  return { type: "FeatureCollection", features } as GeoData;
+  return { type: "FeatureCollection", features };
 }
 
 export function GameLocationMap({

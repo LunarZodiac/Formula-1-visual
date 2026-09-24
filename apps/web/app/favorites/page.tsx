@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function FavoritesRoute() {
-  return <FavoritesPage season={driversJson.season} circuits={circuitsJson.circuits as CircuitCatalogItem[]} drivers={driversJson.drivers as DriverCatalogItem[]} teams={teamsJson.teams as TeamCatalogItem[]} />;
+  return <FavoritesPage season={driversJson.season} circuits={circuitsJson.circuits as CircuitCatalogItem[]} drivers={driversJson.drivers as unknown as DriverCatalogItem[]} teams={teamsJson.teams as TeamCatalogItem[]} />;
 }

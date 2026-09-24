@@ -36,7 +36,9 @@ export default async function AdminTeamsPage({ searchParams }: {
   const rows = season === null ? allTeams : seasonRows;
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
   const currentPage = Math.min(page, totalPages);
-  const visibleRows = rows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const pageStart = (currentPage - 1) * pageSize;
+  const visibleTeams = allTeams.slice(pageStart, pageStart + pageSize);
+  const visibleSeasonRows = seasonRows.slice(pageStart, pageStart + pageSize);
   const seasonOptions = Array.from({ length: currentSeason - firstSeason + 1 }, (_, index) => currentSeason - index);
 
   return <main className="admin-shell"><section className="admin-directory admin-team-directory">
@@ -49,11 +51,11 @@ export default async function AdminTeamsPage({ searchParams }: {
       {season === null ? <><th><span>Период</span></th><th><span>Сезонов</span></th><th><span>Медиа последнего сезона</span></th></> : <><th><span>Модель</span></th><th><span>Двигатель</span></th><th><span>Медиа</span></th></>}
       <th><span className="sr-only">Действие</span></th>
     </tr></thead><tbody>
-      {season === null ? visibleRows.map((team) => {
+      {season === null ? visibleTeams.map((team) => {
         const editSeason = team.latestSeason;
         const hasMedia = Boolean(team.logoUrl || team.carImageUrl);
         return <tr key={team.id}><td><strong>{team.name}</strong><small>{team.aliases.length > 1 ? team.aliases.slice(0, 3).join(' · ') : 'Историческая команда'}</small></td><td><code>{team.id}</code></td><td>{team.firstSeason}–{team.latestSeason}</td><td>{team.seasonCount}</td><td><span className={'admin-status ' + (hasMedia ? 'is-ready' : '')}>{hasMedia ? 'Есть' : 'Нет'}</span><small>Редактор откроется для {editSeason} года</small></td><td><Link className={'admin-photo-link ' + (hasMedia ? 'has-photo' : '')} href={'/admin/teams/' + editSeason + '/' + encodeURIComponent(team.id)}>{hasMedia ? 'Изменить медиа' : 'Добавить медиа'}</Link></td></tr>;
-      }) : visibleRows.map((entry) => {
+      }) : visibleSeasonRows.map((entry) => {
         const hasMedia = Boolean(entry.carImageUrl || entry.logoImageUrl);
         return <tr key={entry.constructorId}><td>{entry.displayName}</td><td><code>{entry.constructorId}</code></td><td>{entry.carModel || '—'}</td><td>{entry.engineName || '—'}</td><td><span className={'admin-status ' + (hasMedia ? 'is-ready' : '')}>{hasMedia ? 'Есть' : 'Нет'}</span></td><td><Link className={'admin-photo-link ' + (hasMedia ? 'has-photo' : '')} href={'/admin/teams/' + season + '/' + encodeURIComponent(entry.constructorId)}>{hasMedia ? 'Изменить медиа' : 'Добавить медиа'}</Link></td></tr>;
       })}

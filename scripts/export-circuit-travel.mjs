@@ -3,17 +3,17 @@
 import { mkdir, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import pg from 'pg';
+import { auditPublicTravelCollection } from './lib/audit-public-travel.mjs';
+import { parseTravelExportArgs } from './lib/travel-export-args.mjs';
 
 const required=['PGHOST','PGPORT','PGDATABASE','PGUSER','PGPASSWORD'];
 const missing=required.filter(name=>!process.env[name]);if(missing.length)throw new Error(`Не заданы параметры базы: ${missing.join(', ')}`);
-const circuitArgument=process.argv.find(value=>value.startsWith('--circuit='))?.slice(10)
-  ??(process.argv.includes('--circuit')?process.argv[process.argv.indexOf('--circuit')+1]:null);
-if(circuitArgument&&!/^[A-Za-z0-9_-]+$/.test(circuitArgument))throw new Error('Некорректный ID трассы');
+const {circuitId:circuitArgument,checkOnly}=parseTravelExportArgs(process.argv.slice(2));
 const root=path.resolve(import.meta.dirname,'..'),outputDirectory=path.join(root,'apps','web','public','data','travel');
 const client=new pg.Client();await client.connect();
 try{
  const circuits=circuitArgument?[circuitArgument]:(await client.query('SELECT id FROM atlas.circuits ORDER BY id')).rows.map(row=>String(row.id));
- await mkdir(outputDirectory,{recursive:true});
+ if(!checkOnly)await mkdir(outputDirectory,{recursive:true});
  for(const circuitId of circuits){
   const result=await client.query(`SELECT feature FROM (
    SELECT jsonb_build_object('type','Feature','geometry',ST_AsGeoJSON(poi.location::geometry)::jsonb,'properties',jsonb_strip_nulls(jsonb_build_object(
@@ -34,15 +34,20 @@ try{
    UNION ALL
    SELECT jsonb_build_object('type','Feature','geometry',ST_AsGeoJSON(route.geometry::geometry)::jsonb,'properties',jsonb_strip_nulls(jsonb_build_object(
     'featureType','route','id',route.id,'name',route.name_ru,'routeType',route.route_type,'travelMode',route.travel_mode,'distanceM',route.distance_m,
-    'durationMinutes',route.duration_minutes,'reviewStatus',route.review_status,'routeGroup',presentation.route_group,'color',presentation.line_colour,
+    'durationMinutes',route.duration_minutes,'reviewStatus',route.review_status,'lifecycle',route.lifecycle,'routeVariantKind',route.route_variant_kind,'displayPriority',route.display_priority,
+    'geometryMode',route.geometry_mode,'routeGroup',presentation.route_group,'color',presentation.line_colour,
     'lineOffset',presentation.line_offset_px,'minZoom',presentation.min_zoom,'maxZoom',presentation.max_zoom,'visibleByDefault',presentation.visible_by_default,
-    'rationale',presentation.rationale_ru,'highlights',presentation.highlights_ru,'practicalNotes',presentation.practical_notes_ru)))
+    'rationale',presentation.rationale_ru,'highlights',presentation.highlights_ru,'practicalNotes',presentation.practical_notes_ru,
+    'stops',coalesce((SELECT jsonb_agg(coalesce(nullif(btrim(stop.name_ru),''),nullif(btrim(poi.name_ru),''),nullif(btrim(poi.name),''),'Остановка '||stop.sequence) ORDER BY stop.sequence)
+      FROM atlas.travel_route_stops stop LEFT JOIN atlas.tourism_pois poi ON poi.id=stop.poi_id WHERE stop.route_id=route.id),'[]'::jsonb))))
    FROM atlas.travel_routes route JOIN atlas.travel_route_presentations presentation ON presentation.route_id=route.id
-   WHERE route.circuit_id=$1 AND route.geometry IS NOT NULL AND route.review_status='published'
-  )exported ORDER BY feature->'properties'->>'featureType',feature->'properties'->>'name'`,[circuitId]);
+   WHERE route.circuit_id=$1 AND route.geometry IS NOT NULL AND route.review_status='published' AND route.lifecycle='active'
+  )exported ORDER BY feature->'properties'->>'featureType',coalesce((feature->'properties'->>'displayPriority')::int,0) DESC,feature->'properties'->>'name'`,[circuitId]);
   const features=result.rows.map(row=>row.feature),counts={poi:features.filter(f=>f.properties.featureType==='poi').length,zones:features.filter(f=>f.properties.featureType==='accommodation_zone').length,routes:features.filter(f=>f.properties.featureType==='route').length};
   const collection={type:'FeatureCollection',name:`${circuitId}-travel-public`,properties:{note:'Публичный туристический слой из PostgreSQL',counts},features};
-  const output=path.join(outputDirectory,`${circuitId}.geojson`),temporary=`${output}.tmp-${process.pid}`;await writeFile(temporary,`${JSON.stringify(collection)}\n`,'utf8');await rename(temporary,output);
-  console.log(`${circuitId}: ${counts.poi} точек, ${counts.zones} зон, ${counts.routes} маршрутов`);
+  const {issues}=auditPublicTravelCollection(collection);
+  if(issues.length)throw new Error(`Публичный слой ${circuitId} не прошёл проверку: ${issues.slice(0,10).join('; ')}${issues.length>10?` (+${issues.length-10})`:''}`);
+  if(!checkOnly){const output=path.join(outputDirectory,`${circuitId}.geojson`),temporary=`${output}.tmp-${process.pid}`;await writeFile(temporary,`${JSON.stringify(collection)}\n`,'utf8');await rename(temporary,output);}
+  console.log(`${circuitId}: ${counts.poi} точек, ${counts.zones} зон, ${counts.routes} маршрутов${checkOnly?' — проверено без записи':''}`);
  }
 }finally{await client.end();}

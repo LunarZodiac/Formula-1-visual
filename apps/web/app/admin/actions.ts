@@ -4,7 +4,10 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { clearAdminSession, createAdminSession, getAdminSession, verifyAdminCredentials } from '../lib/admin-auth';
 import { applyAdminTrackAnnotationImportPreview, createAdminTrackAnnotationImportPreview } from '../lib/admin-database';
-import { applyAdminTravelImportPreview, applyAdminTravelPointOsmTranslations, applyAdminTravelRouteGenerationPreview, createAdminConstructorLineage, createAdminHistoryEraBlock, createAdminTravelImportPreview, createAdminTravelRouteGenerationPreview, deleteAdminConstructorLineage, deleteAdminHistoryEraBlock, deleteAdminSessionResult, deleteAdminTrackAnnotation, getAdminDriver, importAdminTrackGeometry, inspectAdminTrackGeometry, previewAdminCircuitCardImage, previewAdminConstructorCar, previewAdminConstructorLogo, previewAdminDriverPhoto, previewAdminGameLogo, previewAdminTravelPointPhoto, saveAdminEvent, saveAdminEventSession, saveAdminSeason, saveAdminSessionResult, saveAdminSessionResults, saveAdminTrackLayout, syncAdminSeasonFromJolpica, updateAdminCircuit, updateAdminCircuitMediaOrder, updateAdminConstructorEntry, updateAdminConstructorLineage, updateAdminDriver, updateAdminDriverEditorial, updateAdminHistoryEra, updateAdminHistoryEraBlock, updateAdminMapUiSettings, updateAdminMediaAsset, updateAdminTableRow, updateAdminTrackAnnotation, updateAdminTravelCategoryIcon, updateAdminTravelPoint, updateAdminTravelPointsBulk, updateAdminTravelRoute, updateAdminTravelZone, uploadAdminCircuitCardImage, uploadAdminConstructorCar, uploadAdminConstructorLogo, uploadAdminDriverPhoto, uploadAdminGameLogo, uploadAdminTravelCategoryIcon, uploadAdminTravelPointPhoto, type AdminCircuitCardImageInput, type AdminCircuitInput, type AdminConstructorCarInput, type AdminConstructorLineageInput, type AdminDriverInput, type AdminEventInput, type AdminEventSessionInput, type AdminGameLogoInput, type AdminHistoryEraBlockInput, type AdminHistoryEraInput, type AdminSeason, type AdminSessionResultInput, type AdminTrackLayoutInput, type AdminTravelPointPhotoInput } from '../lib/admin-database';
+import { changeAdminTravelRouteLifecycle, deleteAdminArchivedTravelRoute } from '../lib/admin-database';
+import { createAdminTravelRouteGeometryPreview } from '../lib/admin-database';
+import { createAdminTrackSectorSegmentation } from '../lib/admin-database';
+import { applyAdminTravelImportPreview, applyAdminTravelPointOsmTranslations, applyAdminTravelRouteGenerationPreview, applyAdminTravelRouteTailPreview, createAdminConstructorLineage, createAdminHistoryEraBlock, createAdminTravelImportPreview, createAdminTravelRouteGenerationPreview, createAdminTravelRouteTailPreview, deleteAdminConstructorLineage, deleteAdminHistoryEraBlock, deleteAdminSessionResult, deleteAdminTrackAnnotation, getAdminDriver, importAdminTrackGeometry, inspectAdminTrackGeometry, previewAdminCircuitCardImage, previewAdminConstructorCar, previewAdminConstructorLogo, previewAdminDriverPhoto, previewAdminGameLogo, previewAdminTravelPointPhoto, saveAdminEvent, saveAdminEventSession, saveAdminSeason, saveAdminSessionResult, saveAdminSessionResults, saveAdminTrackLayout, syncAdminSeasonFromJolpica, updateAdminCircuit, updateAdminCircuitMediaOrder, updateAdminConstructorEntry, updateAdminConstructorLineage, updateAdminDriver, updateAdminDriverEditorial, updateAdminHistoryEra, updateAdminHistoryEraBlock, updateAdminHistoryEraBlockOrder, updateAdminMapUiSettings, updateAdminMediaAsset, updateAdminTableRow, updateAdminTrackAnnotation, updateAdminTravelAccessAnchor, updateAdminTravelCategoryIcon, updateAdminTravelPoint, updateAdminTravelPointsBulk, updateAdminTravelRoute, updateAdminTravelZone, uploadAdminCircuitCardImage, uploadAdminConstructorCar, uploadAdminConstructorLogo, uploadAdminDriverPhoto, uploadAdminGameLogo, uploadAdminTravelCategoryIcon, uploadAdminTravelPointPhoto, type AdminCircuitCardImageInput, type AdminCircuitInput, type AdminConstructorCarInput, type AdminConstructorLineageInput, type AdminDriverInput, type AdminEventInput, type AdminEventSessionInput, type AdminGameLogoInput, type AdminHistoryEraBlockContentInput, type AdminHistoryEraBlockInput, type AdminHistoryEraInput, type AdminSeason, type AdminSessionResultInput, type AdminTrackLayoutInput, type AdminTravelPointPhotoInput } from '../lib/admin-database';
 
 function optionalText(formData: FormData, name: string) {
   const value = String(formData.get(name) ?? '').trim();
@@ -435,6 +438,19 @@ export async function saveTrackAnnotation(formData:FormData){
   revalidatePath(destination);redirect(`${destination}?saved=1`);
 }
 
+export async function saveTrackSectorSegmentation(formData:FormData){
+  if(!await getAdminSession())redirect('/admin/login');
+  const circuitId=String(formData.get('circuitId')??'').trim(),layoutId=String(formData.get('layoutId')??'').trim();
+  const destination=`/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`;
+  try{
+    const boundaries=JSON.parse(String(formData.get('boundariesJson')??''));
+    await createAdminTrackSectorSegmentation(circuitId,layoutId,{boundaries,
+      validFromYear:optionalText(formData,'validFromYear'),validToYear:optionalText(formData,'validToYear'),
+      sourceName:optionalText(formData,'sourceName'),sourceUrl:String(formData.get('sourceUrl')??''),sourceNotes:optionalText(formData,'sourceNotes')});
+  }catch(error){console.error('Не удалось создать сектора',error);redirect(`${destination}?error=sectors`);}
+  revalidatePath(destination);redirect(`${destination}?saved=sectors`);
+}
+
 export async function removeTrackAnnotation(formData:FormData){
   if(!await getAdminSession())redirect('/admin/login');const circuitId=String(formData.get('circuitId')??'').trim(),layoutId=String(formData.get('layoutId')??'').trim(),annotationId=String(formData.get('annotationId')??'').trim();
   const destination=`/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`;
@@ -454,6 +470,7 @@ export async function previewTrackAnnotationImport(formData: FormData) {
     const packageData = JSON.parse(await file.text()) as Record<string, unknown>;
     if (packageData.circuitId !== circuitId || packageData.layoutId !== layoutId) throw new Error('Пакет относится к другой конфигурации');
     const preview = await createAdminTrackAnnotationImportPreview(packageData);
+    if (!preview) throw new Error('Не удалось создать предпросмотр разметки');
     redirect(`${destination}?importPreview=${encodeURIComponent(preview.token)}`);
   } catch (error) {
     if (error && typeof error === 'object' && 'digest' in error) throw error;
@@ -471,6 +488,7 @@ export async function applyTrackAnnotationImport(formData: FormData) {
   try {
     if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(layoutId) || !/^[A-Za-z0-9-]+$/.test(token)) throw new Error('Некорректный предпросмотр');
     const result = await applyAdminTrackAnnotationImportPreview(token);
+    if (!result) throw new Error('Предпросмотр разметки не найден или устарел');
     if (result.circuitId !== circuitId || result.layoutId !== layoutId) throw new Error('Предпросмотр относится к другой конфигурации');
     revalidatePath(destination);
     redirect(`${destination}?imported=${result.imported}`);
@@ -1189,21 +1207,130 @@ export async function saveTravelRoute(formData:FormData){
     routeGroup:optionalText(formData,'routeGroup'),sortOrder:Number(formData.get('sortOrder')),lineOffsetPx:Number(formData.get('lineOffsetPx')),lineColour:String(formData.get('lineColour')??''),
     minZoom:Number(formData.get('minZoom')),maxZoom:Number(formData.get('maxZoom')),visibleByDefault:formData.get('visibleByDefault')==='yes',notesRu:optionalText(formData,'notesRu'),
     rationaleRu:optionalText(formData,'rationaleRu'),highlightsRu:lines('highlightsRu'),practicalNotesRu:optionalText(formData,'practicalNotesRu'),
+    terminalAccessAnchorId:optionalText(formData,'terminalAccessAnchorId'),
+    routeVariantKind:String(formData.get('routeVariantKind')??''),displayPriority:Number(formData.get('displayPriority')),
+    geometryMode:String(formData.get('geometryMode')??''),lifecycle:String(formData.get('lifecycle')??''),optimizeWaypointOrder:formData.get('optimizeWaypointOrder')==='yes',
+    geometryModified:formData.get('geometryModified')==='yes',
+    expectedUpdatedAt:String(formData.get('expectedUpdatedAt')??''),
     stops:JSON.parse(String(formData.get('stopsJson')??'[]'))});
     revalidatePath('/admin/travel');revalidatePath(`/admin/travel/${circuitId}`);revalidatePath(`/admin/travel/${circuitId}/routes`);revalidatePath(destination);redirect(`${destination}?saved=1${result?.publicDataSynced===false?'&syncError=1':''}`);
   }catch(error){if(error&&typeof error==='object'&&'digest'in error)throw error;console.error('Не удалось сохранить маршрут',error);redirect(`${destination}?error=save`);}
 }
 
+export async function previewTravelRouteGeometry(input:{circuitId:string;routeId:string;travelMode:'car';points:number[][]}) {
+  if(!await getAdminSession())throw new Error('Требуется вход в админку');
+  if(!/^[A-Za-z0-9_-]+$/.test(input.circuitId)||!/^[A-Za-z0-9_-]+$/.test(input.routeId)||input.travelMode!=='car')throw new Error('Некорректные данные маршрута');
+  const result=await createAdminTravelRouteGeometryPreview(input.circuitId,input.routeId,{travelMode:'car',points:input.points});
+  if(!result)throw new Error('Маршрут или трасса не найдены');
+  return result;
+}
+
+export async function changeTravelRouteLifecycle(formData:FormData) {
+  if(!await getAdminSession())redirect('/admin/login');
+  const circuitId=String(formData.get('circuitId')??'').trim(),routeId=String(formData.get('routeId')??'').trim();
+  const destination=`/admin/travel/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}`;
+  try {
+    if(!/^[A-Za-z0-9_-]+$/.test(circuitId)||!/^[A-Za-z0-9_-]+$/.test(routeId))throw new Error('Некорректный маршрут');
+    const operation=String(formData.get('operation')??'');
+    if(operation!=='archive'&&operation!=='restore')throw new Error('Некорректное действие');
+    const result=await changeAdminTravelRouteLifecycle(circuitId,routeId,{operation,expectedUpdatedAt:String(formData.get('expectedUpdatedAt')??'')});
+    if (!result) throw new Error('Маршрут не найден');
+    revalidatePath(`/admin/travel/${circuitId}/routes`);revalidatePath(destination);
+    redirect(`${destination}?routeAction=${operation}${result.publicDataSynced?'':'&syncError=1'}`);
+  }catch(error){if(error&&typeof error==='object'&&'digest'in error)throw error;console.error('Не удалось изменить состояние маршрута',error);redirect(`${destination}?error=lifecycle`);}
+}
+
+export async function deleteArchivedTravelRoute(formData:FormData) {
+  if(!await getAdminSession())redirect('/admin/login');
+  const circuitId=String(formData.get('circuitId')??'').trim(),routeId=String(formData.get('routeId')??'').trim();
+  const destination=`/admin/travel/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}`;
+  try {
+    if(!/^[A-Za-z0-9_-]+$/.test(circuitId)||!/^[A-Za-z0-9_-]+$/.test(routeId))throw new Error('Некорректный маршрут');
+    const result=await deleteAdminArchivedTravelRoute(circuitId,routeId,{confirmRouteId:String(formData.get('confirmRouteId')??''),expectedUpdatedAt:String(formData.get('expectedUpdatedAt')??'')});
+    if (!result) throw new Error('Архивный маршрут не найден');
+    revalidatePath(`/admin/travel/${circuitId}/routes`);revalidatePath(destination);
+    redirect(`/admin/travel/${encodeURIComponent(circuitId)}/routes?lifecycle=archived&deleted=1${result.publicDataSynced?'':'&syncError=1'}`);
+  }catch(error){if(error&&typeof error==='object'&&'digest'in error)throw error;console.error('Не удалось удалить архивный маршрут',error);redirect(`${destination}?error=delete`);}
+}
+
+export async function saveTravelAccessAnchor(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const circuitId = String(formData.get('circuitId') ?? '').trim();
+  const anchorId = String(formData.get('id') ?? '').trim();
+  const destination = `/admin/travel/${encodeURIComponent(circuitId)}/access`;
+  try {
+    if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(anchorId)) throw new Error('Некорректный ID точки доступа');
+    await updateAdminTravelAccessAnchor(circuitId, anchorId, {
+      poiId: String(formData.get('poiId') ?? '').trim(),
+      accessKind: String(formData.get('accessKind') ?? ''),
+      travelModes: formData.getAll('travelModes').map(String),
+      eventScope: String(formData.get('eventScope') ?? ''),
+      validFromYear: optionalText(formData, 'validFromYear'),
+      validToYear: optionalText(formData, 'validToYear'),
+      verificationStatus: String(formData.get('verificationStatus') ?? ''),
+      confidence: Number(formData.get('confidence')),
+      sourceUrl: optionalText(formData, 'sourceUrl'),
+      evidenceNoteRu: optionalText(formData, 'evidenceNoteRu'),
+    });
+    revalidatePath(destination);
+    revalidatePath(`/admin/travel/${circuitId}`);
+    redirect(`${destination}?saved=${encodeURIComponent(anchorId)}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось сохранить точку доступа', error);
+    const editQuery = formData.get('editing') === 'yes' ? `&edit=${encodeURIComponent(anchorId)}` : '';
+    redirect(`${destination}?error=save${editQuery}`);
+  }
+}
+
 export async function previewGeneratedTravelRoutes(formData:FormData){
   if(!await getAdminSession())redirect('/admin/login');const circuitId=String(formData.get('circuitId')??'').trim();
-  try{if(!/^[A-Za-z0-9_-]+$/.test(circuitId))throw new Error('Некорректный ID трассы');const preview=await createAdminTravelRouteGenerationPreview(circuitId);redirect(`/admin/travel/${encodeURIComponent(circuitId)}/routes/generate?preview=${encodeURIComponent(preview.token)}`);}
+  try{if(!/^[A-Za-z0-9_-]+$/.test(circuitId))throw new Error('Некорректный ID трассы');const orderedPoiIds=formData.getAll('orderedPoiId').map(String).map(value=>value.trim()).filter(Boolean);const preview=await createAdminTravelRouteGenerationPreview(circuitId,{orderedPoiIds,optimizeWaypointOrder:formData.get('optimizeWaypointOrder')==='yes'});if(!preview)throw new Error('Не удалось создать предпросмотр маршрутов');redirect(`/admin/travel/${encodeURIComponent(circuitId)}/routes/generate?preview=${encodeURIComponent(preview.token)}`);}
   catch(error){if(error&&typeof error==='object'&&'digest'in error)throw error;console.error('Не удалось предложить маршруты',error);redirect(`/admin/travel/${encodeURIComponent(circuitId)}/routes/generate?error=preview`);}
 }
 
 export async function applyGeneratedTravelRoutes(formData:FormData){
   if(!await getAdminSession())redirect('/admin/login');const circuitId=String(formData.get('circuitId')??'').trim(),token=String(formData.get('token')??'').trim();
-  try{const result=await applyAdminTravelRouteGenerationPreview(token,formData.getAll('routeId').map(String));revalidatePath(`/admin/travel/${circuitId}/routes`);redirect(`/admin/travel/${encodeURIComponent(circuitId)}/routes?generated=${result.created}`);}
-  catch(error){if(error&&typeof error==='object'&&'digest'in error)throw error;console.error('Не удалось сохранить предложенные маршруты',error);redirect(`/admin/travel/${encodeURIComponent(circuitId)}/routes/generate?error=apply`);}
+  const routeIds=formData.getAll('routeId').map(String);
+  if(!routeIds.length)redirect(`/admin/travel/${encodeURIComponent(circuitId)}/routes/generate?preview=${encodeURIComponent(token)}&error=selection`);
+  try{const result=await applyAdminTravelRouteGenerationPreview(token,circuitId,routeIds);if(!result)throw new Error('Предпросмотр маршрутов не найден или устарел');if(result.circuitId!==circuitId)throw new Error('Предпросмотр относится к другой трассе');revalidatePath(`/admin/travel/${circuitId}/routes`);redirect(`/admin/travel/${encodeURIComponent(circuitId)}/routes?generated=${result.created}&skipped=${result.skipped}${result.publicDataSynced?'':'&syncError=1'}`);}
+  catch(error){if(error&&typeof error==='object'&&'digest'in error)throw error;console.error('Не удалось сохранить предложенные маршруты',error);redirect(`/admin/travel/${encodeURIComponent(circuitId)}/routes/generate?preview=${encodeURIComponent(token)}&error=apply`);}
+}
+
+export async function previewTravelRouteTail(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const circuitId = String(formData.get('circuitId') ?? '').trim();
+  const routeId = String(formData.get('routeId') ?? '').trim();
+  const destination = `/admin/travel/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}`;
+  try {
+    if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(routeId)) throw new Error('Некорректный маршрут');
+    const preview = await createAdminTravelRouteTailPreview(circuitId, routeId);
+    if (!preview) throw new Error('Маршрут или точка доступа не найдены');
+    redirect(`${destination}?tailPreview=${encodeURIComponent(preview.token)}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось рассчитать новый хвост маршрута', error);
+    redirect(`${destination}?error=tail-preview`);
+  }
+}
+
+export async function applyTravelRouteTailPreview(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const circuitId = String(formData.get('circuitId') ?? '').trim();
+  const routeId = String(formData.get('routeId') ?? '').trim();
+  const token = String(formData.get('token') ?? '').trim();
+  const destination = `/admin/travel/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}`;
+  try {
+    if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(routeId) || !/^[A-Za-z0-9-]+$/.test(token)) throw new Error('Некорректный предпросмотр');
+    const result = await applyAdminTravelRouteTailPreview(token,circuitId,routeId);
+    if (!result || result.circuitId !== circuitId || result.routeId !== routeId) throw new Error('Предпросмотр не относится к выбранному маршруту');
+    revalidatePath(destination); revalidatePath(`/admin/travel/${circuitId}/routes`);
+    redirect(`${destination}?saved=tail${result.publicDataSynced ? '' : '&syncError=1'}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось применить новый хвост маршрута', error);
+    redirect(`${destination}?error=tail-apply`);
+  }
 }
 
 export async function saveMapUiSettings(formData: FormData) {
@@ -1243,23 +1370,27 @@ function historyEraDestination(slug: string) {
   return `/admin/history/${encodeURIComponent(slug)}`;
 }
 
-function historyEraBlockInput(formData: FormData): AdminHistoryEraBlockInput {
-  const sortOrder = Number(formData.get('sortOrder'));
+function historyEraBlockContentInput(formData: FormData): AdminHistoryEraBlockContentInput {
   const blockType = String(formData.get('blockType') ?? '') as AdminHistoryEraBlockInput['blockType'];
   const mediaPosition = String(formData.get('mediaPosition') ?? '') as AdminHistoryEraBlockInput['mediaPosition'];
   const editorialStatus = String(formData.get('editorialStatus') ?? '') as AdminHistoryEraBlockInput['editorialStatus'];
-  if (!Number.isInteger(sortOrder) || sortOrder < 0 || sortOrder > 9999) throw new Error('Некорректный порядок блока');
   if (!['text', 'media', 'quote', 'timeline', 'entities'].includes(blockType)) throw new Error('Некорректный тип блока');
   if (!['left', 'right', 'wide'].includes(mediaPosition)) throw new Error('Некорректное положение материала');
   if (!['draft', 'review', 'published'].includes(editorialStatus)) throw new Error('Некорректный статус блока');
   return {
-    sortOrder, blockType, mediaPosition, editorialStatus,
+    blockType, mediaPosition, editorialStatus,
     eyebrowRu: optionalText(formData, 'eyebrowRu'),
     titleRu: optionalText(formData, 'titleRu'),
     bodyRu: optionalText(formData, 'bodyRu'),
     mediaAssetId: optionalText(formData, 'mediaAssetId'),
     sourceUrl: optionalText(formData, 'sourceUrl'),
   };
+}
+
+function historyEraBlockInput(formData: FormData): AdminHistoryEraBlockInput {
+  const sortOrder = Number(formData.get('sortOrder'));
+  if (!Number.isInteger(sortOrder) || sortOrder < 0 || sortOrder > 9999) throw new Error('Некорректный порядок блока');
+  return { sortOrder, ...historyEraBlockContentInput(formData) };
 }
 
 export async function saveHistoryEra(formData: FormData) {
@@ -1279,6 +1410,7 @@ export async function saveHistoryEra(formData: FormData) {
     };
     if (!input.yearsLabel || !input.titleRu || !input.summaryRu) throw new Error('Заполните подпись периода, заголовок и аннотацию');
     const result = await updateAdminHistoryEra(slug, input);
+    if (!result) throw new Error('Эпоха не найдена');
     revalidatePath('/admin/history'); revalidatePath(destination); revalidatePath('/history'); revalidatePath(`/history/${slug}`);
     redirect(`${destination}?saved=era${result.publicDataSynced ? '' : '&syncError=1'}`);
   } catch (error) {
@@ -1299,7 +1431,8 @@ export async function saveHistoryEraBlock(formData: FormData) {
     if (blockId !== null && (!Number.isInteger(blockId) || blockId <= 0)) throw new Error('Некорректный блок');
     const result = blockId === null
       ? await createAdminHistoryEraBlock(eraSlug, historyEraBlockInput(formData))
-      : await updateAdminHistoryEraBlock(blockId, historyEraBlockInput(formData));
+      : await updateAdminHistoryEraBlock(blockId, historyEraBlockContentInput(formData));
+    if (!result) throw new Error('Блок эпохи не найден');
     revalidatePath('/admin/history'); revalidatePath(destination); revalidatePath('/history'); revalidatePath(`/history/${eraSlug}`);
     redirect(`${destination}?saved=block${result.publicDataSynced ? '' : '&syncError=1'}`);
   } catch (error) {
@@ -1317,11 +1450,39 @@ export async function removeHistoryEraBlock(formData: FormData) {
     const blockId = Number(formData.get('blockId'));
     if (!/^(?:\d{4}-\d{4}|\d{4}-present)$/.test(eraSlug) || !Number.isInteger(blockId) || blockId <= 0) throw new Error('Некорректный блок');
     const result = await deleteAdminHistoryEraBlock(blockId);
+    if (!result) throw new Error('Блок эпохи не найден');
     revalidatePath('/admin/history'); revalidatePath(destination); revalidatePath('/history'); revalidatePath(`/history/${eraSlug}`);
     redirect(`${destination}?deleted=1${result.publicDataSynced ? '' : '&syncError=1'}`);
   } catch (error) {
     if (error && typeof error === 'object' && 'digest' in error) throw error;
     console.error('Не удалось удалить блок эпохи', error);
     redirect(`${destination}?error=delete`);
+  }
+}
+
+export async function reorderHistoryEraBlocks(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const eraSlug = String(formData.get('eraSlug') ?? '').trim();
+  const destination = historyEraDestination(eraSlug);
+  try {
+    if (!/^(?:\d{4}-\d{4}|\d{4}-present)$/.test(eraSlug)) throw new Error('Некорректный идентификатор эпохи');
+    const orderedIds = JSON.parse(String(formData.get('orderedIds') ?? '[]')) as unknown;
+    const expectedOrderedIds = JSON.parse(String(formData.get('expectedOrderedIds') ?? '[]')) as unknown;
+    if (!Array.isArray(orderedIds)
+      || orderedIds.some((id) => !Number.isSafeInteger(id) || Number(id) <= 0)
+      || new Set(orderedIds).size !== orderedIds.length
+      || !Array.isArray(expectedOrderedIds)
+      || expectedOrderedIds.some((id) => !Number.isSafeInteger(id) || Number(id) <= 0)
+      || new Set(expectedOrderedIds).size !== expectedOrderedIds.length) {
+      throw new Error('Некорректный порядок блоков эпохи');
+    }
+    const result = await updateAdminHistoryEraBlockOrder(eraSlug, orderedIds as number[], expectedOrderedIds as number[]);
+    if (!result) throw new Error('Эпоха не найдена');
+    revalidatePath('/admin/history'); revalidatePath(destination); revalidatePath('/history'); revalidatePath(`/history/${eraSlug}`);
+    redirect(`${destination}?saved=order${result.publicDataSynced ? '' : '&syncError=1'}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось изменить порядок блоков эпохи', error);
+    redirect(`${destination}?error=order`);
   }
 }

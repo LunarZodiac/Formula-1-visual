@@ -12,6 +12,11 @@ import { processCircuitCard, processConstructorCar, processConstructorLogo, proc
 import { closeDriverBackgroundWorker, removeDriverBackground } from './lib/driver-background-removal.mjs';
 import { publishAdminTrackGeometry } from './lib/track-geometry-public-sync.mjs';
 import { discoverTravelCandidates } from './lib/travel-candidate-discovery.mjs';
+import { mergeRoutedTail, prepareRouteTailReplacement } from './lib/travel-route-tail-preview.mjs';
+import { normalizeTravelRouteStop, travelRouteStopsChanged } from './lib/travel-route-stop-fingerprint.mjs';
+import { applyGeneratedRouteBatch } from './lib/travel-route-generation-batch.mjs';
+import { buildOsrmRequestUrl, OsrmTransportError, requestOsrmJson, resolveOsrmBaseUrl } from './lib/osrm-routing-client.mjs';
+import { planHistoryEraBlockOrder } from './lib/history-era-block-order.mjs';
 import { applyTrackAnnotationPackage, summarizeTrackAnnotationPackage, validateTrackAnnotationPackage } from './import-track-annotations.mjs';
 
 const host = '127.0.0.1';
@@ -22,6 +27,7 @@ const mapUiSettingsPath = path.join(repositoryRoot, 'apps', 'web', 'app', 'data'
 const gamesMediaPath = path.join(repositoryRoot, 'apps', 'web', 'public', 'data', 'games-media.json');
 const execFileAsync = promisify(execFile);
 const apiSecret = process.env.ADMIN_SESSION_SECRET?.trim();
+const osrmBaseUrl = resolveOsrmBaseUrl();
 const requiredDatabaseVariables = ['PGHOST', 'PGPORT', 'PGDATABASE', 'PGUSER', 'PGPASSWORD'];
 const missingDatabaseVariables = requiredDatabaseVariables.filter((name) => !process.env[name]);
 
@@ -40,6 +46,8 @@ const travelImportPreviewTtlMs = 15 * 60 * 1000;
 const trackAnnotationImportPreviews = new Map();
 const trackAnnotationImportPreviewTtlMs = 20 * 60 * 1000;
 const travelRouteGenerationPreviews = new Map();
+const travelRouteTailPreviews = new Map();
+const travelRouteTailPreviewTtlMs = 15 * 60 * 1000;
 const activeSeasonSyncs = new Set();
 
 async function syncJolpicaSeason(rawInput) {
@@ -1343,6 +1351,68 @@ async function saveTrackLayoutAnnotation(rawInput,circuitId,layoutId,annotationI
   }catch(error){await client.query('ROLLBACK').catch(()=>{});throw error;}finally{client.release();}
 }
 
+async function saveTrackSectorSegmentation(raw,circuitId,layoutId) {
+  if(!/^[A-Za-z0-9_-]+$/.test(circuitId)||!/^[A-Za-z0-9_-]+$/.test(layoutId))throw new Error('Некорректная конфигурация');
+  const boundaries=raw?.boundaries;
+  const validPoint=point=>Array.isArray(point)&&point.length===2&&Number.isFinite(point[0])&&Number.isFinite(point[1])
+    &&point[0]>=-180&&point[0]<=180&&point[1]>=-90&&point[1]<=90;
+  if(!Array.isArray(boundaries)||boundaries.length!==3||!boundaries.every(validPoint))throw new Error('Укажите старт/финиш и две границы секторов на оси трассы');
+  const year=value=>{const textValue=optionalText(value);if(textValue===null)return null;const parsed=Number(textValue);if(!Number.isInteger(parsed)||parsed<1900||parsed>2100)throw new Error('Некорректный год периода');return parsed;};
+  const fromYear=year(raw?.validFromYear),toYear=year(raw?.validToYear);
+  if(fromYear!==null&&toYear!==null&&toYear<fromYear)throw new Error('Конец периода раньше начала');
+  const sourceUrl=validateEditorialUrl(raw?.sourceUrl),providedSourceName=optionalText(raw?.sourceName),sourceName=providedSourceName??new URL(sourceUrl).hostname;
+  const sourceId=`track-markup-${createHash('sha256').update(sourceUrl).digest('hex').slice(0,16)}`;
+  const client=await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query('SELECT pg_advisory_xact_lock(hashtext($1))',[`track-sectors:${layoutId}`]);
+    const layout=await client.query(`SELECT id
+      FROM atlas.track_layouts WHERE id=$1 AND circuit_id=$2 AND centerline IS NOT NULL FOR SHARE`,[layoutId,circuitId]);
+    if(!layout.rows.length){await client.query('ROLLBACK');return null;}
+    const geometry=await client.query(`WITH line AS (SELECT ST_Force2D(centerline) AS original FROM atlas.track_layouts WHERE id=$1),
+      anchors AS (SELECT original,ST_SetSRID(ST_MakePoint($2,$3),4326) AS start_point,
+        ST_SetSRID(ST_MakePoint($4,$5),4326) AS a,ST_SetSRID(ST_MakePoint($6,$7),4326) AS b FROM line),
+      start_location AS (SELECT original,start_point,a,b,ST_LineLocatePoint(original,start_point) AS start_fraction,
+        ST_Distance(start_point::geography,ST_ClosestPoint(original,start_point)::geography) AS start_distance FROM anchors),
+      rotated AS (SELECT CASE WHEN start_fraction<0.000001 OR start_fraction>0.999999 THEN original
+        ELSE ST_MakeLine(ST_LineSubstring(original,start_fraction,1),ST_LineSubstring(original,0,start_fraction)) END AS g,
+        start_distance,a,b FROM start_location),
+      located AS (SELECT g,ST_IsClosed(g) AS closed,start_distance,ST_LineLocatePoint(g,a) AS f1,ST_LineLocatePoint(g,b) AS f2,
+        ST_Distance(a::geography,ST_ClosestPoint(g,a)::geography) AS d1,
+        ST_Distance(b::geography,ST_ClosestPoint(g,b)::geography) AS d2 FROM rotated)
+      SELECT closed,start_distance,f1,f2,d1,d2,ST_AsGeoJSON(ST_LineSubstring(g,0,f1)) AS s1,
+        ST_AsGeoJSON(ST_LineSubstring(g,f1,f2)) AS s2,ST_AsGeoJSON(ST_LineSubstring(g,f2,1)) AS s3 FROM located`,
+    [layoutId,...boundaries[0],...boundaries[1],...boundaries[2]]);
+    const row=geometry.rows[0];
+    if(!row?.closed||Number(row.start_distance)>50||Number(row.d1)>50||Number(row.d2)>50)throw new Error('Старт и границы должны находиться рядом с замкнутой осью трассы');
+    const f1=Number(row.f1),f2=Number(row.f2);
+    if(!Number.isFinite(f1)||!Number.isFinite(f2)||f1<=0.001||f2>=0.999||f2-f1<=0.001)throw new Error('Границы должны делить круг на три ненулевых сектора');
+    if(f1>=f2)throw new Error('Поставьте границы по направлению вектора трассы: сначала конец S1, затем конец S2');
+    const sectors=[row.s1,row.s2,row.s3].map(value=>JSON.parse(value));
+    if(sectors.some(value=>value.type!=='LineString'||value.coordinates.length<2))throw new Error('Не удалось построить три полных сектора');
+    const overlapping=await client.query(`SELECT id FROM atlas.track_layout_annotations
+      WHERE layout_id=$1 AND annotation_type='sector' AND review_status<>'hidden'
+        AND coalesce(valid_from_year,1900)<=coalesce($3::int,2100)
+        AND coalesce(valid_to_year,2100)>=coalesce($2::int,1900) LIMIT 1`,[layoutId,fromYear,toYear]);
+    if(overlapping.rows.length)throw new Error('Для этого периода уже есть сектора; проверьте существующую разметку');
+    await client.query(`INSERT INTO atlas.data_sources(id,name,url,retrieved_at,notes)VALUES($1,$2,$3,now(),$4)
+      ON CONFLICT(id)DO UPDATE SET name=CASE WHEN $5::text IS NULL THEN data_sources.name ELSE EXCLUDED.name END,
+        url=EXCLUDED.url,retrieved_at=now(),notes=CASE WHEN $4::text IS NULL THEN data_sources.notes ELSE EXCLUDED.notes END`,
+    [sourceId,sourceName,sourceUrl,optionalText(raw?.sourceNotes),providedSourceName]);
+    const periodKey=`${fromYear??'all'}-${toYear??'all'}-${randomUUID().slice(0,8)}`;
+    for(const [index,sector] of sectors.entries()){
+      const sequence=index+1,id=`${layoutId}-sector-${periodKey}-${sequence}`;
+      await client.query(`INSERT INTO atlas.track_layout_annotations(id,layout_id,annotation_type,label_ru,sequence,geometry,
+        valid_from_year,valid_to_year,source_id,review_status,properties)
+        VALUES($1,$2,'sector',$3,$4,ST_SetSRID(ST_GeomFromGeoJSON($5),4326)::geography,$6,$7,$8,'candidate',$9::jsonb)`,
+      [id,layoutId,`Сектор ${sequence}`,sequence,JSON.stringify(sector),fromYear,toYear,sourceId,
+        JSON.stringify({digitizedVia:'admin-sector-tool-v1',boundaryFractions:[f1,f2]})]);
+    }
+    await client.query('COMMIT');
+    return {circuitId,layoutId,created:3};
+  }catch(error){await client.query('ROLLBACK').catch(()=>{});throw error;}finally{client.release();}
+}
+
 async function deleteTrackLayoutAnnotation(circuitId,layoutId,annotationId){
   const result=await pool.query(`DELETE FROM atlas.track_layout_annotations AS annotation USING atlas.track_layouts AS layout
     WHERE annotation.id=$1 AND annotation.layout_id=$2 AND layout.id=annotation.layout_id AND layout.circuit_id=$3 RETURNING annotation.id`,
@@ -2237,10 +2307,103 @@ async function saveTravelZone(rawInput, circuitId, zoneId) {
   return { id: zoneId,circuitId,publicDataSynced };
 }
 
+async function getTravelAccessAnchors(circuitId) {
+  const [circuitResult, anchorsResult, pointsResult] = await Promise.all([
+    pool.query(`SELECT circuit.id,coalesce(profile.name_ru,circuit.short_name,circuit.name) AS name
+      FROM atlas.circuits AS circuit LEFT JOIN atlas.circuit_page_profiles AS profile ON profile.circuit_id=circuit.id
+      WHERE circuit.id=$1`, [circuitId]),
+    pool.query(`SELECT anchor.id,anchor.poi_id,coalesce(poi.name_ru,poi.name) AS poi_name,anchor.access_kind,
+      anchor.travel_modes,anchor.event_scope,anchor.valid_from_year,anchor.valid_to_year,anchor.verification_status,
+      anchor.confidence,source.url AS source_url,anchor.evidence_note_ru,anchor.verified_at
+      FROM atlas.travel_access_anchors AS anchor JOIN atlas.tourism_pois AS poi ON poi.id=anchor.poi_id
+      LEFT JOIN atlas.data_sources AS source ON source.id=anchor.source_id
+      WHERE anchor.circuit_id=$1
+      ORDER BY CASE anchor.verification_status WHEN 'needs_review' THEN 0 WHEN 'candidate' THEN 1 WHEN 'verified' THEN 2 ELSE 3 END,
+        anchor.confidence DESC,lower(coalesce(poi.name_ru,poi.name))`, [circuitId]),
+    pool.query(`SELECT poi.id,coalesce(poi.name_ru,poi.name) AS name,category.name_ru AS category_name,poi.review_status
+      FROM atlas.circuit_travel_pois AS link JOIN atlas.tourism_pois AS poi ON poi.id=link.poi_id
+      JOIN atlas.poi_categories AS category ON category.id=poi.category_id
+      WHERE link.circuit_id=$1
+      AND (poi.review_status<>'hidden' OR EXISTS(
+        SELECT 1 FROM atlas.travel_access_anchors AS hidden_anchor WHERE hidden_anchor.circuit_id=$1 AND hidden_anchor.poi_id=poi.id))
+      AND ((link.role='circuit' AND poi.category_id<>'automotive_history')
+        OR poi.category_id IN('circuit_access','parking','park_and_ride','event_shuttle','bus_station','railway_station')
+        OR EXISTS(SELECT 1 FROM atlas.travel_access_anchors AS existing_anchor WHERE existing_anchor.circuit_id=$1 AND existing_anchor.poi_id=poi.id))
+      ORDER BY CASE WHEN link.role='circuit' THEN 0 ELSE 1 END,link.priority DESC,lower(coalesce(poi.name_ru,poi.name))`, [circuitId]),
+  ]);
+  if (!circuitResult.rows.length) return null;
+  return {
+    circuit: { id: String(circuitResult.rows[0].id), name: String(circuitResult.rows[0].name) },
+    rows: anchorsResult.rows.map((row) => ({
+      id: String(row.id), poiId: String(row.poi_id), poiName: String(row.poi_name), accessKind: String(row.access_kind),
+      travelModes: Array.isArray(row.travel_modes) ? row.travel_modes.map(String) : [], eventScope: String(row.event_scope),
+      validFromYear: row.valid_from_year === null ? null : Number(row.valid_from_year), validToYear: row.valid_to_year === null ? null : Number(row.valid_to_year),
+      verificationStatus: String(row.verification_status), confidence: Number(row.confidence), sourceUrl: row.source_url === null ? null : String(row.source_url),
+      evidenceNoteRu: row.evidence_note_ru === null ? null : String(row.evidence_note_ru), verifiedAt: row.verified_at === null ? null : new Date(row.verified_at).toISOString(),
+    })),
+    pointOptions: pointsResult.rows.map((row) => ({ id: String(row.id), name: String(row.name), categoryName: String(row.category_name), reviewStatus: String(row.review_status) })),
+  };
+}
+
+async function saveTravelAccessAnchor(raw, circuitId, anchorId) {
+  const accessKinds = new Set(['gate', 'parking', 'dropoff', 'shuttle_stop', 'approach']);
+  const allowedModes = new Set(['car', 'transit', 'shuttle', 'walk', 'bicycle', 'mixed']);
+  const statuses = new Set(['candidate', 'needs_review', 'verified', 'rejected', 'expired']);
+  const poiId = String(raw?.poiId ?? '').trim();
+  const accessKind = String(raw?.accessKind ?? '');
+  const eventScope = String(raw?.eventScope ?? '');
+  const verificationStatus = String(raw?.verificationStatus ?? '');
+  const travelModes = [...new Set(Array.isArray(raw?.travelModes) ? raw.travelModes.map(String) : [])];
+  const confidence = Number(raw?.confidence);
+  const year = (value) => value === null || value === undefined || value === '' ? null : Number(value);
+  const validFromYear = year(raw?.validFromYear);
+  const validToYear = year(raw?.validToYear);
+  if (!/^[A-Za-z0-9_-]+$/.test(anchorId) || !/^[A-Za-z0-9_-]+$/.test(poiId) || !accessKinds.has(accessKind)
+    || !['general', 'event'].includes(eventScope) || !statuses.has(verificationStatus)
+    || travelModes.some((mode) => !allowedModes.has(mode)) || !Number.isInteger(confidence) || confidence < 0 || confidence > 100
+    || (validFromYear !== null && (!Number.isInteger(validFromYear) || validFromYear < 1900 || validFromYear > 2100))
+    || (validToYear !== null && (!Number.isInteger(validToYear) || validToYear < 1900 || validToYear > 2100))
+    || (validFromYear !== null && validToYear !== null && validToYear < validFromYear)) throw new Error('Некорректные данные точки доступа');
+  const rawSourceUrl = optionalText(raw?.sourceUrl);
+  const sourceUrl = rawSourceUrl === null ? null : validateEditorialUrl(rawSourceUrl);
+  if (verificationStatus === 'verified' && (!sourceUrl || confidence < 70 || !travelModes.length)) throw new Error('Для подтверждения нужны источник, уверенность не ниже 70% и способ передвижения');
+  const sourceId = sourceUrl ? `travel-access-${createHash('sha256').update(sourceUrl).digest('hex').slice(0,16)}` : null;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const linkedPoint = await client.query(`SELECT 1 FROM atlas.circuit_travel_pois WHERE circuit_id=$1 AND poi_id=$2`, [circuitId, poiId]);
+    if (!linkedPoint.rows.length) { await client.query('ROLLBACK'); return null; }
+    const existing = await client.query('SELECT circuit_id FROM atlas.travel_access_anchors WHERE id=$1 FOR UPDATE', [anchorId]);
+    if (existing.rows.length && existing.rows[0].circuit_id !== circuitId) throw new Error('ID точки доступа уже принадлежит другой трассе');
+    if (verificationStatus !== 'verified') {
+      const protectedAssignment = await client.query(`SELECT route.id FROM atlas.travel_route_access_anchors AS assignment
+        JOIN atlas.travel_routes AS route ON route.id=assignment.route_id
+        WHERE assignment.anchor_id=$1 AND route.review_status IN('reviewed','published') LIMIT 1`, [anchorId]);
+      if (protectedAssignment.rows.length) throw new Error('Точка используется проверенным или опубликованным маршрутом и должна оставаться проверенной');
+    }
+    if (sourceUrl) await client.query(`INSERT INTO atlas.data_sources(id,name,url,retrieved_at,notes)
+      VALUES($1,$2,$3,now(),'Источник точки доступа к трассе') ON CONFLICT(id) DO UPDATE SET name=EXCLUDED.name,url=EXCLUDED.url,retrieved_at=now()`,
+    [sourceId, new URL(sourceUrl).hostname, sourceUrl]);
+    await client.query(`INSERT INTO atlas.travel_access_anchors(id,circuit_id,poi_id,access_kind,travel_modes,event_scope,valid_from_year,valid_to_year,
+      verification_status,confidence,source_id,evidence_note_ru,verified_at)
+      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,CASE WHEN $9='verified' THEN now() ELSE NULL END)
+      ON CONFLICT(id) DO UPDATE SET poi_id=EXCLUDED.poi_id,access_kind=EXCLUDED.access_kind,travel_modes=EXCLUDED.travel_modes,event_scope=EXCLUDED.event_scope,
+      valid_from_year=EXCLUDED.valid_from_year,valid_to_year=EXCLUDED.valid_to_year,verification_status=EXCLUDED.verification_status,confidence=EXCLUDED.confidence,
+      source_id=EXCLUDED.source_id,evidence_note_ru=EXCLUDED.evidence_note_ru,verified_at=EXCLUDED.verified_at`,
+    [anchorId,circuitId,poiId,accessKind,travelModes,eventScope,validFromYear,validToYear,verificationStatus,confidence,sourceId,optionalText(raw?.evidenceNoteRu)]);
+    await client.query('COMMIT');
+    return { id: anchorId, circuitId };
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally { client.release(); }
+}
+
 async function getTravelRoutes(circuitId) {
   const [circuitResult,routesResult]=await Promise.all([
     pool.query(`SELECT circuit.id,coalesce(profile.name_ru,circuit.short_name,circuit.name) AS name FROM atlas.circuits AS circuit LEFT JOIN atlas.circuit_page_profiles AS profile ON profile.circuit_id=circuit.id WHERE circuit.id=$1`,[circuitId]),
     pool.query(`SELECT route.id,route.name_ru,route.route_type,route.travel_mode,route.distance_m,route.duration_minutes,route.review_status,
+      route.route_variant_kind,route.lifecycle,route.display_priority,
       route.geometry IS NOT NULL AS has_geometry,count(stop.sequence)::int AS stop_count,presentation.visible_by_default
       FROM atlas.travel_routes AS route LEFT JOIN atlas.travel_route_stops AS stop ON stop.route_id=route.id
       LEFT JOIN atlas.travel_route_presentations AS presentation ON presentation.route_id=route.id
@@ -2249,21 +2412,26 @@ async function getTravelRoutes(circuitId) {
   if(!circuitResult.rows.length)return null;
   return {circuit:{id:String(circuitResult.rows[0].id),name:String(circuitResult.rows[0].name)},rows:routesResult.rows.map(row=>({
     id:String(row.id),nameRu:String(row.name_ru),routeType:String(row.route_type),travelMode:String(row.travel_mode),distanceM:Number(row.distance_m),
-    durationMinutes:Number(row.duration_minutes),reviewStatus:String(row.review_status),hasGeometry:Boolean(row.has_geometry),stopCount:Number(row.stop_count),visibleByDefault:Boolean(row.visible_by_default)
+    durationMinutes:Number(row.duration_minutes),reviewStatus:String(row.review_status),hasGeometry:Boolean(row.has_geometry),stopCount:Number(row.stop_count),visibleByDefault:Boolean(row.visible_by_default),
+    routeVariantKind:String(row.route_variant_kind),lifecycle:String(row.lifecycle),displayPriority:Number(row.display_priority)
   }))};
 }
 
 async function getTravelRoute(circuitId,routeId){
-  const [routeResult,stopsResult,pointsResult]=await Promise.all([
-    pool.query(`SELECT route.*,ST_AsGeoJSON(route.geometry::geometry) AS geometry_geojson,source.url AS source_url,
+  const [routeResult,stopsResult,pointsResult,accessAnchorsResult,circuitResult,mapPointsResult,existingRoutesResult]=await Promise.all([
+    pool.query(`SELECT route.*,route.updated_at::text AS updated_at_token,ST_AsGeoJSON(route.geometry::geometry) AS geometry_geojson,source.url AS source_url,
       presentation.route_group,presentation.sort_order,presentation.line_offset_px,presentation.line_colour,presentation.min_zoom,presentation.max_zoom,
-      presentation.visible_by_default,presentation.notes_ru,presentation.rationale_ru,presentation.highlights_ru,presentation.practical_notes_ru
+      presentation.visible_by_default,presentation.notes_ru,presentation.rationale_ru,presentation.highlights_ru,presentation.practical_notes_ru,
+      access_assignment.anchor_id AS terminal_access_anchor_id
       FROM atlas.travel_routes AS route LEFT JOIN atlas.data_sources AS source ON source.id=route.source_id
       LEFT JOIN atlas.travel_route_presentations AS presentation ON presentation.route_id=route.id
+      LEFT JOIN atlas.travel_route_access_anchors AS access_assignment ON access_assignment.route_id=route.id
       WHERE route.circuit_id=$1 AND route.id=$2`,[circuitId,routeId]),
     pool.query(`SELECT stop.sequence,stop.poi_id,stop.name_ru,stop.dwell_minutes,stop.instruction_ru,
       CASE WHEN stop.location IS NULL THEN NULL ELSE ST_X(stop.location::geometry) END AS longitude,
       CASE WHEN stop.location IS NULL THEN NULL ELSE ST_Y(stop.location::geometry) END AS latitude,
+      ST_X((CASE WHEN stop.poi_id IS NOT NULL THEN poi.location ELSE stop.location END)::geometry) AS resolved_longitude,
+      ST_Y((CASE WHEN stop.poi_id IS NOT NULL THEN poi.location ELSE stop.location END)::geometry) AS resolved_latitude,
       coalesce(poi.name_ru,poi.name) AS poi_name FROM atlas.travel_route_stops AS stop
       LEFT JOIN atlas.tourism_pois AS poi ON poi.id=stop.poi_id WHERE stop.route_id=$1 ORDER BY stop.sequence`,[routeId]),
     pool.query(`SELECT poi.id,coalesce(poi.name_ru,poi.name) AS name FROM atlas.circuit_travel_pois AS link
@@ -2271,65 +2439,183 @@ async function getTravelRoute(circuitId,routeId){
       AND (link.is_featured OR poi.review_status IN('reviewed','published') OR EXISTS(
         SELECT 1 FROM atlas.travel_route_stops AS stop WHERE stop.route_id=$2 AND stop.poi_id=poi.id))
       ORDER BY lower(coalesce(poi.name_ru,poi.name))`,[circuitId,routeId]),
+    pool.query(`SELECT anchor.id,anchor.poi_id,coalesce(poi.name_ru,poi.name) AS poi_name,anchor.access_kind,anchor.event_scope,
+      anchor.verification_status,anchor.confidence
+      FROM atlas.travel_access_anchors AS anchor JOIN atlas.tourism_pois AS poi ON poi.id=anchor.poi_id
+      LEFT JOIN atlas.travel_route_access_anchors AS selected ON selected.anchor_id=anchor.id AND selected.route_id=$2
+      WHERE anchor.circuit_id=$1 AND (anchor.verification_status NOT IN('rejected','expired') OR selected.route_id IS NOT NULL)
+      ORDER BY CASE anchor.verification_status WHEN 'verified' THEN 0 WHEN 'needs_review' THEN 1 ELSE 2 END,
+        anchor.confidence DESC,lower(coalesce(poi.name_ru,poi.name))`,[circuitId,routeId]),
+    pool.query(`SELECT ST_X(location::geometry) AS longitude,ST_Y(location::geometry) AS latitude FROM atlas.circuits WHERE id=$1`,[circuitId]),
+    pool.query(`SELECT poi.id,coalesce(poi.name_ru,poi.name) AS name,poi.review_status,
+      ST_X(poi.location::geometry) AS longitude,ST_Y(poi.location::geometry) AS latitude
+      FROM atlas.circuit_travel_pois AS link JOIN atlas.tourism_pois AS poi ON poi.id=link.poi_id
+      WHERE link.circuit_id=$1 AND poi.location IS NOT NULL
+        AND NOT ST_IsEmpty(poi.location::geometry) AND ST_IsValid(poi.location::geometry)
+      ORDER BY lower(coalesce(poi.name_ru,poi.name)),poi.id`,[circuitId]),
+    pool.query(`SELECT route.id,route.name_ru,route.review_status,route.lifecycle,
+      ST_AsGeoJSON(route.geometry::geometry) AS geometry_geojson
+      FROM atlas.travel_routes AS route
+      WHERE route.circuit_id=$1 AND route.lifecycle<>'archived' AND route.geometry IS NOT NULL
+        AND NOT ST_IsEmpty(route.geometry::geometry)
+      ORDER BY lower(route.name_ru),route.id`,[circuitId]),
   ]);
-  if(!routeResult.rows.length&&routeId==='new')return {route:{id:'',circuitId,routeType:'arrival',travelMode:'car',name:'',nameRu:'',summaryRu:'',geometryGeoJson:null,
+  if(!circuitResult.rows.length)return null;
+  const circuitRow=circuitResult.rows[0];
+  const mapCenter=circuitRow.longitude===null||circuitRow.latitude===null?null:[Number(circuitRow.longitude),Number(circuitRow.latitude)];
+  const mapPoints=mapPointsResult.rows.map(point=>({id:String(point.id),name:String(point.name),reviewStatus:String(point.review_status),
+    longitude:Number(point.longitude),latitude:Number(point.latitude)}));
+  const existingRoutes=existingRoutesResult.rows.map(route=>({id:String(route.id),nameRu:String(route.name_ru),reviewStatus:String(route.review_status),
+    lifecycle:String(route.lifecycle),geometryGeoJson:String(route.geometry_geojson)}));
+  if(!routeResult.rows.length&&routeId==='new')return {mapCenter,route:{id:'',circuitId,routeType:'arrival',travelMode:'car',name:'',nameRu:'',summaryRu:'',geometryGeoJson:null,
     distanceM:1,durationMinutes:1,difficulty:'easy',eventOnly:false,bookingRequired:false,accessibilityNotesRu:'',scheduleNotesRu:'',routeEngine:'',routeEngineProfile:'',
     reviewStatus:'candidate',sourceUrl:'',routeGroup:`${circuitId}-arrival`,sortOrder:0,lineOffsetPx:0,lineColour:'#FF3158',minZoom:7,maxZoom:18,visibleByDefault:false,
-    notesRu:'',rationaleRu:'',highlightsRu:[],practicalNotesRu:''},stops:[],pointOptions:pointsResult.rows.map(point=>({id:String(point.id),name:String(point.name)}))};
+    notesRu:'',rationaleRu:'',highlightsRu:[],practicalNotesRu:'',terminalAccessAnchorId:null,routeVariantKind:'recommended',displayPriority:100,geometryMode:'routed',lifecycle:'draft',optimizeWaypointOrder:false,updatedAtToken:''},stops:[],pointOptions:pointsResult.rows.map(point=>({id:String(point.id),name:String(point.name)})),mapPoints,existingRoutes,
+    accessAnchorOptions:accessAnchorsResult.rows.map(anchor=>({id:String(anchor.id),poiId:String(anchor.poi_id),poiName:String(anchor.poi_name),accessKind:String(anchor.access_kind),eventScope:String(anchor.event_scope),verificationStatus:String(anchor.verification_status),confidence:Number(anchor.confidence)}))};
   if(!routeResult.rows.length)return null;const row=routeResult.rows[0];
-  return {route:{id:String(row.id),circuitId:String(row.circuit_id),routeType:String(row.route_type),travelMode:String(row.travel_mode),name:String(row.name),nameRu:String(row.name_ru),
+  return {mapCenter,route:{id:String(row.id),circuitId:String(row.circuit_id),routeType:String(row.route_type),travelMode:String(row.travel_mode),name:String(row.name),nameRu:String(row.name_ru),
     summaryRu:row.summary_ru??'',geometryGeoJson:row.geometry_geojson,distanceM:Number(row.distance_m),durationMinutes:Number(row.duration_minutes),difficulty:String(row.difficulty),
     eventOnly:Boolean(row.event_only),bookingRequired:Boolean(row.booking_required),accessibilityNotesRu:row.accessibility_notes_ru??'',scheduleNotesRu:row.schedule_notes_ru??'',
     routeEngine:row.route_engine??'',routeEngineProfile:row.route_engine_profile??'',reviewStatus:String(row.review_status),sourceUrl:row.source_url??'',routeGroup:row.route_group??row.route_type,
     sortOrder:Number(row.sort_order??0),lineOffsetPx:Number(row.line_offset_px??0),lineColour:row.line_colour??'#FF3158',minZoom:Number(row.min_zoom??7),maxZoom:Number(row.max_zoom??18),
-    visibleByDefault:Boolean(row.visible_by_default),notesRu:row.notes_ru??'',rationaleRu:row.rationale_ru??'',highlightsRu:row.highlights_ru??[],practicalNotesRu:row.practical_notes_ru??''},
+    visibleByDefault:Boolean(row.visible_by_default),notesRu:row.notes_ru??'',rationaleRu:row.rationale_ru??'',highlightsRu:row.highlights_ru??[],practicalNotesRu:row.practical_notes_ru??'',
+    terminalAccessAnchorId:row.terminal_access_anchor_id??null,routeVariantKind:String(row.route_variant_kind),displayPriority:Number(row.display_priority),geometryMode:String(row.geometry_mode),
+    lifecycle:String(row.lifecycle),optimizeWaypointOrder:Boolean(row.optimize_waypoint_order),updatedAtToken:String(row.updated_at_token)},
     stops:stopsResult.rows.map(stop=>({sequence:Number(stop.sequence),poiId:stop.poi_id,poiName:stop.poi_name,nameRu:stop.name_ru,dwellMinutes:stop.dwell_minutes,
-      instructionRu:stop.instruction_ru,longitude:stop.longitude===null?null:Number(stop.longitude),latitude:stop.latitude===null?null:Number(stop.latitude)})),
-    pointOptions:pointsResult.rows.map(point=>({id:String(point.id),name:String(point.name)}))};
+      instructionRu:stop.instruction_ru,longitude:stop.longitude===null?null:Number(stop.longitude),latitude:stop.latitude===null?null:Number(stop.latitude),
+      resolvedLongitude:stop.resolved_longitude===null?null:Number(stop.resolved_longitude),resolvedLatitude:stop.resolved_latitude===null?null:Number(stop.resolved_latitude)})),
+    pointOptions:pointsResult.rows.map(point=>({id:String(point.id),name:String(point.name)})),
+    mapPoints,existingRoutes,
+    accessAnchorOptions:accessAnchorsResult.rows.map(anchor=>({id:String(anchor.id),poiId:String(anchor.poi_id),poiName:String(anchor.poi_name),accessKind:String(anchor.access_kind),eventScope:String(anchor.event_scope),verificationStatus:String(anchor.verification_status),confidence:Number(anchor.confidence)}))};
 }
 
-async function saveTravelRoute(raw,circuitId,routeId){
-  const text=key=>optionalText(raw?.[key]);const routeType=String(raw?.routeType??''),travelMode=String(raw?.travelMode??''),status=String(raw?.reviewStatus??'');
+async function saveTravelRoute(raw,circuitId,routeId,options={}){
+  const text=key=>optionalText(raw?.[key]);const routeType=String(raw?.routeType??''),travelMode=String(raw?.travelMode??'');let status=String(raw?.reviewStatus??'');
+  const terminalAccessAnchorId=text('terminalAccessAnchorId');
+  const routeVariantKind=String(raw?.routeVariantKind??''),geometryMode=String(raw?.geometryMode??'');let lifecycle=String(raw?.lifecycle??'');
+  const displayPriority=Number(raw?.displayPriority);
   const distanceM=Number(raw?.distanceM),duration=Number(raw?.durationMinutes),difficulty=String(raw?.difficulty??'');
   if(!/^[A-Za-z0-9_-]+$/.test(routeId)||!text('name')||!text('nameRu')||!['arrival','race_day','event_shuttle','park_and_ride','tourist_half_day','tourist_full_day','walking','scenic_drive'].includes(routeType)
     ||!['car','transit','shuttle','walk','bicycle','mixed'].includes(travelMode)||!['candidate','reviewed','published','hidden'].includes(status)||!['easy','moderate','difficult'].includes(difficulty)
-    ||!Number.isInteger(distanceM)||distanceM<1||!Number.isInteger(duration)||duration<1)throw new Error('Некорректные данные маршрута');
-  let geometry=null;if(text('geometryGeoJson')){geometry=JSON.parse(text('geometryGeoJson'));if(geometry?.type!=='LineString')throw new Error('Маршрут должен быть LineString');}
-  if(['reviewed','published'].includes(status)&&!geometry)throw new Error('Для проверки или публикации нужна линия маршрута');
+    ||!Number.isInteger(distanceM)||distanceM<1||!Number.isInteger(duration)||duration<1
+    ||(terminalAccessAnchorId&&!/^[A-Za-z0-9_-]+$/.test(terminalAccessAnchorId))
+    ||!['recommended','fastest','shortest','loop','manual'].includes(routeVariantKind)||!['routed','waypoints','freehand'].includes(geometryMode)
+    ||!['draft','active','archived'].includes(lifecycle)||!Number.isInteger(displayPriority)||displayPriority<0||displayPriority>100
+    ||(routeVariantKind==='loop'&&displayPriority>49))throw new Error('Некорректные данные маршрута');
+  let geometry=null;if(text('geometryGeoJson')){
+    geometry=JSON.parse(text('geometryGeoJson'));
+    if(geometry?.type!=='LineString'||!Array.isArray(geometry.coordinates)||geometry.coordinates.length<2
+      ||geometry.coordinates.some(point=>!Array.isArray(point)||point.length!==2||!Number.isFinite(point[0])||!Number.isFinite(point[1])
+        ||point[0]< -180||point[0]>180||point[1]< -90||point[1]>90)
+      ||!geometry.coordinates.some(point=>point[0]!==geometry.coordinates[0][0]||point[1]!==geometry.coordinates[0][1]))
+      throw new Error('Маршрут должен содержать минимум две различные корректные координаты [долгота, широта]');
+  }
   const sourceUrl=new URL(text('sourceUrl'));if(!['http:','https:'].includes(sourceUrl.protocol)||sourceUrl.username||sourceUrl.password)throw new Error('Некорректный источник');
   const colour=String(raw?.lineColour??''),minZoom=Number(raw?.minZoom),maxZoom=Number(raw?.maxZoom),offset=Number(raw?.lineOffsetPx),sortOrder=Number(raw?.sortOrder);
   if(!/^#[0-9A-Fa-f]{6}$/.test(colour)||!Number.isFinite(minZoom)||!Number.isFinite(maxZoom)||minZoom<0||maxZoom>24||maxZoom<minZoom||!Number.isFinite(offset)||offset< -24||offset>24||!Number.isInteger(sortOrder)||sortOrder<0)throw new Error('Некорректное отображение маршрута');
-  const sourceId=`travel-${createHash('sha256').update(sourceUrl.href).digest('hex').slice(0,16)}`;const client=await pool.connect();
-  try{await client.query('BEGIN');const circuit=await client.query('SELECT id FROM atlas.circuits WHERE id=$1',[circuitId]);if(!circuit.rows.length){await client.query('ROLLBACK');return null;}
-    const existing=await client.query('SELECT circuit_id FROM atlas.travel_routes WHERE id=$1',[routeId]);if(existing.rows.length&&existing.rows[0].circuit_id!==circuitId)throw new Error('ID маршрута принадлежит другой трассе');
+  const sourceId=`travel-${createHash('sha256').update(sourceUrl.href).digest('hex').slice(0,16)}`;const ownsTransaction=!options.client;const client=options.client??await pool.connect();
+  try{if(ownsTransaction)await client.query('BEGIN');await client.query('SELECT pg_advisory_xact_lock(hashtext($1))',[`route-generation:${circuitId}`]);await client.query('SELECT pg_advisory_xact_lock(hashtext($1))',[routeId]);const circuit=await client.query('SELECT id FROM atlas.circuits WHERE id=$1',[circuitId]);if(!circuit.rows.length){if(ownsTransaction)await client.query('ROLLBACK');return null;}
+    const existing=await client.query('SELECT circuit_id,lifecycle,travel_mode,geometry_mode,distance_m,duration_minutes,updated_at::text AS updated_at_token,ST_AsGeoJSON(geometry::geometry) AS geometry_geojson FROM atlas.travel_routes WHERE id=$1',[routeId]);if(existing.rows.length&&existing.rows[0].circuit_id!==circuitId)throw new Error('ID маршрута принадлежит другой трассе');
+    if(existing.rows.length&&raw?.createOnly===true){if(ownsTransaction)await client.query('ROLLBACK');return{id:routeId,circuitId,publicDataSynced:true,created:false};}
+    const expectedUpdatedAt=String(raw?.expectedUpdatedAt??'');
+    if(raw?.createOnly!==true){
+      if(existing.rows.length&&(!expectedUpdatedAt||existing.rows[0].updated_at_token!==expectedUpdatedAt))throw new Error('Маршрут изменился. Обновите страницу и повторите сохранение');
+      if(!existing.rows.length&&expectedUpdatedAt)throw new Error('Маршрут удалён. Обновите список маршрутов');
+      if(existing.rows.length&&existing.rows[0].lifecycle==='archived')throw new Error('Восстановите архивный маршрут перед редактированием');
+    }
+    const previousGeometry=existing.rows.length&&existing.rows[0].geometry_geojson?JSON.parse(existing.rows[0].geometry_geojson):null;
+    const geometryChanged=existing.rows.length?JSON.stringify(previousGeometry)!==JSON.stringify(geometry):raw?.geometryModified===true;
+    const routeSemanticsChanged=existing.rows.length&&(existing.rows[0].travel_mode!==travelMode||existing.rows[0].geometry_mode!==geometryMode
+      ||Number(existing.rows[0].distance_m)!==distanceM||Number(existing.rows[0].duration_minutes)!==duration);
+    const stops=(Array.isArray(raw?.stops)?raw.stops:[]).map((stop,index)=>normalizeTravelRouteStop(stop,index+1));
+    const previousStops=existing.rows.length?await client.query(`SELECT sequence,poi_id AS "poiId",name_ru AS "nameRu",
+      ST_X(location::geometry) AS longitude,ST_Y(location::geometry) AS latitude,
+      dwell_minutes AS "dwellMinutes",instruction_ru AS "instructionRu"
+      FROM atlas.travel_route_stops WHERE route_id=$1 ORDER BY sequence`,[routeId]):null;
+    const stopsChanged=existing.rows.length&&travelRouteStopsChanged(
+      previousStops.rows.map(stop=>normalizeTravelRouteStop(stop,Number(stop.sequence))),stops);
+    if(travelMode!=='car'&&geometryMode==='routed'&&(!existing.rows.length||geometryChanged||existing.rows[0].travel_mode!==travelMode))throw new Error('Дорожный расчёт доступен только для автомобильного маршрута; для другого способа выберите опорные точки или ручную линию');
+    if(geometryChanged||routeSemanticsChanged||stopsChanged){
+      if(existing.rows[0]?.lifecycle==='archived')throw new Error('Сначала верните маршрут из архива');
+      status='candidate';lifecycle='draft';
+    }
+    if(['reviewed','published'].includes(status)&&!geometry)throw new Error('Для проверки или публикации нужна линия маршрута');
+    if(terminalAccessAnchorId){const anchor=await client.query('SELECT circuit_id,verification_status FROM atlas.travel_access_anchors WHERE id=$1 FOR SHARE',[terminalAccessAnchorId]);
+      if(!anchor.rows.length||anchor.rows[0].circuit_id!==circuitId)throw new Error('Точка доступа не относится к выбранной трассе');
+      if(['rejected','expired'].includes(anchor.rows[0].verification_status)){const unchanged=await client.query('SELECT 1 FROM atlas.travel_route_access_anchors WHERE route_id=$1 AND anchor_id=$2',[routeId,terminalAccessAnchorId]);
+        if(!unchanged.rows.length)throw new Error('Отклонённую или устаревшую точку нельзя назначить маршруту');}
+      if(['reviewed','published'].includes(status)&&anchor.rows[0].verification_status!=='verified')throw new Error('Для проверенного маршрута конечная точка доступа должна быть проверена');}
     await client.query(`INSERT INTO atlas.data_sources(id,name,url,retrieved_at,notes)VALUES($1,$2,$3,now(),'Источник туристического маршрута')ON CONFLICT(id)DO UPDATE SET name=EXCLUDED.name,url=EXCLUDED.url,retrieved_at=now()`,[sourceId,sourceUrl.hostname,sourceUrl.href]);
     await client.query(`INSERT INTO atlas.travel_routes(id,circuit_id,route_type,travel_mode,name,name_ru,summary_ru,geometry,distance_m,duration_minutes,difficulty,event_only,booking_required,
-      accessibility_notes_ru,schedule_notes_ru,source_id,route_engine,route_engine_profile,review_status,verified_at)
-      VALUES($1,$2,$3,$4,$5,$6,$7,CASE WHEN $8::jsonb IS NULL THEN NULL ELSE ST_SetSRID(ST_GeomFromGeoJSON($8::text),4326)::geography END,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,CASE WHEN $19 IN('reviewed','published')THEN now() ELSE NULL END)
+      accessibility_notes_ru,schedule_notes_ru,source_id,route_engine,route_engine_profile,review_status,verified_at,route_variant_kind,display_priority,geometry_mode,lifecycle,archived_at,optimize_waypoint_order,optimization_metadata)
+      VALUES($1,$2,$3,$4,$5,$6,$7,CASE WHEN $8::jsonb IS NULL THEN NULL ELSE ST_SetSRID(ST_GeomFromGeoJSON($8::text),4326)::geography END,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,
+      CASE WHEN $19 IN('reviewed','published')THEN now() ELSE NULL END,$20,$21,$22,$23,CASE WHEN $23='archived' THEN now() ELSE NULL END,$24,$25::jsonb)
       ON CONFLICT(id)DO UPDATE SET route_type=EXCLUDED.route_type,travel_mode=EXCLUDED.travel_mode,name=EXCLUDED.name,name_ru=EXCLUDED.name_ru,summary_ru=EXCLUDED.summary_ru,geometry=EXCLUDED.geometry,
       distance_m=EXCLUDED.distance_m,duration_minutes=EXCLUDED.duration_minutes,difficulty=EXCLUDED.difficulty,event_only=EXCLUDED.event_only,booking_required=EXCLUDED.booking_required,
       accessibility_notes_ru=EXCLUDED.accessibility_notes_ru,schedule_notes_ru=EXCLUDED.schedule_notes_ru,source_id=EXCLUDED.source_id,route_engine=EXCLUDED.route_engine,
-      route_engine_profile=EXCLUDED.route_engine_profile,review_status=EXCLUDED.review_status,verified_at=EXCLUDED.verified_at,updated_at=now()`,
-    [routeId,circuitId,routeType,travelMode,text('name'),text('nameRu'),text('summaryRu'),geometry?JSON.stringify(geometry):null,distanceM,duration,difficulty,raw?.eventOnly===true,raw?.bookingRequired===true,text('accessibilityNotesRu'),text('scheduleNotesRu'),sourceId,text('routeEngine'),text('routeEngineProfile'),status]);
+      route_engine_profile=EXCLUDED.route_engine_profile,review_status=EXCLUDED.review_status,verified_at=EXCLUDED.verified_at,route_variant_kind=EXCLUDED.route_variant_kind,
+      display_priority=EXCLUDED.display_priority,geometry_mode=EXCLUDED.geometry_mode,lifecycle=EXCLUDED.lifecycle,
+      archived_at=CASE WHEN EXCLUDED.lifecycle='archived' THEN coalesce(travel_routes.archived_at,now()) ELSE NULL END,
+      optimize_waypoint_order=EXCLUDED.optimize_waypoint_order,
+      optimization_metadata=coalesce(travel_routes.optimization_metadata,'{}'::jsonb)||jsonb_build_object('requested',EXCLUDED.optimize_waypoint_order),updated_at=now()`,
+    [routeId,circuitId,routeType,travelMode,text('name'),text('nameRu'),text('summaryRu'),geometry?JSON.stringify(geometry):null,distanceM,duration,difficulty,raw?.eventOnly===true,raw?.bookingRequired===true,text('accessibilityNotesRu'),text('scheduleNotesRu'),sourceId,text('routeEngine'),text('routeEngineProfile'),status,
+      routeVariantKind,displayPriority,geometryMode,lifecycle,raw?.optimizeWaypointOrder===true,JSON.stringify({requested:Boolean(raw?.optimizeWaypointOrder)})]);
+    if(terminalAccessAnchorId)await client.query(`INSERT INTO atlas.travel_route_access_anchors(route_id,anchor_id)VALUES($1,$2)
+      ON CONFLICT(route_id)DO UPDATE SET anchor_id=EXCLUDED.anchor_id,updated_at=now()`,[routeId,terminalAccessAnchorId]);
+    else await client.query('DELETE FROM atlas.travel_route_access_anchors WHERE route_id=$1',[routeId]);
     await client.query(`INSERT INTO atlas.travel_route_presentations(route_id,route_group,sort_order,line_offset_px,line_colour,min_zoom,max_zoom,visible_by_default,notes_ru,rationale_ru,highlights_ru,practical_notes_ru)
       VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)ON CONFLICT(route_id)DO UPDATE SET route_group=EXCLUDED.route_group,sort_order=EXCLUDED.sort_order,line_offset_px=EXCLUDED.line_offset_px,
       line_colour=EXCLUDED.line_colour,min_zoom=EXCLUDED.min_zoom,max_zoom=EXCLUDED.max_zoom,visible_by_default=EXCLUDED.visible_by_default,notes_ru=EXCLUDED.notes_ru,
       rationale_ru=EXCLUDED.rationale_ru,highlights_ru=EXCLUDED.highlights_ru,practical_notes_ru=EXCLUDED.practical_notes_ru,updated_at=now()`,
     [routeId,text('routeGroup')??routeType,sortOrder,offset,colour,minZoom,maxZoom,raw?.visibleByDefault===true,text('notesRu'),text('rationaleRu'),raw?.highlightsRu??[],text('practicalNotesRu')]);
-    const stops=Array.isArray(raw?.stops)?raw.stops:[];await client.query('DELETE FROM atlas.travel_route_stops WHERE route_id=$1',[routeId]);
-    for(const [index,stop]of stops.entries()){
-      const poiId=optionalText(stop?.poiId),nameRu=optionalText(stop?.nameRu),instruction=optionalText(stop?.instructionRu),dwell=stop?.dwellMinutes===null?null:Number(stop?.dwellMinutes);
-      const parsedLongitude=Number(stop?.longitude),parsedLatitude=Number(stop?.latitude);
-      const longitude=stop?.longitude===null||stop?.longitude===''||!Number.isFinite(parsedLongitude)?null:parsedLongitude;
-      const latitude=stop?.latitude===null||stop?.latitude===''||!Number.isFinite(parsedLatitude)?null:parsedLatitude;
-      if((dwell!==null&&(!Number.isInteger(dwell)||dwell<0))||(!poiId&&(!Number.isFinite(longitude)||!Number.isFinite(latitude)||longitude< -180||longitude>180||latitude< -90||latitude>90)))throw new Error('Некорректная остановка маршрута');
-      if(poiId){const linked=await client.query('SELECT 1 FROM atlas.circuit_travel_pois WHERE circuit_id=$1 AND poi_id=$2',[circuitId,poiId]);if(!linked.rows.length)throw new Error('Остановка не относится к выбранной трассе');}
+    await client.query('DELETE FROM atlas.travel_route_stops WHERE route_id=$1',[routeId]);
+    for(const stop of stops){
+      if(stop.poiId){const linked=await client.query('SELECT 1 FROM atlas.circuit_travel_pois WHERE circuit_id=$1 AND poi_id=$2',[circuitId,stop.poiId]);if(!linked.rows.length)throw new Error('Остановка не относится к выбранной трассе');}
       await client.query(`INSERT INTO atlas.travel_route_stops(route_id,sequence,poi_id,name_ru,location,dwell_minutes,instruction_ru)
         VALUES($1,$2,$3,$4,CASE WHEN $5::float8 IS NULL OR $6::float8 IS NULL THEN NULL ELSE ST_SetSRID(ST_MakePoint($5,$6),4326)::geography END,$7,$8)`,
-      [routeId,index+1,poiId,nameRu,longitude,latitude,dwell,instruction]);
+      [routeId,stop.sequence,stop.poiId,stop.nameRu,stop.longitude,stop.latitude,stop.dwellMinutes,stop.instructionRu]);
     }
-    await client.query('COMMIT');}catch(error){await client.query('ROLLBACK').catch(()=>{});throw error;}finally{client.release();}
-  let publicDataSynced=true;try{await runCircuitExports(circuitId,'published');}catch(error){publicDataSynced=false;console.error('Маршрут сохранён, но read-model не обновлён',error);}return{id:routeId,circuitId,publicDataSynced};
+    if(ownsTransaction)await client.query('COMMIT');}catch(error){if(ownsTransaction)await client.query('ROLLBACK').catch(()=>{});throw error;}finally{if(ownsTransaction)client.release();}
+  if(!ownsTransaction)return{id:routeId,circuitId,publicDataSynced:false,created:true};
+  let publicDataSynced=true;try{await runCircuitExports(circuitId,'published');}catch(error){publicDataSynced=false;console.error('Маршрут сохранён, но read-model не обновлён',error);}return{id:routeId,circuitId,publicDataSynced,created:true};
+}
+
+async function changeTravelRouteLifecycle(circuitId,routeId,raw) {
+  const operation=String(raw?.operation??''),expectedUpdatedAt=String(raw?.expectedUpdatedAt??'');
+  if(!['archive','restore'].includes(operation)||!expectedUpdatedAt)throw new Error('Некорректное действие с маршрутом');
+  const client=await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query('SELECT pg_advisory_xact_lock(hashtext($1))',[routeId]);
+    const current=await client.query('SELECT lifecycle,updated_at::text AS updated_at_token FROM atlas.travel_routes WHERE id=$1 AND circuit_id=$2 FOR UPDATE',[routeId,circuitId]);
+    if(!current.rows.length){await client.query('ROLLBACK');return null;}
+    if(current.rows[0].updated_at_token!==expectedUpdatedAt)throw new Error('Маршрут изменился. Обновите страницу и повторите действие');
+    if(operation==='restore'&&current.rows[0].lifecycle!=='archived')throw new Error('В черновики можно вернуть только архивный маршрут');
+    if(operation==='archive'&&current.rows[0].lifecycle==='archived')throw new Error('Маршрут уже находится в архиве');
+    const lifecycle=operation==='archive'?'archived':'draft';
+    await client.query(`UPDATE atlas.travel_routes SET lifecycle=$3,archived_at=CASE WHEN $3='archived' THEN now() ELSE NULL END,updated_at=now()
+      WHERE id=$1 AND circuit_id=$2`,[routeId,circuitId,lifecycle]);
+    await client.query('COMMIT');
+  } catch(error){await client.query('ROLLBACK').catch(()=>{});throw error;}finally{client.release();}
+  let publicDataSynced=true;try{await runCircuitExports(circuitId,'published');}catch(error){publicDataSynced=false;console.error('Жизненный цикл маршрута изменён, но read-model не обновлён',error);}
+  return{id:routeId,circuitId,publicDataSynced};
+}
+
+async function deleteArchivedTravelRoute(circuitId,routeId,raw) {
+  if(String(raw?.confirmRouteId??'')!==routeId||!String(raw?.expectedUpdatedAt??''))throw new Error('Для удаления введите точный ID маршрута');
+  const client=await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query('SELECT pg_advisory_xact_lock(hashtext($1))',[routeId]);
+    const current=await client.query('SELECT lifecycle,updated_at::text AS updated_at_token FROM atlas.travel_routes WHERE id=$1 AND circuit_id=$2 FOR UPDATE',[routeId,circuitId]);
+    if(!current.rows.length){await client.query('ROLLBACK');return null;}
+    if(current.rows[0].lifecycle!=='archived')throw new Error('Удалить можно только маршрут из архива');
+    if(current.rows[0].updated_at_token!==raw.expectedUpdatedAt)throw new Error('Маршрут изменился. Обновите страницу и повторите действие');
+    await client.query('DELETE FROM atlas.travel_routes WHERE id=$1 AND circuit_id=$2',[routeId,circuitId]);
+    await client.query('COMMIT');
+  } catch(error){await client.query('ROLLBACK').catch(()=>{});throw error;}finally{client.release();}
+  let publicDataSynced=true;try{await runCircuitExports(circuitId,'published');}catch(error){publicDataSynced=false;console.error('Архивный маршрут удалён, но read-model не обновлён',error);}
+  return{id:routeId,circuitId,publicDataSynced};
 }
 
 function routePointDistance(left, right) {
@@ -2355,16 +2641,147 @@ function selectDiverseRoutePoints(points, count, maximumDistanceM) {
 }
 
 async function fetchGeneratedRoadRoute(points) {
-  const coordinates = points.map(point => `${point.longitude},${point.latitude}`).join(';');
-  const url = `https://router.project-osrm.org/route/v1/driving/${coordinates}?overview=full&geometries=geojson&steps=false`;
-  const response = await fetch(url, {
-    headers: { 'User-Agent': 'F1-Geovisual-Atlas/0.1 (admin route draft generator)' },
-    signal: AbortSignal.timeout(45_000),
+  const url = buildOsrmRequestUrl(osrmBaseUrl, 'route', 'driving', points.map(point => [point.longitude, point.latitude]), {
+    overview: 'full', geometries: 'geojson', steps: 'false',
   });
-  if (!response.ok) throw new Error(`OSRM: ${response.status} ${response.statusText}`);
-  const payload = await response.json();
+  const payload = await requestOsrmJson(url, {
+    baseUrl: osrmBaseUrl, userAgent: 'F1-Geovisual-Atlas/0.1 (admin route draft generator)',
+  });
   if (payload.code !== 'Ok' || !payload.routes?.[0]) throw new Error(`OSRM: ${payload.code ?? 'нет маршрута'}`);
   return payload.routes[0];
+}
+
+async function fetchGeneratedRoadAlternatives(points) {
+  const url = buildOsrmRequestUrl(osrmBaseUrl, 'route', 'driving', points.map(point => [point.longitude, point.latitude]), {
+    alternatives: '3', overview: 'full', geometries: 'geojson', steps: 'false',
+  });
+  const payload = await requestOsrmJson(url, {
+    baseUrl: osrmBaseUrl, userAgent: 'F1-Geovisual-Atlas/0.1 (admin route alternatives)',
+  });
+  if (payload.code !== 'Ok' || !Array.isArray(payload.routes) || !payload.routes.length) throw new Error(`OSRM: ${payload.code ?? 'нет маршрута'}`);
+  return payload.routes.filter(route => route?.geometry?.type === 'LineString'
+    && Array.isArray(route.geometry.coordinates) && route.geometry.coordinates.length >= 2
+    && Number.isFinite(route.distance) && Number.isFinite(route.duration));
+}
+
+async function fetchOptimizedGeneratedRoadRoute(points) {
+  const url = buildOsrmRequestUrl(osrmBaseUrl, 'trip', 'driving', points.map(point => [point.longitude, point.latitude]), {
+    source: 'first', destination: 'last', roundtrip: 'false', overview: 'full', geometries: 'geojson', steps: 'false',
+  });
+  const payload = await requestOsrmJson(url, {
+    baseUrl: osrmBaseUrl, userAgent: 'F1-Geovisual-Atlas/0.1 (admin route draft optimizer)',
+  });
+  if (payload.code !== 'Ok' || payload.trips?.length !== 1 || payload.waypoints?.length !== points.length
+    || payload.waypoints.some(waypoint => Number(waypoint?.trips_index) !== 0)) throw new Error(`OSRM: ${payload.code ?? 'маршрут состоит из несвязанных частей'}`);
+  const waypointOrder = payload.waypoints.map(waypoint => Number(waypoint?.waypoint_index));
+  if (new Set(waypointOrder).size !== points.length || waypointOrder.some(value => !Number.isInteger(value) || value < 0 || value >= points.length)
+    || waypointOrder[0] !== 0 || waypointOrder[points.length-1] !== points.length-1) throw new Error('OSRM вернул некорректный порядок точек');
+  const orderedPoints = points.map((point,index) => ({ point,order:waypointOrder[index] }))
+    .sort((left,right) => left.order-right.order).map(item => item.point);
+  return { route:payload.trips[0],orderedPoints };
+}
+
+async function fetchTailRoadRoute(coordinates, travelMode) {
+  const profiles = { car: 'driving' };
+  const profile = profiles[travelMode];
+  if (!profile) throw new Error('Этот маршрутизатор пока поддерживает только автомобильный профиль');
+  const url = buildOsrmRequestUrl(osrmBaseUrl, 'route', profile, coordinates, {
+    overview: 'full', geometries: 'geojson', steps: 'false',
+  });
+  const payload = await requestOsrmJson(url, {
+    baseUrl: osrmBaseUrl, userAgent: 'F1-Geovisual-Atlas/0.1 (admin route tail preview)',
+  });
+  if (payload.code !== 'Ok' || !payload.routes?.[0]?.geometry) throw new Error(`OSRM: ${payload.code ?? 'маршрут не построен'}`);
+  return payload.routes[0];
+}
+
+async function previewTravelRouteGeometry(circuitId,routeId,raw) {
+  const points=Array.isArray(raw?.points)?raw.points:[];
+  if(points.length<2||points.length>20||raw?.travelMode!=='car')throw new Error('Для расчёта по дорогам выберите от 2 до 20 точек и автомобильный способ передвижения');
+  if(points.some(point=>!Array.isArray(point)||point.length!==2||point.some(value=>typeof value!=='number'||!Number.isFinite(value))))throw new Error('Некорректные координаты маршрута');
+  const coordinates=points.map(point=>[Number(point?.[0]),Number(point?.[1])]);
+  if(coordinates.some(([longitude,latitude])=>!Number.isFinite(longitude)||!Number.isFinite(latitude)||longitude< -180||longitude>180||latitude< -90||latitude>90))throw new Error('Некорректные координаты маршрута');
+  const circuit=await pool.query('SELECT 1 FROM atlas.circuits WHERE id=$1',[circuitId]);
+  if(!circuit.rows.length)return null;
+  if(routeId!=='new'){
+    const route=await pool.query('SELECT 1 FROM atlas.travel_routes WHERE id=$1 AND circuit_id=$2 AND lifecycle<>\'archived\'',[routeId,circuitId]);
+    if(!route.rows.length)return null;
+  }
+  const result=await fetchTailRoadRoute(coordinates,'car');
+  if(result.geometry?.type!=='LineString'||!Array.isArray(result.geometry.coordinates)||result.geometry.coordinates.length<2
+    ||!Number.isFinite(result.distance)||!Number.isFinite(result.duration))throw new Error('Маршрутизатор вернул неполную линию');
+  return{geometryGeoJson:JSON.stringify(result.geometry),distanceM:Math.max(1,Math.round(result.distance)),durationMinutes:Math.max(1,Math.round(result.duration/60))};
+}
+
+function travelRouteTailPreviewPayload(preview) {
+  return { token:preview.token,expiresAt:new Date(preview.expiresAt).toISOString(),circuitId:preview.circuitId,routeId:preview.routeId,
+    anchor:preview.anchor,replacedSide:preview.replacedSide,metrics:preview.metrics,proposed:preview.proposed };
+}
+
+function getTravelRouteTailPreview(token) {
+  const preview = travelRouteTailPreviews.get(token);
+  if (!preview || preview.expiresAt <= Date.now()) { travelRouteTailPreviews.delete(token); return null; }
+  return travelRouteTailPreviewPayload(preview);
+}
+
+async function createTravelRouteTailPreview(circuitId, routeId) {
+  const result = await pool.query(`SELECT route.id,route.circuit_id,route.travel_mode,route.distance_m,route.duration_minutes,route.updated_at,
+    ST_AsGeoJSON(route.geometry::geometry) AS geometry_geojson,assignment.anchor_id,anchor.verification_status,anchor.updated_at AS anchor_updated_at,
+    poi.updated_at AS poi_updated_at,coalesce(poi.name_ru,poi.name) AS poi_name,ST_X(poi.location::geometry) AS longitude,ST_Y(poi.location::geometry) AS latitude
+    FROM atlas.travel_routes AS route
+    JOIN atlas.travel_route_access_anchors AS assignment ON assignment.route_id=route.id
+    JOIN atlas.travel_access_anchors AS anchor ON anchor.id=assignment.anchor_id
+    JOIN atlas.tourism_pois AS poi ON poi.id=anchor.poi_id
+    WHERE route.circuit_id=$1 AND route.id=$2 AND route.lifecycle<>'archived'`, [circuitId, routeId]);
+  if (!result.rows.length) return null;
+  const row = result.rows[0];
+  if (['rejected','expired'].includes(row.verification_status)) throw new Error('Для расчёта выберите действующую точку доступа');
+  const originalLineString = JSON.parse(row.geometry_geojson);
+  const preparation = prepareRouteTailReplacement(originalLineString, [Number(row.longitude), Number(row.latitude)]);
+  const routed = await fetchTailRoadRoute(preparation.routingCoordinates, String(row.travel_mode));
+  const merged = mergeRoutedTail(preparation, routed.geometry);
+  const originalDistanceM = Number(row.distance_m);
+  const keptRatio = preparation.metrics.totalMetres > 0 ? preparation.metrics.keptMetres / preparation.metrics.totalMetres : 0;
+  const preservedDistanceM = originalDistanceM * keptRatio;
+  const durationMinutes = Math.max(1, Math.round(Number(row.duration_minutes) * keptRatio + Number(routed.duration) / 60));
+  const token = randomUUID();
+  const preview = { token,expiresAt:Date.now()+travelRouteTailPreviewTtlMs,circuitId,routeId,routeUpdatedAt:new Date(row.updated_at).getTime(),anchorId:String(row.anchor_id),
+    anchorUpdatedAt:new Date(row.anchor_updated_at).getTime(),poiUpdatedAt:new Date(row.poi_updated_at).getTime(),
+    anchor:{id:String(row.anchor_id),poiName:String(row.poi_name)},replacedSide:preparation.side,
+    metrics:{originalDistanceM,keptDistanceM:Math.round(preservedDistanceM),replacedOldDistanceM:Math.max(0,Math.round(originalDistanceM-preservedDistanceM)),
+      replacedNewDistanceM:Math.round(Number(routed.distance)),seamGapM:Math.round(merged.metrics.seamGapMetres),endpointDistanceM:Math.round(merged.metrics.endpointDistanceMetres)},
+    proposed:{distanceM:Math.max(1,Math.round(preservedDistanceM+Number(routed.distance)+merged.metrics.seamGapMetres)),durationMinutes,geometryGeoJson:JSON.stringify(merged.lineString)} };
+  travelRouteTailPreviews.set(token, preview);
+  return travelRouteTailPreviewPayload(preview);
+}
+
+async function applyTravelRouteTailPreview(token, expectedCircuitId, expectedRouteId) {
+  const preview = travelRouteTailPreviews.get(token);
+  if (!preview || preview.expiresAt <= Date.now()) { travelRouteTailPreviews.delete(token); return null; }
+  if (preview.circuitId !== expectedCircuitId || preview.routeId !== expectedRouteId) throw new Error('Предпросмотр не относится к выбранному маршруту');
+  if (preview.metrics.seamGapM > 500 || preview.metrics.endpointDistanceM > 500) throw new Error('Предпросмотр имеет слишком большой разрыв и не может быть применён');
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const currentAnchor = await client.query(`SELECT anchor.updated_at AS anchor_updated_at,anchor.verification_status,poi.updated_at AS poi_updated_at
+      FROM atlas.travel_access_anchors AS anchor JOIN atlas.tourism_pois AS poi ON poi.id=anchor.poi_id WHERE anchor.id=$1 FOR SHARE OF anchor,poi`, [preview.anchorId]);
+    if (!currentAnchor.rows.length || ['rejected','expired'].includes(currentAnchor.rows[0].verification_status)
+      || new Date(currentAnchor.rows[0].anchor_updated_at).getTime() !== preview.anchorUpdatedAt
+      || new Date(currentAnchor.rows[0].poi_updated_at).getTime() !== preview.poiUpdatedAt) throw new Error('Точка доступа изменилась после расчёта. Создайте новый предпросмотр');
+    const current = await client.query(`SELECT route.updated_at,route.lifecycle,assignment.anchor_id FROM atlas.travel_routes AS route
+      LEFT JOIN atlas.travel_route_access_anchors AS assignment ON assignment.route_id=route.id
+      WHERE route.id=$1 AND route.circuit_id=$2 FOR UPDATE OF route`, [preview.routeId, preview.circuitId]);
+    if (!current.rows.length || current.rows[0].lifecycle==='archived' || new Date(current.rows[0].updated_at).getTime() !== preview.routeUpdatedAt || current.rows[0].anchor_id !== preview.anchorId) {
+      throw new Error('Маршрут или точка доступа изменились после расчёта. Создайте новый предпросмотр');
+    }
+    await client.query(`UPDATE atlas.travel_routes SET geometry=ST_SetSRID(ST_GeomFromGeoJSON($1),4326)::geography,
+      distance_m=$2,duration_minutes=$3,review_status='candidate',lifecycle='draft',archived_at=NULL,verified_at=NULL,updated_at=now() WHERE id=$4`,
+    [preview.proposed.geometryGeoJson,preview.proposed.distanceM,preview.proposed.durationMinutes,preview.routeId]);
+    await client.query('COMMIT');
+  } catch (error) { await client.query('ROLLBACK').catch(() => {}); throw error; } finally { client.release(); }
+  travelRouteTailPreviews.delete(token);
+  let publicDataSynced=true;try{await runCircuitExports(preview.circuitId,'published');}catch(error){publicDataSynced=false;console.error('Хвост маршрута применён, но read-model не обновлён',error);}
+  return {circuitId:preview.circuitId,routeId:preview.routeId,publicDataSynced};
 }
 
 function routeGenerationPreviewPayload(preview) {
@@ -2381,7 +2798,44 @@ function getTravelRouteGenerationPreview(token) {
   return routeGenerationPreviewPayload(preview);
 }
 
-async function createTravelRouteGenerationPreview(circuitId) {
+function generatedRouteSourceFingerprint(rows) {
+  const normalized = rows.map(row => ({
+    id:String(row.id),poiUpdatedAt:new Date(row.poi_updated_at).toISOString(),linkUpdatedAt:new Date(row.link_updated_at).toISOString(),
+    role:String(row.role),reviewStatus:String(row.review_status),longitude:Number(row.longitude),latitude:Number(row.latitude),
+  })).sort((left,right) => left.id.localeCompare(right.id));
+  return createHash('sha256').update(JSON.stringify(normalized)).digest('hex');
+}
+
+function generatedRouteSemanticFingerprint(stops, routeVariantKind) {
+  return createHash('sha256').update(JSON.stringify({
+    orderedPoiIds:stops.map(stop => String(stop.poiId)),routeVariantKind:String(routeVariantKind??'recommended'),
+  })).digest('hex');
+}
+
+async function currentGeneratedRouteFingerprints(circuitId, queryable=pool) {
+  const result = await queryable.query(`SELECT route.id,route.route_variant_kind,stop.sequence,stop.poi_id
+    FROM atlas.travel_routes AS route JOIN atlas.travel_route_stops AS stop ON stop.route_id=route.id
+    WHERE route.circuit_id=$1 AND route.route_engine='osrm' AND stop.poi_id IS NOT NULL
+    ORDER BY route.id,stop.sequence`, [circuitId]);
+  const routes = new Map();
+  for (const row of result.rows) {
+    const route = routes.get(String(row.id)) ?? { routeVariantKind:String(row.route_variant_kind),stops:[] };
+    route.stops.push({ poiId:String(row.poi_id) });
+    routes.set(String(row.id),route);
+  }
+  return new Set([...routes.values()].map(route => generatedRouteSemanticFingerprint(route.stops,route.routeVariantKind)));
+}
+
+async function currentGeneratedRouteSourceRows(circuitId, poiIds, queryable=pool) {
+  if (!poiIds.length) return [];
+  const result = await queryable.query(`SELECT poi.id,poi.updated_at AS poi_updated_at,link.updated_at AS link_updated_at,
+    link.role,poi.review_status,ST_X(poi.location::geometry) AS longitude,ST_Y(poi.location::geometry) AS latitude
+    FROM atlas.tourism_pois AS poi JOIN atlas.circuit_travel_pois AS link ON link.poi_id=poi.id AND link.circuit_id=$1
+    WHERE poi.id=ANY($2::text[]) FOR SHARE OF poi,link`, [circuitId,poiIds]);
+  return result.rows;
+}
+
+async function createTravelRouteGenerationPreview(circuitId, rawInput = {}) {
   if (!/^[A-Za-z0-9_-]+$/.test(circuitId)) throw new Error('Некорректный ID трассы');
   const [circuitResult, pointsResult, existingResult] = await Promise.all([
     pool.query(`SELECT circuit.id,coalesce(profile.name_ru,circuit.short_name,circuit.name) AS name,
@@ -2389,69 +2843,158 @@ async function createTravelRouteGenerationPreview(circuitId) {
       FROM atlas.circuits AS circuit LEFT JOIN atlas.circuit_page_profiles AS profile ON profile.circuit_id=circuit.id
       WHERE circuit.id=$1`, [circuitId]),
     pool.query(`SELECT poi.id,coalesce(poi.name_ru,poi.name) AS name,poi.category_id,link.role,poi.importance,
+      poi.updated_at AS poi_updated_at,link.updated_at AS link_updated_at,
       round(coalesce(link.distance_to_circuit_m,ST_Distance(poi.location,circuit.location)))::int AS distance_to_circuit_m,
       poi.review_status,ST_X(poi.location::geometry) AS longitude,ST_Y(poi.location::geometry) AS latitude
       FROM atlas.circuit_travel_pois AS link JOIN atlas.tourism_pois AS poi ON poi.id=link.poi_id
       JOIN atlas.circuits AS circuit ON circuit.id=link.circuit_id
       WHERE link.circuit_id=$1 AND poi.review_status<>'hidden'
       ORDER BY poi.importance DESC,link.distance_to_circuit_m,lower(coalesce(poi.name_ru,poi.name))`, [circuitId]),
-    pool.query('SELECT id FROM atlas.travel_routes WHERE circuit_id=$1', [circuitId]),
+    pool.query(`SELECT route.id,route.route_variant_kind,route.route_engine,stop.sequence,stop.poi_id
+      FROM atlas.travel_routes AS route LEFT JOIN atlas.travel_route_stops AS stop ON stop.route_id=route.id
+      WHERE route.circuit_id=$1 ORDER BY route.id,stop.sequence`, [circuitId]),
   ]);
   if (!circuitResult.rows.length) return null;
   const circuit = { id:circuitId,name:String(circuitResult.rows[0].name),longitude:Number(circuitResult.rows[0].longitude),latitude:Number(circuitResult.rows[0].latitude) };
   const points = pointsResult.rows.map(row => ({ id:String(row.id),name:String(row.name),categoryId:String(row.category_id),role:String(row.role),importance:Number(row.importance),
     distanceToCircuitM:Number(row.distance_to_circuit_m),reviewStatus:String(row.review_status),longitude:Number(row.longitude),latitude:Number(row.latitude) }));
   const existingIds = new Set(existingResult.rows.map(row => String(row.id)));
+  const existingGeneratedRoutes = new Map();
+  for (const row of existingResult.rows.filter(row => row.route_engine==='osrm' && row.poi_id!==null)) {
+    const route = existingGeneratedRoutes.get(String(row.id)) ?? { routeVariantKind:String(row.route_variant_kind),stops:[] };
+    route.stops.push({ poiId:String(row.poi_id) });
+    existingGeneratedRoutes.set(String(row.id),route);
+  }
+  const existingFingerprints = new Set([...existingGeneratedRoutes.values()].map(route => generatedRouteSemanticFingerprint(route.stops,route.routeVariantKind)));
   const blockers = [];
   const definitions = [];
+  const orderedPoiIds = Array.isArray(rawInput?.orderedPoiIds) ? rawInput.orderedPoiIds.map(String).filter(Boolean) : [];
+  const optimizeWaypointOrder = rawInput?.optimizeWaypointOrder === true;
+  if (orderedPoiIds.length) {
+    if (orderedPoiIds.length < 2 || orderedPoiIds.length > 10 || new Set(orderedPoiIds).size !== orderedPoiIds.length) throw new Error('Выберите от двух до десяти разных точек маршрута');
+    const pointsById = new Map(points.map(point => [point.id,point]));
+    const selectedPoints = orderedPoiIds.map(id => pointsById.get(id));
+    if (selectedPoints.some(point => !point)) throw new Error('Одна из выбранных точек недоступна для этой трассы');
+    definitions.push({ id:`${circuitId}-custom-${randomUUID().slice(0,8)}`,routeType:'tourist_half_day',travelMode:'car',
+      nameRu:`Маршрут по выбранным точкам — ${circuit.name}`,summaryRu:optimizeWaypointOrder?'Порядок промежуточных точек оптимизирован; начало и конец сохранены':'Черновик в заданном порядке точек',
+      points:selectedPoints,optimizeWaypointOrder,routeVariantKind:'recommended' });
+  }
   const explore = points.filter(point => point.role === 'explore');
-  const halfDay = selectDiverseRoutePoints(explore, 3, 30_000);
-  const fullDay = selectDiverseRoutePoints(explore.filter(point => !halfDay.some(selected => selected.id === point.id)), 5, 50_000);
-  if (halfDay.length >= 3) definitions.push({ id:`${circuitId}-generated-half-day`,routeType:'tourist_half_day',travelMode:'car',nameRu:`Знакомство с окрестностями трассы ${circuit.name}`,summaryRu:'Автоматически предложенный автомобильный маршрут на полдня',points:halfDay });
-  else blockers.push('Для маршрута на полдня нужно минимум три разнесённые достопримечательности в радиусе 30 км');
-  if (fullDay.length >= 4) definitions.push({ id:`${circuitId}-generated-full-day`,routeType:'tourist_full_day',travelMode:'car',nameRu:`Большой маршрут вокруг трассы ${circuit.name}`,summaryRu:'Автоматически предложенный автомобильный маршрут на полный день',points:fullDay });
-  else blockers.push('Для маршрута на полный день нужно минимум четыре дополнительные достопримечательности в радиусе 50 км');
-  const accessPoint = points.find(point => point.role === 'circuit' && ['gate','parking','park_and_ride'].includes(point.categoryId) && ['reviewed','published'].includes(point.reviewStatus));
-  if (accessPoint) {
-    const airport = points.find(point => point.categoryId === 'airport');
-    const station = points.find(point => point.categoryId === 'railway_station');
-    if (airport) definitions.push({ id:`${circuitId}-generated-airport-arrival`,routeType:'arrival',travelMode:'car',nameRu:`${airport.name} → ${circuit.name}`,summaryRu:'Черновой маршрут от аэропорта к подтверждённой точке доступа',points:[airport,accessPoint] });
-    if (station) definitions.push({ id:`${circuitId}-generated-station-arrival`,routeType:'arrival',travelMode:'car',nameRu:`${station.name} → ${circuit.name}`,summaryRu:'Черновой маршрут от железнодорожного вокзала к подтверждённой точке доступа',points:[station,accessPoint] });
-  } else blockers.push('Маршруты прибытия не созданы: сначала подтвердите вход, парковку или другую точку доступа к трассе');
+  if (!orderedPoiIds.length) {
+    const halfDay = selectDiverseRoutePoints(explore, 3, 30_000);
+    const fullDay = selectDiverseRoutePoints(explore.filter(point => !halfDay.some(selected => selected.id === point.id)), 5, 50_000);
+    if (halfDay.length >= 3) definitions.push({ id:`${circuitId}-generated-half-day`,routeType:'tourist_half_day',travelMode:'car',nameRu:`Знакомство с окрестностями трассы ${circuit.name}`,summaryRu:'Автоматически предложенный автомобильный маршрут на полдня',points:halfDay });
+    else blockers.push('Для маршрута на полдня нужно минимум три разнесённые достопримечательности в радиусе 30 км');
+    if (fullDay.length >= 4) definitions.push({ id:`${circuitId}-generated-full-day`,routeType:'tourist_full_day',travelMode:'car',nameRu:`Большой маршрут вокруг трассы ${circuit.name}`,summaryRu:'Автоматически предложенный автомобильный маршрут на полный день',points:fullDay });
+    else blockers.push('Для маршрута на полный день нужно минимум четыре дополнительные достопримечательности в радиусе 50 км');
+    const accessPoint = points.find(point => point.role === 'circuit' && ['gate','parking','park_and_ride'].includes(point.categoryId) && ['reviewed','published'].includes(point.reviewStatus));
+    if (accessPoint) {
+      const airport = points.find(point => point.categoryId === 'airport');
+      const station = points.find(point => point.categoryId === 'railway_station');
+      if (airport) definitions.push({ id:`${circuitId}-generated-airport-arrival`,routeType:'arrival',travelMode:'car',nameRu:`${airport.name} → ${circuit.name}`,summaryRu:'Черновой маршрут от аэропорта к подтверждённой точке доступа',points:[airport,accessPoint] });
+      if (station) definitions.push({ id:`${circuitId}-generated-station-arrival`,routeType:'arrival',travelMode:'car',nameRu:`${station.name} → ${circuit.name}`,summaryRu:'Черновой маршрут от железнодорожного вокзала к подтверждённой точке доступа',points:[station,accessPoint] });
+    } else blockers.push('Маршруты прибытия не созданы: сначала подтвердите вход, парковку или другую точку доступа к трассе');
+  }
   const suggestions = [];
+  let routerUnavailable = false;
   for (const definition of definitions) {
     if (existingIds.has(definition.id)) { blockers.push(`Маршрут ${definition.id} уже существует и не будет перезаписан`); continue; }
     try {
-      const route = await fetchGeneratedRoadRoute(definition.points);
-      suggestions.push({ id:definition.id,routeType:definition.routeType,travelMode:definition.travelMode,nameRu:definition.nameRu,summaryRu:definition.summaryRu,
-        geometryGeoJson:JSON.stringify(route.geometry),distanceM:Math.max(1,Math.round(route.distance)),durationMinutes:Math.max(1,Math.round(route.duration/60)),
-        stops:definition.points.map(point => ({ poiId:point.id,nameRu:point.name })),highlightsRu:definition.points.map(point => point.name) });
-    } catch (error) { blockers.push(`${definition.nameRu}: ${error instanceof Error ? error.message : String(error)}`); }
+      const optimized = definition.optimizeWaypointOrder ? await fetchOptimizedGeneratedRoadRoute(definition.points) : null;
+      const routePoints = optimized?.orderedPoints ?? definition.points;
+      let alternatives = [];
+      if (orderedPoiIds.length) {
+        if (optimized) {
+          try { alternatives = await fetchGeneratedRoadAlternatives(routePoints); }
+          catch (error) {
+            if (error instanceof OsrmTransportError) routerUnavailable = true;
+            blockers.push(`Альтернативные линии не рассчитаны: ${error instanceof Error ? error.message : String(error)}`);
+          }
+        } else {
+          alternatives = await fetchGeneratedRoadAlternatives(routePoints);
+        }
+      }
+      const primaryRoute = optimized?.route ?? alternatives[0] ?? await fetchGeneratedRoadRoute(routePoints);
+      if (primaryRoute?.geometry?.type !== 'LineString' || !Array.isArray(primaryRoute.geometry.coordinates)
+        || primaryRoute.geometry.coordinates.length < 2 || !Number.isFinite(primaryRoute.distance)
+        || !Number.isFinite(primaryRoute.duration)) throw new Error('Маршрутизатор вернул неполную геометрию');
+      const candidates = orderedPoiIds.length ? [primaryRoute,...alternatives] : [primaryRoute];
+      const variantCandidates = [{kind:'recommended',route:primaryRoute,label:''}];
+      if (orderedPoiIds.length) {
+        const fastest = [...candidates].sort((left,right) => left.duration-right.duration)[0];
+        const shortest = [...candidates].sort((left,right) => left.distance-right.distance)[0];
+        for (const [kind,route,label] of [['fastest',fastest,' · быстрее по времени'],['shortest',shortest,' · меньше по расстоянию']]) {
+          if (!variantCandidates.some(candidate => JSON.stringify(candidate.route.geometry) === JSON.stringify(route.geometry))) variantCandidates.push({kind,route,label});
+        }
+      }
+      for (const candidate of variantCandidates) {
+        const stops = routePoints.map(point => ({ poiId:point.id,nameRu:point.name }));
+        const semanticFingerprint = generatedRouteSemanticFingerprint(stops,orderedPoiIds.length?candidate.kind:(definition.routeVariantKind??'recommended'));
+        if (existingFingerprints.has(semanticFingerprint)) {
+          blockers.push(`${definition.nameRu}${candidate.label}: маршрут с тем же порядком точек и вариантом уже существует`);
+          continue;
+        }
+        suggestions.push({ id:candidate.kind==='recommended'?definition.id:`${definition.id}-${candidate.kind}`,routeType:definition.routeType,travelMode:definition.travelMode,
+          nameRu:`${definition.nameRu}${candidate.label}`,summaryRu:definition.summaryRu,
+          geometryGeoJson:JSON.stringify(candidate.route.geometry),distanceM:Math.max(1,Math.round(candidate.route.distance)),durationMinutes:Math.max(1,Math.round(candidate.route.duration/60)),
+          stops,highlightsRu:routePoints.map(point => point.name),semanticFingerprint,
+          routeVariantKind:orderedPoiIds.length?candidate.kind:(definition.routeVariantKind??'recommended'),optimizeWaypointOrder:Boolean(definition.optimizeWaypointOrder) });
+        existingFingerprints.add(semanticFingerprint);
+      }
+      if (routerUnavailable) {
+        blockers.push('Остальные маршруты не рассчитаны: сервис маршрутизации недоступен');
+        break;
+      }
+    } catch (error) {
+      blockers.push(`${definition.nameRu}: ${error instanceof Error ? error.message : String(error)}`);
+      if (error instanceof OsrmTransportError) {
+        blockers.push('Остальные маршруты не рассчитаны: сервис маршрутизации недоступен');
+        break;
+      }
+    }
   }
   const token = randomUUID();
-  const preview = { token,expiresAt:Date.now()+travelImportPreviewTtlMs,circuit,suggestions,blockers };
+  const sourcePoiIds = [...new Set(suggestions.flatMap(suggestion => suggestion.stops.map(stop => stop.poiId)))];
+  const sourceRows = pointsResult.rows.filter(row => sourcePoiIds.includes(String(row.id)));
+  const preview = { token,expiresAt:Date.now()+travelImportPreviewTtlMs,circuit,suggestions,blockers,sourceRows };
   travelRouteGenerationPreviews.set(token, preview);
   return routeGenerationPreviewPayload(preview);
 }
 
-async function applyTravelRouteGenerationPreview(token, selectedIds) {
+async function applyTravelRouteGenerationPreview(token, expectedCircuitId, selectedIds) {
   const preview = travelRouteGenerationPreviews.get(token);
   if (!preview || preview.expiresAt <= Date.now()) { travelRouteGenerationPreviews.delete(token); return null; }
+  if (preview.circuit.id !== expectedCircuitId) throw new Error('Предпросмотр относится к другой трассе');
   const selected = new Set(Array.isArray(selectedIds) ? selectedIds.map(String) : []);
-  let created = 0;
-  for (const suggestion of preview.suggestions.filter(item => selected.has(item.id))) {
-    const existing = await pool.query('SELECT 1 FROM atlas.travel_routes WHERE id=$1', [suggestion.id]);
-    if (existing.rows.length) continue;
-    await saveTravelRoute({ ...suggestion,stops:suggestion.stops.map(stop=>({ ...stop,dwellMinutes:null,longitude:null,latitude:null,instructionRu:null })),name:suggestion.nameRu,difficulty:'easy',eventOnly:false,bookingRequired:false,
+  const selectedSuggestions = preview.suggestions.filter(item => selected.has(item.id));
+  if (!selectedSuggestions.length) throw new Error('Выберите хотя бы один маршрут для сохранения');
+  const client = await pool.connect();
+  let batch;
+  try {
+    batch = await applyGeneratedRouteBatch({client,circuitId:preview.circuit.id,suggestions:selectedSuggestions,
+      checkSources:async transaction=>{
+        const selectedPoiIds = [...new Set(selectedSuggestions.flatMap(suggestion => suggestion.stops.map(stop => stop.poiId)))];
+        const selectedPoiIdSet = new Set(selectedPoiIds);
+        const previewSourceRows = preview.sourceRows.filter(row => selectedPoiIdSet.has(String(row.id)));
+        const currentSourceRows = await currentGeneratedRouteSourceRows(preview.circuit.id,selectedPoiIds,transaction);
+        if (generatedRouteSourceFingerprint(currentSourceRows)!==generatedRouteSourceFingerprint(previewSourceRows)) {
+          throw new Error('Точки маршрута изменились после расчёта. Создайте новый предпросмотр');
+        }
+      },
+      loadFingerprints:transaction=>currentGeneratedRouteFingerprints(preview.circuit.id,transaction),
+      save:(transaction,suggestion,created)=>saveTravelRoute({ ...suggestion,createOnly:true,stops:suggestion.stops.map(stop=>({ ...stop,dwellMinutes:null,longitude:null,latitude:null,instructionRu:null })),name:suggestion.nameRu,difficulty:'easy',eventOnly:false,bookingRequired:false,
       accessibilityNotesRu:'Требует ручной проверки доступности каждой остановки',scheduleNotesRu:'Проверьте часы работы и дорожные ограничения перед поездкой',
       routeEngine:'osrm',routeEngineProfile:'driving',reviewStatus:'candidate',sourceUrl:'https://project-osrm.org/',routeGroup:`${preview.circuit.id}-${suggestion.routeType}`,
       sortOrder:created,lineOffsetPx:0,lineColour:suggestion.routeType==='tourist_full_day'?'#A47CFF':'#7FD98A',minZoom:7,maxZoom:18,visibleByDefault:false,
+      routeVariantKind:suggestion.routeVariantKind??'recommended',displayPriority:100,geometryMode:'routed',lifecycle:'draft',optimizeWaypointOrder:Boolean(suggestion.optimizeWaypointOrder),
       notesRu:'Автоматический черновик; публикация разрешена только после ручной проверки',rationaleRu:'Маршрут автоматически объединяет наиболее содержательные и разнесённые туристические точки. Порядок и дорожную линию необходимо проверить вручную.',
-      practicalNotesRu:'Перед публикацией проверьте актуальность объектов, часы работы, доступность дорог и фактическое время в пути.' }, preview.circuit.id, suggestion.id);
-    created += 1;
+      practicalNotesRu:'Перед публикацией проверьте актуальность объектов, часы работы, доступность дорог и фактическое время в пути.' }, preview.circuit.id, suggestion.id,{client:transaction})});
   }
+  finally { client.release(); }
   travelRouteGenerationPreviews.delete(token);
-  return { circuitId:preview.circuit.id,created };
+  let publicDataSynced=true;
+  if(batch.created){try{await runCircuitExports(preview.circuit.id,'published');}catch(error){publicDataSynced=false;console.error('Пакет маршрутов сохранён, но read-model не обновлён',error);}}
+  return { circuitId:preview.circuit.id,...batch,publicDataSynced };
 }
 
 function travelPreviewPayload(preview) {
@@ -3657,8 +4200,8 @@ async function saveHistoryEra(rawInput, slugValue) {
 
 async function saveHistoryEraBlock(rawInput, eraSlugValue, blockId = null) {
   const eraSlug = validHistoryEraSlug(eraSlugValue);
-  const sortOrder = optionalInteger(rawInput?.sortOrder, 'порядок блока');
-  if (sortOrder > 9999) throw new Error('Некорректный порядок блока');
+  const sortOrder = blockId === null ? optionalInteger(rawInput?.sortOrder, 'порядок блока') : null;
+  if (sortOrder !== null && sortOrder > 9999) throw new Error('Некорректный порядок блока');
   const blockType = String(rawInput?.blockType ?? '').trim();
   const editorialStatus = historyEraStatus(rawInput?.editorialStatus);
   if (!['text', 'media', 'quote', 'timeline', 'entities'].includes(blockType)) throw new Error('Некорректный тип блока');
@@ -3688,18 +4231,20 @@ async function saveHistoryEraBlock(rawInput, eraSlugValue, blockId = null) {
         ON CONFLICT(id) DO UPDATE SET name=EXCLUDED.name,url=EXCLUDED.url,retrieved_at=now()`,
       [sourceId, sourceUrl.hostname, sourceUrl.href]);
     }
-    const values = [eraSlug, sortOrder, blockType, eyebrowRu, titleRu, bodyRu, mediaAssetId,
-      mediaPosition, sourceId, sourceUrl?.href ?? null, editorialStatus];
     let result;
     if (blockId === null) {
       result = await client.query(`INSERT INTO atlas.history_era_blocks
         (era_slug,sort_order,block_type,eyebrow_ru,title_ru,body_ru,media_asset_id,media_position,source_id,source_url,editorial_status)
-        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`, values);
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
+      [eraSlug, sortOrder, blockType, eyebrowRu, titleRu, bodyRu, mediaAssetId,
+        mediaPosition, sourceId, sourceUrl?.href ?? null, editorialStatus]);
     } else {
       result = await client.query(`UPDATE atlas.history_era_blocks SET
-        era_slug=$1,sort_order=$2,block_type=$3,eyebrow_ru=$4,title_ru=$5,body_ru=$6,media_asset_id=$7,
-        media_position=$8,source_id=$9,source_url=$10,editorial_status=$11,updated_at=now()
-        WHERE id=$12 RETURNING id`, [...values, blockId]);
+        block_type=$1,eyebrow_ru=$2,title_ru=$3,body_ru=$4,media_asset_id=$5,
+        media_position=$6,source_id=$7,source_url=$8,editorial_status=$9,updated_at=now()
+        WHERE id=$10 AND era_slug=$11 RETURNING id`,
+      [blockType, eyebrowRu, titleRu, bodyRu, mediaAssetId, mediaPosition, sourceId,
+        sourceUrl?.href ?? null, editorialStatus, blockId, eraSlug]);
     }
     await client.query('COMMIT');
     if (!result.rows[0]) return null;
@@ -3716,6 +4261,40 @@ async function deleteHistoryEraBlock(blockId) {
   const result = await pool.query('DELETE FROM atlas.history_era_blocks WHERE id=$1 RETURNING id', [blockId]);
   if (!result.rows[0]) return null;
   return { id: Number(result.rows[0].id), publicDataSynced: await syncHistoryEraPublicData() };
+}
+
+async function saveHistoryEraBlockOrder(eraSlugValue, rawInput) {
+  const eraSlug = validHistoryEraSlug(eraSlugValue);
+  let orderedIds;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const eraResult = await client.query('SELECT slug FROM atlas.history_eras WHERE slug=$1 FOR UPDATE', [eraSlug]);
+    if (!eraResult.rows[0]) throw new Error('Историческая эпоха не найдена');
+    const existingResult = await client.query(`SELECT id, sort_order
+      FROM atlas.history_era_blocks
+      WHERE era_slug=$1
+      ORDER BY sort_order,id
+      FOR UPDATE`, [eraSlug]);
+    const plan = planHistoryEraBlockOrder(existingResult.rows, rawInput);
+    orderedIds = plan.orderedIds;
+
+    if (orderedIds.length) {
+      await client.query(`UPDATE atlas.history_era_blocks
+        SET sort_order=$3 + array_position($2::bigint[],id) - 1,updated_at=now()
+        WHERE era_slug=$1 AND id=ANY($2::bigint[])`, [eraSlug, orderedIds, plan.temporaryBase]);
+      await client.query(`UPDATE atlas.history_era_blocks
+        SET sort_order=array_position($2::bigint[],id) - 1,updated_at=now()
+        WHERE era_slug=$1 AND id=ANY($2::bigint[])`, [eraSlug, orderedIds]);
+    }
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally {
+    client.release();
+  }
+  return { eraSlug, orderedIds, publicDataSynced: await syncHistoryEraPublicData() };
 }
 
 function validSeason(value) {
@@ -4300,6 +4879,16 @@ const server = createServer(async (request, response) => {
       const result = await saveTravelZone(await requestBody(request, 500_000), travelZoneMatch[1], travelZoneMatch[2]);
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
     }
+    const travelAccessAnchorsMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/access-anchors$/);
+    if (request.method === 'GET' && travelAccessAnchorsMatch) {
+      const result = await getTravelAccessAnchors(travelAccessAnchorsMatch[1]);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    const travelAccessAnchorMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/access-anchors\/([A-Za-z0-9_-]+)$/);
+    if (request.method === 'PUT' && travelAccessAnchorMatch) {
+      const result = await saveTravelAccessAnchor(await requestBody(request), travelAccessAnchorMatch[1], travelAccessAnchorMatch[2]);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
     const travelRoutesMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/routes$/);
     if (request.method === 'GET' && travelRoutesMatch) {
       const result = await getTravelRoutes(travelRoutesMatch[1]);
@@ -4307,7 +4896,7 @@ const server = createServer(async (request, response) => {
     }
     const travelRouteGenerationCreateMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/route-generation-previews$/);
     if (request.method === 'POST' && travelRouteGenerationCreateMatch) {
-      const result = await createTravelRouteGenerationPreview(travelRouteGenerationCreateMatch[1]);
+      const result = await createTravelRouteGenerationPreview(travelRouteGenerationCreateMatch[1], await requestBody(request));
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
     }
     const travelRouteGenerationMatch = url.pathname.match(/^\/travel\/route-generation-previews\/([A-Za-z0-9-]+)$/);
@@ -4318,16 +4907,46 @@ const server = createServer(async (request, response) => {
     const travelRouteGenerationApplyMatch = url.pathname.match(/^\/travel\/route-generation-previews\/([A-Za-z0-9-]+)\/apply$/);
     if (request.method === 'POST' && travelRouteGenerationApplyMatch) {
       const input = await requestBody(request);
-      const result = await applyTravelRouteGenerationPreview(travelRouteGenerationApplyMatch[1], input?.routeIds);
+      const result = await applyTravelRouteGenerationPreview(travelRouteGenerationApplyMatch[1], String(input?.circuitId??''), input?.routeIds);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    const travelRouteTailPreviewCreateMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/routes\/([A-Za-z0-9_-]+)\/tail-previews$/);
+    const travelRouteGeometryPreviewMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/routes\/([A-Za-z0-9_-]+)\/geometry-previews$/);
+    if (request.method === 'POST' && travelRouteGeometryPreviewMatch) {
+      const result = await previewTravelRouteGeometry(travelRouteGeometryPreviewMatch[1],travelRouteGeometryPreviewMatch[2],await requestBody(request));
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    if (request.method === 'POST' && travelRouteTailPreviewCreateMatch) {
+      const result = await createTravelRouteTailPreview(travelRouteTailPreviewCreateMatch[1],travelRouteTailPreviewCreateMatch[2]);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    const travelRouteTailPreviewMatch = url.pathname.match(/^\/travel\/route-tail-previews\/([A-Za-z0-9-]+)$/);
+    if (request.method === 'GET' && travelRouteTailPreviewMatch) {
+      const result = getTravelRouteTailPreview(travelRouteTailPreviewMatch[1]);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    const travelRouteTailPreviewApplyMatch = url.pathname.match(/^\/travel\/route-tail-previews\/([A-Za-z0-9-]+)\/apply$/);
+    if (request.method === 'POST' && travelRouteTailPreviewApplyMatch) {
+      const input = await requestBody(request);
+      const result = await applyTravelRouteTailPreview(travelRouteTailPreviewApplyMatch[1],String(input?.circuitId??''),String(input?.routeId??''));
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
     }
     const travelRouteMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/routes\/([A-Za-z0-9_-]+)$/);
+    const travelRouteLifecycleMatch = url.pathname.match(/^\/travel\/circuits\/([A-Za-z0-9_-]+)\/routes\/([A-Za-z0-9_-]+)\/lifecycle$/);
+    if (request.method === 'POST' && travelRouteLifecycleMatch) {
+      const result = await changeTravelRouteLifecycle(travelRouteLifecycleMatch[1],travelRouteLifecycleMatch[2],await requestBody(request));
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
     if (request.method === 'GET' && travelRouteMatch) {
       const result = await getTravelRoute(travelRouteMatch[1],travelRouteMatch[2]);
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
     }
     if (request.method === 'PUT' && travelRouteMatch) {
       const result = await saveTravelRoute(await requestBody(request,500_000),travelRouteMatch[1],travelRouteMatch[2]);
+      return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
+    }
+    if (request.method === 'DELETE' && travelRouteMatch) {
+      const result = await deleteArchivedTravelRoute(travelRouteMatch[1],travelRouteMatch[2],await requestBody(request));
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
     }
     if (request.method === 'POST' && url.pathname === '/travel/import-previews') {
@@ -4390,6 +5009,11 @@ const server = createServer(async (request, response) => {
       const result = await getTrackLayoutAnnotations(circuitLayoutAnnotationsMatch[1],circuitLayoutAnnotationsMatch[2]);
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
     }
+    const sectorSegmentationMatch = url.pathname.match(/^\/circuits\/([A-Za-z0-9_-]+)\/layouts\/([A-Za-z0-9_-]+)\/sectors$/);
+    if (request.method === 'POST' && sectorSegmentationMatch) {
+      const result = await saveTrackSectorSegmentation(await requestBody(request,100_000),sectorSegmentationMatch[1],sectorSegmentationMatch[2]);
+      return result ? json(response, 201, result) : json(response, 404, { error: 'not_found' });
+    }
     const circuitLayoutAnnotationMatch = url.pathname.match(/^\/circuits\/([A-Za-z0-9_-]+)\/layouts\/([A-Za-z0-9_-]+)\/annotations\/([A-Za-z0-9_-]+)$/);
     if (request.method === 'PUT' && circuitLayoutAnnotationMatch) {
       const result = await saveTrackLayoutAnnotation(await requestBody(request,1_000_000),circuitLayoutAnnotationMatch[1],circuitLayoutAnnotationMatch[2],circuitLayoutAnnotationMatch[3]);
@@ -4432,6 +5056,10 @@ const server = createServer(async (request, response) => {
     if (request.method === 'POST' && historyEraBlocksMatch) {
       const result = await saveHistoryEraBlock(await requestBody(request, 500_000), historyEraBlocksMatch[1]);
       return result ? json(response, 201, result) : json(response, 404, { error: 'not_found' });
+    }
+    const historyEraBlockOrderMatch = url.pathname.match(/^\/history-eras\/([A-Za-z0-9-]+)\/blocks\/order$/);
+    if (request.method === 'PATCH' && historyEraBlockOrderMatch) {
+      return json(response, 200, await saveHistoryEraBlockOrder(historyEraBlockOrderMatch[1], await requestBody(request, 500_000)));
     }
     const historyEraBlockMatch = url.pathname.match(/^\/history-era-blocks\/(\d+)$/);
     if (request.method === 'PATCH' && historyEraBlockMatch) {

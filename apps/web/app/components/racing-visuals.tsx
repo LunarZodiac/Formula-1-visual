@@ -1,7 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { driverPhotoUrl } from '../data/driver-photo-sources';
 
 const driverCountries: Record<string, string> = {
@@ -192,10 +192,12 @@ export function TeamLogo({
   className?: string;
 }) {
   const source = logoUrl ?? teamLogoUrl(constructorId, constructorName, season);
+  return <TeamLogoImage key={source ?? ''} source={source} constructorName={constructorName} teamColor={teamColor} className={className} />;
+}
+
+function TeamLogoImage({ source, constructorName, teamColor, className }: { source: string | null | undefined; constructorName?: string | null; teamColor?: string | null; className: string }) {
   const [mediaFailed, setMediaFailed] = useState(false);
   const initials = (constructorName ?? 'F1').split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
-
-  useEffect(() => setMediaFailed(false), [source]);
 
   const hasLogo = Boolean(source) && !mediaFailed;
   return (
@@ -208,14 +210,13 @@ export function TeamLogo({
 
 export function TeamCar({ season, constructorId, constructorName, carImageUrl }: { season: number; constructorId?: string | null; constructorName?: string | null; carImageUrl?: string | null }) {
   const source = carImageUrl ?? teamCarUrl(season, constructorId, constructorName);
+  return <TeamCarImage key={source ?? ''} source={source} />;
+}
+
+function TeamCarImage({ source }: { source: string | null | undefined }) {
   const [mediaFailed, setMediaFailed] = useState(false);
   const [placeholderFailed, setPlaceholderFailed] = useState(false);
   const placeholder = '/assets/f1/teams/placeholders/unbranded-car.png';
-
-  useEffect(() => {
-    setMediaFailed(false);
-    setPlaceholderFailed(false);
-  }, [source]);
 
   if (placeholderFailed) return <span className="team-car-mark" aria-hidden="true"><i /><i /></span>;
 

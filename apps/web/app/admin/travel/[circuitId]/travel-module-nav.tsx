@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 const sections = [
   { id: 'points', label: 'Точки', suffix: '' },
+  { id: 'access', label: 'Доступ', suffix: '/access' },
   { id: 'zones', label: 'Районы', suffix: '/zones' },
   { id: 'routes', label: 'Маршруты', suffix: '/routes' },
 ] as const;

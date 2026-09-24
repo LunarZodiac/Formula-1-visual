@@ -26,6 +26,8 @@ try {
       route.name_ru,
       route.route_type,
       route.review_status,
+      route.verified_at,
+      route.lifecycle,
       route.distance_m,
       route.geometry IS NOT NULL AS has_geometry,
       route.event_only,
@@ -38,6 +40,8 @@ try {
       presentation.rationale_ru,
       presentation.highlights_ru,
       presentation.practical_notes_ru,
+      COALESCE(stops.stop_count, 0)::integer AS stop_count,
+      COALESCE(stops.unnamed_stop_count, 0)::integer AS unnamed_stop_count,
       COALESCE((endpoint.properties ->> 'eventAccessConfirmed')::boolean, false)
         AS endpoint_event_access_confirmed,
       round(ST_Distance(
@@ -52,6 +56,14 @@ try {
     LEFT JOIN atlas.travel_route_presentations AS presentation
       ON presentation.route_id = route.id
     LEFT JOIN atlas.data_sources AS source ON source.id = route.source_id
+    LEFT JOIN LATERAL (
+      SELECT count(*) AS stop_count,
+        count(*) FILTER (WHERE NULLIF(btrim(coalesce(stop.name_ru, poi.name_ru, poi.name, '')), '') IS NULL)
+          AS unnamed_stop_count
+      FROM atlas.travel_route_stops stop
+      LEFT JOIN atlas.tourism_pois poi ON poi.id = stop.poi_id
+      WHERE stop.route_id = route.id
+    ) AS stops ON true
     LEFT JOIN LATERAL (
       SELECT poi.properties
       FROM atlas.travel_route_stops AS stop
@@ -110,6 +122,12 @@ try {
     if (!route.rationale_ru) publicationBlockers.push('не заполнено объяснение выбора маршрута');
     if (!Array.isArray(route.highlights_ru) || route.highlights_ru.length === 0) publicationBlockers.push('не заполнены точки интереса');
     if (!route.practical_notes_ru) publicationBlockers.push('не заполнены практические советы');
+    if (route.stop_count < 2) publicationBlockers.push('нужно минимум две остановки');
+    if (route.unnamed_stop_count > 0) publicationBlockers.push('есть остановки без отображаемого названия');
+    if (route.lifecycle !== 'active') publicationBlockers.push('маршрут находится в архиве');
+    if (!['reviewed', 'published'].includes(route.review_status) || !route.verified_at) {
+      publicationBlockers.push('маршрут не прошёл редакторскую проверку с датой подтверждения');
+    }
     if (route.route_type === 'arrival' && !route.endpoint_event_access_confirmed) {
       publicationBlockers.push('конечная точка не подтверждена как въезд на этап');
     }

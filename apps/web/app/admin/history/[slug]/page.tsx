@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../lib/admin-auth';
 import { getAdminHistoryEra, isAdminDatabaseConfigured } from '../../../lib/admin-database';
 import { removeHistoryEraBlock, saveHistoryEra, saveHistoryEraBlock } from '../../actions';
+import { HistoryEraBlockOrderControls } from './history-era-block-order-controls';
 
 const statusOptions = [
   ['draft', 'Черновик'],
@@ -37,15 +38,18 @@ export default async function AdminHistoryEraPage({ params, searchParams }: {
   const detail = await getAdminHistoryEra(slug).catch(() => null);
   if (!detail) notFound();
   const { era, blocks } = detail;
+  const orderedBlockIds = blocks.map((block) => block.id);
 
   return <main className="admin-shell"><section className="admin-edit-panel">
     <Link className="admin-back-link" href="/admin/history">← Вернуться к эпохам</Link>
-    <header><div><span className="admin-kicker">Эпоха чемпионата</span><h1>{era.titleRu}</h1><p>{era.yearsLabel} · {blocks.length} блоков</p></div><code>{era.slug}</code></header>
-    {state.saved === 'era' ? <div className="admin-alert is-success">Основные поля эпохи сохранены</div> : null}
-    {state.saved === 'block' ? <div className="admin-alert is-success">Блок сохранён</div> : null}
-    {state.deleted ? <div className="admin-alert is-success">Блок удалён</div> : null}
-    {state.syncError ? <div className="admin-alert is-error">Запись сохранена в базе, но публичный экспорт не обновлён</div> : null}
-    {state.error ? <div className="admin-alert is-error">Не удалось сохранить изменения. Проверьте обязательные поля</div> : null}
+    <header><div><span className="admin-kicker">Эпоха чемпионата</span><h1>{era.titleRu}</h1><p>{era.yearsLabel} · {blocks.length} блоков</p><Link className="admin-back-link" href={`/admin/history/${encodeURIComponent(era.slug)}/preview`}>Предпросмотр материала →</Link></div><code>{era.slug}</code></header>
+    {state.saved === 'era' ? <div className="admin-alert is-success" role="status">Основные поля эпохи сохранены</div> : null}
+    {state.saved === 'block' ? <div className="admin-alert is-success" role="status">Блок сохранён</div> : null}
+    {state.saved === 'order' ? <div className="admin-alert is-success" role="status">Порядок блоков сохранён</div> : null}
+    {state.deleted ? <div className="admin-alert is-success" role="status">Блок удалён</div> : null}
+    {state.syncError ? <div className="admin-alert is-error" role="alert">Запись сохранена в базе, но публичный экспорт не обновлён</div> : null}
+    {state.error === 'order' ? <div className="admin-alert is-error" role="alert">Не удалось изменить порядок. Обновите страницу и повторите</div> : null}
+    {state.error && state.error !== 'order' ? <div className="admin-alert is-error" role="alert">Не удалось сохранить изменения. Проверьте обязательные поля</div> : null}
 
     <form action={saveHistoryEra} className="admin-editor-form">
       <input type="hidden" name="slug" value={era.slug} />
@@ -62,11 +66,11 @@ export default async function AdminHistoryEraPage({ params, searchParams }: {
     </form>
 
     <section className="admin-related-section"><header><div><span className="admin-kicker">Структура материала</span><h2>Редакционные блоки</h2></div><span>{blocks.length}</span></header>
-      <div className="admin-editor-stack">{blocks.map((block, index) => <article className="admin-editor-card" key={block.id}><header><div><span className="admin-kicker">{String(index + 1).padStart(2, '0')} / {block.blockType}</span><h3>{block.titleRu || 'Без заголовка'}</h3></div><code>{block.id}</code></header>
+      <div className="admin-editor-stack">{blocks.map((block, index) => <article className="admin-editor-card" key={block.id}><header><div><span className="admin-kicker">{String(index + 1).padStart(2, '0')} / {block.blockType}</span><h3>{block.titleRu || 'Без заголовка'}</h3></div><div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', alignItems: 'center', gap: 12 }}><code>{block.id}</code><HistoryEraBlockOrderControls eraSlug={era.slug} orderedIds={orderedBlockIds} index={index} blockLabel={block.titleRu || `Блок ${index + 1}`} /></div></header>
         <form action={saveHistoryEraBlock} className="admin-editor-form">
           <input type="hidden" name="eraSlug" value={era.slug} /><input type="hidden" name="blockId" value={block.id} />
           <div className="admin-form-grid">
-            <label><span>Порядок</span><input name="sortOrder" type="number" min="0" defaultValue={block.sortOrder} required /></label>
+            <label><span>Позиция</span><input value={index + 1} readOnly /></label>
             <label><span>Тип</span><select name="blockType" defaultValue={block.blockType}>{blockTypeOptions.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
             <label className="is-wide"><span>Служебная подпись</span><input name="eyebrowRu" defaultValue={block.eyebrowRu ?? ''} /></label>
             <label className="is-wide"><span>Заголовок</span><input name="titleRu" defaultValue={block.titleRu ?? ''} /></label>

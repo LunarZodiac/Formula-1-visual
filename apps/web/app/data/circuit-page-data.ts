@@ -147,8 +147,9 @@ export type CircuitPageData = {
   }>;
 };
 
-export const bahrainCircuitPage = bahrainPageJson as CircuitPageData;
-export const spaCircuitPage = spaPageJson as CircuitPageData;
+// These generated JSON documents follow the CircuitPageData export contract.
+export const bahrainCircuitPage = bahrainPageJson as unknown as CircuitPageData;
+export const spaCircuitPage = spaPageJson as unknown as CircuitPageData;
 
 type CircuitCatalogRow = (typeof circuitCatalogJson.circuits)[number];
 
@@ -165,7 +166,10 @@ function aroundCoordinate([longitude, latitude]: [number, number]): [[number, nu
  */
 export function buildCircuitPageFromCatalog(circuit: CircuitCatalogRow): CircuitPageData {
   const seasons = circuit.seasons?.length ? circuit.seasons : [circuitCatalogJson.season];
-  const fallbackFeature = circuit.geometry ? { type: 'Feature' as const, properties: {}, geometry: circuit.geometry } : null;
+  const coordinates: [number, number] = [circuit.coordinates[0], circuit.coordinates[1]];
+  const fallbackFeature: GeoJSON.Feature<GeoJSON.LineString> | null = circuit.geometry?.type === 'LineString'
+    ? { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: circuit.geometry.coordinates } }
+    : null;
   const layoutsById = new Map<string, { id: string; centerline: GeoJSON.Feature<GeoJSON.LineString> }>();
   const seasonLayoutIds: Record<string, string> = {};
   for (const season of seasons) {
@@ -199,7 +203,7 @@ export function buildCircuitPageFromCatalog(circuit: CircuitCatalogRow): Circuit
     geometryId: circuit.id,
     nameRu: circuit.nameRu,
     officialName: circuit.officialName,
-    location: { cityRu: circuit.cityRu, countryRu: circuit.countryRu, countryCode: circuit.countryCode, coordinates: circuit.coordinates },
+    location: { cityRu: circuit.cityRu, countryRu: circuit.countryRu, countryCode: circuit.countryCode, coordinates },
     summary: {
       description: circuit.summary || 'Публичный редакционный профиль трассы готовится: базовые сведения взяты из каталога, дополнительные факты и источники будут добавлены после проверки',
       typeRu: circuit.typeRu,
@@ -214,7 +218,7 @@ export function buildCircuitPageFromCatalog(circuit: CircuitCatalogRow): Circuit
         { label: 'Тип трассы', value: circuit.typeRu, icon: 'type' },
       ],
     },
-    map: { trackCamera: { maxZoom: 14.8, pitch: 46, bearing: 0, padding: 92 }, travelBounds: aroundCoordinate(circuit.coordinates), travelZoom: 11 },
+    map: { trackCamera: { maxZoom: 14.8, pitch: 46, bearing: 0, padding: 92 }, travelBounds: aroundCoordinate(coordinates), travelZoom: 11 },
     results: { seasons, defaultSeason: seasons[0] },
     features: { technicalOverlay: false, travelMode: false, local3dModel: false, buildings3d: false },
     trackPresentation,

@@ -97,7 +97,7 @@ function formatResultValue(result: SnapshotSessionResult, view: ResultView) {
   return result.status ?? '—';
 }
 
-function makeTravelPoints(pageData: CircuitPageData): GeoJSON.FeatureCollection<GeoJSON.Point> {
+function makeTravelPoints(pageData: CircuitPageData): GeoJSON.FeatureCollection<GeoJSON.Point, Record<string, unknown>> {
   return {
     type: 'FeatureCollection',
     features: pageData.travel.points.map((point) => ({
@@ -156,6 +156,22 @@ function annotationCollection(
 }
 
 type TravelMapCollection = GeoJSON.FeatureCollection<GeoJSON.Geometry, Record<string, unknown>>;
+type RouteDisplayMode = 'default' | 'all' | 'none';
+
+function routeVisibleAtZoom(feature: GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>, mode: RouteDisplayMode, zoom: number) {
+  if (mode === 'none' || mode === 'default' && feature.properties?.visibleByDefault === false) return false;
+  const minZoom = Number(feature.properties?.minZoom ?? 0);
+  const maxZoom = Number(feature.properties?.maxZoom ?? 24);
+  return zoom >= minZoom && zoom <= maxZoom;
+}
+
+function travelFeatureTextList(value: unknown): string[] {
+  let items = value;
+  if (typeof items === 'string') {
+    try { items = JSON.parse(items); } catch { return []; }
+  }
+  return Array.isArray(items) ? items.filter((item): item is string => typeof item === 'string' && item.trim().length > 0) : [];
+}
 
 function travelFeatureId(feature: GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>) {
   return String(feature.properties?.id ?? '');
@@ -346,7 +362,7 @@ function applyBasemap(map: MapLibreMap, nextBasemap: DetailBasemap) {
 
 function applyDetailMapTheme(map: MapLibreMap, theme: AtlasTheme, basemap: DetailBasemap) {
   const isLight = theme === 'light';
-  const paint = (layerId: string, property: string, value: unknown) => {
+  const paint = (layerId: string, property: Parameters<MapLibreMap['setPaintProperty']>[1], value: Parameters<MapLibreMap['setPaintProperty']>[2]) => {
     if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
   };
   const visibility = (layerId: string, value: 'visible' | 'none') => {
@@ -451,8 +467,8 @@ function trackBounds(track: GeoJSON.Feature<GeoJSON.LineString> | undefined) {
   if (!track) return undefined;
   const [first, ...coordinates] = track.geometry.coordinates;
   return coordinates.reduce(
-    (bounds, coordinate) => bounds.extend(coordinate),
-    new maplibregl.LngLatBounds(first, first),
+    (bounds, coordinate) => bounds.extend([coordinate[0], coordinate[1]]),
+    new maplibregl.LngLatBounds([first[0], first[1]], [first[0], first[1]]),
   );
 }
 
@@ -503,10 +519,11 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
   const onSelectRef = useRef(onSelect);
   const [basemap, setBasemap] = useState<DetailBasemap>('dark');
   const [showAllPoints, setShowAllPoints] = useState(true);
-  const [showRoutes, setShowRoutes] = useState(true);
+  const [routeDisplayMode, setRouteDisplayMode] = useState<RouteDisplayMode>('default');
   const [ready, setReady] = useState(false);
   const mapCollections = useMemo(() => travelCollections(collection, roleFilter), [collection, roleFilter]);
   const routeCount = mapCollections.routes.features.length;
+  const defaultRouteCount = mapCollections.routes.features.filter((feature) => feature.properties?.visibleByDefault !== false).length;
   const visiblePoints = useMemo(() => ({
     ...mapCollections.points,
     features: [
@@ -522,31 +539,44 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
     if (!containerRef.current || mapRef.current) return;
     const initialTheme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
     themeRef.current = initialTheme;
+    const allPointBounds = pointCollectionBounds(travelCollections(collection).points);
+    const coverageBounds = allPointBounds ?? new maplibregl.LngLatBounds(bounds[0], bounds[1]);
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: makeInitialDetailStyle(initialTheme, 'dark'),
-      bounds,
+      bounds: coverageBounds,
       fitBoundsOptions: { padding: 48 },
-      minZoom: 4.5,
+      minZoom: -2,
       maxZoom: 18,
+      maxBounds: [[-180, -85], [180, 85]],
+      renderWorldCopies: false,
       attributionControl: false,
     });
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-left');
     addAtlasMapAttribution(map);
-    const observer = new ResizeObserver(() => map.resize());
+    const updateMinimumZoom = () => {
+      const coverageZoom = map.cameraForBounds(coverageBounds, { padding: 64 })?.zoom;
+      if (typeof coverageZoom === 'number' && Number.isFinite(coverageZoom)) {
+        map.setMinZoom(Math.max(-2, Math.min(12.5, coverageZoom - .05)));
+      }
+    };
+    const observer = new ResizeObserver(() => { map.resize(); updateMinimumZoom(); });
     observer.observe(containerRef.current);
+    updateMinimumZoom();
 
     map.on('load', () => {
       const showFeaturePopup = (feature: maplibregl.MapGeoJSONFeature, fallbackPosition?: maplibregl.LngLat) => {
         const properties = feature.properties ?? {};
+        const isRoute = properties.featureType === 'route';
         const title = String(properties.name ?? properties.title ?? 'Точка маршрута');
         const role = String(properties.role ?? '');
-        const category = String(properties.categoryRu ?? travelRoleLabels[role as keyof typeof travelRoleLabels] ?? 'Ориентир поездки');
+        const category = isRoute ? 'Маршрут' : String(properties.categoryRu ?? travelRoleLabels[role as keyof typeof travelRoleLabels] ?? 'Ориентир поездки');
         const description = String(properties.descriptionRu ?? properties.description ?? '').trim();
         const imageUrl = String(properties.imageUrl ?? '').trim();
         const popupContent = document.createElement('article');
-        popupContent.className = 'poi-popup-content';
+        popupContent.className = isRoute ? 'poi-popup-content poi-popup-content--route' : 'poi-popup-content';
+        if (isRoute) popupContent.tabIndex = 0;
         if (imageUrl) {
           const image = document.createElement('img');
           image.className = 'poi-popup-content__image';
@@ -563,6 +593,38 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
           const descriptionElement = document.createElement('p');
           descriptionElement.textContent = description;
           popupContent.append(descriptionElement);
+        }
+        if (isRoute) {
+          const distance = Number(properties.distanceM);
+          const minutes = Number(properties.durationMinutes);
+          if (Number.isFinite(distance) && distance > 0 || Number.isFinite(minutes) && minutes > 0) {
+            const journey = document.createElement('p');
+            journey.textContent = [
+              Number.isFinite(distance) && distance > 0 ? `${(distance / 1000).toLocaleString('ru-RU', { maximumFractionDigits: 1 })} км` : '',
+              Number.isFinite(minutes) && minutes > 0 ? `${minutes} мин в пути` : '',
+            ].filter(Boolean).join(' · ');
+            popupContent.appendChild(journey);
+          }
+          const stops = travelFeatureTextList(properties.stops);
+          if (stops.length > 0) {
+            const stopsLabel = document.createElement('p');
+            stopsLabel.textContent = 'Остановки по порядку';
+            const stopsList = document.createElement('ol');
+            stopsList.className = 'poi-popup-content__stops';
+            stops.forEach((stop) => {
+              const item = document.createElement('li');
+              item.textContent = stop;
+              stopsList.appendChild(item);
+            });
+            popupContent.appendChild(stopsLabel);
+            popupContent.appendChild(stopsList);
+          }
+          for (const value of [properties.rationale, properties.practicalNotes]) {
+            if (typeof value !== 'string' || !value.trim()) continue;
+            const note = document.createElement('p');
+            note.textContent = value;
+            popupContent.appendChild(note);
+          }
         }
         const position = feature.geometry.type === 'Point'
           ? feature.geometry.coordinates as [number, number]
@@ -695,6 +757,17 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
         showFeaturePopup(feature, event.lngLat);
       });
       map.on('click', 'poi-section-zones-fill', (event) => {
+        // Точки и линии точнее по месту, чем фоновая зона: не перекрываем их popup зоны.
+        const pointHit = map.queryRenderedFeatures(event.point, {
+          layers: ['poi-section-clusters', 'poi-section-points', 'poi-section-circuit-point', 'poi-section-routes'],
+        });
+        if (pointHit.length > 0) return;
+        const feature = event.features?.[0];
+        if (!feature) return;
+        onSelectRef.current(String(feature.properties?.id ?? ''));
+        showFeaturePopup(feature, event.lngLat);
+      });
+      map.on('click', 'poi-section-routes', (event) => {
         const pointHit = map.queryRenderedFeatures(event.point, {
           layers: ['poi-section-clusters', 'poi-section-points', 'poi-section-circuit-point'],
         });
@@ -711,7 +784,7 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
         const zoom = await source.getClusterExpansionZoom(Number(feature.properties?.cluster_id));
         map.easeTo({ center: feature.geometry.coordinates as [number, number], zoom, duration: 500, essential: true });
       });
-      ['poi-section-points', 'poi-section-clusters', 'poi-section-circuit-point', 'poi-section-zones-fill'].forEach((layer) => {
+      ['poi-section-points', 'poi-section-clusters', 'poi-section-circuit-point', 'poi-section-zones-fill', 'poi-section-routes'].forEach((layer) => {
         map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
         map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
       });
@@ -739,9 +812,20 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!ready || !map?.isStyleLoaded() || !map.getLayer('poi-section-routes')) return;
-    map.setLayoutProperty('poi-section-routes', 'visibility', showRoutes ? 'visible' : 'none');
-  }, [ready, showRoutes]);
+    if (!ready || !map?.isStyleLoaded()) return;
+    const routeSource = map.getSource('poi-section-routes') as maplibregl.GeoJSONSource | undefined;
+    if (!routeSource) return;
+    const updateVisibleRoutes = () => {
+      const zoom = map.getZoom();
+      routeSource.setData({
+        ...mapCollections.routes,
+        features: mapCollections.routes.features.filter((feature) => routeVisibleAtZoom(feature, routeDisplayMode, zoom)),
+      });
+    };
+    updateVisibleRoutes();
+    map.on('zoomend', updateVisibleRoutes);
+    return () => { map.off('zoomend', updateVisibleRoutes); };
+  }, [mapCollections.routes, ready, routeDisplayMode]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -750,19 +834,24 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
     if (!source) return;
     source.setData(visiblePoints);
     (map.getSource('poi-section-zones') as maplibregl.GeoJSONSource | undefined)?.setData(mapCollections.zones);
-    (map.getSource('poi-section-routes') as maplibregl.GeoJSONSource | undefined)?.setData(mapCollections.routes);
-  }, [mapCollections.routes, mapCollections.zones, ready, visiblePoints]);
+  }, [mapCollections.zones, ready, visiblePoints]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!ready || !map?.isStyleLoaded()) return;
     const selectionSource = map.getSource('poi-section-selection') as maplibregl.GeoJSONSource | undefined;
     const feature = collection.features.find((candidate) => travelFeatureId(candidate) === selectedId);
-    selectionSource?.setData({ type: 'FeatureCollection', features: feature ? [feature] : [] });
-    if (!feature) return;
+    const syncSelection = () => {
+      const visible = feature && (feature.properties?.featureType !== 'route' || routeVisibleAtZoom(feature, routeDisplayMode, map.getZoom()));
+      selectionSource?.setData({ type: 'FeatureCollection', features: feature && visible ? [feature] : [] });
+    };
+    syncSelection();
+    map.on('zoomend', syncSelection);
+    if (!feature || feature.properties?.featureType === 'route' && routeDisplayMode === 'none') return () => { map.off('zoomend', syncSelection); };
     const selectedBounds = featureCollectionBounds([feature]);
     if (selectedBounds) map.fitBounds(selectedBounds, { padding: 86, maxZoom: 13.2, duration: 650, essential: true });
-  }, [collection, ready, selectedId]);
+    return () => { map.off('zoomend', syncSelection); };
+  }, [collection, ready, routeDisplayMode, selectedId]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -807,9 +896,10 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
         {showAllPoints ? 'К трассе' : 'Показать все точки'}
       </button>
       <label className={`spa-poi-routes-toggle${routeCount === 0 ? ' is-disabled' : ''}`}>
-        <input type="checkbox" checked={showRoutes && routeCount > 0} disabled={routeCount === 0} onChange={(event) => setShowRoutes(event.currentTarget.checked)} />
+        <input type="checkbox" checked={routeCount > 0 && (routeDisplayMode === 'all' || routeDisplayMode === 'default' && defaultRouteCount > 0)} disabled={routeCount === 0} onChange={(event) => setRouteDisplayMode(event.currentTarget.checked ? 'all' : 'none')} />
         <span>{routeCount > 0 ? 'Показать маршруты' : 'Маршруты пока не опубликованы'}</span>
       </label>
+      {routeCount > defaultRouteCount && routeDisplayMode === 'default' && <button type="button" className="spa-poi-routes-show-all" onClick={() => setRouteDisplayMode('all')}>Показать все {routeCount} маршрутов</button>}
     </div>
   );
 }
@@ -887,6 +977,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   const sceneNavigationLockRef = useRef<string | null>(null);
   const sceneNavigationTimerRef = useRef<number | null>(null);
   const travelStory = pageData.travel.story;
+  const showLegacyTravelStory: boolean = false;
   const activeTravelChapter = travelStory?.chapters.find((chapter) => chapter.id === activeTravelChapterId) ?? travelStory?.chapters[0];
   const activeHistoryItem = pageData.history?.[activeHistoryIndex] ?? pageData.history?.[0];
   const sceneNavigation = useMemo(() => [
@@ -922,6 +1013,28 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
     () => travelCollections(travelMapData).routes.features.length,
     [travelMapData],
   );
+  const featuredTravelRoutes = useMemo(() => {
+    const exportedRoutes = travelCollections(travelMapData).routes.features
+      .map((feature) => {
+        const properties = feature.properties ?? {};
+        const distance = Number(properties.distanceM);
+        const minutes = Number(properties.durationMinutes);
+        return {
+          id: travelFeatureId(feature),
+          type: 'Опубликованный маршрут',
+          title: String(properties.name ?? 'Маршрут'),
+          description: 'Остановки и дорожная линия доступны на карте',
+          distance: Number.isFinite(distance) ? `${(distance / 1000).toLocaleString('ru-RU', { maximumFractionDigits: 1 })} км` : '—',
+          duration: Number.isFinite(minutes) ? `${minutes} мин в пути` : 'Время в пути уточняется',
+          stops: travelFeatureTextList(properties.stops),
+          rationale: typeof properties.rationale === 'string' ? properties.rationale : undefined,
+          highlights: travelFeatureTextList(properties.highlights),
+          practicalNotes: typeof properties.practicalNotes === 'string' ? properties.practicalNotes : undefined,
+        };
+      });
+    return exportedRoutes;
+  }, [travelMapData]);
+  const selectedPublishedTravelRoute = featuredTravelRoutes.find((route) => route.id === selectedTravelFeatureId);
   const availableTravelRoles = useMemo(() => {
     const roles = new Set(
       travelCollections(travelMapData).points.features.map((feature) => String(feature.properties?.role ?? '')),
@@ -1060,7 +1173,10 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
     setActiveTravelChapterId(null);
     setTravelFocusFeatureIds([]);
     setSelectedTravelFeatureId(featureId);
-  }, []);
+    if (travelMapData.features.some((feature) => travelFeatureId(feature) === featureId && feature.properties?.featureType === 'route')) {
+      setTravelWorkspacePanel('scenarios');
+    }
+  }, [travelMapData]);
 
   useEffect(() => {
     if (!pageData.features.travelMode) return;
@@ -1305,6 +1421,16 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         const coordinates = feature.geometry.type === 'Polygon'
           ? feature.geometry.coordinates.flat(1)
           : feature.geometry.coordinates.flat(2);
+        const first = coordinates[0];
+        if (!first) return;
+        const bounds = coordinates.slice(1).reduce(
+          (nextBounds, coordinate) => nextBounds.extend(coordinate as [number, number]),
+          new maplibregl.LngLatBounds(first as [number, number], first as [number, number]),
+        );
+        map.fitBounds(bounds, { padding: 90, maxZoom: 13.5, pitch: 48, duration: 800, essential: true });
+      }
+      if (feature.geometry.type === 'LineString') {
+        const coordinates = feature.geometry.coordinates;
         const first = coordinates[0];
         if (!first) return;
         const bounds = coordinates.slice(1).reduce(
@@ -1880,11 +2006,40 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           kind.textContent = isRoute ? 'Маршрут' : 'Район проживания';
           name.textContent = String(feature.properties?.name ?? 'Объект');
           description.textContent = isRoute
-            ? `${Math.round(Number(feature.properties?.distanceM ?? 0) / 1000)} км · ${feature.properties?.durationMinutes ?? '—'} минут`
+            ? `${Math.round(Number(feature.properties?.distanceM ?? 0) / 1000)} км · ${feature.properties?.durationMinutes ?? '—'} минут в пути`
             : `Подходящих вариантов размещения: ${feature.properties?.hotelCount ?? '—'}`;
-          popupContent.className = 'poi-popup-content';
+          popupContent.className = isRoute ? 'poi-popup-content poi-popup-content--route' : 'poi-popup-content';
+          if (isRoute) {
+            popupContent.tabIndex = 0;
+            popupContent.setAttribute('aria-label', `Остановки и сведения о маршруте ${name.textContent}`);
+          }
           popupContent.append(kind, name, description);
-          new maplibregl.Popup({ offset: 12, className: 'atlas-poi-popup' })
+          if (isRoute) {
+            const stops = travelFeatureTextList(feature.properties?.stops);
+            if (stops.length) {
+              const stopsLabel = document.createElement('span');
+              stopsLabel.textContent = 'По пути';
+              const stopsList = document.createElement('ol');
+              stopsList.className = 'poi-popup-content__stops';
+              for (const stop of stops) {
+                const item = document.createElement('li');
+                item.textContent = stop;
+                stopsList.appendChild(item);
+              }
+              popupContent.appendChild(stopsLabel);
+              popupContent.appendChild(stopsList);
+            }
+            for (const [label, value] of [
+              ['Почему выбран', feature.properties?.rationale],
+              ['Перед поездкой', feature.properties?.practicalNotes],
+            ] as const) {
+              if (typeof value !== 'string' || !value.trim()) continue;
+              const paragraph = document.createElement('p');
+              paragraph.textContent = `${label}: ${value}`;
+              popupContent.appendChild(paragraph);
+            }
+          }
+          new maplibregl.Popup({ offset: 12, className: 'atlas-poi-popup', maxWidth: '320px' })
             .setLngLat(event.lngLat)
             .setDOMContent(popupContent)
             .addTo(map);
@@ -2270,6 +2425,37 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
                       </li>
                     ))}
                   </ol>
+                  {featuredTravelRoutes.length > 0 && (
+                    <div className="spa-travel-published-routes">
+                      <h3>Опубликованные маршруты</h3>
+                      <ul>
+                        {featuredTravelRoutes.map((route) => (
+                          <li key={route.id} className={selectedTravelFeatureId === route.id ? 'is-selected' : ''}>
+                            <button type="button" aria-pressed={selectedTravelFeatureId === route.id} onClick={() => selectPlannerFeature(route.id)}>
+                              <span aria-hidden="true">↗</span>
+                              <div>
+                                <strong>{route.title}</strong>
+                                <small>{route.distance} · {route.duration}</small>
+                                {route.stops.length > 0 && <p>{route.stops.join(' → ')}</p>}
+                              </div>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      {selectedPublishedTravelRoute && (
+                        <article className="spa-travel-route-detail" aria-label={`Маршрут ${selectedPublishedTravelRoute.title}`}>
+                          <h4>{selectedPublishedTravelRoute.title}</h4>
+                          <p>{selectedPublishedTravelRoute.distance} · {selectedPublishedTravelRoute.duration}</p>
+                          {selectedPublishedTravelRoute.rationale && <p><strong>Почему выбран:</strong> {selectedPublishedTravelRoute.rationale}</p>}
+                          {selectedPublishedTravelRoute.stops.length > 0 && <>
+                            <strong>Остановки по порядку</strong>
+                            <ol>{selectedPublishedTravelRoute.stops.map((stop, index) => <li key={`${index}-${stop}`}>{stop}</li>)}</ol>
+                          </>}
+                          {selectedPublishedTravelRoute.practicalNotes && <p><strong>Перед поездкой:</strong> {selectedPublishedTravelRoute.practicalNotes}</p>}
+                        </article>
+                      )}
+                    </div>
+                  )}
                 </section>
               )}
 
@@ -2317,7 +2503,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         </section>
       )}
 
-      {false && travelStory && pageData.features.travelMode && (
+      {showLegacyTravelStory && travelStory && pageData.features.travelMode && (
         <section className="track-content track-content--travel">
           <header className="travel-experience__heading">
             <div className="section-heading">
@@ -2470,7 +2656,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
                 </div>
               </div>
               <div className="track-gallery__rail" ref={galleryRef}>
-                {travelStory.gallery.map((image, index) => (
+                {travelStory.gallery?.map((image, index) => (
                   <figure key={`${image.src}-${index}`}>
                     <img src={image.src} srcSet={image.srcSet} sizes="(max-width: 760px) 88vw, 31vw" alt={image.title} loading="lazy" decoding="async" />
                     <figcaption><span>{String(index + 1).padStart(2, '0')}</span><strong>{image.title}</strong><small>{image.description}</small></figcaption>

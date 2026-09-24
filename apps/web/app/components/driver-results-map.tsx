@@ -18,6 +18,10 @@ const geographyMetrics: Array<{ key: GeographyMetric; label: string; unit: strin
   { key: 'points', label: 'Очки', unit: 'очков' },
 ];
 
+function rankPoints(points: ResultGeography[], metric: GeographyMetric) {
+  return [...points].sort((left, right) => right[metric] - left[metric] || right.wins - left.wins || left.name.localeCompare(right.name, 'ru'));
+}
+
 const mapStyle: maplibregl.StyleSpecification = {
   version: 8,
   glyphs: 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
@@ -42,7 +46,7 @@ const mapStyle: maplibregl.StyleSpecification = {
 
 function applyMapTheme(map: MapLibreMap, theme: AtlasTheme) {
   const light = theme === 'light';
-  const paint = (layer: string, property: string, value: unknown) => {
+  const paint = (layer: string, property: Parameters<MapLibreMap['setPaintProperty']>[1], value: Parameters<MapLibreMap['setPaintProperty']>[2]) => {
     if (map.getLayer(layer)) map.setPaintProperty(layer, property, value);
   };
   paint('driver-results-background', 'background-color', light ? '#d9e4e7' : '#071017');
@@ -81,7 +85,7 @@ export function DriverResultsMap({ points, color }: { points: ResultGeography[];
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [metric, setMetric] = useState<GeographyMetric>('wins');
-  const ranked = useMemo(() => [...points].sort((left, right) => right[metric] - left[metric] || right.wins - left.wins || left.name.localeCompare(right.name, 'ru')), [metric, points]);
+  const ranked = useMemo(() => rankPoints(points, metric), [metric, points]);
   const [selectedId, setSelectedId] = useState<string | null>(ranked[0]?.id ?? null);
   const selected = points.find((point) => point.id === selectedId) ?? ranked[0] ?? null;
   const activeMetric = geographyMetrics.find((item) => item.key === metric)!;
@@ -169,11 +173,9 @@ export function DriverResultsMap({ points, color }: { points: ResultGeography[];
       map.remove();
       mapRef.current = null;
     };
+  // Map lifecycle follows data; selection and theme are updated by their own effects.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [color, points]);
-
-  useEffect(() => {
-    setSelectedId(ranked[0]?.id ?? null);
-  }, [metric]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -210,7 +212,7 @@ export function DriverResultsMap({ points, color }: { points: ResultGeography[];
     <div className="driver-results-atlas">
       <div className="driver-results-atlas__map-wrap">
         <div className="driver-results-atlas__toolbar" aria-label="Показатель карты карьеры">
-          {geographyMetrics.map((item) => <button type="button" aria-pressed={metric === item.key} className={metric === item.key ? 'is-active' : undefined} onClick={() => setMetric(item.key)} key={item.key}>{item.label}</button>)}
+          {geographyMetrics.map((item) => <button type="button" aria-pressed={metric === item.key} className={metric === item.key ? 'is-active' : undefined} onClick={() => { setMetric(item.key); setSelectedId(rankPoints(points, item.key)[0]?.id ?? null); }} key={item.key}>{item.label}</button>)}
         </div>
         <div ref={nodeRef} className="driver-results-atlas__map" aria-label="Карта результатов пилота по трассам" />
         <div className="driver-results-atlas__legend" aria-label="Условные обозначения карты">

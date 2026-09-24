@@ -1,22 +1,4 @@
-type AnnotationFeature = {
-  id: string;
-  annotationType: string;
-  label: string | null;
-  sequence: number | null;
-  validFromYear: number | null;
-  validToYear: number | null;
-  maximumDistanceToTrackM: number;
-};
-
-type TrackAnnotationImportPreview = {
-  token: string;
-  expiresAt: string | Date;
-  summary: {
-    features: number;
-    byType: Record<string, number>;
-  };
-  features: AnnotationFeature[];
-};
+import type { AdminTrackAnnotationImportPreview } from '../../../../../../lib/admin-database';
 
 const annotationTypeLabels: Record<string, string> = {
   sector: 'Сектор',
@@ -43,7 +25,7 @@ export function TrackAnnotationImportPreview({
   layoutId,
   applyAction,
 }: {
-  preview: TrackAnnotationImportPreview;
+  preview: AdminTrackAnnotationImportPreview;
   circuitId: string;
   layoutId: string;
   applyAction: (formData: FormData) => void | Promise<void>;

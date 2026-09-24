@@ -72,6 +72,10 @@ async function saveCandidates(client, circuitId, candidates, discoveredCount, fa
        USING atlas.tourism_pois AS poi
        WHERE link.circuit_id=$1 AND poi.id=link.poi_id AND poi.review_status='candidate'
          AND poi.properties->>'importedVia'='bulk-travel-wizard-v1'
+         AND NOT EXISTS (
+           SELECT 1 FROM atlas.travel_access_anchors AS anchor
+           WHERE anchor.circuit_id=link.circuit_id AND anchor.poi_id=link.poi_id
+         )
          AND NOT (link.poi_id=ANY($2::text[]))`,
       [circuitId, candidates.map((candidate) => candidate.id)],
     );

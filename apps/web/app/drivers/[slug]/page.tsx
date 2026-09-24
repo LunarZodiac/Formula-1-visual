@@ -24,5 +24,5 @@ export default async function DriverPage({ params, searchParams }: DriverPagePro
   const catalog = await getDriverCatalog(Number.isInteger(requestedSeason) ? requestedSeason : directoryDriver.latestSeason ?? 2026);
   const driver = catalog.drivers.find((item) => item.id === slug);
   if (!driver) notFound();
-  return <DriverProfile season={catalog.season} driver={driver} sources={catalog.sources} />;
+  return <DriverProfile season={catalog.season} driver={driver} />;
 }

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '../../components/breadcrumbs';
 import { getHistoryEra, historyEras } from '../../data/history-eras';
+import styles from './history-era.module.css';
 
 type HistoryEraPageProps = { params: Promise<{ slug: string }> };
 
@@ -23,27 +24,51 @@ export default async function HistoryEraPage({ params }: HistoryEraPageProps) {
   const previous = historyEras[currentIndex - 1];
   const next = historyEras[currentIndex + 1];
 
-  return <main className="history-era-page">
+  return <main className={`history-era-page ${styles.page}`}>
     <Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'История', href: '/history' }, { label: era.title }]} />
-    <header className="history-era-hero">
-      <p className="history-era-kicker">Эпоха {String(currentIndex + 1).padStart(2, '0')}</p>
-      <h1>{era.title}</h1>
-      <div><strong>{era.years}</strong><p>{era.description}</p></div>
+    <header className={styles.hero}>
+      <p className={styles.kicker}>Эпоха {String(currentIndex + 1).padStart(2, '0')}</p>
+      <h1 className={styles.title}>{era.title}</h1>
+      <div className={styles.heroSummary}><strong>{era.years}</strong><p>{era.description}</p></div>
     </header>
 
-    <article className="history-era-story">
-      {era.blocks.length ? era.blocks.map((block, index) => <section className={`history-era-chapter history-era-chapter-${block.mediaPosition ?? 'right'} history-era-block-${block.type}`} key={block.id}>
-        {block.media ? <figure className="history-era-media"><Image src={block.media.url} alt={block.media.altTextRu} fill sizes={block.mediaPosition === 'wide' ? '100vw' : '(max-width: 800px) 100vw, 50vw'} /></figure> : null}
-        <div><span>{block.eyebrowRu || `${String(index + 1).padStart(2, '0')} / ${String(era.blocks.length).padStart(2, '0')}`}</span>{block.titleRu ? <h2>{block.titleRu}</h2> : null}{block.bodyRu ? block.type === 'quote' ? <blockquote>{block.bodyRu}</blockquote> : <p>{block.bodyRu}</p> : null}</div>
-      </section>) : <>
-      <p className="history-era-lead">Страница подготовлена как редакционный каркас. Исторические факты, подписи и фотографии будут добавляться только вместе с источниками и сведениями о правах</p>
-      {era.chapters.map((chapter, index) => <section className={`history-era-chapter history-era-chapter-${index + 1}`} key={chapter}>
-        <div className="history-era-placeholder" role="img" aria-label={`Место для проверенной иллюстрации раздела «${chapter}»`}><span>{String(index + 1).padStart(2, '0')}</span><small>Иллюстрация и подпись</small></div>
-        <div><span>{String(index + 1).padStart(2, '0')} / {String(era.chapters.length).padStart(2, '0')}</span><h2>{chapter}</h2><p>Содержательный блок будет собран из проверяемых событий, пространственных изменений и связанных материалов атласа. Такая структура позволяет чередовать текст с изображениями разного масштаба, не превращая страницу в сплошную статью</p></div>
+    <article className={styles.story}>
+      {era.blocks.length ? era.blocks.map((block, index) => {
+        const position = block.mediaPosition ?? (index % 2 === 0 ? 'right' : 'left');
+        const hasCopy = Boolean(block.titleRu || block.bodyRu || block.eyebrowRu);
+        const chapterClassName = [
+          styles.chapter,
+          styles[`position${position[0].toUpperCase()}${position.slice(1)}` as keyof typeof styles],
+          styles[`type${block.type[0].toUpperCase()}${block.type.slice(1)}` as keyof typeof styles],
+          block.media && !hasCopy ? styles.mediaOnly : '',
+          !block.media ? styles.copyOnly : '',
+        ].filter(Boolean).join(' ');
+
+        return <section className={chapterClassName} key={block.id}>
+          {block.media ? <figure className={styles.media}>
+            <Image
+              src={block.media.url}
+              alt={block.media.altTextRu}
+              fill
+              priority={index === 0}
+              sizes={position === 'wide' || !hasCopy ? '(max-width: 760px) 100vw, 1240px' : '(max-width: 760px) 100vw, 55vw'}
+            />
+          </figure> : null}
+          {hasCopy ? <div className={styles.copy}>
+            <span className={styles.eyebrow}>{block.eyebrowRu || `${String(index + 1).padStart(2, '0')} / ${String(era.blocks.length).padStart(2, '0')}`}</span>
+            {block.titleRu ? <h2>{block.titleRu}</h2> : null}
+            {block.bodyRu ? block.type === 'quote' ? <blockquote>{block.bodyRu}</blockquote> : <p>{block.bodyRu}</p> : null}
+          </div> : null}
+        </section>;
+      }) : <>
+      <p className={styles.lead}>Страница подготовлена как редакционный каркас. Исторические факты, подписи и фотографии будут добавляться только вместе с источниками и сведениями о правах</p>
+      {era.chapters.map((chapter, index) => <section className={`${styles.chapter} ${index % 2 === 0 ? styles.positionRight : styles.positionLeft}`} key={chapter}>
+        <div className={styles.placeholder} role="img" aria-label={`Место для проверенной иллюстрации раздела «${chapter}»`}><span>{String(index + 1).padStart(2, '0')}</span><small>Иллюстрация и подпись</small></div>
+        <div className={styles.copy}><span className={styles.eyebrow}>{String(index + 1).padStart(2, '0')} / {String(era.chapters.length).padStart(2, '0')}</span><h2>{chapter}</h2><p>Содержательный блок будет собран из проверяемых событий, пространственных изменений и связанных материалов атласа. Такая структура позволяет чередовать текст с изображениями разного масштаба, не превращая страницу в сплошную статью</p></div>
       </section>)}</>}
     </article>
 
-    <nav className="history-era-pagination" aria-label="Навигация между эпохами">
+    <nav className={styles.pagination} aria-label="Навигация между эпохами">
       {previous ? <Link href={`/history/${previous.slug}`}><small>Предыдущая эпоха</small><b>{previous.title}</b></Link> : <span />}
       {next ? <Link href={`/history/${next.slug}`}><small>Следующая эпоха</small><b>{next.title}</b></Link> : <Link href="/history"><small>Вернуться</small><b>Все эпохи</b></Link>}
     </nav>

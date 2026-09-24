@@ -33,7 +33,7 @@ export function GameLogoForm({ gameId, title }: { gameId: GameId; title: string 
         }
       })
       .catch(() => {});
-  }, [gameId]);
+  }, [gameId, title]);
 
   function selectFile(file: File | null) {
     if (sourcePreview) URL.revokeObjectURL(sourcePreview);

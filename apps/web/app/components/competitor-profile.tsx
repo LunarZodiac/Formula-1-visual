@@ -134,6 +134,8 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
   }, [seasonToRestore, showAllSeasons]);
 
   const rememberSeasonPosition = (seasonYear: number) => {
+    // Browser navigation state must change before Link starts navigating.
+    // eslint-disable-next-line react-hooks/immutability
     window.history.scrollRestoration = 'manual';
     window.sessionStorage.setItem(`driver-profile-return:${driver.id}`, String(seasonYear));
   };
@@ -320,7 +322,8 @@ export function TeamProfile({ season, team, lineages = [] }: { season: number; t
   const history = [...team.seasonHistory].sort((a, b) => b.season - a.season);
   const totals = history.reduce((result, row) => ({ points: result.points + row.points, wins: result.wins + row.wins }), { points: 0, wins: 0 });
   const titles = history.filter((row) => row.position === 1).length;
-  const bestPosition = history.length ? Math.min(...history.map((row) => row.position)) : null;
+  const knownPositions = history.map((row) => row.position).filter((position): position is number => position !== null);
+  const bestPosition = knownPositions.length ? Math.min(...knownPositions) : null;
   const firstSeason = history.at(-1)?.season ?? null;
   const color = team.color ?? driverTeamColors[team.id] ?? '#738795';
   const nationalities: Record<string, string> = { Austrian: 'Австрия', British: 'Великобритания', French: 'Франция', German: 'Германия', Italian: 'Италия', Swiss: 'Швейцария', American: 'США' };

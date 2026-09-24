@@ -31,7 +31,7 @@ const mapStyle: maplibregl.StyleSpecification = { version: 8, glyphs: "https://t
 
 function applyCalendarMapTheme(map: MapLibreMap, theme: AtlasTheme) {
   const isLight = theme === "light";
-  const paint = (layerId: string, property: string, value: unknown) => {
+  const paint = (layerId: string, property: Parameters<MapLibreMap['setPaintProperty']>[1], value: Parameters<MapLibreMap['setPaintProperty']>[2]) => {
     if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
   };
 
@@ -43,8 +43,8 @@ function applyCalendarMapTheme(map: MapLibreMap, theme: AtlasTheme) {
   paint("calendar-boundaries", "line-opacity", isLight ? .48 : .35);
   paint("calendar-labels", "text-color", isLight ? "#263b44" : "#f4f7f8");
   paint("calendar-labels", "text-halo-color", isLight ? "#f7faf8" : "#071014");
-  paint("calendar-route-line-shadow", "line-color", isLight ? "#dce7e7" : "#030b0f");
-  paint("calendar-route-line", "line-color", isLight ? "#263b44" : "#ffffff");
+  paint("calendar-route-line-shadow", "line-color", isLight ? "#263b44" : "#030b0f");
+  paint("calendar-route-line", "line-color", "#ffffff");
   paint("calendar-route-points", "circle-stroke-color", isLight ? "#f7faf8" : "#edf6f7");
 }
 
@@ -53,12 +53,27 @@ export function CalendarRouteMap({ stages }: { stages: Stage[] }) {
   const containerRef = useRef<HTMLDivElement>(null); const mapRef = useRef<MapLibreMap | null>(null); const readyRef = useRef(false); const initialStagesRef = useRef(stages);
   useEffect(() => {
     if (!containerRef.current) return undefined;
-    const map = new maplibregl.Map({ container: containerRef.current, style: mapStyle, center: [12, 23], zoom: .8, minZoom: -2, maxZoom: 7, renderWorldCopies: false, attributionControl: { compact: true },
-      transformConstrain: (center, zoom) => ({ center: new maplibregl.LngLat(Math.max(-180, Math.min(180, center.lng)), Math.max(-85, Math.min(85, center.lat))), zoom: Math.max(-2, Math.min(7, zoom)) }) });
+    const map = new maplibregl.Map({ container: containerRef.current, style: mapStyle, center: [12, 23], zoom: .8, minZoom: 0, maxZoom: 7, renderWorldCopies: false, attributionControl: { compact: true },
+      transformConstrain: (center, zoom) => {
+        const width = containerRef.current?.clientWidth ?? 0;
+        const height = containerRef.current?.clientHeight ?? 0;
+        const viewportZoom = Math.max(0, Math.log2(Math.max(width, height, 1) / 512));
+        const nextZoom = Math.min(7, Math.max(zoom, viewportZoom));
+        const worldSize = 512 * (2 ** nextZoom);
+        const halfX = Math.min(.5, width / (2 * worldSize));
+        const halfY = Math.min(.5, height / (2 * worldSize));
+        const mercatorX = Math.min(1 - halfX, Math.max(halfX, (center.lng + 180) / 360));
+        const latitude = Math.min(85.051129, Math.max(-85.051129, center.lat));
+        const radians = latitude * Math.PI / 180;
+        const rawY = (1 - Math.asinh(Math.tan(radians)) / Math.PI) / 2;
+        const mercatorY = Math.min(1 - halfY, Math.max(halfY, rawY));
+        const constrainedLatitude = Math.atan(Math.sinh(Math.PI * (1 - 2 * mercatorY))) * 180 / Math.PI;
+        return { center: new maplibregl.LngLat(mercatorX * 360 - 180, constrainedLatitude), zoom: nextZoom };
+      } });
     mapRef.current = map; map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
     map.on("load", () => { map.addSource("calendar-route", { type: "geojson", data: routeData(initialStagesRef.current) });
       map.addLayer({ id: "calendar-route-line-shadow", type: "line", source: "calendar-route", filter: ["==", ["geometry-type"], "MultiLineString"], paint: { "line-color": "#030b0f", "line-width": 4.5, "line-opacity": .7 } });
-      map.addLayer({ id: "calendar-route-line", type: "line", source: "calendar-route", filter: ["==", ["geometry-type"], "MultiLineString"], paint: { "line-color": "#ffffff", "line-width": 2.25, "line-opacity": .92 } });
+      map.addLayer({ id: "calendar-route-line", type: "line", source: "calendar-route", filter: ["==", ["geometry-type"], "MultiLineString"], paint: { "line-color": "#ffffff", "line-width": 2.25, "line-opacity": .96, "line-dasharray": [2.4, 2] } });
       map.addLayer({ id: "calendar-route-points", type: "circle", source: "calendar-route", filter: ["==", ["geometry-type"], "Point"], paint: { "circle-color": "#ff365c", "circle-radius": 7, "circle-stroke-color": "#edf6f7", "circle-stroke-width": 1.5 } });
       map.addLayer({ id: "calendar-route-order", type: "symbol", source: "calendar-route", filter: ["==", ["geometry-type"], "Point"], layout: { "text-field": ["to-string", ["get", "order"]], "text-font": ["Noto Sans Regular"], "text-size": 9 }, paint: { "text-color": "#fff" } });
       applyCalendarMapTheme(map, document.documentElement.dataset.theme === "light" ? "light" : "dark");

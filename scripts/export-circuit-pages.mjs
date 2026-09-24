@@ -219,6 +219,7 @@ async function readPageData(client, circuitId) {
   );
   const travelRoutesResult = await client.query(
     `SELECT route.id,route.route_type,route.name_ru,route.summary_ru,route.distance_m,route.duration_minutes,
+            route.route_variant_kind,route.display_priority,route.geometry_mode,
             presentation.rationale_ru,presentation.highlights_ru,presentation.practical_notes_ru,
             COALESCE(array_agg(COALESCE(stop.name_ru,poi.name_ru,poi.name) ORDER BY stop.sequence)
               FILTER (WHERE stop.sequence IS NOT NULL),ARRAY[]::text[]) AS stops
@@ -226,9 +227,9 @@ async function readPageData(client, circuitId) {
      JOIN atlas.travel_route_presentations AS presentation ON presentation.route_id=route.id
      LEFT JOIN atlas.travel_route_stops AS stop ON stop.route_id=route.id
      LEFT JOIN atlas.tourism_pois AS poi ON poi.id=stop.poi_id
-     WHERE route.circuit_id=$1 AND route.review_status='published'
+     WHERE route.circuit_id=$1 AND route.review_status='published' AND route.lifecycle='active'
      GROUP BY route.id,presentation.rationale_ru,presentation.highlights_ru,presentation.practical_notes_ru,presentation.sort_order
-     ORDER BY presentation.sort_order`,[circuitId]);
+     ORDER BY route.display_priority DESC,presentation.sort_order`,[circuitId]);
   const travelCategoriesResult = await client.query(
     `SELECT id, name_ru
      FROM atlas.travel_category_groups
@@ -512,6 +513,7 @@ function buildReadModel(existing, databasePage) {
           const previous = existingRoutes.get(item.id);
           const typeLabels = { arrival: 'Прибытие', race_day: 'Гоночный день', event_shuttle: 'Трансфер', park_and_ride: 'P+R', tourist_half_day: 'Полдня', tourist_full_day: 'Полный день', walking: 'Пешком', scenic_drive: 'Обзорная поездка' };
           return { id:item.id,type:typeLabels[item.route_type] ?? item.route_type,title:item.name_ru,
+            variantKind:item.route_variant_kind,displayPriority:Number(item.display_priority),geometryMode:item.geometry_mode,
             distance:`${(Number(item.distance_m)/1000).toLocaleString('ru-RU',{maximumFractionDigits:1})} км`,duration:`${item.duration_minutes} мин`,
             stops:item.stops,description:item.summary_ru ?? item.rationale_ru ?? '',
             ...(item.rationale_ru?{rationale:item.rationale_ru}:{}),...(item.highlights_ru?.length?{highlights:item.highlights_ru}:{}),

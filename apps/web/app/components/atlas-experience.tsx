@@ -235,8 +235,8 @@ function makeCircuitMarker(type: Circuit['type']): ImageData {
 function getTrackBounds(track: GeoJSON.Feature<GeoJSON.LineString>) {
   const [firstCoordinate, ...coordinates] = track.geometry.coordinates;
   return coordinates.reduce(
-    (bounds, coordinate) => bounds.extend(coordinate),
-    new maplibregl.LngLatBounds(firstCoordinate, firstCoordinate),
+    (bounds, coordinate) => bounds.extend([coordinate[0], coordinate[1]]),
+    new maplibregl.LngLatBounds([firstCoordinate[0], firstCoordinate[1]], [firstCoordinate[0], firstCoordinate[1]]),
   );
 }
 
@@ -313,7 +313,7 @@ const darkBasemapLayerIds = [
 
 function applyAtlasMapTheme(map: MapLibreMap, theme: AtlasTheme, basemap: Basemap) {
   const isLight = theme === 'light';
-  const paint = (layerId: string, property: string, value: unknown) => {
+  const paint = (layerId: string, property: Parameters<MapLibreMap['setPaintProperty']>[1], value: Parameters<MapLibreMap['setPaintProperty']>[2]) => {
     if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
   };
 

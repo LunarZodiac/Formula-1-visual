@@ -29,7 +29,7 @@ const style: maplibregl.StyleSpecification = {
 
 function applyDriverMapTheme(map: MapLibreMap, theme: AtlasTheme) {
   const isLight = theme === "light";
-  const paint = (layerId: string, property: string, value: unknown) => {
+  const paint = (layerId: string, property: Parameters<MapLibreMap['setPaintProperty']>[1], value: Parameters<MapLibreMap['setPaintProperty']>[2]) => {
     if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
   };
 

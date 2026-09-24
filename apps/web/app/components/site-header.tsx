@@ -54,7 +54,7 @@ export function SiteHeader() {
   ]);
   const [selectedSeason, setSelectedSeason] = useState(2026);
   const [seasonOpen, setSeasonOpen] = useState(false);
-  const [activeHref, setActiveHref] = useState(() =>
+  const [activeHref, setActiveHref] = useState<string>(() =>
     activeHrefForPath(pathname),
   );
 

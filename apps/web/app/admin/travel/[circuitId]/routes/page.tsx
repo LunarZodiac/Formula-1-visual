@@ -15,10 +15,12 @@ const modeLabels: Record<string, string> = {
   car: 'Автомобиль', transit: 'Общественный транспорт', shuttle: 'Трансфер',
   walk: 'Пешком', bicycle: 'Велосипед', mixed: 'Смешанный',
 };
+const lifecycleLabels: Record<string,string> = { draft:'Черновик', active:'Активный', archived:'Архив' };
+const variantLabels: Record<string,string> = { recommended:'Рекомендуемый', fastest:'Быстрый', shortest:'Короткий', loop:'Кольцевой', manual:'Авторский' };
 
 export default async function AdminTravelRoutesPage({ params, searchParams }: {
   params: Promise<{ circuitId: string }>;
-  searchParams: Promise<{ generated?: string; q?: string; type?: string; status?: string; geometry?: string }>;
+  searchParams: Promise<{ generated?: string; skipped?: string; deleted?: string; syncError?: string; q?: string; type?: string; status?: string; geometry?: string; lifecycle?: string }>;
 }) {
   if (!await getAdminSession()) redirect('/admin/login');
   if (!isAdminDatabaseConfigured()) redirect('/admin/overview');
@@ -35,22 +37,25 @@ export default async function AdminTravelRoutesPage({ params, searchParams }: {
   const type = state.type && state.type in typeLabels ? state.type : '';
   const status = state.status && state.status in statusLabels ? state.status : '';
   const geometry = state.geometry === 'yes' || state.geometry === 'no' ? state.geometry : '';
+  const lifecycle = state.lifecycle && state.lifecycle in lifecycleLabels ? state.lifecycle : 'active';
   const rows = registry.rows.filter((route) => (
     (!query || (route.nameRu + ' ' + route.id).toLocaleLowerCase('ru-RU').includes(query))
     && (!type || route.routeType === type)
     && (!status || route.reviewStatus === status)
     && (!geometry || (geometry === 'yes' ? route.hasGeometry : !route.hasGeometry))
+    && (!lifecycle || route.lifecycle === lifecycle)
   ));
 
   return <main className="admin-shell"><section className="admin-directory admin-travel-subdirectory">
     <Link className="admin-back-link" href={'/admin/travel/' + encodeURIComponent(circuitId)}>← Вернуться к точкам</Link>
     <header><div><span className="admin-kicker">Маршруты</span><h1>{registry.circuit.name}</h1><p>{rows.length} из {registry.rows.length} маршрутов по текущему фильтру</p></div><div className="admin-directory-header-actions"><Link href={'/admin/travel/' + encodeURIComponent(circuitId) + '/routes/generate'}>Предложить автоматически</Link><Link href={'/admin/travel/' + encodeURIComponent(circuitId) + '/routes/new'}>Добавить вручную</Link></div></header>
     <TravelModuleNav circuitId={circuitId} active="routes" />
-    {state.generated ? <div className="admin-alert is-success">Создано черновиков маршрутов: {state.generated}</div> : null}
-    <form className="admin-directory-search admin-travel-directory-filters" method="get"><label><span>Название или ID</span><input name="q" defaultValue={state.q ?? ''} placeholder="Найти маршрут" /></label><label><span>Тип</span><select name="type" defaultValue={type}><option value="">Все типы</option>{Object.entries(typeLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><label><span>Линия</span><select name="geometry" defaultValue={geometry}><option value="">Любое состояние</option><option value="yes">Есть</option><option value="no">Нет</option></select></label><label><span>Статус</span><select name="status" defaultValue={status}><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><button type="submit">Применить</button><Link href={'/admin/travel/' + encodeURIComponent(circuitId) + '/routes'}>Сбросить</Link></form>
-    <div className="admin-table-wrap"><table><thead><tr><th>Маршрут</th><th>Тип</th><th>Способ</th><th>Расстояние</th><th>Время</th><th>Линия</th><th>Статус</th><th><span className="sr-only">Действие</span></th></tr></thead><tbody>{rows.map((route) => <tr key={route.id}>
+    {state.generated ? <div className="admin-alert is-success">Создано черновиков маршрутов: {state.generated}{Number(state.skipped)>0 ? `. Пропущено повторов: ${Number(state.skipped)}` : ''}{state.syncError ? '. Публичные данные пока не обновились' : ''}</div> : null}
+    {state.deleted ? <div className="admin-alert is-success">Архивный маршрут удалён{state.syncError ? ' из базы; публичные данные пока не обновились' : ''}</div> : null}
+    <form className="admin-directory-search admin-travel-directory-filters" method="get"><label><span>Название или ID</span><input name="q" defaultValue={state.q ?? ''} placeholder="Найти маршрут" /></label><label><span>Тип</span><select name="type" defaultValue={type}><option value="">Все типы</option>{Object.entries(typeLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><label><span>Линия</span><select name="geometry" defaultValue={geometry}><option value="">Любое состояние</option><option value="yes">Есть</option><option value="no">Нет</option></select></label><label><span>Статус</span><select name="status" defaultValue={status}><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><label><span>Жизненный цикл</span><select name="lifecycle" defaultValue={lifecycle}><option value="">Все</option>{Object.entries(lifecycleLabels).map(([value,label])=><option value={value} key={value}>{label}</option>)}</select></label><button type="submit">Применить</button><Link href={'/admin/travel/' + encodeURIComponent(circuitId) + '/routes'}>Сбросить</Link></form>
+    <div className="admin-table-wrap"><table><thead><tr><th>Маршрут</th><th>Тип</th><th>Вариант</th><th>Способ</th><th>Расстояние</th><th>Время</th><th>Линия</th><th>Статус</th><th><span className="sr-only">Действие</span></th></tr></thead><tbody>{rows.map((route) => <tr key={route.id}>
       <td><strong>{route.nameRu}</strong><small>{route.id} · {route.stopCount} остановок</small></td>
-      <td>{typeLabels[route.routeType] ?? route.routeType}</td><td>{modeLabels[route.travelMode] ?? route.travelMode}</td>
+      <td>{typeLabels[route.routeType] ?? route.routeType}</td><td>{variantLabels[route.routeVariantKind] ?? route.routeVariantKind}<small>{lifecycleLabels[route.lifecycle] ?? route.lifecycle} · {route.displayPriority}</small></td><td>{modeLabels[route.travelMode] ?? route.travelMode}</td>
       <td>{(route.distanceM / 1000).toLocaleString('ru-RU')} км</td><td>{route.durationMinutes} мин</td>
       <td>{route.hasGeometry ? 'Есть' : 'Нет'}</td>
       <td><span className={'admin-status is-' + route.reviewStatus}>{statusLabels[route.reviewStatus] ?? route.reviewStatus}</span></td>

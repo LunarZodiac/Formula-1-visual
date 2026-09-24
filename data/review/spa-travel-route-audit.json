@@ -1,14 +1,16 @@
 {
-  "generatedAt": "2026-09-21T18:51:58.447Z",
+  "generatedAt": "2026-09-23T19:52:55.450Z",
   "circuitId": "spa",
   "routeCount": 8,
-  "publicationReadyCount": 2,
+  "publicationReadyCount": 0,
   "routes": [
     {
       "id": "spa-route-brussels-airport",
       "name_ru": "Аэропорт Брюссель → трасса",
       "route_type": "arrival",
       "review_status": "candidate",
+      "verified_at": null,
+      "lifecycle": "active",
       "distance_m": 141991,
       "has_geometry": true,
       "event_only": false,
@@ -24,10 +26,13 @@
         "Подход к району Франкоршам"
       ],
       "practical_notes_ru": "В дни Гран-при выбирайте парковочную зону заранее и следуйте Waze-ссылке из билета: организатор может изменить подъездные дороги.",
+      "stop_count": 2,
+      "unnamed_stop_count": 0,
       "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
       "track_buffer_overlap_m": 0,
       "publicationBlockers": [
+        "маршрут не прошёл редакторскую проверку с датой подтверждения",
         "конечная точка не подтверждена как въезд на этап"
       ],
       "publicationReady": false
@@ -37,6 +42,8 @@
       "name_ru": "Аэропорт Шарлеруа → трасса",
       "route_type": "arrival",
       "review_status": "candidate",
+      "verified_at": null,
+      "lifecycle": "active",
       "distance_m": 139373,
       "has_geometry": true,
       "event_only": false,
@@ -52,10 +59,13 @@
         "Подход к району Франкоршам"
       ],
       "practical_notes_ru": "Не используйте конечную точку как место высадки. В 2027 году kiss & ride не предусмотрен; въезд определяется парковочным билетом.",
+      "stop_count": 2,
+      "unnamed_stop_count": 0,
       "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
       "track_buffer_overlap_m": 0,
       "publicationBlockers": [
+        "маршрут не прошёл редакторскую проверку с датой подтверждения",
         "конечная точка не подтверждена как въезд на этап"
       ],
       "publicationReady": false
@@ -65,6 +75,8 @@
       "name_ru": "Аэропорт Кёльн/Бонн → трасса",
       "route_type": "arrival",
       "review_status": "candidate",
+      "verified_at": null,
+      "lifecycle": "active",
       "distance_m": 144351,
       "has_geometry": true,
       "event_only": false,
@@ -80,10 +92,13 @@
         "Подход к району Франкоршам"
       ],
       "practical_notes_ru": "Проверьте дорожную обстановку и требования прокатной компании. В дни этапа используйте только назначенный организатором подъезд к своей парковке.",
+      "stop_count": 2,
+      "unnamed_stop_count": 0,
       "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
       "track_buffer_overlap_m": 0,
       "publicationBlockers": [
+        "маршрут не прошёл редакторскую проверку с датой подтверждения",
         "конечная точка не подтверждена как въезд на этап"
       ],
       "publicationReady": false
@@ -93,6 +108,8 @@
       "name_ru": "Ставло и водопад Коо",
       "route_type": "tourist_half_day",
       "review_status": "candidate",
+      "verified_at": null,
+      "lifecycle": "active",
       "distance_m": 26647,
       "has_geometry": true,
       "event_only": false,
@@ -109,17 +126,23 @@
         "Водопад Коо"
       ],
       "practical_notes_ru": "Закладывайте не меньше половины дня и заранее проверяйте часы работы музеев. Не совмещайте маршрут с жёстким временем входа на этап.",
+      "stop_count": 4,
+      "unnamed_stop_count": 0,
       "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
       "track_buffer_overlap_m": 0,
-      "publicationBlockers": [],
-      "publicationReady": true
+      "publicationBlockers": [
+        "маршрут не прошёл редакторскую проверку с датой подтверждения"
+      ],
+      "publicationReady": false
     },
     {
       "id": "spa-route-high-fens",
       "name_ru": "Высокие Фены и замок Рейнхардштайн",
       "route_type": "tourist_full_day",
       "review_status": "candidate",
+      "verified_at": null,
+      "lifecycle": "active",
       "distance_m": 44582,
       "has_geometry": true,
       "event_only": false,
@@ -136,17 +159,23 @@
         "Замок Рейнхардштайн"
       ],
       "practical_notes_ru": "Погода на плато меняется быстро. Проверьте доступность троп и расписание экскурсий в замке; этот сценарий лучше оставить на день без гоночных сессий.",
+      "stop_count": 5,
+      "unnamed_stop_count": 0,
       "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
       "track_buffer_overlap_m": 0,
-      "publicationBlockers": [],
-      "publicationReady": true
+      "publicationBlockers": [
+        "маршрут не прошёл редакторскую проверку с датой подтверждения"
+      ],
+      "publicationReady": false
     },
     {
       "id": "spa-route-liege-arrival",
       "name_ru": "Льеж → трасса",
       "route_type": "arrival",
       "review_status": "candidate",
+      "verified_at": null,
+      "lifecycle": "active",
       "distance_m": 55934,
       "has_geometry": true,
       "event_only": false,
@@ -162,10 +191,13 @@
         "Переезд из Льежа в Арденны"
       ],
       "practical_notes_ru": "Сначала сравните этот вариант с официальным City Shuttle из Льежа. В дни этапа автомобильный въезд зависит от выбранной парковочной зоны.",
+      "stop_count": 2,
+      "unnamed_stop_count": 0,
       "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
       "track_buffer_overlap_m": 0,
       "publicationBlockers": [
+        "маршрут не прошёл редакторскую проверку с датой подтверждения",
         "конечная точка не подтверждена как въезд на этап"
       ],
       "publicationReady": false
@@ -175,6 +207,8 @@
       "name_ru": "Ставло → трасса",
       "route_type": "arrival",
       "review_status": "candidate",
+      "verified_at": null,
+      "lifecycle": "active",
       "distance_m": 5654,
       "has_geometry": true,
       "event_only": false,
@@ -191,10 +225,13 @@
         "Музей трассы Спа-Франкоршам"
       ],
       "practical_notes_ru": "В гоночные дни обычная линия может не соответствовать организации движения. Используйте назначенную парковку и официальную навигацию этапа.",
+      "stop_count": 2,
+      "unnamed_stop_count": 0,
       "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": 37,
       "track_buffer_overlap_m": 0,
       "publicationBlockers": [
+        "маршрут не прошёл редакторскую проверку с датой подтверждения",
         "конечная точка не подтверждена как въезд на этап"
       ],
       "publicationReady": false
@@ -204,6 +241,8 @@
       "name_ru": "Вервье-Центральный → трасса",
       "route_type": "event_shuttle",
       "review_status": "hidden",
+      "verified_at": null,
+      "lifecycle": "active",
       "distance_m": null,
       "has_geometry": false,
       "event_only": true,
@@ -219,11 +258,14 @@
         "Высадка на Rue de Sart у Trou Hennet"
       ],
       "practical_notes_ru": "Билет приобретается отдельно. Проверяйте расписание и стоимость для конкретного года; обычные линии TEC по воскресеньям могут не обслуживать трассу.",
+      "stop_count": 2,
+      "unnamed_stop_count": 0,
       "endpoint_event_access_confirmed": false,
       "endpoint_distance_to_track_m": null,
       "track_buffer_overlap_m": null,
       "publicationBlockers": [
-        "отсутствует геометрия"
+        "отсутствует геометрия",
+        "маршрут не прошёл редакторскую проверку с датой подтверждения"
       ],
       "publicationReady": false
     }

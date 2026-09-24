@@ -179,6 +179,7 @@ export type AdminHistoryEraInput = Pick<AdminHistoryEraSummary,
 >;
 
 export type AdminHistoryEraBlockInput = Omit<AdminHistoryEraBlock, 'id' | 'eraSlug' | 'updatedAt'>;
+export type AdminHistoryEraBlockContentInput = Omit<AdminHistoryEraBlockInput, 'sortOrder'>;
 
 export type AdminDriverListItem = {
   id: string;
@@ -453,9 +454,21 @@ export type AdminTravelZoneDetail = {
   points: Array<{ id: string; name: string; categoryName: string; selected: boolean; isExample: boolean; sortOrder: number }>;
 };
 
-export type AdminTravelRouteRegistry = { circuit:{id:string;name:string}; rows:Array<{id:string;nameRu:string;routeType:string;travelMode:string;distanceM:number;durationMinutes:number;reviewStatus:string;hasGeometry:boolean;stopCount:number;visibleByDefault:boolean}> };
-export type AdminTravelRouteDetail = { route:{id:string;circuitId:string;routeType:string;travelMode:string;name:string;nameRu:string;summaryRu:string;geometryGeoJson:string|null;distanceM:number;durationMinutes:number;difficulty:string;eventOnly:boolean;bookingRequired:boolean;accessibilityNotesRu:string;scheduleNotesRu:string;routeEngine:string;routeEngineProfile:string;reviewStatus:string;sourceUrl:string;routeGroup:string;sortOrder:number;lineOffsetPx:number;lineColour:string;minZoom:number;maxZoom:number;visibleByDefault:boolean;notesRu:string;rationaleRu:string;highlightsRu:string[];practicalNotesRu:string}; stops:Array<{sequence:number;poiId:string|null;poiName:string|null;nameRu:string|null;dwellMinutes:number|null;instructionRu:string|null;longitude:number|null;latitude:number|null}>; pointOptions:Array<{id:string;name:string}> };
+export type AdminTravelRouteRegistry = { circuit:{id:string;name:string}; rows:Array<{id:string;nameRu:string;routeType:string;travelMode:string;distanceM:number;durationMinutes:number;reviewStatus:string;hasGeometry:boolean;stopCount:number;visibleByDefault:boolean;routeVariantKind:string;lifecycle:string;displayPriority:number}> };
+export type AdminTravelRouteDetail = { mapCenter:[number,number]|null; route:{id:string;circuitId:string;routeType:string;travelMode:string;name:string;nameRu:string;summaryRu:string;geometryGeoJson:string|null;distanceM:number;durationMinutes:number;difficulty:string;eventOnly:boolean;bookingRequired:boolean;accessibilityNotesRu:string;scheduleNotesRu:string;routeEngine:string;routeEngineProfile:string;reviewStatus:string;sourceUrl:string;routeGroup:string;sortOrder:number;lineOffsetPx:number;lineColour:string;minZoom:number;maxZoom:number;visibleByDefault:boolean;notesRu:string;rationaleRu:string;highlightsRu:string[];practicalNotesRu:string;terminalAccessAnchorId:string|null;routeVariantKind:string;displayPriority:number;geometryMode:string;lifecycle:string;optimizeWaypointOrder:boolean;updatedAtToken:string}; stops:Array<{sequence:number;poiId:string|null;poiName:string|null;nameRu:string|null;dwellMinutes:number|null;instructionRu:string|null;longitude:number|null;latitude:number|null;resolvedLongitude:number|null;resolvedLatitude:number|null}>; pointOptions:Array<{id:string;name:string}>; mapPoints:Array<{id:string;name:string;reviewStatus:string;longitude:number;latitude:number}>; existingRoutes:Array<{id:string;nameRu:string;reviewStatus:string;lifecycle:string;geometryGeoJson:string}>; accessAnchorOptions:Array<{id:string;poiId:string;poiName:string;accessKind:string;eventScope:string;verificationStatus:string;confidence:number}> };
 export type AdminTravelRouteGenerationPreview = { token:string;expiresAt:string;circuit:{id:string;name:string;longitude:number;latitude:number};suggestions:Array<{id:string;routeType:string;travelMode:string;nameRu:string;summaryRu:string;geometryGeoJson:string;distanceM:number;durationMinutes:number;stops:Array<{poiId:string;nameRu:string}>;highlightsRu:string[]}>;blockers:string[] };
+export type AdminTravelRouteTailPreview = { token:string;expiresAt:string;circuitId:string;routeId:string;anchor:{id:string;poiName:string};replacedSide:'start'|'end';metrics:{originalDistanceM:number;keptDistanceM:number;replacedOldDistanceM:number;replacedNewDistanceM:number;seamGapM:number;endpointDistanceM:number};proposed:{distanceM:number;durationMinutes:number;geometryGeoJson:string} };
+
+export type AdminTravelAccessAnchorRegistry = {
+  circuit: { id: string; name: string };
+  rows: Array<{
+    id: string; poiId: string; poiName: string; accessKind: string; travelModes: string[];
+    eventScope: string; validFromYear: number | null; validToYear: number | null;
+    verificationStatus: string; confidence: number; sourceUrl: string | null;
+    evidenceNoteRu: string | null; verifiedAt: string | null;
+  }>;
+  pointOptions: Array<{ id: string; name: string; categoryName: string; reviewStatus: string }>;
+};
 
 export type AdminSchemaTable = {
   name: string;
@@ -925,9 +938,17 @@ export function updateAdminTravelZone(circuitId: string, zoneId: string, input: 
 export function getAdminTravelRoutes(circuitId:string){return apiRequest<AdminTravelRouteRegistry>(`/travel/circuits/${encodeURIComponent(circuitId)}/routes`);}
 export function getAdminTravelRoute(circuitId:string,routeId:string){return apiRequest<AdminTravelRouteDetail>(`/travel/circuits/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}`);}
 export function updateAdminTravelRoute(circuitId:string,routeId:string,input:Record<string,unknown>){return apiRequest<{id:string;circuitId:string;publicDataSynced:boolean}>(`/travel/circuits/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}`,{method:'PUT',body:JSON.stringify(input)},120_000);}
-export function createAdminTravelRouteGenerationPreview(circuitId:string){return apiRequest<AdminTravelRouteGenerationPreview>(`/travel/circuits/${encodeURIComponent(circuitId)}/route-generation-previews`,{method:'POST',body:'{}'},180_000);}
+export function createAdminTravelRouteGeometryPreview(circuitId:string,routeId:string,input:{travelMode:'car';points:number[][]}){return apiRequest<{geometryGeoJson:string;distanceM:number;durationMinutes:number}>(`/travel/circuits/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}/geometry-previews`,{method:'POST',body:JSON.stringify(input)},120_000);}
+export function changeAdminTravelRouteLifecycle(circuitId:string,routeId:string,input:{operation:'archive'|'restore';expectedUpdatedAt:string}){return apiRequest<{id:string;circuitId:string;publicDataSynced:boolean}>(`/travel/circuits/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}/lifecycle`,{method:'POST',body:JSON.stringify(input)},120_000);}
+export function deleteAdminArchivedTravelRoute(circuitId:string,routeId:string,input:{confirmRouteId:string;expectedUpdatedAt:string}){return apiRequest<{id:string;circuitId:string;publicDataSynced:boolean}>(`/travel/circuits/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}`,{method:'DELETE',body:JSON.stringify(input)},120_000);}
+export function createAdminTravelRouteGenerationPreview(circuitId:string,input:Record<string,unknown>={}){return apiRequest<AdminTravelRouteGenerationPreview>(`/travel/circuits/${encodeURIComponent(circuitId)}/route-generation-previews`,{method:'POST',body:JSON.stringify(input)},180_000);}
 export function getAdminTravelRouteGenerationPreview(token:string){return apiRequest<AdminTravelRouteGenerationPreview>(`/travel/route-generation-previews/${encodeURIComponent(token)}`);}
-export function applyAdminTravelRouteGenerationPreview(token:string,routeIds:string[]){return apiRequest<{circuitId:string;created:number}>(`/travel/route-generation-previews/${encodeURIComponent(token)}/apply`,{method:'POST',body:JSON.stringify({routeIds})},180_000);}
+export function applyAdminTravelRouteGenerationPreview(token:string,circuitId:string,routeIds:string[]){return apiRequest<{circuitId:string;created:number;skipped:number;publicDataSynced:boolean}>(`/travel/route-generation-previews/${encodeURIComponent(token)}/apply`,{method:'POST',body:JSON.stringify({circuitId,routeIds})},180_000);}
+export function createAdminTravelRouteTailPreview(circuitId:string,routeId:string){return apiRequest<AdminTravelRouteTailPreview>(`/travel/circuits/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}/tail-previews`,{method:'POST',body:'{}'},120_000);}
+export function getAdminTravelRouteTailPreview(token:string){return apiRequest<AdminTravelRouteTailPreview>(`/travel/route-tail-previews/${encodeURIComponent(token)}`);}
+export function applyAdminTravelRouteTailPreview(token:string,circuitId:string,routeId:string){return apiRequest<{circuitId:string;routeId:string;publicDataSynced:boolean}>(`/travel/route-tail-previews/${encodeURIComponent(token)}/apply`,{method:'POST',body:JSON.stringify({circuitId,routeId})},120_000);}
+export function getAdminTravelAccessAnchors(circuitId:string){return apiRequest<AdminTravelAccessAnchorRegistry>(`/travel/circuits/${encodeURIComponent(circuitId)}/access-anchors`);}
+export function updateAdminTravelAccessAnchor(circuitId:string,anchorId:string,input:Record<string,unknown>){return apiRequest<{id:string;circuitId:string}>(`/travel/circuits/${encodeURIComponent(circuitId)}/access-anchors/${encodeURIComponent(anchorId)}`,{method:'PUT',body:JSON.stringify(input)});}
 
 export function getAdminCircuit(id: string, includeGeometry = false) {
   return apiRequest<AdminCircuit>(`/circuits/${encodeURIComponent(id)}${includeGeometry ? '?includeGeometry=1' : ''}`);
@@ -1001,6 +1022,7 @@ export async function importAdminTrackGeometry(circuitId: string, layoutId: stri
 }
 
 export function getAdminTrackAnnotations(circuitId:string,layoutId:string){return apiRequest<AdminTrackAnnotationRegistry>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`);}
+export function createAdminTrackSectorSegmentation(circuitId:string,layoutId:string,input:Record<string,unknown>){return apiRequest<{circuitId:string;layoutId:string;created:number}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/sectors`,{method:'POST',body:JSON.stringify(input)},60_000);}
 export function updateAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string,input:Record<string,unknown>){return apiRequest<{id:string;circuitId:string;layoutId:string}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'PUT',body:JSON.stringify(input)},60_000);}
 export function deleteAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string){return apiRequest<{id:string;circuitId:string;layoutId:string}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'DELETE'},35_000);}
 export function createAdminTrackAnnotationImportPreview(packageData:unknown){return apiRequest<AdminTrackAnnotationImportPreview>('/track-annotation-import-previews',{method:'POST',body:JSON.stringify(packageData)},60_000);}
@@ -1162,7 +1184,7 @@ export function createAdminHistoryEraBlock(eraSlug: string, input: AdminHistoryE
   });
 }
 
-export function updateAdminHistoryEraBlock(id: number, input: AdminHistoryEraBlockInput) {
+export function updateAdminHistoryEraBlock(id: number, input: AdminHistoryEraBlockContentInput) {
   return apiRequest<{ id: number; publicDataSynced: boolean }>(`/history-era-blocks/${id}`, {
     method: 'PATCH', body: JSON.stringify(input),
   });
@@ -1170,6 +1192,13 @@ export function updateAdminHistoryEraBlock(id: number, input: AdminHistoryEraBlo
 
 export function deleteAdminHistoryEraBlock(id: number) {
   return apiRequest<{ id: number; publicDataSynced: boolean }>(`/history-era-blocks/${id}`, { method: 'DELETE' });
+}
+
+export function updateAdminHistoryEraBlockOrder(eraSlug: string, orderedIds: number[], expectedOrderedIds: number[]) {
+  return apiRequest<{ eraSlug: string; orderedIds: number[]; publicDataSynced: boolean }>(
+    `/history-eras/${encodeURIComponent(eraSlug)}/blocks/order`,
+    { method: 'PATCH', body: JSON.stringify({ orderedIds, expectedOrderedIds }) },
+  );
 }
 
 async function constructorMediaRequest(input: AdminConstructorCarInput, kind: 'car' | 'logo', preview: boolean) {
