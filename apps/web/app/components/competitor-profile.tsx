@@ -11,6 +11,7 @@ import type { TeamListItem } from '../data/competitor-contract';
 import { DriverNumberMark, resolveDriverNumber } from './driver-number-mark';
 import { Breadcrumbs } from './breadcrumbs';
 import { DriverResultsMap } from './driver-results-map';
+import { russianCountNoun } from '../data/russian-count-noun';
 
 const driverTeamColors: Record<string, string> = {
   alpine: '#f079b5', aston_martin: '#229971', audi: '#e21b2d', cadillac: '#c7a866',
@@ -212,7 +213,7 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
         </article>
 
         <article className="driver-profile-panel driver-profile-career-card">
-          <header><span>Сводка по базе</span><h2>Карьера</h2></header>
+          <header><span>Представленные сезоны</span><h2>Карьера</h2></header>
           <dl><div><dt>Сезонов</dt><dd>{orderedHistory.length}</dd></div><div><dt>Победы</dt><dd>{totals.wins}</dd></div><div><dt>Очки</dt><dd>{totals.points}</dd></div><div><dt>Лучшее место</dt><dd>{bestPosition ?? '—'}</dd></div><div><dt>Первый сезон</dt><dd>{debutSeason ?? '—'}</dd></div><div><dt>Последний сезон</dt><dd>{orderedHistory[0]?.season ?? '—'}</dd></div></dl>
         </article>
 
@@ -227,7 +228,7 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
         <div className="driver-profile-biography-scene">
           <article className="driver-profile-biography-story">
             <header><span>Карьерный портрет</span><strong>{debutSeason && lastRecordedSeason ? `${debutSeason}—${lastRecordedSeason}` : 'Период уточняется'}</strong></header>
-            <p className={driver.biography ? undefined : 'is-pending'}>{driver.biography ?? 'Редакционная биография ещё не опубликована. До проверки источников здесь остаются только структурированные сведения из базы результатов.'}</p>
+            <p className={driver.biography ? undefined : 'is-pending'}>{driver.biography ?? 'Редакционная биография ещё не опубликована. До проверки источников здесь остаются только структурированные сведения о результатах.'}</p>
             <ol className="driver-profile-biography-milestones" aria-label="Ключевые показатели карьеры">
               <li><small>Первая запись</small><strong>{debutSeason ?? '—'}</strong></li>
               <li><small>Лучший итог</small><strong>{bestPosition ? `№ ${bestPosition}` : '—'}</strong></li>
@@ -275,7 +276,7 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
       </section>
 
       <section className="driver-profile-section" id="history">
-        <header><div><span>Результаты по годам</span><h2>История сезонов</h2></div><p>{orderedHistory.length > 0 ? `${orderedHistory.length} ${orderedHistory.length === 1 ? 'сезон' : orderedHistory.length < 5 ? 'сезона' : 'сезонов'} в текущей базе` : 'История сезонов пока не загружена'}</p></header>
+        <header><div><span>Результаты по годам</span><h2>История сезонов</h2></div><p>{orderedHistory.length > 0 ? `Представленные сезоны: ${orderedHistory.length}` : 'История сезонов пока не загружена'}</p></header>
         {numberEntries.length > 0 ? <details className="driver-number-events">
           <summary><span>Номера по этапам сезона {season}</span><strong>{usedNumbers.map((number) => `№ ${number}`).join(' · ')}</strong></summary>
           <div role="table" aria-label={`Гоночные номера по этапам сезона ${season}`}>
@@ -312,7 +313,7 @@ export function DriverProfile({ season, driver }: { season: number; driver: Driv
           })}
         </ol>{orderedHistory.length > 5 ? <button className="driver-profile-history-toggle" type="button" aria-expanded={showAllSeasons} onClick={() => setShowAllSeasons((value) => !value)}><span>{showAllSeasons ? 'Свернуть историю' : `Показать все сезоны · ${orderedHistory.length}`}</span><i aria-hidden="true">{showAllSeasons ? '↑' : '↓'}</i></button> : null}</> : <p className="driver-profile-empty">История сезонов пока не загружена</p>}
       </section>
-      <p className="driver-profile-data-note">Показатели отражают последний загруженный срез базы и могут измениться после следующего обновления</p>
+      <p className="driver-profile-data-note">Показатели рассчитаны по представленным сезонам и могут измениться после обновления данных</p>
     </main>
   );
 }
@@ -333,11 +334,11 @@ export function TeamProfile({ season, team, lineages = [] }: { season: number; t
     <Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'Команды', href: '/teams' }, { label: team.name }]} />
     <header className="team-profile-hero">
       <FavoriteToggle type="team" id={team.id} label="команду" />
-      <div className="team-profile-intro"><span>Команда Formula 1 · сезон {season}</span><div className="team-profile-title"><TeamLogo constructorId={team.id} constructorName={team.name} teamColor={color} season={season} logoUrl={team.logoUrl} /><h1>{team.name}</h1></div>{nationality ? <p>{nationality}</p> : null}<dl><div><dt>Позиция</dt><dd>{team.position}</dd></div><div><dt>Очки</dt><dd>{team.points}</dd></div><div><dt>Победы</dt><dd>{team.wins}</dd></div><div><dt>Пилоты</dt><dd>{team.driverCount}</dd></div></dl></div>
+      <div className="team-profile-intro"><span>Команда Formula 1 · сезон {season}</span><div className="team-profile-title"><TeamLogo constructorId={team.id} constructorName={team.name} teamColor={color} season={season} logoUrl={team.logoUrl} /><div className="team-profile-heading"><h1>{team.name}</h1>{team.nameRu ? <p className="team-secondary-name">{team.nameRu}</p> : null}</div></div>{nationality ? <p>{nationality}</p> : null}<dl><div><dt>Позиция</dt><dd>{team.position}</dd></div><div><dt>Очки</dt><dd>{team.points}</dd></div><div><dt>Победы</dt><dd>{team.wins}</dd></div><div><dt>Пилоты</dt><dd>{team.driverCount}</dd></div></dl></div>
       <div className="team-profile-hero-car"><TeamCar season={season} constructorId={team.id} constructorName={team.name} carImageUrl={team.carImageUrl} /><small>{team.carModel ?? team.engineName ?? `Болид сезона ${season}`}</small></div>
     </header>
 
-    <section className="team-profile-facts" aria-label="Факты о команде"><div><span>Сезонов в базе</span><strong>{history.length}</strong></div><div><span>Лучшее место</span><strong>{bestPosition ?? '—'}</strong></div><div><span>Титулы</span><strong>{titles}</strong></div><div><span>Победы</span><strong>{totals.wins}</strong></div><div><span>Первый сезон</span><strong>{firstSeason ?? '—'}</strong></div></section>
+    <section className="team-profile-facts" aria-label="Факты о команде"><div><span>Сезонов представлено</span><strong>{history.length}</strong></div><div><span>Лучшее место</span><strong>{bestPosition ?? '—'}</strong></div><div><span>Титулы</span><strong>{titles}</strong></div><div><span>Победы</span><strong>{totals.wins}</strong></div><div><span>Первый сезон</span><strong>{firstSeason ?? '—'}</strong></div></section>
 
     <section className="team-profile-roster-scene" aria-labelledby="team-roster-title">
       <div className="team-profile-roster">
@@ -345,20 +346,20 @@ export function TeamProfile({ season, team, lineages = [] }: { season: number; t
         <div>{team.drivers.length ? team.drivers.map((driver) => <Link href={`/drivers/${driver.id}`} key={driver.id}><div className="team-profile-driver-photo"><DriverPortrait driverId={driver.id} name={driver.nameRu} /></div><div><small>{driver.position ? `№ ${driver.position} в чемпионате` : 'Позиция не указана'}</small><strong>{driver.nameRu}</strong><span>{driver.points} очков · вклад команды {driver.teamPoints}</span></div></Link>) : <p>Состав сезона пока не загружен</p>}</div>
       </div>
       <aside className="team-profile-season-story">
-        <span>Сезонный срез</span><p>{season}</p><div className="team-profile-season-position"><strong>{team.position}</strong><span>место в Кубке<br />конструкторов</span></div>
+        <span>Выбранный сезон</span><p>{season}</p><div className="team-profile-season-position"><strong>{team.position}</strong><span>место в Кубке<br />конструкторов</span></div>
         <dl><div><dt>Очки</dt><dd>{team.points}</dd></div><div><dt>Победы</dt><dd>{team.wins}</dd></div><div><dt>Пилоты</dt><dd>{team.driverCount}</dd></div></dl>
         <small>{team.carModel ?? team.engineName ?? 'Модель болида и двигатель не подтверждены'}</small>
       </aside>
     </section>
 
-    <section className="team-profile-section" id="team-circuits"><header><div><span>География результатов</span><h2>Успешные трассы</h2></div><p>Трассы, на которых команда побеждала в доступном наборе результатов</p></header>{team.successfulCircuits.length ? <div className="team-profile-circuits">{team.successfulCircuits.map((circuit, index) => { const content = <><small>{String(index + 1).padStart(2, '0')}</small><div><strong>{circuit.name}</strong><span>{circuit.wins} побед</span></div><b>↗</b></>; return circuit.isPublished && circuit.slug ? <Link href={`/circuits/${circuit.slug}`} key={circuit.id}>{content}</Link> : <div key={circuit.id}>{content}</div>; })}</div> : <p className="team-profile-empty">В загруженном наборе результатов побед пока нет</p>}</section>
+    <section className="team-profile-section" id="team-circuits"><header><div><span>География результатов</span><h2>Успешные трассы</h2></div><p>Трассы, на которых команда побеждала в представленных результатах</p></header>{team.successfulCircuits.length ? <div className="team-profile-circuits">{team.successfulCircuits.map((circuit, index) => { const content = <><small>{String(index + 1).padStart(2, '0')}</small><div><strong>{circuit.name}</strong><span>{circuit.wins} {russianCountNoun(circuit.wins, ['победа', 'победы', 'побед'])}</span></div><b>↗</b></>; return circuit.isPublished && circuit.slug ? <Link href={`/circuits/${circuit.slug}`} key={circuit.id}>{content}</Link> : <div key={circuit.id}>{content}</div>; })}</div> : <p className="team-profile-empty">Среди представленных результатов побед пока нет</p>}</section>
     <TeamLineageSection lineages={lineages} />
-    <section className="team-profile-section" id="team-history"><header><div><span>Результаты по годам</span><h2>История сезонов</h2></div><p>{history.length} сезонов в текущей базе</p></header>{history.length ? <><ol className={`team-profile-season-journey${showAllSeasons ? ' is-expanded' : ' is-collapsed'}`} aria-label="История результатов команды">{history.map((row, index) => {
+    <section className="team-profile-section" id="team-history"><header><div><span>Результаты по годам</span><h2>История сезонов</h2></div><p>Представленные сезоны: {history.length}</p></header>{history.length ? <><ol className={`team-profile-season-journey${showAllSeasons ? ' is-expanded' : ' is-collapsed'}`} aria-label="История результатов команды">{history.map((row, index) => {
       const seasonLabel = row.position === 1 ? 'Чемпионский сезон' : row.wins > 0 ? 'Победный сезон' : row.position === null ? 'Итог не загружен' : `Место в Кубке — ${row.position}`;
       const hiddenWhileCollapsed = !showAllSeasons && index >= 5;
       return <li className={index === 0 ? 'is-latest' : undefined} aria-hidden={hiddenWhileCollapsed || undefined} key={`${row.season}-${row.name}`}><Link className="team-profile-season-link" href={`/?season=${row.season}#season`} tabIndex={hiddenWhileCollapsed ? -1 : undefined} aria-label={`Открыть сезон ${row.season} в атласе`}><div className="team-profile-season-index"><time dateTime={String(row.season)}>{row.season}</time><span>{seasonLabel}</span></div><div className="team-profile-season-entry"><div><small>Название в сезоне</small><strong>{row.name}</strong></div><dl><div><dt>Место</dt><dd>{row.position ?? '—'}</dd></div><div><dt>Очки</dt><dd>{row.points}</dd></div><div><dt>Победы</dt><dd>{row.wins}</dd></div></dl><span className="team-profile-season-atlas">Сезон в атласе <i>↗</i></span></div></Link></li>;
     })}</ol>{history.length > 5 ? <button className="team-profile-history-toggle" type="button" aria-expanded={showAllSeasons} onClick={() => setShowAllSeasons((value) => !value)}><span>{showAllSeasons ? 'Свернуть историю' : `Показать все сезоны · ${history.length}`}</span><i aria-hidden="true">{showAllSeasons ? '↑' : '↓'}</i></button> : null}</> : <p className="team-profile-empty">История сезонов пока не загружена</p>}</section>
-    <p className="team-profile-note">Показатели отражают последний загруженный срез базы; адреса, технические характеристики и персоналии не отображаются, пока для них нет подтверждённых данных</p>
+    <p className="team-profile-note">Показатели рассчитаны по представленным сезонам; адреса, технические характеристики и персоналии не отображаются, пока для них нет подтверждённых данных</p>
   </main>;
 }
 

@@ -2,6 +2,7 @@ import allDriversJson from './catalogs/drivers-all.json';
 import allTeamsJson from './catalogs/teams-all.json';
 import circuitCatalogJson from './catalogs/circuits.json';
 import type { AllTeamCatalogData, DriverCatalogData, DriverListItem, TeamCatalogData } from './competitor-contract';
+import { resolveTeamSecondaryName } from './team-secondary-name';
 
 const driverCatalogModules = import.meta.glob('./catalogs/drivers-*.json', { import: 'default' }) as Record<string, () => Promise<DriverCatalogData>>;
 const teamCatalogModules = import.meta.glob('./catalogs/teams-*.json', { import: 'default' }) as Record<string, () => Promise<TeamCatalogData>>;
@@ -32,6 +33,7 @@ function localizeDriverCatalog(catalog: DriverCatalogData): DriverCatalogData {
 function localizeTeamCatalog(catalog: TeamCatalogData): TeamCatalogData {
   return { ...catalog, teams: catalog.teams.map((team) => ({
     ...team,
+    nameRu: resolveTeamSecondaryName(team, catalog.season, allTeams.teams),
     resultGeography: team.resultGeography.map(withCircuitPage),
     successfulCircuits: team.successfulCircuits.map(withCircuitPage),
   })) };

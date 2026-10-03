@@ -17,10 +17,10 @@ const typeLabels: Record<string, string> = {
 };
 const variantLabels: Record<string, string> = {
   recommended: 'Рекомендуемый',
-  fastest: 'Быстрее среди альтернатив',
-  shortest: 'Короче среди альтернатив',
+  fastest: 'Самый быстрый среди альтернативных маршрутов',
+  shortest: 'Самый короткий среди альтернативных маршрутов',
   loop: 'Кольцевой',
-  manual: 'Ручной',
+  manual: 'Авторский',
 };
 const mapStyle: maplibregl.StyleSpecification = {
   version: 8,
@@ -117,7 +117,7 @@ export function RouteGenerationPreview({ suggestions }: { suggestions: Suggestio
           <strong>{route.nameRu}</strong>
           <small>{route.summaryRu}</small>
           <span className={styles.variantBadge}>{variantLabels[route.routeVariantKind ?? 'recommended'] ?? route.routeVariantKind ?? 'Рекомендуемый'}</span>
-          <span className={styles.cardMetrics}>{route.stops.length} остановок · {distance(route.distanceM)} · {route.durationMinutes} мин</span>
+          <span className={styles.cardMetrics}>Остановок: {route.stops.length} · {distance(route.distanceM)} · {route.durationMinutes} мин</span>
         </button>
       </article>)}
     </div>

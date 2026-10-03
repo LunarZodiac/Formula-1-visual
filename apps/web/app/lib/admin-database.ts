@@ -310,11 +310,12 @@ export type AdminTrackGeometryInspection = {
 };
 
 export type AdminTrackAnnotation = {
-  id:string;annotationType:'sector'|'turn'|'straight'|'timing_line'|'drs_zone'|'drs_detection';
+  id:string;annotationType:'sector'|'turn'|'straight'|'timing_line'|'drs_zone'|'drs_detection'|'straight_mode_zone'|'straight_mode_activation'|'straight_mode_low_grip_activation'|'overtake_detection'|'overtake_activation';
   labelRu:string|null;labelOriginal:string|null;sequence:number|null;descriptionRu:string|null;
   geometryGeoJson:{type:'Point';coordinates:number[]}|{type:'LineString';coordinates:number[][]};
+  calloutPoint:number[]|null;
   validFromYear:number|null;validToYear:number|null;reviewStatus:'candidate'|'reviewed'|'published'|'hidden';
-  verifiedAt:string|null;sourceName:string|null;sourceUrl:string|null;
+  verifiedAt:string|null;revision:string;sourceName:string|null;sourceUrl:string|null;sourceNotes:string|null;
 };
 
 export type AdminTrackAnnotationRegistry = {
@@ -1023,8 +1024,8 @@ export async function importAdminTrackGeometry(circuitId: string, layoutId: stri
 
 export function getAdminTrackAnnotations(circuitId:string,layoutId:string){return apiRequest<AdminTrackAnnotationRegistry>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`);}
 export function createAdminTrackSectorSegmentation(circuitId:string,layoutId:string,input:Record<string,unknown>){return apiRequest<{circuitId:string;layoutId:string;created:number}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/sectors`,{method:'POST',body:JSON.stringify(input)},60_000);}
-export function updateAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string,input:Record<string,unknown>){return apiRequest<{id:string;circuitId:string;layoutId:string}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'PUT',body:JSON.stringify(input)},60_000);}
-export function deleteAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string){return apiRequest<{id:string;circuitId:string;layoutId:string}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'DELETE'},35_000);}
+export function updateAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string,input:Record<string,unknown>){return apiRequest<{id:string;circuitId:string;layoutId:string;publicDataSynced:boolean}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'PUT',body:JSON.stringify(input)},120_000);}
+export function deleteAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string,revision:string){return apiRequest<{id:string;circuitId:string;layoutId:string;publicDataSynced:boolean}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'DELETE',body:JSON.stringify({revision})},120_000);}
 export function createAdminTrackAnnotationImportPreview(packageData:unknown){return apiRequest<AdminTrackAnnotationImportPreview>('/track-annotation-import-previews',{method:'POST',body:JSON.stringify(packageData)},60_000);}
 export function getAdminTrackAnnotationImportPreview(token:string){return apiRequest<AdminTrackAnnotationImportPreview>(`/track-annotation-import-previews/${encodeURIComponent(token)}`,{},35_000);}
 export function applyAdminTrackAnnotationImportPreview(token:string){return apiRequest<{imported:number;circuitId:string;layoutId:string}>(`/track-annotation-import-previews/${encodeURIComponent(token)}/apply`,{method:'POST',body:'{}'},120_000);}

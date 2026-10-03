@@ -61,10 +61,10 @@ export default async function HistoryEraPage({ params }: HistoryEraPageProps) {
           </div> : null}
         </section>;
       }) : <>
-      <p className={styles.lead}>Страница подготовлена как редакционный каркас. Исторические факты, подписи и фотографии будут добавляться только вместе с источниками и сведениями о правах</p>
+      <p className={styles.lead}>На странице пока нет опубликованных исторических материалов. Тексты и изображения появятся после проверки источников и сведений о правах.</p>
       {era.chapters.map((chapter, index) => <section className={`${styles.chapter} ${index % 2 === 0 ? styles.positionRight : styles.positionLeft}`} key={chapter}>
         <div className={styles.placeholder} role="img" aria-label={`Место для проверенной иллюстрации раздела «${chapter}»`}><span>{String(index + 1).padStart(2, '0')}</span><small>Иллюстрация и подпись</small></div>
-        <div className={styles.copy}><span className={styles.eyebrow}>{String(index + 1).padStart(2, '0')} / {String(era.chapters.length).padStart(2, '0')}</span><h2>{chapter}</h2><p>Содержательный блок будет собран из проверяемых событий, пространственных изменений и связанных материалов атласа. Такая структура позволяет чередовать текст с изображениями разного масштаба, не превращая страницу в сплошную статью</p></div>
+        <div className={styles.copy}><span className={styles.eyebrow}>{String(index + 1).padStart(2, '0')} / {String(era.chapters.length).padStart(2, '0')}</span><h2>{chapter}</h2><p>Материал для этого раздела пока не опубликован. Текст и иллюстрации появятся после проверки источников и сведений о правах.</p></div>
       </section>)}</>}
     </article>
 

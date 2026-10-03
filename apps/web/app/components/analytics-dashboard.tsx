@@ -711,9 +711,8 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
             <em>результата</em>
           </h1>
           <p>
-            Сравните до трёх пилотов по сезону или всей доступной карьере.
-            Выберите показатель и исследуйте, на каких трассах складывался
-            результат
+            Сравните до трёх пилотов за сезон или за все представленные сезоны.
+            Карта показывает их победы, подиумы, поулы и очки по трассам
           </p>
         </div>
         <b aria-hidden="true">01</b>
@@ -735,9 +734,10 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
             Карьера
           </button>
         </div>
-        <label>
+        <label className="public-catalog-field">
           <span>Сезон</span>
           <select
+            className="public-catalog-control"
             value={season}
             disabled={scope === "career"}
             onChange={(e) => setSeason(Number(e.target.value))}
@@ -748,8 +748,11 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
           </select>
         </label>
         <div className="av-picker">
-          <label htmlFor="driver-search">
-            Пилоты <small>{selected.length}/3</small>
+          <label className="public-catalog-label" htmlFor="driver-search">
+            Пилоты
+            <small className="public-catalog-count">
+              <strong>{selected.length}</strong>/3
+            </small>
           </label>
           <div>
             {selected.map((d, i) => (
@@ -767,6 +770,7 @@ export function AnalyticsDashboard({ drivers, seasons, initialSeason }: Props) {
           </div>
           {selected.length < 3 && (
             <input
+              className="public-catalog-control"
               id="driver-search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}

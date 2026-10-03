@@ -1,9 +1,11 @@
 'use server';
 
+import { randomUUID } from 'node:crypto';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { clearAdminSession, createAdminSession, getAdminSession, verifyAdminCredentials } from '../lib/admin-auth';
-import { applyAdminTrackAnnotationImportPreview, createAdminTrackAnnotationImportPreview } from '../lib/admin-database';
+import { applyAdminTrackAnnotationImportPreview, createAdminTrackAnnotationImportPreview, getAdminTrackAnnotations } from '../lib/admin-database';
+import { buildLegacyTrackAnnotationPackage } from './circuits/[id]/layouts/[layoutId]/annotations/legacy-track-markup';
 import { changeAdminTravelRouteLifecycle, deleteAdminArchivedTravelRoute } from '../lib/admin-database';
 import { createAdminTravelRouteGeometryPreview } from '../lib/admin-database';
 import { createAdminTrackSectorSegmentation } from '../lib/admin-database';
@@ -429,13 +431,44 @@ export async function importTrackGeometry(formData: FormData) {
 }
 
 export async function saveTrackAnnotation(formData:FormData){
-  if(!await getAdminSession())redirect('/admin/login');const circuitId=String(formData.get('circuitId')??'').trim(),layoutId=String(formData.get('layoutId')??'').trim(),annotationId=String(formData.get('annotationId')??'').trim();
+  if(!await getAdminSession())redirect('/admin/login');const circuitId=String(formData.get('circuitId')??'').trim(),layoutId=String(formData.get('layoutId')??'').trim(),annotationType=String(formData.get('annotationType')??'').trim(),annotationId=String(formData.get('annotationId')??'').trim()||`${layoutId}-${annotationType}-${randomUUID().slice(0,8)}`;
   const destination=`/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`;
-  try{await updateAdminTrackAnnotation(circuitId,layoutId,annotationId,{annotationType:String(formData.get('annotationType')??''),labelRu:optionalText(formData,'labelRu'),labelOriginal:optionalText(formData,'labelOriginal'),
-    sequence:optionalText(formData,'sequence'),descriptionRu:optionalText(formData,'descriptionRu'),geometryGeoJson:String(formData.get('geometryGeoJson')??''),validFromYear:optionalText(formData,'validFromYear'),validToYear:optionalText(formData,'validToYear'),
-    reviewStatus:String(formData.get('reviewStatus')??'candidate'),sourceName:optionalText(formData,'sourceName'),sourceUrl:String(formData.get('sourceUrl')??''),sourceNotes:optionalText(formData,'sourceNotes'),sourceVerified:formData.get('sourceVerified')==='yes'});
-  }catch(error){console.error('Не удалось сохранить разметку конфигурации',error);redirect(`${destination}?edit=${encodeURIComponent(annotationId)}&error=save`);}
-  revalidatePath(destination);redirect(`${destination}?saved=1`);
+  let publicDataSynced=true;
+  try{const result=await updateAdminTrackAnnotation(circuitId,layoutId,annotationId,{annotationType,labelRu:optionalText(formData,'labelRu'),labelOriginal:optionalText(formData,'labelOriginal'),
+    sequence:optionalText(formData,'sequence'),descriptionRu:optionalText(formData,'descriptionRu'),geometryGeoJson:String(formData.get('geometryGeoJson')??''),calloutPointJson:optionalText(formData,'calloutPointJson'),validFromYear:optionalText(formData,'validFromYear'),validToYear:optionalText(formData,'validToYear'),
+    revision:optionalText(formData,'revision'),reviewStatus:String(formData.get('reviewStatus')??'candidate'),sourceName:optionalText(formData,'sourceName'),sourceUrl:String(formData.get('sourceUrl')??''),sourceNotes:optionalText(formData,'sourceNotes'),sourceVerified:formData.get('sourceVerified')==='yes'});
+    if(!result)throw new Error('Разметка не сохранена');
+    publicDataSynced=result.publicDataSynced;
+  }catch(error){console.error('Не удалось сохранить разметку конфигурации',error);redirect(`${destination}?edit=${encodeURIComponent(annotationId)}&error=${error instanceof Error&&error.message.includes('Обновите страницу')?'conflict':'save'}`);}
+  revalidatePath(destination);revalidatePath(`/circuits/${encodeURIComponent(circuitId)}`);
+  redirect(`${destination}?saved=1${publicDataSynced?'':'&syncError=1'}`);
+}
+
+export async function saveTrackStartFinish(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const circuitId = String(formData.get('circuitId') ?? '').trim();
+  const layoutId = String(formData.get('layoutId') ?? '').trim();
+  const annotationId = `${layoutId}-start-finish`;
+  const destination = `/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`;
+  let publicDataSynced = true;
+  try {
+    const result = await updateAdminTrackAnnotation(circuitId, layoutId, annotationId, {
+      annotationType: 'timing_line', labelRu: 'Старт/финиш', labelOriginal: null,
+      sequence: null, descriptionRu: null, geometryGeoJson: String(formData.get('geometryGeoJson') ?? ''), calloutPointJson: null,
+      validFromYear: optionalText(formData, 'validFromYear'), validToYear: optionalText(formData, 'validToYear'),
+      revision: optionalText(formData, 'revision'), reviewStatus: String(formData.get('reviewStatus') ?? 'candidate'),
+      sourceName: optionalText(formData, 'sourceName'), sourceUrl: String(formData.get('sourceUrl') ?? ''),
+      sourceNotes: optionalText(formData, 'sourceNotes'), sourceVerified: formData.get('sourceVerified') === 'yes',
+    });
+    if (!result) throw new Error('Положение старта/финиша не сохранено');
+    publicDataSynced = result.publicDataSynced;
+  } catch (error) {
+    console.error('Не удалось сохранить положение старта/финиша', error);
+    redirect(`${destination}?panel=finish&error=${error instanceof Error && error.message.includes('Обновите страницу') ? 'conflict' : 'finish'}`);
+  }
+  revalidatePath(destination);
+  revalidatePath(`/circuits/${encodeURIComponent(circuitId)}`);
+  redirect(`${destination}?panel=finish&saved=finish${publicDataSynced ? '' : '&syncError=1'}`);
 }
 
 export async function saveTrackSectorSegmentation(formData:FormData){
@@ -454,8 +487,10 @@ export async function saveTrackSectorSegmentation(formData:FormData){
 export async function removeTrackAnnotation(formData:FormData){
   if(!await getAdminSession())redirect('/admin/login');const circuitId=String(formData.get('circuitId')??'').trim(),layoutId=String(formData.get('layoutId')??'').trim(),annotationId=String(formData.get('annotationId')??'').trim();
   const destination=`/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`;
-  try{if(formData.get('confirmed')!=='yes')throw new Error('Удаление не подтверждено');await deleteAdminTrackAnnotation(circuitId,layoutId,annotationId);}catch(error){console.error('Не удалось удалить разметку конфигурации',error);redirect(`${destination}?error=delete`);}
-  revalidatePath(destination);redirect(`${destination}?deleted=1`);
+  let publicDataSynced=true;
+  try{if(formData.get('confirmed')!=='yes')throw new Error('Удаление не подтверждено');const result=await deleteAdminTrackAnnotation(circuitId,layoutId,annotationId,String(formData.get('revision')??''));if(!result)throw new Error('Элемент разметки не найден');publicDataSynced=result.publicDataSynced;}catch(error){console.error('Не удалось удалить разметку конфигурации',error);redirect(`${destination}?error=${error instanceof Error&&error.message.includes('Обновите страницу')?'conflict':'delete'}`);}
+  revalidatePath(destination);revalidatePath(`/circuits/${encodeURIComponent(circuitId)}`);
+  redirect(`${destination}?deleted=1${publicDataSynced?'':'&syncError=1'}`);
 }
 
 export async function previewTrackAnnotationImport(formData: FormData) {
@@ -476,6 +511,36 @@ export async function previewTrackAnnotationImport(formData: FormData) {
     if (error && typeof error === 'object' && 'digest' in error) throw error;
     console.error('Не удалось подготовить пакет разметки', error);
     redirect(`${destination}?error=import-preview`);
+  }
+}
+
+export async function previewLegacyTrackAnnotationImport(formData: FormData) {
+  if (!await getAdminSession()) redirect('/admin/login');
+  const circuitId = String(formData.get('circuitId') ?? '').trim();
+  const layoutId = String(formData.get('layoutId') ?? '').trim();
+  const destination = `/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`;
+  try {
+    if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(layoutId)) throw new Error('Некорректная конфигурация');
+    const sourceName = String(formData.get('sourceName') ?? '').trim();
+    const sourceUrl = new URL(String(formData.get('sourceUrl') ?? '').trim());
+    if (!sourceName || !['http:', 'https:'].includes(sourceUrl.protocol) || sourceUrl.username || sourceUrl.password) throw new Error('Укажите документированный источник');
+    if (formData.get('sourceAcknowledged') !== 'yes') throw new Error('Подтвердите применимость источника');
+    const packageData = buildLegacyTrackAnnotationPackage(circuitId, layoutId, sourceName, sourceUrl.href);
+    if (!packageData) throw new Error('Справочная разметка для этой конфигурации отсутствует');
+    const registry = await getAdminTrackAnnotations(circuitId, layoutId);
+    if (!registry) throw new Error('Конфигурация не найдена');
+    const existing = new Set(registry.annotations.map(item => item.id));
+    const occupied = new Set(registry.annotations.filter(item => item.sequence !== null && item.reviewStatus !== 'hidden').map(item => `${item.annotationType}:${item.sequence}:${item.validFromYear ?? 0}`));
+    const features = packageData.features.filter(feature => !existing.has(String(feature.properties?.id))
+      && !occupied.has(`${feature.properties?.annotationType}:${feature.properties?.sequence}:${feature.properties?.validFromYear ?? 0}`));
+    if (!features.length) throw new Error('Все элементы уже перенесены');
+    const preview = await createAdminTrackAnnotationImportPreview({ ...packageData, features });
+    if (!preview) throw new Error('Не удалось создать предпросмотр');
+    redirect(`${destination}?importPreview=${encodeURIComponent(preview.token)}`);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
+    console.error('Не удалось подготовить перенос существующей разметки', error);
+    redirect(`${destination}?error=legacy-import`);
   }
 }
 

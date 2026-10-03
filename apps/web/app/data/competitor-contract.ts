@@ -57,7 +57,7 @@ export type DriverListItem = Pick<DriverCatalogItem, 'id' | 'nameRu' | 'nameEn' 
   seasonHistory?: { season: number; numbers?: number[] }[];
 };
 export type TeamCatalogItem = CompetitorHistory & {
-  id: string; name: string; nationality: string | null; position: number; points: number; wins: number;
+  id: string; name: string; nameRu?: string; nationality: string | null; position: number; points: number; wins: number;
   driverCount: number; engineName: string | null; color: string | null; logoUrl: string | null;
   carModel: string | null; carImageUrl: string | null;
   drivers: { id: string; nameRu: string; code: string | null; position: number | null; points: number; raceEntries: number; teamPoints: number }[];
@@ -270,6 +270,7 @@ export function assertCompetitorCatalog(value: unknown, kind: 'drivers' | 'teams
       }
     } else {
       text(row.name, `${path}.name`);
+      if (row.nameRu !== undefined) text(row.nameRu, `${path}.nameRu`);
       for (const key of ['engineName', 'color', 'logoUrl', 'carModel', 'carImageUrl']) nullableText(row[key], `${path}.${key}`);
       const drivers = list(row.drivers, `${path}.drivers`);
       unique(drivers, `${path}.drivers`);

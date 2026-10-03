@@ -5,6 +5,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
+import { serializePublicTrackAnnotation } from './lib/public-track-annotation.mjs';
 
 const { Client } = pg;
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -152,6 +153,7 @@ async function readPageData(client, circuitId) {
     `SELECT annotation.id, annotation.layout_id, annotation.annotation_type,
             annotation.label_ru, annotation.label_original, annotation.sequence,
             annotation.description_ru, annotation.valid_from_year, annotation.valid_to_year,
+            annotation.properties->'calloutPoint' AS callout_point,
             ST_AsGeoJSON(annotation.geometry::geometry)::json AS geometry,
             source.name AS source_name, source.url AS source_url
      FROM atlas.track_layout_annotations AS annotation
@@ -428,21 +430,7 @@ function buildReadModel(existing, databasePage) {
         centerline: { type: 'Feature', properties: { layoutId: layout.id }, geometry: layout.centerline },
         annotations: trackAnnotations
           .filter((annotation) => annotation.layout_id === layout.id)
-          .map((annotation) => ({
-            id: annotation.id,
-            type: annotation.annotation_type,
-            ...(annotation.label_ru ? { labelRu: annotation.label_ru } : {}),
-            ...(annotation.label_original ? { labelOriginal: annotation.label_original } : {}),
-            ...(annotation.sequence ? { sequence: Number(annotation.sequence) } : {}),
-            ...(annotation.description_ru ? { descriptionRu: annotation.description_ru } : {}),
-            ...(annotation.valid_from_year ? { validFromYear: Number(annotation.valid_from_year) } : {}),
-            ...(annotation.valid_to_year ? { validToYear: Number(annotation.valid_to_year) } : {}),
-            geometry: annotation.geometry,
-            source: {
-              name: annotation.source_name,
-              ...(annotation.source_url ? { url: annotation.source_url } : {}),
-            },
-          })),
+          .map(serializePublicTrackAnnotation),
       })),
     },
     history,

@@ -4,7 +4,7 @@
 import * as maplibregl from 'maplibre-gl';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { addAtlasMapAttribution } from '../lib/map-attribution';
 import type { CircuitPageData } from '../data/circuit-page-data';
@@ -118,17 +118,35 @@ function makeTravelPoints(pageData: CircuitPageData): GeoJSON.FeatureCollection<
 }
 
 function annotationIsActive(annotation: TrackAnnotationPresentation, season: number) {
+  if ((annotation.type === 'drs_zone' || annotation.type === 'drs_detection') && season >= 2026) return false;
+  if ((annotation.type.startsWith('straight_mode_') || annotation.type.startsWith('overtake_')) && season < 2026) return false;
   return (annotation.validFromYear === undefined || annotation.validFromYear <= season)
     && (annotation.validToYear === undefined || annotation.validToYear >= season);
+}
+
+function annotationCalloutPoint(annotation: TrackAnnotationPresentation): [number, number] | null {
+  const point = annotation.calloutPoint;
+  return Array.isArray(point) && point.length >= 2 && point.slice(0, 2).every(Number.isFinite)
+    ? [point[0], point[1]]
+    : null;
+}
+
+function isNumberOnlyTurn(annotation: TrackAnnotationPresentation) {
+  return annotation.type === 'turn' && annotation.sequence !== undefined
+    && !annotation.labelRu?.trim() && !annotation.labelOriginal?.trim();
 }
 
 function annotationFeature(annotation: TrackAnnotationPresentation): GeoJSON.Feature<GeoJSON.Geometry> {
   const fallbackLabels: Record<TrackAnnotationPresentation['type'], string> = {
     sector: 'Сектор', turn: 'Поворот', straight: 'Прямая', timing_line: 'Отсечка времени',
     drs_zone: 'Зона DRS', drs_detection: 'Точка детекции DRS',
+    straight_mode_zone: 'Участок Straight Mode', straight_mode_activation: 'Активация Straight Mode',
+    straight_mode_low_grip_activation: 'Активация при низком сцеплении',
+    overtake_detection: 'Детекция Overtake Mode', overtake_activation: 'Активация Overtake Mode',
   };
   const label = annotation.labelRu ?? annotation.labelOriginal
     ?? (annotation.sequence ? `${fallbackLabels[annotation.type]} ${annotation.sequence}` : fallbackLabels[annotation.type]);
+  const calloutPoint = annotationCalloutPoint(annotation);
   return {
     type: 'Feature',
     properties: {
@@ -137,11 +155,15 @@ function annotationFeature(annotation: TrackAnnotationPresentation): GeoJSON.Fea
       label,
       title: label,
       sequence: annotation.sequence ?? 0,
+      hasCallout: calloutPoint !== null,
+      isStartFinish: annotation.id.endsWith('-start-finish'),
       description: annotation.descriptionRu ?? '',
       sourceName: annotation.source.name,
       sourceUrl: annotation.source.url ?? '',
     },
-    geometry: annotation.geometry,
+    geometry: calloutPoint && isNumberOnlyTurn(annotation)
+      ? { type: 'Point', coordinates: calloutPoint }
+      : annotation.geometry,
   };
 }
 
@@ -152,6 +174,44 @@ function annotationCollection(
   return {
     type: 'FeatureCollection',
     features: annotations.filter((annotation) => types.includes(annotation.type)).map(annotationFeature),
+  };
+}
+
+function annotationCalloutCollection(
+  annotations: TrackAnnotationPresentation[],
+): GeoJSON.FeatureCollection<GeoJSON.Point> {
+  return {
+    type: 'FeatureCollection',
+    features: annotations.flatMap((annotation) => {
+      const calloutPoint = annotationCalloutPoint(annotation);
+      if (!calloutPoint || isNumberOnlyTurn(annotation)) return [];
+      const feature = annotationFeature(annotation);
+      return [{ ...feature, geometry: { type: 'Point' as const, coordinates: calloutPoint } }];
+    }),
+  };
+}
+
+function closeLegacyLabels(
+  labels: GeoJSON.FeatureCollection<GeoJSON.Point>,
+  leaders: GeoJSON.FeatureCollection<GeoJSON.LineString>,
+): GeoJSON.FeatureCollection<GeoJSON.Point> {
+  return {
+    ...labels,
+    features: labels.features.map((feature, index) => {
+      const anchor = leaders.features[index]?.geometry.coordinates[0];
+      const original = feature.geometry.coordinates;
+      if (!anchor) return feature;
+      return {
+        ...feature,
+        geometry: {
+          ...feature.geometry,
+          coordinates: [
+            anchor[0] + (original[0] - anchor[0]) * .26,
+            anchor[1] + (original[1] - anchor[1]) * .26,
+          ],
+        },
+      };
+    }),
   };
 }
 
@@ -360,21 +420,32 @@ function applyBasemap(map: MapLibreMap, nextBasemap: DetailBasemap) {
   if (map.getLayer('context-buildings-3d')) map.setPaintProperty('context-buildings-3d', 'fill-extrusion-color', nextBasemap === 'dark' ? '#61727c' : '#b8a991');
 }
 
-function applyDetailMapTheme(map: MapLibreMap, theme: AtlasTheme, basemap: DetailBasemap) {
+function applyDetailMapTheme(
+  map: MapLibreMap,
+  theme: AtlasTheme,
+  basemap: DetailBasemap,
+  forceVectorFallback = false,
+) {
   const isLight = theme === 'light';
   const paint = (layerId: string, property: Parameters<MapLibreMap['setPaintProperty']>[1], value: Parameters<MapLibreMap['setPaintProperty']>[2]) => {
     if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
   };
   const visibility = (layerId: string, value: 'visible' | 'none') => {
-    if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', value);
+    if (map.getLayer(layerId) && map.getLayoutProperty(layerId, 'visibility') !== value) {
+      map.setLayoutProperty(layerId, 'visibility', value);
+    }
   };
 
   // Светлая тема использует векторную подложку, чтобы вся карта, а не только интерфейс, меняла тональность.
-  visibility('satellite-base', isLight ? 'none' : basemap === 'satellite' ? 'visible' : 'none');
-  visibility('base', isLight || basemap === 'dark' ? 'visible' : 'none');
+  const wantsSatellite = !isLight && basemap === 'satellite';
+  const showVectorBasemap = !wantsSatellite || forceVectorFallback || !map.isSourceLoaded('satellite');
+  visibility('base', showVectorBasemap ? 'visible' : 'none');
   ['context-landcover', 'context-water', 'context-roads-casing', 'context-roads'].forEach((layerId) => {
-    visibility(layerId, isLight || basemap === 'dark' ? 'visible' : 'none');
+    visibility(layerId, showVectorBasemap ? 'visible' : 'none');
   });
+  // Reveal the incoming base before hiding the outgoing one, so a theme switch never exposes
+  // a partially themed frame while vector tiles are being prepared.
+  visibility('satellite-base', wantsSatellite ? 'visible' : 'none');
 
   paint('background', 'background-color', isLight ? '#e8eeec' : '#02070d');
   paint('base', 'background-color', isLight ? '#e4ebe8' : '#07111a');
@@ -435,10 +506,13 @@ function makeInitialDetailStyle(theme: AtlasTheme, basemap: DetailBasemap) {
   };
 
   // MapLibre получает правильную палитру до первого кадра, поэтому сохранённая светлая тема не вспыхивает тёмной подложкой.
-  visibility('satellite-base', isLight ? 'none' : basemap === 'satellite' ? 'visible' : 'none');
-  visibility('base', isLight || basemap === 'dark' ? 'visible' : 'none');
+  const wantsSatellite = !isLight && basemap === 'satellite';
+  visibility('satellite-base', wantsSatellite ? 'visible' : 'none');
+  // Keep the complete vector map above the raster layer for the first frame. The load handler
+  // removes it only after the satellite source has tiles ready for the current viewport.
+  visibility('base', 'visible');
   ['context-landcover', 'context-water', 'context-roads-casing', 'context-roads'].forEach((layerId) => {
-    visibility(layerId, isLight || basemap === 'dark' ? 'visible' : 'none');
+    visibility(layerId, 'visible');
   });
   paint('background', 'background-color', isLight ? '#e8eeec' : '#02070d');
   paint('base', 'background-color', isLight ? '#e4ebe8' : '#07111a');
@@ -511,6 +585,8 @@ type TravelPoiMapProps = {
 };
 
 function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureIds, bounds, onSelect }: TravelPoiMapProps) {
+  // Exactly ±180° wrap to the same Mercator X in MapLibre 6 and make the constraint zoom infinite.
+  const worldBounds: [[number, number], [number, number]] = [[-179.999, -85], [179.999, 85]];
   const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -548,8 +624,8 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
       fitBoundsOptions: { padding: 48 },
       minZoom: -2,
       maxZoom: 18,
-      maxBounds: [[-180, -85], [180, 85]],
       renderWorldCopies: false,
+      trackResize: false,
       attributionControl: false,
     });
     mapRef.current = map;
@@ -561,11 +637,31 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
         map.setMinZoom(Math.max(-2, Math.min(12.5, coverageZoom - .05)));
       }
     };
-    const observer = new ResizeObserver(() => { map.resize(); updateMinimumZoom(); });
+    let resizeFrame: number | null = null;
+    let mapLoaded = false;
+    const observer = new ResizeObserver(() => {
+      if (!mapLoaded || resizeFrame !== null) return;
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = null;
+        const container = containerRef.current;
+        if (mapRef.current !== map || !container?.clientWidth || !container.clientHeight) return;
+        map.resize();
+        // MapLibre 6 can build a singular camera matrix when minZoom is raised while maxBounds is active.
+        // Reapply both constraints in their safe order after the viewport dimensions have settled.
+        map.setMaxBounds(null);
+        try {
+          updateMinimumZoom();
+        } finally {
+          map.setMaxBounds(worldBounds);
+        }
+      });
+    });
     observer.observe(containerRef.current);
-    updateMinimumZoom();
 
     map.on('load', () => {
+      mapLoaded = true;
+      updateMinimumZoom();
+      map.setMaxBounds(worldBounds);
       const showFeaturePopup = (feature: maplibregl.MapGeoJSONFeature, fallbackPosition?: maplibregl.LngLat) => {
         const properties = feature.properties ?? {};
         const isRoute = properties.featureType === 'route';
@@ -790,11 +886,11 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
       });
       applyDetailMapTheme(map, themeRef.current, 'dark');
       setReady(true);
-      map.resize();
     });
 
     return () => {
       observer.disconnect();
+      if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame);
       popupRef.current?.remove();
       popupRef.current = null;
       map.remove();
@@ -804,10 +900,17 @@ function TravelPoiMap({ collection, track, roleFilter, selectedId, focusFeatureI
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const map = mapRef.current;
-    if (!ready || !map?.isStyleLoaded()) return;
-    applyDetailMapTheme(map, theme, basemap);
+    if (!ready || !map) return;
+    const applyTheme = () => {
+      if (mapRef.current !== map || !map.isStyleLoaded()) return;
+      applyDetailMapTheme(map, theme, basemap);
+      map.triggerRepaint();
+    };
+    if (map.isStyleLoaded()) applyTheme();
+    else map.once('style.load', applyTheme);
+    return () => { map.off('style.load', applyTheme); };
   }, [basemap, ready, theme]);
 
   useEffect(() => {
@@ -911,7 +1014,15 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   const mediaDialogRef = useRef<HTMLDialogElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const themeRef = useRef<AtlasTheme>(theme);
+  const basemapRef = useRef<DetailBasemap>('satellite');
+  const mapLoadedRef = useRef(false);
+  const awaitingSatelliteRef = useRef(false);
   const [resultSeason, setResultSeason] = useState(pageData.results.defaultSeason);
+  const [settledMapSeason, setSettledMapSeason] = useState<number | null>(null);
+  const isMapLoading = settledMapSeason !== resultSeason;
+  const [mapLoadFailed, setMapLoadFailed] = useState(false);
+  const [mapLoadNotice, setMapLoadNotice] = useState<string | null>(null);
+  const [mapRetry, setMapRetry] = useState(0);
   const activeTrackLayout = useMemo<TrackLayoutPresentation | null>(() => {
     const presentation = pageData.trackPresentation;
     if (!presentation) return null;
@@ -927,6 +1038,8 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
     () => (activeTrackLayout?.annotations ?? []).filter((annotation) => annotationIsActive(annotation, resultSeason)),
     [activeTrackLayout, resultSeason],
   );
+  const hasStraightMode = activeTrackAnnotations.some((annotation) => annotation.type.startsWith('straight_mode_'));
+  const hasOvertakeMode = activeTrackAnnotations.some((annotation) => annotation.type.startsWith('overtake_'));
   const circuitTrack = activeTrackLayout?.centerline ?? trackGeometries[pageData.geometryId];
   const technicalData = circuitTechnicalData[pageData.id as keyof typeof circuitTechnicalData];
   const spaNamedTrackFeatures = pageData.id === 'spa' && technicalData && 'namedTrackFeatures' in technicalData
@@ -937,8 +1050,9 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
     : null;
   const usesSpaTechnicalMap = Boolean(spaNamedTrackFeatures);
   const usesDatabaseTechnicalOverlay = activeTrackAnnotations.length > 0;
-  const hasTechnicalOverlay = usesDatabaseTechnicalOverlay
-    || (pageData.features.technicalOverlay && Boolean(technicalData));
+  const hasSeasonTrackLayout = !pageData.trackPresentation || activeTrackLayout !== null;
+  const hasTechnicalOverlay = hasSeasonTrackLayout && (usesDatabaseTechnicalOverlay
+    || (pageData.features.technicalOverlay && Boolean(technicalData)));
   const databaseSectorLines = useMemo(
     () => annotationCollection(activeTrackAnnotations, ['sector']), [activeTrackAnnotations],
   );
@@ -948,9 +1062,15 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   const databaseDrsLines = useMemo(
     () => annotationCollection(activeTrackAnnotations, ['drs_zone']), [activeTrackAnnotations],
   );
+  const databaseStraightModeLines = useMemo(
+    () => annotationCollection(activeTrackAnnotations, ['straight_mode_zone']), [activeTrackAnnotations],
+  );
   const databaseAnnotationPoints = useMemo(
-    () => annotationCollection(activeTrackAnnotations, ['turn', 'timing_line', 'drs_detection']),
+    () => annotationCollection(activeTrackAnnotations, ['turn', 'timing_line', 'drs_detection', 'straight_mode_activation', 'straight_mode_low_grip_activation', 'overtake_detection', 'overtake_activation']),
     [activeTrackAnnotations],
+  );
+  const databaseAnnotationCallouts = useMemo(
+    () => annotationCalloutCollection(activeTrackAnnotations), [activeTrackAnnotations],
   );
   const fallbackTravelPoints = useMemo(() => makeTravelPoints(pageData), [pageData]);
   const [travelMapData, setTravelMapData] = useState<TravelMapCollection>(fallbackTravelPoints);
@@ -987,7 +1107,19 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
     { id: 'history', label: 'История' },
     { id: 'media', label: 'Медиатека' },
   ], [travelStory]);
-  useEffect(() => { themeRef.current = theme; }, [theme]);
+  useLayoutEffect(() => {
+    const map = mapRef.current;
+    const wantsSatellite = theme === 'dark' && basemap === 'satellite';
+    const activatesSatellite = Boolean(map && mapLoadedRef.current && wantsSatellite
+      && map.getLayoutProperty('satellite-base', 'visibility') !== 'visible');
+    themeRef.current = theme;
+    basemapRef.current = basemap;
+    if (!map || !mapLoadedRef.current) return;
+    awaitingSatelliteRef.current = activatesSatellite
+      || (wantsSatellite && !map.isSourceLoaded('satellite'));
+    applyDetailMapTheme(map, theme, basemap, awaitingSatelliteRef.current);
+    map.triggerRepaint();
+  }, [basemap, theme]);
   useEffect(() => {
     queueMicrotask(() => {
       try {
@@ -1315,12 +1447,22 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
   }, [pageData.id, pageData.nameRu, resultSeason]);
 
   const changeResultSeason = useCallback((season: number) => {
+    setSettledMapSeason(null);
+    setMapLoadFailed(false);
+    setMapLoadNotice(null);
     setResultStatus('loading');
     setResultSeason(season);
     const url = new URL(window.location.href);
     url.searchParams.set('season', String(season));
     window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
   }, []);
+
+  const retryTrackMap = () => {
+    setSettledMapSeason(null);
+    setMapLoadFailed(false);
+    setMapLoadNotice(null);
+    setMapRetry((value) => value + 1);
+  };
 
   const focusTrack = useCallback((duration = 1000) => {
     const map = mapRef.current;
@@ -1361,8 +1503,9 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
       [
         'track-glow', 'track-line', 'track-basic-line', 'sector-lines', 'drs-glow', 'drs-lines',
         'drs-zone-labels',
-        'annotation-sector-lines', 'annotation-straight-lines', 'annotation-drs-glow',
-        'annotation-drs-lines', 'annotation-line-labels', 'annotation-points', 'annotation-point-labels',
+        'annotation-sector-lines', 'annotation-straight-lines', 'annotation-straight-mode-lines', 'annotation-drs-glow',
+        'annotation-drs-lines', 'annotation-line-labels', 'annotation-points', 'annotation-turn-labels',
+        'annotation-start-finish', 'annotation-point-labels', 'annotation-callout-labels',
         'drs-detection-leader-casing', 'drs-detection-leaders',
         'drs-detection-points', 'drs-detection-labels',
         'start-finish-leader', 'start-finish-marker',
@@ -1446,9 +1589,10 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
     if (!containerRef.current || mapRef.current) return;
     const initialTheme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
     themeRef.current = initialTheme;
+    const initialBasemap = basemapRef.current;
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: makeInitialDetailStyle(initialTheme, 'satellite'),
+      style: makeInitialDetailStyle(initialTheme, initialBasemap),
       center: pageData.location.coordinates,
       zoom: 13,
       pitch: pageData.map.trackCamera.pitch,
@@ -1458,15 +1602,59 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
       maxPitch: 75,
       attributionControl: false,
       interactive: true,
+      trackResize: false,
     });
     mapRef.current = map;
     const updateBearing = () => setMapBearing(map.getBearing());
+    // A season change replaces the map. Reveal it only after the final camera,
+    // annotations and selected basemap have rendered, never its temporary base.
+    const finishMapPresentation = () => {
+      if (mapRef.current !== map || !mapLoadedRef.current || awaitingSatelliteRef.current) return;
+      if (themeRef.current === 'dark' && basemapRef.current === 'satellite'
+        && !map.isSourceLoaded('satellite')) return;
+      setSettledMapSeason(resultSeason);
+      window.clearTimeout(presentationTimer);
+      map.off('idle', finishMapPresentation);
+    };
+    map.on('idle', finishMapPresentation);
+    const presentationTimer = window.setTimeout(() => {
+      if (mapRef.current !== map) return;
+      map.off('idle', finishMapPresentation);
+      if (!mapLoadedRef.current) {
+        setMapLoadFailed(true);
+        return;
+      }
+      // A failing tile host must not leave the usable vector map behind a curtain.
+      awaitingSatelliteRef.current = false;
+      applyDetailMapTheme(map, themeRef.current, 'dark');
+      setMapLoadNotice(themeRef.current === 'dark' && basemapRef.current === 'satellite'
+        ? 'Спутниковая подложка недоступна — показана векторная карта'
+        : 'Карта загружена не полностью — часть слоёв может быть недоступна');
+      setSettledMapSeason(resultSeason);
+    }, 12000);
+    const finishSatelliteTransition = (event: maplibregl.MapSourceDataEvent) => {
+      if (event.sourceId !== 'satellite' || !awaitingSatelliteRef.current || !mapLoadedRef.current
+        || themeRef.current !== 'dark' || basemapRef.current !== 'satellite'
+        || !map.isSourceLoaded('satellite')) return;
+      awaitingSatelliteRef.current = false;
+      applyDetailMapTheme(map, themeRef.current, basemapRef.current);
+      map.triggerRepaint();
+    };
     map.on('rotate', updateBearing);
+    map.on('sourcedata', finishSatelliteTransition);
     let resizeFrame: number | null = null;
+    let mapLoaded = false;
+    let lastWidth = containerRef.current.clientWidth;
+    let lastHeight = containerRef.current.clientHeight;
     const resizeObserver = new ResizeObserver(() => {
-      if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame);
+      if (!mapLoaded || resizeFrame !== null) return;
       resizeFrame = window.requestAnimationFrame(() => {
         resizeFrame = null;
+        const container = containerRef.current;
+        if (mapRef.current !== map || !container?.clientWidth || !container.clientHeight) return;
+        if (container.clientWidth === lastWidth && container.clientHeight === lastHeight) return;
+        lastWidth = container.clientWidth;
+        lastHeight = container.clientHeight;
         map.resize();
       });
     });
@@ -1475,6 +1663,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
     addAtlasMapAttribution(map);
 
     map.on('load', () => {
+      mapLoaded = true;
       map.setTerrain({ source: 'terrainSource', exaggeration: 1 });
       if (!pageData.features.buildings3d && map.getLayer('context-buildings-3d')) {
         map.setLayoutProperty('context-buildings-3d', 'visibility', 'none');
@@ -1521,7 +1710,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'line-opacity': 0.98,
         },
       });
-      map.addSource('drs-zones', { type: 'geojson', data: technicalData.drsZones });
+      map.addSource('drs-zones', { type: 'geojson', data: resultSeason === 2025 ? technicalData.drsZones : { type: 'FeatureCollection', features: [] } });
       map.addLayer({
         id: 'drs-glow', type: 'line', source: 'drs-zones',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
@@ -1556,7 +1745,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         },
       });
       if (!usesEditorialTemplate) {
-      map.addSource('drs-detection-leaders', { type: 'geojson', data: technicalData.drsDetectionLeaders });
+      map.addSource('drs-detection-leaders', { type: 'geojson', data: resultSeason === 2025 ? technicalData.drsDetectionLeaders : { type: 'FeatureCollection', features: [] } });
       map.addLayer({
         id: 'drs-detection-leader-casing', type: 'line', source: 'drs-detection-leaders',
         layout: { 'line-cap': 'round' },
@@ -1573,8 +1762,8 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'line-opacity': 1,
         },
       });
-      map.addSource('drs-detection-anchors', { type: 'geojson', data: technicalData.drsDetectionAnchors });
-      map.addSource('drs-detection-labels', { type: 'geojson', data: technicalData.drsDetectionLabels });
+      map.addSource('drs-detection-anchors', { type: 'geojson', data: resultSeason === 2025 ? technicalData.drsDetectionAnchors : { type: 'FeatureCollection', features: [] } });
+      map.addSource('drs-detection-labels', { type: 'geojson', data: resultSeason === 2025 ? technicalData.drsDetectionLabels : { type: 'FeatureCollection', features: [] } });
       map.addLayer({
         id: 'drs-detection-points', type: 'circle', source: 'drs-detection-anchors',
         paint: {
@@ -1621,16 +1810,10 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         },
       });
       }
-      map.addSource('turn-label-leaders', { type: 'geojson', data: technicalData.turnLabelLeaders });
-      map.addLayer({
-        id: 'turn-label-leaders', type: 'line', source: 'turn-label-leaders',
-        paint: {
-          'line-color': '#70808a',
-          'line-width': 0.8,
-          'line-opacity': 0.58,
-        },
+      map.addSource('turn-labels', {
+        type: 'geojson',
+        data: closeLegacyLabels(technicalData.turnLabels, technicalData.turnLabelLeaders),
       });
-      map.addSource('turn-labels', { type: 'geojson', data: technicalData.turnLabels });
       const turnBadgeCanvas = document.createElement('canvas');
       turnBadgeCanvas.width = 48;
       turnBadgeCanvas.height = 48;
@@ -1649,37 +1832,28 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         id: 'turn-labels', type: 'symbol', source: 'turn-labels',
         layout: {
           'icon-image': 'turn-badge',
-          'icon-allow-overlap': false,
-          'icon-ignore-placement': false,
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true,
           'icon-padding': 4,
           'text-field': ['get', 'label'],
           'text-font': ['Noto Sans Regular'],
           'text-size': 9,
-          'text-allow-overlap': false,
-          'text-ignore-placement': false,
+          'text-allow-overlap': true,
+          'text-ignore-placement': true,
           'text-padding': 5,
         },
         paint: { 'text-color': '#f6f9fa' },
       });
       if (spaNamedTrackFeatures && spaNamedTrackLeaders) {
-        map.addSource('named-track-features', { type: 'geojson', data: spaNamedTrackFeatures });
-        map.addSource('named-track-leaders', { type: 'geojson', data: spaNamedTrackLeaders });
+        map.addSource('named-track-features', {
+          type: 'geojson',
+          data: closeLegacyLabels(spaNamedTrackFeatures, spaNamedTrackLeaders),
+        });
         ([1, 2, 3] as const).forEach((priority) => {
           const minzoom = 10;
           map.addLayer({
-            id: `named-track-leaders-p${priority}`, type: 'line', source: 'named-track-leaders',
-            filter: ['==', ['get', 'priority'], priority],
-            minzoom,
-            layout: { 'line-cap': 'round' },
-            paint: {
-              'line-color': '#a9bac3',
-              'line-width': 1,
-              'line-opacity': 0.72,
-            },
-          });
-          map.addLayer({
             id: `named-track-labels-p${priority}`, type: 'symbol', source: 'named-track-features',
-            filter: ['==', ['get', 'priority'], priority],
+            filter: ['all', ['==', ['get', 'priority'], priority], ['!=', ['get', 'nameRu'], 'Старт-финишная прямая']],
             minzoom,
             layout: {
               'text-field': ['get', 'nameRu'],
@@ -1701,7 +1875,16 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           });
         });
       }
-      map.addSource('track-points', { type: 'geojson', data: technicalData.trackPoints });
+      const fallbackStartFinish = circuitTrack?.geometry.coordinates[0];
+      map.addSource('track-points', {
+        type: 'geojson',
+        data: fallbackStartFinish ? {
+          ...technicalData.trackPoints,
+          features: technicalData.trackPoints.features.map((feature) => feature.properties?.kind === 'start'
+            ? { ...feature, geometry: { type: 'Point' as const, coordinates: fallbackStartFinish } }
+            : feature),
+        } : technicalData.trackPoints,
+      });
       const checkerCanvas = document.createElement('canvas');
       checkerCanvas.width = 32;
       checkerCanvas.height = 32;
@@ -1728,11 +1911,13 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         const checkerImage = checkerContext.getImageData(0, 0, 32, 32);
         map.addImage('finish-checker', checkerImage, { pixelRatio: 2 });
       }
-      map.addSource('start-finish-leader', { type: 'geojson', data: technicalData.startFinishLeader });
-      map.addLayer({
-        id: 'start-finish-leader', type: 'line', source: 'start-finish-leader',
-        paint: { 'line-color': '#a7b4bc', 'line-width': 0.9, 'line-opacity': 0.72 },
-      });
+      if (!usesSpaTechnicalMap) {
+        map.addSource('start-finish-leader', { type: 'geojson', data: technicalData.startFinishLeader });
+        map.addLayer({
+          id: 'start-finish-leader', type: 'line', source: 'start-finish-leader',
+          paint: { 'line-color': '#a7b4bc', 'line-width': 0.9, 'line-opacity': 0.72 },
+        });
+      }
       map.addLayer({
         id: 'start-finish-marker', type: 'symbol', source: 'track-points',
         filter: ['==', ['get', 'kind'], 'start'],
@@ -1742,7 +1927,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'icon-allow-overlap': true,
         },
       });
-      if (!usesEditorialTemplate || usesSpaTechnicalMap) map.addLayer({
+      if (!usesEditorialTemplate) map.addLayer({
         id: 'track-info-points', type: 'circle', source: 'track-points',
         filter: ['==', ['get', 'kind'], 'sector'],
         paint: {
@@ -1752,7 +1937,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           'circle-stroke-width': usesSpaTechnicalMap ? 2.2 : 1.5,
         },
       });
-      if (!usesEditorialTemplate || usesSpaTechnicalMap) map.addLayer({
+      if (!usesEditorialTemplate) map.addLayer({
         id: 'track-info-labels', type: 'symbol', source: 'track-points',
         filter: ['==', ['get', 'kind'], 'sector'],
         layout: {
@@ -1775,8 +1960,45 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         },
       });
       if (map.getLayer('turn-labels')) map.moveLayer('turn-labels');
+      if (map.getLayer('start-finish-marker')) map.moveLayer('start-finish-marker');
       }
       if (usesDatabaseTechnicalOverlay) {
+        const turnBadgeCanvas = document.createElement('canvas');
+        turnBadgeCanvas.width = 48;
+        turnBadgeCanvas.height = 48;
+        const turnBadgeContext = turnBadgeCanvas.getContext('2d');
+        if (turnBadgeContext) {
+          turnBadgeContext.beginPath();
+          turnBadgeContext.arc(24, 24, 19, 0, Math.PI * 2);
+          turnBadgeContext.fillStyle = '#121b23';
+          turnBadgeContext.fill();
+          turnBadgeContext.lineWidth = 5;
+          turnBadgeContext.strokeStyle = '#02070d';
+          turnBadgeContext.stroke();
+          map.addImage('annotation-turn-badge', turnBadgeContext.getImageData(0, 0, 48, 48), { pixelRatio: 2 });
+        }
+        const finishCanvas = document.createElement('canvas');
+        finishCanvas.width = 32;
+        finishCanvas.height = 32;
+        const finishContext = finishCanvas.getContext('2d');
+        if (finishContext) {
+          finishContext.save();
+          finishContext.beginPath();
+          finishContext.arc(16, 16, 13, 0, Math.PI * 2);
+          finishContext.clip();
+          const square = 6.5;
+          for (let row = 0; row < 4; row += 1) for (let column = 0; column < 4; column += 1) {
+            finishContext.fillStyle = (row + column) % 2 ? '#101820' : '#f5f8fa';
+            finishContext.fillRect(3 + column * square, 3 + row * square, square, square);
+          }
+          finishContext.restore();
+          finishContext.beginPath();
+          finishContext.arc(16, 16, 13.5, 0, Math.PI * 2);
+          finishContext.strokeStyle = '#02070d';
+          finishContext.lineWidth = 4;
+          finishContext.stroke();
+          map.addImage('annotation-finish-marker', finishContext.getImageData(0, 0, 32, 32), { pixelRatio: 2 });
+        }
         map.addSource('annotation-sectors', { type: 'geojson', data: databaseSectorLines });
         map.addLayer({
           id: 'annotation-sector-lines', type: 'line', source: 'annotation-sectors',
@@ -1803,34 +2025,67 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           layout: { 'line-cap': 'round', 'line-join': 'round' },
           paint: { 'line-color': '#70f2a8', 'line-width': 2.2, 'line-opacity': 0.96, 'line-dasharray': [1.15, 2.35] },
         });
+        map.addSource('annotation-straight-mode', { type: 'geojson', data: databaseStraightModeLines });
+        map.addLayer({
+          id: 'annotation-straight-mode-lines', type: 'line', source: 'annotation-straight-mode',
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+          paint: { 'line-color': '#ff3158', 'line-width': 4, 'line-opacity': 0.98 },
+        });
         map.addSource('annotation-lines', {
           type: 'geojson',
           data: { type: 'FeatureCollection', features: [
-            ...databaseSectorLines.features, ...databaseStraightLines.features, ...databaseDrsLines.features,
+            ...databaseSectorLines.features, ...databaseStraightLines.features, ...databaseDrsLines.features, ...databaseStraightModeLines.features,
           ] },
         });
         map.addLayer({
           id: 'annotation-line-labels', type: 'symbol', source: 'annotation-lines',
+          filter: ['!=', ['get', 'hasCallout'], true],
           layout: {
             'symbol-placement': 'line-center', 'text-field': ['get', 'label'],
-            'text-font': ['Noto Sans Regular'], 'text-size': 9, 'text-allow-overlap': false,
+            'text-font': ['Noto Sans Regular'], 'text-size': 12, 'text-allow-overlap': false,
           },
           paint: { 'text-color': '#f7fbff', 'text-halo-color': '#06101a', 'text-halo-width': 2 },
         });
         map.addSource('annotation-points-source', { type: 'geojson', data: databaseAnnotationPoints });
+        map.addSource('annotation-callouts', { type: 'geojson', data: databaseAnnotationCallouts });
         map.addLayer({
           id: 'annotation-points', type: 'circle', source: 'annotation-points-source',
+          filter: ['all', ['!=', ['get', 'annotationType'], 'turn'], ['!=', ['get', 'isStartFinish'], true]],
           paint: {
-            'circle-radius': ['match', ['get', 'annotationType'], 'turn', 9, 6],
-            'circle-color': ['match', ['get', 'annotationType'], 'drs_detection', '#70f2a8', 'timing_line', '#f2c94c', '#121b23'],
+            'circle-radius': 6,
+            'circle-color': ['match', ['get', 'annotationType'], 'drs_detection', '#70f2a8', 'timing_line', '#f2c94c', 'straight_mode_activation', '#ff3158', 'straight_mode_low_grip_activation', '#ff8a86', 'overtake_detection', '#e738c5', 'overtake_activation', '#e738c5', '#121b23'],
             'circle-stroke-color': '#f7fbff', 'circle-stroke-width': 1.8,
           },
         });
         map.addLayer({
-          id: 'annotation-point-labels', type: 'symbol', source: 'annotation-points-source',
+          id: 'annotation-turn-labels', type: 'symbol', source: 'annotation-points-source',
+          filter: ['==', ['get', 'annotationType'], 'turn'],
           layout: {
-            'text-field': ['get', 'label'], 'text-font': ['Noto Sans Regular'], 'text-size': 9,
+            'icon-image': 'annotation-turn-badge', 'icon-allow-overlap': true, 'icon-ignore-placement': true, 'icon-padding': 4,
+            'text-field': ['to-string', ['get', 'sequence']], 'text-font': ['Noto Sans Regular'],
+            'text-size': 9, 'text-allow-overlap': true, 'text-ignore-placement': true, 'text-padding': 5,
+          },
+          paint: { 'text-color': '#f6f9fa' },
+        });
+        map.addLayer({
+          id: 'annotation-start-finish', type: 'symbol', source: 'annotation-points-source',
+          filter: ['==', ['get', 'isStartFinish'], true],
+          layout: { 'icon-image': 'annotation-finish-marker', 'icon-size': 1.25, 'icon-allow-overlap': true, 'icon-ignore-placement': true },
+        });
+        map.addLayer({
+          id: 'annotation-point-labels', type: 'symbol', source: 'annotation-points-source',
+          filter: ['all', ['!=', ['get', 'annotationType'], 'turn'], ['!=', ['get', 'isStartFinish'], true], ['!=', ['get', 'hasCallout'], true]],
+          layout: {
+            'text-field': ['get', 'label'], 'text-font': ['Noto Sans Regular'], 'text-size': 12,
             'text-offset': [0, 1.6], 'text-anchor': 'top', 'text-allow-overlap': false,
+          },
+          paint: { 'text-color': '#ffffff', 'text-halo-color': '#06101a', 'text-halo-width': 1.7 },
+        });
+        map.addLayer({
+          id: 'annotation-callout-labels', type: 'symbol', source: 'annotation-callouts',
+          layout: {
+            'text-field': ['get', 'label'], 'text-font': ['Noto Sans Regular'], 'text-size': 12,
+            'text-offset': [.5, -.5], 'text-anchor': 'bottom-left', 'text-allow-overlap': false,
           },
           paint: { 'text-color': '#ffffff', 'text-halo-color': '#06101a', 'text-halo-width': 1.7 },
         });
@@ -2047,7 +2302,8 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
       });
       if (usesDatabaseTechnicalOverlay) {
         const annotationLayerIds = [
-          'annotation-points', 'annotation-sector-lines', 'annotation-straight-lines', 'annotation-drs-lines',
+          'annotation-points', 'annotation-turn-labels', 'annotation-start-finish', 'annotation-callout-labels',
+          'annotation-sector-lines', 'annotation-straight-lines', 'annotation-straight-mode-lines', 'annotation-drs-lines',
         ];
         annotationLayerIds.forEach((layerId) => {
           map.on('mouseenter', layerId, () => { map.getCanvas().style.cursor = 'pointer'; });
@@ -2063,6 +2319,9 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
             const typeLabels: Record<string, string> = {
               sector: 'Сектор', turn: 'Поворот', straight: 'Прямая', timing_line: 'Отсечка времени',
               drs_zone: 'Зона DRS', drs_detection: 'Точка детекции DRS',
+              straight_mode_zone: 'Участок Straight Mode', straight_mode_activation: 'Активация Straight Mode',
+              straight_mode_low_grip_activation: 'Активация при низком сцеплении',
+              overtake_detection: 'Детекция Overtake Mode', overtake_activation: 'Активация Overtake Mode',
             };
             kind.textContent = typeLabels[String(feature.properties?.annotationType ?? '')] ?? 'Элемент трассы';
             title.textContent = String(feature.properties?.title ?? 'Элемент трассы');
@@ -2119,7 +2378,10 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         bearing: pageData.map.trackCamera.bearing,
         duration: 0,
       });
-      applyDetailMapTheme(map, themeRef.current, 'satellite');
+      mapLoadedRef.current = true;
+      awaitingSatelliteRef.current = themeRef.current === 'dark' && basemapRef.current === 'satellite'
+        && !map.isSourceLoaded('satellite');
+      applyDetailMapTheme(map, themeRef.current, basemapRef.current, awaitingSatelliteRef.current);
       setReady(true);
     });
 
@@ -2127,44 +2389,55 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
       resizeObserver.disconnect();
       if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame);
       map.off('rotate', updateBearing);
+      map.off('sourcedata', finishSatelliteTransition);
+      map.off('idle', finishMapPresentation);
+      window.clearTimeout(presentationTimer);
+      mapLoadedRef.current = false;
+      awaitingSatelliteRef.current = false;
       map.remove();
       mapRef.current = null;
     };
-  }, [circuitTrack, databaseAnnotationPoints, databaseDrsLines, databaseSectorLines,
-    databaseStraightLines, fallbackTravelPoints, hasTechnicalOverlay, pageData, technicalData,
+  }, [circuitTrack, databaseAnnotationCallouts, databaseAnnotationPoints, databaseDrsLines, databaseSectorLines,
+    databaseStraightLines, databaseStraightModeLines, fallbackTravelPoints, hasTechnicalOverlay, pageData, technicalData, resultSeason,
     usesDatabaseTechnicalOverlay, usesEditorialTemplate, usesSpaTechnicalMap,
-    spaNamedTrackFeatures, spaNamedTrackLeaders]);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!ready || !map?.isStyleLoaded()) return;
-    applyDetailMapTheme(map, theme, basemap);
-  }, [basemap, ready, theme]);
+    spaNamedTrackFeatures, spaNamedTrackLeaders, mapRetry]);
 
   return (
     <main className="track-page track-page--spa">
       <section className="track-hero" id="configuration">
-        <div className="track-map-wrap">
+        <div className="track-map-wrap" aria-busy={isMapLoading && !mapLoadFailed}>
           <div ref={containerRef} className="track-map" aria-label={`Карта трассы ${pageData.nameRu}`} />
+          {isMapLoading && <div className="track-map-loading" role="status">
+            {mapLoadFailed ? <div><p>Не удалось загрузить карту</p><button type="button" className="atlas-button" onClick={retryTrackMap}>Попробовать снова</button></div>
+              : `Загружаем карту сезона ${resultSeason}…`}
+          </div>}
+          {!isMapLoading && mapLoadNotice && <div className="track-map-load-notice" role="status">{mapLoadNotice}</div>}
           <div className="track-map-shade" aria-hidden="true" />
           <div className="track-hero-actions">
-            <a href="#circuit-pois">◎ На карте</a>
             <button type="button" aria-pressed={isFavorite} onClick={toggleFavorite}>
               {isFavorite ? '★ В избранном' : '☆ Добавить в избранное'}
             </button>
           </div>
-          <div className="track-map-legend" aria-label="Условные обозначения схемы трассы">
+          {activeTrackLayout && <div className="track-map-legend" aria-label="Условные обозначения схемы трассы">
               {hasTechnicalOverlay ? <>
                   <span><i className="legend-sector legend-sector--one" />Сектор 1</span>
                   <span><i className="legend-sector legend-sector--two" />Сектор 2</span>
                   <span><i className="legend-sector legend-sector--three" />Сектор 3</span>
-                  <span><i className="legend-drs" />DRS · архив 2025</span>
+                  {resultSeason === 2025 ? <span><i className="legend-drs" />DRS · 2025</span> : null}
+                  {hasStraightMode ? <span><i className="legend-straight-mode" />Straight Mode</span> : null}
+                  {hasOvertakeMode ? <span><i className="legend-overtake-mode" />Overtake Mode</span> : null}
               </> : <span><i className="legend-turn" />Контур трассы</span>}
-          </div>
-          {activeTrackLayout && (
+          </div>}
+          {pageData.trackPresentation && (
             <div className="track-layout-season" aria-live="polite">
-              <span>Конфигурация сезона {resultSeason}</span>
-              <strong>{activeTrackLayout.name}</strong>
+              <label className="track-layout-season-select">
+                <span>Схема сезона</span>
+                <select value={resultSeason} onChange={(event) => changeResultSeason(Number(event.target.value))}>
+                  {circuitSeasonOptions.map((season) => <option key={season} value={season}>{season}</option>)}
+                </select>
+              </label>
+              <strong>{activeTrackLayout?.name ?? `Схема для ${resultSeason} года не опубликована`}</strong>
+              {activeTrackLayout && resultSeason >= 2026 && !hasStraightMode && !hasOvertakeMode ? <small>Разметка режимов 2026 пока не опубликована</small> : null}
             </div>
           )}
           <button
@@ -2409,7 +2682,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
 
               {travelWorkspacePanel === 'scenarios' && (
                 <section className="spa-travel-panel spa-travel-scenarios" role="tabpanel" aria-label="Сценарии поездки">
-                  <header><span>Сценарии вместо неподтверждённых линий</span><strong>{publishedTravelRouteCount > 0 ? `${publishedTravelRouteCount} маршрутов опубликовано` : 'Маршруты проходят проверку'}</strong></header>
+                  <header><span>Сценарии поездки</span><strong>{publishedTravelRouteCount > 0 ? `${publishedTravelRouteCount} маршрутов опубликовано` : 'Маршруты проходят проверку'}</strong></header>
                   <ol>
                     {travelStory.chapters.map((chapter) => (
                       <li key={chapter.id} className={activeTravelChapter?.id === chapter.id ? 'is-selected' : ''}>
@@ -2461,7 +2734,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
 
               {travelWorkspacePanel === 'stays' && (
                 <section className="spa-travel-panel spa-planner-stays" role="tabpanel" aria-label="Районы проживания">
-                  <header><span>Размещение</span><strong>Выберите характер района</strong></header>
+                  <header><span>Размещение</span><strong>Выберите подходящий район</strong></header>
                   <ul>
                     {travelStory.zones.map((zone) => (
                       <li key={zone.id} className={selectedTravelFeatureId === zone.mapFeatureId ? 'is-selected' : ''}>
@@ -2588,8 +2861,8 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           <section className="travel-zones" aria-labelledby="travel-zones-title">
             <div className="travel-subheading">
               <span className="eyebrow">Где остановиться</span>
-              <h3 id="travel-zones-title">Шесть характеров одного уик-энда</h3>
-              <p>Зона важнее отдельного отеля: сначала выбираем ритм поездки, затем конкретное размещение</p>
+              <h3 id="travel-zones-title">Районы для проживания</h3>
+              <p>Сначала выберите подходящий район, затем — конкретный вариант размещения</p>
             </div>
             <div className="travel-zone-grid">
               {travelStory.zones.map((zone, index) => (
@@ -2620,8 +2893,8 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
           {travelStory.routes.length > 0 && <section className="travel-featured-routes" aria-labelledby="travel-routes-title">
             <div className="travel-subheading">
               <span className="eyebrow">Готовые сценарии</span>
-              <h3 id="travel-routes-title">Маршрут — это часть этапа</h3>
-              <p>Не просто линия на карте, а понятный план на гоночный день или свободное время</p>
+              <h3 id="travel-routes-title">Маршруты на гоночный уик-энд</h3>
+              <p>Остановки, расстояние и время в пути для гоночного дня или свободной поездки</p>
             </div>
             <div className="travel-route-grid">
               {travelStory.routes.map((route, index) => (
@@ -2688,7 +2961,7 @@ export function CircuitExperience({ pageData }: { pageData: CircuitPageData }) {
         <section className="spa-history" id="history" aria-labelledby="spa-history-title">
           <header className="spa-section-heading">
             <div><span className="eyebrow">Эволюция</span><h2 id="spa-history-title">История трассы</h2></div>
-            <p>Четыре момента, которые изменили характер Спа-Франкоршам — от дорожного кольца до современной конфигурации</p>
+            <p>Ключевые изменения конфигурации и инфраструктуры трассы</p>
           </header>
           <div className="spa-history-layout">
             <ol className="spa-history-index" aria-label="Ключевые этапы истории">

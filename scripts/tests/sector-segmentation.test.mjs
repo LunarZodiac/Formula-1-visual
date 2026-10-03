@@ -1,8 +1,14 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { segmentTrackIntoSectors } from '../../apps/web/app/admin/circuits/[id]/layouts/[layoutId]/annotations/sector-segmentation.ts';
+import { previewFirstTrackSector, segmentTrackIntoSectors } from '../../apps/web/app/admin/circuits/[id]/layouts/[layoutId]/annotations/sector-segmentation.ts';
 
 const closedCenterline = [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]];
+
+test('first sector is visible immediately after choosing its two snapped ends', () => {
+  const preview = previewFirstTrackSector(closedCenterline, [0, 0], [0.5, 0.1]);
+  const sectors = segmentTrackIntoSectors(closedCenterline, [0, 0], [0.5, 0.1], [1.1, 0.5]);
+  assert.deepEqual(preview, sectors[0]);
+});
 
 test('two snapped boundaries produce three contiguous sectors covering the full closed axis', () => {
   const sectors = segmentTrackIntoSectors(closedCenterline, [0, 0], [0.5, 0.1], [1.1, 0.5]);

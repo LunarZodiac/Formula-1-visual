@@ -103,10 +103,10 @@ export default async function AdminTravelRoutePage({ params, searchParams }: {
         </div></fieldset>
       </details>
 
-      <div className="admin-form-actions"><span>{stops.length} остановок сохранено сейчас</span><button type="submit" disabled={route.lifecycle === 'archived'}>Сохранить маршрут</button></div>
+      <div className="admin-form-actions"><span>Сейчас сохранено остановок: {stops.length}</span><button type="submit" disabled={route.lifecycle === 'archived'}>Сохранить маршрут</button></div>
     </form>
     {!isNew && route.lifecycle !== 'archived' ? <RouteTailPreview circuitId={circuitId} routeId={route.id} anchorId={route.terminalAccessAnchorId} travelMode={route.travelMode} preview={matchingTailPreview} /> : null}
-    {!isNew ? <section className="admin-editor-disclosure" aria-label="Архив маршрута">
+    {!isNew ? <section className="admin-editor-disclosure admin-travel-route-archive" aria-label="Архив маршрута">
       <h2>Архив маршрута</h2>
       <p>{route.lifecycle === 'archived' ? 'Маршрут скрыт с публичной карты. Его можно вернуть в черновики или удалить окончательно' : 'Архивирование уберёт маршрут с публичной карты и сохранит его данные для возможного восстановления'}</p>
       <form action={changeTravelRouteLifecycle} className="admin-form-actions">

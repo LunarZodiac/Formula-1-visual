@@ -6,6 +6,60 @@
       "name": "Formula 1 — The family tree of F1's 11 teams and how they came to be",
       "url": "https://www.formula1.com/en/latest/article/the-family-tree-f1-11-teams-and-how-they-came-to-be.2QBA1PPMf0bC8mp2xxqZeq",
       "retrievedAt": "2026-09-21T00:00:00Z"
+    },
+    {
+      "id": "formula1-new-teams-2025",
+      "name": "Formula 1 — How did F1’s most recent new teams approach their first driver line-ups?",
+      "url": "https://www.formula1.com/en/latest/article/from-world-champions-to-grand-prix-rookies-how-did-f1s-most-recent-new-teams.25tfjMrYGd3SBCGp3ypm8q",
+      "retrievedAt": "2026-09-28T00:00:00Z"
+    },
+    {
+      "id": "honda-barh-acquisition-2005",
+      "name": "Honda Global — Honda acquires all shares in BARH Ltd.",
+      "url": "https://global.honda/en/newsroom/news/2005/c051004-eng.html",
+      "retrievedAt": "2026-09-28T00:00:00Z"
+    },
+    {
+      "id": "honda-f1-team-sale-2009",
+      "name": "Honda Global — Honda Announces Sale of the Honda Racing F1 Team",
+      "url": "https://global.honda/en/newsroom/news/2009/c090306eng.html",
+      "retrievedAt": "2026-09-28T00:00:00Z"
+    },
+    {
+      "id": "mercedes-300th-gp",
+      "name": "Mercedes-AMG Petronas F1 Team — Mercedes' 300th GP: Our Journey to Three Centuries of F1 Starts",
+      "url": "https://www.mercedesamgf1.com/news/mercedes-300th-gp-our-journey-to-three-centuries-of-f1-starts",
+      "retrievedAt": "2026-09-28T00:00:00Z"
+    },
+    {
+      "id": "formula1-benetton-fashion-2025",
+      "name": "Formula 1 — From Nike to Benetton: Iconic fashion partnerships that shaped Formula 1",
+      "url": "https://www.formula1.com/en/latest/article/from-nike-to-benetton-iconic-fashion-partnerships-that-shaped-formula-1.6dpBXobLVpXXQ2sMw1ZD9y",
+      "retrievedAt": "2026-09-28T00:00:00Z"
+    },
+    {
+      "id": "formula1-alpine-guide-2023",
+      "name": "Formula 1 — TEAM GUIDE: Get briefed on Alpine as they push to join F1’s front-runners in 2023",
+      "url": "https://www.formula1.com/en/latest/article/team-guide-get-briefed-on-alpine-as-they-push-to-join-f1s-front-runners-in.1xuTndqXy5gN6UsKuCBlvz",
+      "retrievedAt": "2026-09-28T00:00:00Z"
+    },
+    {
+      "id": "formula1-alpine-year-by-year",
+      "name": "Formula 1 — Alpine: Year by Year",
+      "url": "https://www.formula1.com/en/information/alpine-year-by-year.26lcAj4zKxSs1w959B6yV",
+      "retrievedAt": "2026-09-28T00:00:00Z"
+    },
+    {
+      "id": "renault-lotus-acquisition-2015",
+      "name": "Renault Group — Groupe Renault completes the acquisition of Lotus F1 Team",
+      "url": "https://media.renaultgroup.com/groupe-renault-completes-the-acquisition-of-lotus-f1-team/?lang=eng",
+      "retrievedAt": "2026-09-28T00:00:00Z"
+    },
+    {
+      "id": "formula1-renault-alpine-rebrand-2020",
+      "name": "Formula 1 — Renault to rebrand as Alpine F1 Team in 2021",
+      "url": "https://www.formula1.com/en/latest/article/renault-alpine-f1-team-2021.7eY84dCU9MythQjcYG8T45",
+      "retrievedAt": "2026-09-28T00:00:00Z"
     }
   ],
   "lineages": [
@@ -96,6 +150,78 @@
       "validFromYear": 2026,
       "descriptionRu": "После полного приобретения Sauber компания Audi преобразовала коллектив в свою заводскую команду с сезона 2026 года.",
       "sourceId": "formula1-team-family-tree-2026"
+    },
+    {
+      "predecessorId": "tyrrell",
+      "successorId": "bar",
+      "relationshipType": "licence_transfer",
+      "validFromYear": 1999,
+      "descriptionRu": "BAR приобрела заявку Tyrrell, но Formula 1 характеризует коллектив 1999 года как фактически новую команду",
+      "sourceId": "formula1-new-teams-2025"
+    },
+    {
+      "predecessorId": "bar",
+      "successorId": "honda",
+      "relationshipType": "factory_takeover",
+      "validFromYear": 2006,
+      "descriptionRu": "Honda выкупила оставшиеся акции BARH Ltd. и с сезона 2006 года выступала собственной заводской командой на прежней базе в Брэкли",
+      "sourceId": "honda-barh-acquisition-2005"
+    },
+    {
+      "predecessorId": "honda",
+      "successorId": "brawn",
+      "relationshipType": "ownership_change",
+      "validFromYear": 2009,
+      "descriptionRu": "Honda продала Россу Брауну все акции холдинга команды; новый коллектив вышел на старт сезона 2009 года как Brawn GP",
+      "sourceId": "honda-f1-team-sale-2009"
+    },
+    {
+      "predecessorId": "brawn",
+      "successorId": "mercedes",
+      "relationshipType": "factory_takeover",
+      "validFromYear": 2010,
+      "descriptionRu": "Daimler получила контроль над Brawn GP в конце 2009 года, и с сезона 2010 года коллектив выступал как заводская команда Mercedes",
+      "sourceId": "mercedes-300th-gp"
+    },
+    {
+      "predecessorId": "toleman",
+      "successorId": "benetton",
+      "relationshipType": "ownership_change",
+      "validFromYear": 1986,
+      "descriptionRu": "Benetton купила Toleman в 1985 году и с сезона 1986 года выставляла собственный конструктор",
+      "sourceId": "formula1-benetton-fashion-2025"
+    },
+    {
+      "predecessorId": "benetton",
+      "successorId": "renault",
+      "relationshipType": "factory_takeover",
+      "validFromYear": 2002,
+      "descriptionRu": "Renault взяла под контроль операцию Benetton в 2000 году и полностью переименовала команду к сезону 2002 года",
+      "sourceId": "formula1-alpine-guide-2023"
+    },
+    {
+      "predecessorId": "renault",
+      "successorId": "lotus_f1",
+      "relationshipType": "rename",
+      "validFromYear": 2012,
+      "descriptionRu": "Официальное имя команды сменилось с Renault на Lotus к сезону 2012 года",
+      "sourceId": "formula1-alpine-year-by-year"
+    },
+    {
+      "predecessorId": "lotus_f1",
+      "successorId": "renault",
+      "relationshipType": "factory_takeover",
+      "validFromYear": 2016,
+      "descriptionRu": "Groupe Renault приобрела контрольную долю Lotus F1 Team Limited 18 декабря 2015 года и вернула коллективу заводской статус с сезона 2016 года",
+      "sourceId": "renault-lotus-acquisition-2015"
+    },
+    {
+      "predecessorId": "renault",
+      "successorId": "alpine",
+      "relationshipType": "rename",
+      "validFromYear": 2021,
+      "descriptionRu": "С сезона 2021 года команда Renault стала Alpine F1 Team; шасси получило имя Alpine, а двигатель сохранил марку Renault",
+      "sourceId": "formula1-renault-alpine-rebrand-2020"
     }
   ]
 }

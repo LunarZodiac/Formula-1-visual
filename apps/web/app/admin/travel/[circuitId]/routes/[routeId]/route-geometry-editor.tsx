@@ -53,10 +53,12 @@ function lineLengthMeters(points: Point[]) {
   return Math.round(length);
 }
 function applyContextVisibility(map: MapLibreMap, showPoints: boolean, showRoutes: boolean) {
-  for (const layer of ['context-poi-clusters', 'context-poi-count', 'context-poi-points', 'context-poi-labels']) {
+  for (const layer of ['context-poi-clusters', 'context-poi-count', 'context-poi-points', 'context-poi-points-hit', 'context-poi-labels']) {
     if (map.getLayer(layer)) map.setLayoutProperty(layer, 'visibility', showPoints ? 'visible' : 'none');
   }
-  if (map.getLayer('existing-routes')) map.setLayoutProperty('existing-routes', 'visibility', showRoutes ? 'visible' : 'none');
+  for (const layer of ['existing-routes', 'existing-routes-hit']) {
+    if (map.getLayer(layer)) map.setLayoutProperty(layer, 'visibility', showRoutes ? 'visible' : 'none');
+  }
 }
 
 export function RouteGeometryEditor({ initialValue, colour, initialMode, initialDistance, initialDuration, travelMode, circuitId, routeId, archived, mapCenter, stopCoordinates, mapPoints, existingRoutes, trackCenterline, trackSource }: {
@@ -139,9 +141,15 @@ export function RouteGeometryEditor({ initialValue, colour, initialMode, initial
     const feature = parse(initialValue);
     const first = feature?.geometry.coordinates[0] ?? trackFeature?.geometry.coordinates[0] ?? mapCenter ?? [0, 0];
     const map = new maplibregl.Map({ container: container.current, style, center: first as Point, zoom: feature || mapCenter ? 9 : 2, attributionControl: false, renderWorldCopies: false });
+    let activePopup: maplibregl.Popup | null = null;
+    const popupMaxWidth = () => {
+      const width = map.getContainer().clientWidth;
+      return `${Math.max(1, Math.min(240, width - Math.min(80, width / 2)))}px`;
+    };
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     addAtlasMapAttribution(map);
+    map.on('resize', () => activePopup?.setMaxWidth(popupMaxWidth()));
     map.on('load', () => {
       map.addSource('track-centerline', { type: 'geojson', data: trackFeature ?? empty });
       map.addLayer({ id: 'track-halo', type: 'line', source: 'track-centerline', paint: { 'line-color': '#07141c', 'line-width': 7, 'line-opacity': .85 } });
@@ -150,6 +158,9 @@ export function RouteGeometryEditor({ initialValue, colour, initialMode, initial
       map.addLayer({ id: 'existing-routes', type: 'line', source: 'existing-routes', paint: {
         'line-color': ['case', ['==', ['get', 'lifecycle'], 'draft'], '#8b979e', ['match', ['get', 'status'], 'published', '#83abc0', 'reviewed', '#c3a875', 'candidate', '#d89b67', '#738b98']],
         'line-width': 3, 'line-opacity': ['case', ['==', ['get', 'lifecycle'], 'draft'], .48, .78], 'line-dasharray': [2, 1.5],
+      } });
+      map.addLayer({ id: 'existing-routes-hit', type: 'line', source: 'existing-routes', paint: {
+        'line-color': '#ffffff', 'line-width': 16, 'line-opacity': 0,
       } });
       const currentValue = (container.current?.closest('form')?.querySelector('textarea[name="geometryGeoJson"]') as HTMLTextAreaElement | null)?.value ?? initialValue;
       const currentFeature = parse(currentValue);
@@ -161,19 +172,26 @@ export function RouteGeometryEditor({ initialValue, colour, initialMode, initial
       map.addLayer({ id: 'context-poi-clusters', type: 'circle', source: 'context-pois', filter: ['has', 'point_count'], paint: { 'circle-color': '#227d9a', 'circle-radius': ['step', ['get', 'point_count'], 14, 20, 19, 100, 25], 'circle-opacity': .9, 'circle-stroke-color': '#e8f6fa', 'circle-stroke-width': 1 } });
       map.addLayer({ id: 'context-poi-count', type: 'symbol', source: 'context-pois', filter: ['has', 'point_count'], layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-font': ['Noto Sans Regular'], 'text-size': 11 }, paint: { 'text-color': '#fff' } });
       map.addLayer({ id: 'context-poi-points', type: 'circle', source: 'context-pois', filter: ['!', ['has', 'point_count']], paint: { 'circle-color': ['match', ['get', 'status'], ['reviewed', 'published'], '#3eb7d5', 'candidate', '#d89b67', '#7b8991'], 'circle-radius': 4, 'circle-stroke-color': '#0a2633', 'circle-stroke-width': 1.5 } });
+      map.addLayer({ id: 'context-poi-points-hit', type: 'circle', source: 'context-pois', filter: ['!', ['has', 'point_count']], paint: {
+        'circle-color': '#ffffff', 'circle-radius': 12, 'circle-opacity': 0,
+      } });
       map.addLayer({ id: 'context-poi-labels', type: 'symbol', source: 'context-pois', filter: ['!', ['has', 'point_count']], minzoom: 13, layout: { 'text-field': ['get', 'name'], 'text-font': ['Noto Sans Regular'], 'text-size': 11, 'text-offset': [0, 1.2], 'text-max-width': 12 }, paint: { 'text-color': '#e8f6fa', 'text-halo-color': '#0c1b24', 'text-halo-width': 1.5 } });
       map.moveLayer('route-points');
       applyContextVisibility(map, contextVisibilityRef.current.points, contextVisibilityRef.current.routes);
       map.on('click', 'context-poi-clusters', event => { if (!drawingRef.current) map.easeTo({ center: event.lngLat, zoom: Math.min(map.getZoom() + 2, 16), duration: 350 }); });
-      map.on('click', 'context-poi-points', event => {
+      map.on('click', event => {
         if (drawingRef.current) return;
-        const properties = event.features?.[0]?.properties;
-        if (properties?.name) new maplibregl.Popup({ closeButton: false, className: 'admin-route-map-popup' }).setLngLat(event.lngLat).setText(`${String(properties.name)} · ${properties.status === 'candidate' ? 'кандидат' : properties.status === 'hidden' ? 'скрыта' : properties.status === 'published' ? 'опубликована' : 'проверена'}`).addTo(map);
-      });
-      map.on('click', 'existing-routes', event => {
-        if (drawingRef.current) return;
-        const properties = event.features?.[0]?.properties;
-        if (properties?.name) new maplibregl.Popup({ closeButton: false, className: 'admin-route-map-popup' }).setLngLat(event.lngLat).setText(`${properties.lifecycle === 'draft' ? 'Черновик маршрута' : 'Маршрут'}: ${String(properties.name)}`).addTo(map);
+        if (map.queryRenderedFeatures(event.point, { layers: ['context-poi-clusters'] }).length) return;
+        const point = map.queryRenderedFeatures(event.point, { layers: ['context-poi-points-hit'] })[0];
+        const route = point ? null : map.queryRenderedFeatures(event.point, { layers: ['existing-routes-hit'] })[0];
+        const properties = (point ?? route)?.properties;
+        if (!properties?.name) return;
+        const label = point
+          ? `${String(properties.name)} · ${properties.status === 'candidate' ? 'кандидат' : properties.status === 'hidden' ? 'скрыта' : properties.status === 'published' ? 'опубликована' : 'проверена'}`
+          : `${properties.lifecycle === 'draft' ? 'Черновик маршрута' : 'Маршрут'}: ${String(properties.name)}`;
+        activePopup?.remove();
+        activePopup = new maplibregl.Popup({ closeButton: false, className: 'admin-route-map-popup', maxWidth: popupMaxWidth() })
+          .setLngLat(event.lngLat).setText(label).addTo(map);
       });
       if (currentFeature || trackFeature) {
         const bounds = new maplibregl.LngLatBounds();
@@ -245,7 +263,7 @@ export function RouteGeometryEditor({ initialValue, colour, initialMode, initial
     map.on('touchend', finishStroke);
     map.on('touchcancel', finishStroke);
     window.addEventListener('mouseup', finishStroke);
-    return () => { window.removeEventListener('mouseup', finishStroke); map.remove(); mapRef.current = null; };
+    return () => { window.removeEventListener('mouseup', finishStroke); activePopup?.remove(); map.remove(); mapRef.current = null; };
   }, [colour, initialValue, mapCenter, trackFeature, contextRoutes, contextPoints]);
 
   useEffect(() => {

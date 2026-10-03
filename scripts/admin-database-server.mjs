@@ -17,6 +17,7 @@ import { normalizeTravelRouteStop, travelRouteStopsChanged } from './lib/travel-
 import { applyGeneratedRouteBatch } from './lib/travel-route-generation-batch.mjs';
 import { buildOsrmRequestUrl, OsrmTransportError, requestOsrmJson, resolveOsrmBaseUrl } from './lib/osrm-routing-client.mjs';
 import { planHistoryEraBlockOrder } from './lib/history-era-block-order.mjs';
+import { normalizeTrackCalloutPoint } from './lib/track-callout-point.mjs';
 import { applyTrackAnnotationPackage, summarizeTrackAnnotationPackage, validateTrackAnnotationPackage } from './import-track-annotations.mjs';
 
 const host = '127.0.0.1';
@@ -1257,8 +1258,8 @@ async function saveTrackLayout(rawInput, circuitId, routeLayoutId = null) {
   } finally { client.release(); }
 }
 
-const trackAnnotationTypes = new Set(['sector','turn','straight','timing_line','drs_zone','drs_detection']);
-const trackAnnotationPointTypes = new Set(['turn','timing_line','drs_detection']);
+const trackAnnotationTypes = new Set(['sector','turn','straight','timing_line','drs_zone','drs_detection','straight_mode_zone','straight_mode_activation','straight_mode_low_grip_activation','overtake_detection','overtake_activation']);
+const trackAnnotationPointTypes = new Set(['turn','timing_line','drs_detection','straight_mode_activation','straight_mode_low_grip_activation','overtake_detection','overtake_activation']);
 const trackAnnotationStatuses = new Set(['candidate','reviewed','published','hidden']);
 
 function normalizeTrackAnnotationGeometry(rawGeometry, annotationType) {
@@ -1276,6 +1277,8 @@ function normalizeTrackAnnotationGeometry(rawGeometry, annotationType) {
   }
   if (!Array.isArray(geometry.coordinates) || geometry.coordinates.length < 2 || geometry.coordinates.length > 10_000
     || !geometry.coordinates.every(validCoordinate)) throw new Error('Линия разметки должна содержать от 2 до 10 000 координат');
+  if (geometry.coordinates.every(coordinate => Math.abs(Number(coordinate[0])-Number(geometry.coordinates[0][0]))<1e-7
+    && Math.abs(Number(coordinate[1])-Number(geometry.coordinates[0][1]))<1e-7)) throw new Error('Участок разметки должен иметь ненулевую длину');
   return { type:'LineString',coordinates:geometry.coordinates.map(coordinate => [Number(coordinate[0]),Number(coordinate[1])]) };
 }
 
@@ -1290,7 +1293,9 @@ async function getTrackLayoutAnnotations(circuitId, layoutId) {
     pool.query(`SELECT annotation.id,annotation.annotation_type,annotation.label_ru,annotation.label_original,
       annotation.sequence,annotation.description_ru,ST_AsGeoJSON(annotation.geometry::geometry) AS geometry_geojson,
       annotation.valid_from_year,annotation.valid_to_year,annotation.review_status,annotation.verified_at,
-      source.name AS source_name,source.url AS source_url
+      annotation.updated_at::text AS revision,
+      annotation.properties->'calloutPoint' AS callout_point,
+      source.name AS source_name,source.url AS source_url,source.notes AS source_notes
       FROM atlas.track_layout_annotations AS annotation
       LEFT JOIN atlas.data_sources AS source ON source.id=annotation.source_id
       WHERE annotation.layout_id=$1
@@ -1303,11 +1308,23 @@ async function getTrackLayoutAnnotations(circuitId, layoutId) {
     centerlineGeoJson:layout.centerline_geojson?JSON.parse(layout.centerline_geojson):null},annotations:annotationsResult.rows.map(row=>({
       id:String(row.id),annotationType:String(row.annotation_type),labelRu:row.label_ru,labelOriginal:row.label_original,
       sequence:row.sequence===null?null:Number(row.sequence),descriptionRu:row.description_ru,geometryGeoJson:JSON.parse(row.geometry_geojson),
+      calloutPoint:Array.isArray(row.callout_point)?row.callout_point:null,
       validFromYear:row.valid_from_year===null?null:Number(row.valid_from_year),validToYear:row.valid_to_year===null?null:Number(row.valid_to_year),
-      reviewStatus:String(row.review_status),verifiedAt:row.verified_at===null?null:new Date(row.verified_at).toISOString(),sourceName:row.source_name,sourceUrl:row.source_url })) };
+      reviewStatus:String(row.review_status),verifiedAt:row.verified_at===null?null:new Date(row.verified_at).toISOString(),revision:row.revision,sourceName:row.source_name,sourceUrl:row.source_url,sourceNotes:row.source_notes })) };
 }
 
-async function saveTrackLayoutAnnotation(rawInput,circuitId,layoutId,annotationId) {
+let trackAnnotationMutationTail=Promise.resolve();
+function queueTrackAnnotationMutation(task) {
+  const result=trackAnnotationMutationTail.then(task);
+  trackAnnotationMutationTail=result.catch(()=>{});
+  return result;
+}
+
+function saveTrackLayoutAnnotation(rawInput,circuitId,layoutId,annotationId) {
+  return queueTrackAnnotationMutation(()=>saveTrackLayoutAnnotationQueued(rawInput,circuitId,layoutId,annotationId));
+}
+
+async function saveTrackLayoutAnnotationQueued(rawInput,circuitId,layoutId,annotationId) {
   if(!/^[A-Za-z0-9_-]+$/.test(circuitId)||!/^[A-Za-z0-9_-]+$/.test(layoutId)||!/^[A-Za-z0-9_-]+$/.test(annotationId))throw new Error('Некорректный ID разметки');
   const annotationType=String(rawInput?.annotationType??''),reviewStatus=String(rawInput?.reviewStatus??'candidate');
   if(!trackAnnotationTypes.has(annotationType)||!trackAnnotationStatuses.has(reviewStatus))throw new Error('Некорректный тип или статус разметки');
@@ -1318,7 +1335,9 @@ async function saveTrackLayoutAnnotation(rawInput,circuitId,layoutId,annotationI
   const year=value=>{const raw=optionalText(value);if(raw===null)return null;const parsed=Number(raw);if(!Number.isInteger(parsed)||parsed<1900||parsed>2100)throw new Error('Некорректный год');return parsed;};
   const validFromYear=year(rawInput?.validFromYear),validToYear=year(rawInput?.validToYear);
   if(validFromYear!==null&&validToYear!==null&&validToYear<validFromYear)throw new Error('Конец периода раньше начала');
+  if(['straight_mode_zone','straight_mode_activation','straight_mode_low_grip_activation','overtake_detection','overtake_activation'].includes(annotationType)&&(!validFromYear||validFromYear<2026))throw new Error('Для режимов 2026+ укажите год начала не раньше 2026');
   const geometry=normalizeTrackAnnotationGeometry(rawInput?.geometryGeoJson,annotationType);
+  const calloutPoint=normalizeTrackCalloutPoint(optionalText(rawInput?.calloutPointJson),annotationType);
   const sourceUrl=validateEditorialUrl(rawInput?.sourceUrl),sourceName=optionalText(rawInput?.sourceName)??new URL(sourceUrl).hostname;
   if(['reviewed','published'].includes(reviewStatus)&&rawInput?.sourceVerified!==true)throw new Error('Подтвердите проверку источника');
   const sourceId=`track-markup-${createHash('sha256').update(sourceUrl).digest('hex').slice(0,16)}`;
@@ -1332,11 +1351,21 @@ async function saveTrackLayoutAnnotation(rawInput,circuitId,layoutId,annotationI
       FROM points CROSS JOIN atlas.track_layouts AS layout WHERE layout.id=$2`,[JSON.stringify(geometry),layoutId]);
     const maximumDistanceM=Number(proximity.rows[0]?.maximum_distance_m??Infinity);
     if(maximumDistanceM>2000)throw new Error(`Разметка удалена от контура до ${maximumDistanceM.toLocaleString('ru-RU')} м`);
-    const existing=await client.query('SELECT layout_id FROM atlas.track_layout_annotations WHERE id=$1',[annotationId]);
+    if(calloutPoint){
+      const calloutDistance=await client.query(`SELECT ST_Distance(
+        ST_SetSRID(ST_MakePoint($1,$2),4326)::geography,
+        ST_SetSRID(ST_GeomFromGeoJSON($3),4326)::geography) AS distance_m`,[...calloutPoint,JSON.stringify(geometry)]);
+      if(Number(calloutDistance.rows[0]?.distance_m??Infinity)>1000)throw new Error('Выносная подпись должна быть не дальше 1 км от элемента');
+    }
+    const existing=await client.query('SELECT layout_id,annotation_type,review_status,updated_at::text AS revision FROM atlas.track_layout_annotations WHERE id=$1 FOR UPDATE',[annotationId]);
     if(existing.rows.length&&existing.rows[0].layout_id!==layoutId)throw new Error('ID разметки принадлежит другой конфигурации');
+    if(annotationId===`${layoutId}-start-finish`&&(annotationType!=='timing_line'||existing.rows.length&&existing.rows[0].annotation_type!=='timing_line'))throw new Error('ID старта/финиша занят другим типом разметки');
+    if(existing.rows.length&&existing.rows[0].revision!==rawInput?.revision)throw new Error('Разметка уже изменена. Обновите страницу перед повторным сохранением');
+    if(!existing.rows.length&&rawInput?.revision)throw new Error('Разметка уже удалена. Обновите страницу');
     await client.query(`INSERT INTO atlas.data_sources(id,name,url,retrieved_at,notes)VALUES($1,$2,$3,now(),$4)
-      ON CONFLICT(id)DO UPDATE SET name=EXCLUDED.name,url=EXCLUDED.url,retrieved_at=now(),notes=EXCLUDED.notes`,
-    [sourceId,sourceName,sourceUrl,optionalText(rawInput?.sourceNotes)]);
+      ON CONFLICT(id)DO UPDATE SET name=EXCLUDED.name,url=EXCLUDED.url,retrieved_at=now(),
+        notes=CASE WHEN $5::boolean THEN EXCLUDED.notes ELSE data_sources.notes END`,
+    [sourceId,sourceName,sourceUrl,optionalText(rawInput?.sourceNotes),Object.hasOwn(rawInput??{},'sourceNotes')]);
     await client.query(`INSERT INTO atlas.track_layout_annotations(id,layout_id,annotation_type,label_ru,label_original,sequence,description_ru,geometry,
       valid_from_year,valid_to_year,source_id,review_status,properties,verified_at,updated_at)
       VALUES($1,$2,$3,$4,$5,$6,$7,ST_SetSRID(ST_GeomFromGeoJSON($8),4326)::geography,$9,$10,$11,$12,$13::jsonb,
@@ -1346,8 +1375,12 @@ async function saveTrackLayoutAnnotation(rawInput,circuitId,layoutId,annotationI
         valid_to_year=EXCLUDED.valid_to_year,source_id=EXCLUDED.source_id,review_status=EXCLUDED.review_status,properties=EXCLUDED.properties,
         verified_at=EXCLUDED.verified_at,updated_at=now()`,[annotationId,layoutId,annotationType,labelRu,labelOriginal,sequence,
       optionalText(rawInput?.descriptionRu),JSON.stringify(geometry),validFromYear,validToYear,sourceId,reviewStatus,
-      JSON.stringify({maximumDistanceToTrackM:maximumDistanceM,editedVia:'admin-track-markup-v1'})]);
-    await client.query('COMMIT');return{id:annotationId,circuitId,layoutId};
+      JSON.stringify({maximumDistanceToTrackM:maximumDistanceM,editedVia:'admin-track-markup-v2',...(calloutPoint?{calloutPoint}:{})})]);
+    await client.query('COMMIT');
+    const affectsPublicPage=reviewStatus==='published'||existing.rows[0]?.review_status==='published';
+    const publicDataSynced=affectsPublicPage&&['spa','bahrain'].includes(circuitId)
+      ? await syncCircuitPublicData(circuitId):true;
+    return{id:annotationId,circuitId,layoutId,publicDataSynced};
   }catch(error){await client.query('ROLLBACK').catch(()=>{});throw error;}finally{client.release();}
 }
 
@@ -1413,10 +1446,25 @@ async function saveTrackSectorSegmentation(raw,circuitId,layoutId) {
   }catch(error){await client.query('ROLLBACK').catch(()=>{});throw error;}finally{client.release();}
 }
 
-async function deleteTrackLayoutAnnotation(circuitId,layoutId,annotationId){
+function deleteTrackLayoutAnnotation(circuitId,layoutId,annotationId,revision){
+  return queueTrackAnnotationMutation(()=>deleteTrackLayoutAnnotationQueued(circuitId,layoutId,annotationId,revision));
+}
+
+async function deleteTrackLayoutAnnotationQueued(circuitId,layoutId,annotationId,revision){
+  if(!revision)throw new Error('Обновите страницу перед удалением элемента');
   const result=await pool.query(`DELETE FROM atlas.track_layout_annotations AS annotation USING atlas.track_layouts AS layout
-    WHERE annotation.id=$1 AND annotation.layout_id=$2 AND layout.id=annotation.layout_id AND layout.circuit_id=$3 RETURNING annotation.id`,
-  [annotationId,layoutId,circuitId]);return result.rows.length?{id:annotationId,circuitId,layoutId}:null;
+    WHERE annotation.id=$1 AND annotation.layout_id=$2 AND layout.id=annotation.layout_id AND layout.circuit_id=$3
+      AND annotation.updated_at::text=$4
+    RETURNING annotation.id,annotation.review_status`,
+  [annotationId,layoutId,circuitId,revision]);
+  if(!result.rows.length){
+    const existing=await pool.query('SELECT 1 FROM atlas.track_layout_annotations WHERE id=$1 AND layout_id=$2',[annotationId,layoutId]);
+    if(existing.rows.length)throw new Error('Разметка уже изменена. Обновите страницу перед удалением');
+    return null;
+  }
+  const publicDataSynced=result.rows[0].review_status==='published'&&['spa','bahrain'].includes(circuitId)
+    ? await syncCircuitPublicData(circuitId):true;
+  return{id:annotationId,circuitId,layoutId,publicDataSynced};
 }
 
 function pruneTrackAnnotationImportPreviews() {
@@ -1451,6 +1499,11 @@ async function createTrackAnnotationImportPreview(rawPackage) {
     const maximumDistanceToTrackM = Number(proximity.rows[0]?.distance ?? Infinity);
     if (!Number.isFinite(maximumDistanceToTrackM) || maximumDistanceToTrackM > 2000) {
       throw new Error(`Элемент ${feature.properties.id} удалён от контура более чем на 2 км`);
+    }
+    if (feature.properties.calloutPoint) {
+      const callout = await pool.query(`SELECT ST_Distance(ST_SetSRID(ST_MakePoint($1,$2),4326)::geography,ST_SetSRID(ST_GeomFromGeoJSON($3),4326)::geography) AS distance_m`,
+        [...feature.properties.calloutPoint, JSON.stringify(feature.geometry)]);
+      if (Number(callout.rows[0]?.distance_m ?? Infinity) > 1000) throw new Error(`Выносная подпись ${feature.properties.id} дальше 1 км от элемента`);
     }
     features.push({
       id: feature.properties.id,
@@ -1542,6 +1595,8 @@ async function listFiles(directory) {
 }
 
 let circuitExportTail = Promise.resolve();
+const circuitExportCommandOptions = { cwd: repositoryRoot, env: process.env, windowsHide: true, timeout: 120_000 };
+const circuitPageExportOptions = { ...circuitExportCommandOptions, timeout: 30_000 };
 function runCircuitExports(circuitId, editorialStatus) {
   const task = circuitExportTail.then(async () => {
     const snapshotDirectory = path.join(repositoryRoot, 'apps', 'web', 'public', 'data', 'f1');
@@ -1558,12 +1613,12 @@ function runCircuitExports(circuitId, editorialStatus) {
     }
     try {
       if (editorialStatus === 'published' && ['spa', 'bahrain'].includes(circuitId)) {
-        await execFileAsync(process.execPath, [path.join(repositoryRoot, 'scripts', 'export-circuit-pages.mjs'), '--circuit', circuitId], { cwd: repositoryRoot, env: process.env });
+        await execFileAsync(process.execPath, [path.join(repositoryRoot, 'scripts', 'export-circuit-pages.mjs'), '--circuit', circuitId], circuitExportCommandOptions);
       }
-      await execFileAsync(process.execPath, [path.join(repositoryRoot, 'scripts', 'export-circuit-travel.mjs'), '--circuit', circuitId], { cwd: repositoryRoot, env: process.env });
-      await execFileAsync(process.execPath, [path.join(repositoryRoot, 'scripts', 'export-circuit-catalog.mjs')], { cwd: repositoryRoot, env: process.env });
-      await execFileAsync(process.execPath, [path.join(repositoryRoot, 'scripts', 'export-search-index.mjs')], { cwd: repositoryRoot, env: process.env });
-      await execFileAsync(process.execPath, [path.join(repositoryRoot, 'scripts', 'export-web-snapshots.mjs')], { cwd: repositoryRoot, env: process.env });
+      await execFileAsync(process.execPath, [path.join(repositoryRoot, 'scripts', 'export-circuit-travel.mjs'), '--circuit', circuitId], circuitExportCommandOptions);
+      await execFileAsync(process.execPath, [path.join(repositoryRoot, 'scripts', 'export-circuit-catalog.mjs')], circuitExportCommandOptions);
+      await execFileAsync(process.execPath, [path.join(repositoryRoot, 'scripts', 'export-search-index.mjs')], circuitExportCommandOptions);
+      await execFileAsync(process.execPath, [path.join(repositoryRoot, 'scripts', 'export-web-snapshots.mjs')], circuitExportCommandOptions);
     } catch (error) {
       const currentDirectoryFiles = await listFiles(snapshotDirectory);
       await Promise.all(currentDirectoryFiles.filter((filePath) => !originalFiles.has(filePath)).map((filePath) => unlink(filePath).catch(() => {})));
@@ -3426,14 +3481,25 @@ async function getCircuitMediaOrder(circuitId) {
 }
 
 async function syncCircuitPublicData(circuitId) {
+  let started = false;
+  let expired = false;
+  let queueTimer;
   try {
-    await execFileAsync(process.execPath, [path.join(scriptDirectory, 'export-circuit-pages.mjs'), '--circuit', circuitId], {
-      cwd: repositoryRoot, env: process.env, windowsHide: true, timeout: 30_000,
+    const task=circuitExportTail.then(() => {
+      if (expired) return false;
+      started = true;
+      return execFileAsync(process.execPath, [path.join(scriptDirectory, 'export-circuit-pages.mjs'), '--circuit', circuitId], circuitPageExportOptions);
     });
-    return true;
+    circuitExportTail=task.catch(()=>{});
+    const queueDeadline = new Promise(resolve => { queueTimer = setTimeout(() => {
+      if (!started) { expired = true; resolve(false); }
+    }, 20_000); });
+    return Boolean(await Promise.race([task, queueDeadline]));
   } catch (error) {
-    console.error('Порядок материалов сохранён, но публичная страница трассы не синхронизирована', error);
+    console.error('Изменения сохранены, но публичная страница трассы не синхронизирована', error);
     return false;
+  } finally {
+    clearTimeout(queueTimer);
   }
 }
 
@@ -5020,7 +5086,8 @@ const server = createServer(async (request, response) => {
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
     }
     if (request.method === 'DELETE' && circuitLayoutAnnotationMatch) {
-      const result = await deleteTrackLayoutAnnotation(circuitLayoutAnnotationMatch[1],circuitLayoutAnnotationMatch[2],circuitLayoutAnnotationMatch[3]);
+      const input=await requestBody(request,10_000);
+      const result = await deleteTrackLayoutAnnotation(circuitLayoutAnnotationMatch[1],circuitLayoutAnnotationMatch[2],circuitLayoutAnnotationMatch[3],input?.revision);
       return result ? json(response, 200, result) : json(response, 404, { error: 'not_found' });
     }
     const circuitMatch = url.pathname.match(/^\/circuits\/([A-Za-z0-9_-]+)$/);

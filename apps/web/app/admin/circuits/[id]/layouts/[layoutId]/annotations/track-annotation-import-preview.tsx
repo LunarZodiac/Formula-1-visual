@@ -7,6 +7,11 @@ const annotationTypeLabels: Record<string, string> = {
   timing_line: 'Отсечка времени',
   drs_zone: 'Зона DRS',
   drs_detection: 'Детекция DRS',
+  straight_mode_zone: 'Straight Mode · участок',
+  straight_mode_activation: 'Straight Mode · активация',
+  straight_mode_low_grip_activation: 'Straight Mode · низкое сцепление',
+  overtake_detection: 'Overtake Mode · детекция',
+  overtake_activation: 'Overtake Mode · активация',
 };
 
 function formatDistance(distanceM: number) {

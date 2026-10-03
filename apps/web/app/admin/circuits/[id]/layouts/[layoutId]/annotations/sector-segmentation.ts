@@ -34,13 +34,24 @@ function slice(centerline: TrackCoordinate[], start: Snap, end: Snap): TrackCoor
   return raw.filter((point, index) => index === 0 || !samePoint(point, raw[index - 1]));
 }
 
-export function segmentTrackIntoSectors(centerlineInput: number[][], startFinish: TrackCoordinate, firstBoundary: TrackCoordinate, secondBoundary: TrackCoordinate): TrackCoordinate[][] {
+function rotatedCenterline(centerlineInput: number[][], startFinish: TrackCoordinate): TrackCoordinate[] {
   if (centerlineInput.length < 4 || centerlineInput.some(point => !validPoint(point))) throw new Error('Нужна корректная замкнутая ось трассы');
   const centerline = centerlineInput.map(point => [point[0], point[1]] as TrackCoordinate);
   if (!samePoint(centerline[0], centerline[centerline.length - 1])) throw new Error('Ось трассы должна быть замкнута');
   const startPoint = snapToCenterline(centerline, startFinish);
-  const rotated = samePoint(startPoint.point, centerline[0]) ? centerline : [startPoint.point, ...centerline.slice(startPoint.segment + 1, -1),
+  return samePoint(startPoint.point, centerline[0]) ? centerline : [startPoint.point, ...centerline.slice(startPoint.segment + 1, -1),
     ...centerline.slice(0, startPoint.segment + 1), startPoint.point];
+}
+
+export function previewFirstTrackSector(centerlineInput: number[][], startFinish: TrackCoordinate, firstBoundary: TrackCoordinate): TrackCoordinate[] {
+  const rotated = rotatedCenterline(centerlineInput, startFinish);
+  const first = snapToCenterline(rotated, firstBoundary);
+  if (first.position <= 0 || first.position >= rotated.length - 1) throw new Error('Конец S1 должен находиться после старта по направлению оси трассы');
+  return slice(rotated, { point: rotated[0], segment: 0, position: 0 }, first);
+}
+
+export function segmentTrackIntoSectors(centerlineInput: number[][], startFinish: TrackCoordinate, firstBoundary: TrackCoordinate, secondBoundary: TrackCoordinate): TrackCoordinate[][] {
+  const rotated = rotatedCenterline(centerlineInput, startFinish);
   const first = snapToCenterline(rotated, firstBoundary);
   const second = snapToCenterline(rotated, secondBoundary);
   const start: Snap = { point: rotated[0], segment: 0, position: 0 };

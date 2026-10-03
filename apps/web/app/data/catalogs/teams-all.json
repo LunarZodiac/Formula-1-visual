@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-21T18:29:53.242Z",
+  "generatedAt": "2026-09-24T13:26:15.701Z",
   "teams": [
     {
       "id": "alpine",
@@ -21,7 +21,18 @@
       "color": null,
       "logoUrl": "/assets/f1/teams/2026/logos/06_alpine_2026.png",
       "carImageUrl": "/assets/f1/teams/2026/cars/cars2026/2026alpinecarright.avif",
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "renault",
+          "teamName": "Renault",
+          "relationshipType": "rename",
+          "validFromYear": 2021,
+          "validToYear": null,
+          "descriptionRu": "С сезона 2021 года команда Renault стала Alpine F1 Team; шасси получило имя Alpine, а двигатель сохранил марку Renault",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/renault-alpine-f1-team-2021.7eY84dCU9MythQjcYG8T45"
+        }
+      ],
       "seasons": [
         {
           "season": 2021,
@@ -174,6 +185,7 @@
     {
       "id": "audi",
       "name": "Audi",
+      "nameRu": "Ауди",
       "nationality": "German",
       "firstSeason": 2026,
       "latestSeason": 2026,
@@ -215,6 +227,7 @@
     {
       "id": "cadillac",
       "name": "Cadillac F1 Team",
+      "nameRu": "Кадиллак",
       "nationality": "American",
       "firstSeason": 2026,
       "latestSeason": 2026,
@@ -1490,7 +1503,18 @@
       "color": null,
       "logoUrl": "/assets/f1/teams/2026/logos/04_mercedes_2026.png",
       "carImageUrl": "/assets/f1/teams/2026/cars/cars2026/2026mercedescarright.avif",
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "brawn",
+          "teamName": "Brawn",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2010,
+          "validToYear": null,
+          "descriptionRu": "Daimler получила контроль над Brawn GP в конце 2009 года, и с сезона 2010 года коллектив выступал как заводская команда Mercedes",
+          "sourceUrl": "https://www.mercedesamgf1.com/news/mercedes-300th-gp-our-journey-to-three-centuries-of-f1-starts"
+        }
+      ],
       "seasons": [
         {
           "season": 1954,
@@ -2724,6 +2748,7 @@
     {
       "id": "alphatauri",
       "name": "AlphaTauri",
+      "nameRu": "Альфа Таури",
       "nationality": "Italian",
       "firstSeason": 2020,
       "latestSeason": 2023,
@@ -2799,6 +2824,7 @@
     {
       "id": "racing_point",
       "name": "Racing Point",
+      "nameRu": "Рейсинг Пойнт",
       "nationality": "British",
       "firstSeason": 2019,
       "latestSeason": 2020,
@@ -2874,7 +2900,48 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "benetton",
+          "teamName": "Benetton",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2002,
+          "validToYear": null,
+          "descriptionRu": "Renault взяла под контроль операцию Benetton в 2000 году и полностью переименовала команду к сезону 2002 года",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/team-guide-get-briefed-on-alpine-as-they-push-to-join-f1s-front-runners-in.1xuTndqXy5gN6UsKuCBlvz"
+        },
+        {
+          "direction": "successor",
+          "teamId": "lotus_f1",
+          "teamName": "Lotus F1",
+          "relationshipType": "rename",
+          "validFromYear": 2012,
+          "validToYear": null,
+          "descriptionRu": "Официальное имя команды сменилось с Renault на Lotus к сезону 2012 года",
+          "sourceUrl": "https://www.formula1.com/en/information/alpine-year-by-year.26lcAj4zKxSs1w959B6yV"
+        },
+        {
+          "direction": "predecessor",
+          "teamId": "lotus_f1",
+          "teamName": "Lotus F1",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2016,
+          "validToYear": null,
+          "descriptionRu": "Groupe Renault приобрела контрольную долю Lotus F1 Team Limited 18 декабря 2015 года и вернула коллективу заводской статус с сезона 2016 года",
+          "sourceUrl": "https://media.renaultgroup.com/groupe-renault-completes-the-acquisition-of-lotus-f1-team/?lang=eng"
+        },
+        {
+          "direction": "successor",
+          "teamId": "alpine",
+          "teamName": "Alpine F1 Team",
+          "relationshipType": "rename",
+          "validFromYear": 2021,
+          "validToYear": null,
+          "descriptionRu": "С сезона 2021 года команда Renault стала Alpine F1 Team; шасси получило имя Alpine, а двигатель сохранил марку Renault",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/renault-alpine-f1-team-2021.7eY84dCU9MythQjcYG8T45"
+        }
+      ],
       "seasons": [
         {
           "season": 1977,
@@ -3361,6 +3428,7 @@
     {
       "id": "manor",
       "name": "Manor Marussia",
+      "nameRu": "Манор",
       "nationality": "British",
       "firstSeason": 2015,
       "latestSeason": 2016,
@@ -3399,6 +3467,7 @@
     {
       "id": "lotus_f1",
       "name": "Lotus F1",
+      "nameRu": "Лотус",
       "nationality": "British",
       "firstSeason": 2012,
       "latestSeason": 2015,
@@ -3414,7 +3483,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "renault",
+          "teamName": "Renault",
+          "relationshipType": "rename",
+          "validFromYear": 2012,
+          "validToYear": null,
+          "descriptionRu": "Официальное имя команды сменилось с Renault на Lotus к сезону 2012 года",
+          "sourceUrl": "https://www.formula1.com/en/information/alpine-year-by-year.26lcAj4zKxSs1w959B6yV"
+        },
+        {
+          "direction": "successor",
+          "teamId": "renault",
+          "teamName": "Renault",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2016,
+          "validToYear": null,
+          "descriptionRu": "Groupe Renault приобрела контрольную долю Lotus F1 Team Limited 18 декабря 2015 года и вернула коллективу заводской статус с сезона 2016 года",
+          "sourceUrl": "https://media.renaultgroup.com/groupe-renault-completes-the-acquisition-of-lotus-f1-team/?lang=eng"
+        }
+      ],
       "seasons": [
         {
           "season": 2012,
@@ -3453,6 +3543,7 @@
     {
       "id": "caterham",
       "name": "Caterham",
+      "nameRu": "Кейтерем",
       "nationality": "Malaysian",
       "firstSeason": 2012,
       "latestSeason": 2014,
@@ -3499,6 +3590,7 @@
     {
       "id": "marussia",
       "name": "Marussia",
+      "nameRu": "Маруся",
       "nationality": "Russian",
       "firstSeason": 2012,
       "latestSeason": 2014,
@@ -3591,6 +3683,7 @@
     {
       "id": "lotus_racing",
       "name": "Lotus",
+      "nameRu": "Лотус",
       "nationality": "Malaysian",
       "firstSeason": 2010,
       "latestSeason": 2011,
@@ -3629,6 +3722,7 @@
     {
       "id": "virgin",
       "name": "Virgin",
+      "nameRu": "Вёрджин",
       "nationality": "British",
       "firstSeason": 2010,
       "latestSeason": 2011,
@@ -3667,6 +3761,7 @@
     {
       "id": "bmw_sauber",
       "name": "BMW Sauber",
+      "nameRu": "БМВ-Заубер",
       "nationality": "German",
       "firstSeason": 2006,
       "latestSeason": 2009,
@@ -3721,6 +3816,7 @@
     {
       "id": "brawn",
       "name": "Brawn",
+      "nameRu": "Браун",
       "nationality": "British",
       "firstSeason": 2009,
       "latestSeason": 2009,
@@ -3736,7 +3832,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "honda",
+          "teamName": "Honda",
+          "relationshipType": "ownership_change",
+          "validFromYear": 2009,
+          "validToYear": null,
+          "descriptionRu": "Honda продала Россу Брауну все акции холдинга команды; новый коллектив вышел на старт сезона 2009 года как Brawn GP",
+          "sourceUrl": "https://global.honda/en/newsroom/news/2009/c090306eng.html"
+        },
+        {
+          "direction": "successor",
+          "teamId": "mercedes",
+          "teamName": "Mercedes",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2010,
+          "validToYear": null,
+          "descriptionRu": "Daimler получила контроль над Brawn GP в конце 2009 года, и с сезона 2010 года коллектив выступал как заводская команда Mercedes",
+          "sourceUrl": "https://www.mercedesamgf1.com/news/mercedes-300th-gp-our-journey-to-three-centuries-of-f1-starts"
+        }
+      ],
       "seasons": [
         {
           "season": 2009,
@@ -3838,6 +3955,7 @@
     {
       "id": "honda",
       "name": "Honda",
+      "nameRu": "Хонда",
       "nationality": "Japanese",
       "firstSeason": 1964,
       "latestSeason": 2008,
@@ -3853,7 +3971,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "bar",
+          "teamName": "BAR",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2006,
+          "validToYear": null,
+          "descriptionRu": "Honda выкупила оставшиеся акции BARH Ltd. и с сезона 2006 года выступала собственной заводской командой на прежней базе в Брэкли",
+          "sourceUrl": "https://global.honda/en/newsroom/news/2005/c051004-eng.html"
+        },
+        {
+          "direction": "successor",
+          "teamId": "brawn",
+          "teamName": "Brawn",
+          "relationshipType": "ownership_change",
+          "validFromYear": 2009,
+          "validToYear": null,
+          "descriptionRu": "Honda продала Россу Брауну все акции холдинга команды; новый коллектив вышел на старт сезона 2009 года как Brawn GP",
+          "sourceUrl": "https://global.honda/en/newsroom/news/2009/c090306eng.html"
+        }
+      ],
       "seasons": [
         {
           "season": 1964,
@@ -3924,6 +4063,7 @@
     {
       "id": "super_aguri",
       "name": "Super Aguri",
+      "nameRu": "Супер Агури",
       "nationality": "Japanese",
       "firstSeason": 2006,
       "latestSeason": 2008,
@@ -3970,6 +4110,7 @@
     {
       "id": "spyker",
       "name": "Spyker",
+      "nameRu": "Спайкер",
       "nationality": "Dutch",
       "firstSeason": 2007,
       "latestSeason": 2007,
@@ -4118,7 +4259,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "tyrrell",
+          "teamName": "Tyrrell",
+          "relationshipType": "licence_transfer",
+          "validFromYear": 1999,
+          "validToYear": null,
+          "descriptionRu": "BAR приобрела заявку Tyrrell, но Formula 1 характеризует коллектив 1999 года как фактически новую команду",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/from-world-champions-to-grand-prix-rookies-how-did-f1s-most-recent-new-teams.25tfjMrYGd3SBCGp3ypm8q"
+        },
+        {
+          "direction": "successor",
+          "teamId": "honda",
+          "teamName": "Honda",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2006,
+          "validToYear": null,
+          "descriptionRu": "Honda выкупила оставшиеся акции BARH Ltd. и с сезона 2006 года выступала собственной заводской командой на прежней базе в Брэкли",
+          "sourceUrl": "https://global.honda/en/newsroom/news/2005/c051004-eng.html"
+        }
+      ],
       "seasons": [
         {
           "season": 1999,
@@ -4537,6 +4699,7 @@
     {
       "id": "jaguar",
       "name": "Jaguar",
+      "nameRu": "Ягуар",
       "nationality": "British",
       "firstSeason": 2000,
       "latestSeason": 2004,
@@ -4811,7 +4974,28 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "predecessor",
+          "teamId": "toleman",
+          "teamName": "Toleman",
+          "relationshipType": "ownership_change",
+          "validFromYear": 1986,
+          "validToYear": null,
+          "descriptionRu": "Benetton купила Toleman в 1985 году и с сезона 1986 года выставляла собственный конструктор",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/from-nike-to-benetton-iconic-fashion-partnerships-that-shaped-formula-1.6dpBXobLVpXXQ2sMw1ZD9y"
+        },
+        {
+          "direction": "successor",
+          "teamId": "renault",
+          "teamName": "Renault",
+          "relationshipType": "factory_takeover",
+          "validFromYear": 2002,
+          "validToYear": null,
+          "descriptionRu": "Renault взяла под контроль операцию Benetton в 2000 году и полностью переименовала команду к сезону 2002 года",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/team-guide-get-briefed-on-alpine-as-they-push-to-join-f1s-front-runners-in.1xuTndqXy5gN6UsKuCBlvz"
+        }
+      ],
       "seasons": [
         {
           "season": 1986,
@@ -4946,6 +5130,7 @@
     {
       "id": "prost",
       "name": "Prost",
+      "nameRu": "Прост",
       "nationality": "French",
       "firstSeason": 1997,
       "latestSeason": 2001,
@@ -5008,6 +5193,7 @@
     {
       "id": "stewart",
       "name": "Stewart",
+      "nameRu": "Стюарт",
       "nationality": "British",
       "firstSeason": 1997,
       "latestSeason": 1999,
@@ -5081,7 +5267,18 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "successor",
+          "teamId": "bar",
+          "teamName": "BAR",
+          "relationshipType": "licence_transfer",
+          "validFromYear": 1999,
+          "validToYear": null,
+          "descriptionRu": "BAR приобрела заявку Tyrrell, но Formula 1 характеризует коллектив 1999 года как фактически новую команду",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/from-world-champions-to-grand-prix-rookies-how-did-f1s-most-recent-new-teams.25tfjMrYGd3SBCGp3ypm8q"
+        }
+      ],
       "seasons": [
         {
           "season": 1970,
@@ -5320,6 +5517,7 @@
     {
       "id": "footwork",
       "name": "Footwork",
+      "nameRu": "Футуорк",
       "nationality": "British",
       "firstSeason": 1991,
       "latestSeason": 1996,
@@ -5390,6 +5588,7 @@
     {
       "id": "forti",
       "name": "Forti",
+      "nameRu": "Форти",
       "nationality": "Italian",
       "firstSeason": 1995,
       "latestSeason": 1996,
@@ -5619,6 +5818,7 @@
     {
       "id": "pacific",
       "name": "Pacific",
+      "nameRu": "Пасифик",
       "nationality": "British",
       "firstSeason": 1994,
       "latestSeason": 1995,
@@ -5657,6 +5857,7 @@
     {
       "id": "simtek",
       "name": "Simtek",
+      "nameRu": "Симтек",
       "nationality": "British",
       "firstSeason": 1994,
       "latestSeason": 1995,
@@ -6037,6 +6238,7 @@
     {
       "id": "lola",
       "name": "Lola",
+      "nameRu": "Лола",
       "nationality": "British",
       "firstSeason": 1962,
       "latestSeason": 1993,
@@ -6139,6 +6341,7 @@
     {
       "id": "moda",
       "name": "Andrea Moda",
+      "nameRu": "Андреа Мода",
       "nationality": "Italian",
       "firstSeason": 1992,
       "latestSeason": 1992,
@@ -6368,6 +6571,7 @@
     {
       "id": "dallara",
       "name": "Dallara",
+      "nameRu": "Даллара",
       "nationality": "Italian",
       "firstSeason": 1988,
       "latestSeason": 1992,
@@ -6695,6 +6899,7 @@
     {
       "id": "leyton",
       "name": "Leyton House",
+      "nameRu": "Лейтон Хаус",
       "nationality": "British",
       "firstSeason": 1990,
       "latestSeason": 1991,
@@ -6733,6 +6938,7 @@
     {
       "id": "eurobrun",
       "name": "Euro Brun",
+      "nameRu": "ЕвроБрун",
       "nationality": "Italian",
       "firstSeason": 1988,
       "latestSeason": 1990,
@@ -6771,6 +6977,7 @@
     {
       "id": "onyx",
       "name": "Onyx",
+      "nameRu": "Оникс",
       "nationality": "British",
       "firstSeason": 1989,
       "latestSeason": 1990,
@@ -6920,6 +7127,7 @@
     {
       "id": "coloni",
       "name": "Coloni",
+      "nameRu": "Колони",
       "nationality": "Italian",
       "firstSeason": 1987,
       "latestSeason": 1989,
@@ -7004,6 +7212,7 @@
     {
       "id": "zakspeed",
       "name": "Zakspeed",
+      "nameRu": "Цакспид",
       "nationality": "German",
       "firstSeason": 1985,
       "latestSeason": 1989,
@@ -7112,6 +7321,7 @@
     {
       "id": "spirit",
       "name": "Spirit",
+      "nameRu": "Спирит",
       "nationality": "British",
       "firstSeason": 1983,
       "latestSeason": 1985,
@@ -7158,6 +7368,7 @@
     {
       "id": "toleman",
       "name": "Toleman",
+      "nameRu": "Тоулмен",
       "nationality": "British",
       "firstSeason": 1981,
       "latestSeason": 1985,
@@ -7173,7 +7384,18 @@
       "color": null,
       "logoUrl": null,
       "carImageUrl": null,
-      "lineages": [],
+      "lineages": [
+        {
+          "direction": "successor",
+          "teamId": "benetton",
+          "teamName": "Benetton",
+          "relationshipType": "ownership_change",
+          "validFromYear": 1986,
+          "validToYear": null,
+          "descriptionRu": "Benetton купила Toleman в 1985 году и с сезона 1986 года выставляла собственный конструктор",
+          "sourceUrl": "https://www.formula1.com/en/latest/article/from-nike-to-benetton-iconic-fashion-partnerships-that-shaped-formula-1.6dpBXobLVpXXQ2sMw1ZD9y"
+        }
+      ],
       "seasons": [
         {
           "season": 1981,
@@ -7307,6 +7529,7 @@
     {
       "id": "theodore",
       "name": "Theodore",
+      "nameRu": "Теодор",
       "nationality": "Hong Kong",
       "firstSeason": 1978,
       "latestSeason": 1983,
@@ -7361,6 +7584,7 @@
     {
       "id": "ensign",
       "name": "Ensign",
+      "nameRu": "Энсайн",
       "nationality": "British",
       "firstSeason": 1973,
       "latestSeason": 1982,
@@ -7550,6 +7774,7 @@
     {
       "id": "shadow",
       "name": "Shadow",
+      "nameRu": "Шэдоу",
       "nationality": "British",
       "firstSeason": 1973,
       "latestSeason": 1980,
@@ -7736,6 +7961,7 @@
     {
       "id": "merzario",
       "name": "Merzario",
+      "nameRu": "Мерцарио",
       "nationality": "Italian",
       "firstSeason": 1978,
       "latestSeason": 1979,
@@ -7804,6 +8030,7 @@
     {
       "id": "wolf",
       "name": "Wolf",
+      "nameRu": "Вольф",
       "nationality": "Canadian",
       "firstSeason": 1976,
       "latestSeason": 1979,
@@ -7858,6 +8085,7 @@
     {
       "id": "hesketh",
       "name": "Hesketh",
+      "nameRu": "Хескет",
       "nationality": "British",
       "firstSeason": 1974,
       "latestSeason": 1978,
@@ -8358,6 +8586,7 @@
     {
       "id": "penske",
       "name": "Penske",
+      "nameRu": "Пенске",
       "nationality": "American",
       "firstSeason": 1974,
       "latestSeason": 1977,
@@ -8412,6 +8641,7 @@
     {
       "id": "parnelli",
       "name": "Parnelli",
+      "nameRu": "Парнелли",
       "nationality": "American",
       "firstSeason": 1974,
       "latestSeason": 1976,
@@ -10542,6 +10772,7 @@
     {
       "id": "cooper",
       "name": "Cooper",
+      "nameRu": "Купер",
       "nationality": "British",
       "firstSeason": 1950,
       "latestSeason": 1962,

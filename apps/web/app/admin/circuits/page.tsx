@@ -8,6 +8,7 @@ import { AdminPagination } from '../admin-pagination';
 const typeLabels: Record<string, string> = { permanent: 'Стационарная', street: 'Городская', hybrid: 'Гибридная', temporary: 'Временная' };
 const statusLabels: Record<string, string> = { draft: 'Черновик', review: 'На проверке', published: 'Опубликована', missing: 'Без профиля' };
 const gapLabels: Record<string, string> = { profile: 'Профиль', geometry: 'Контур', assignments: 'Привязка этапов', stats: 'Показатели', history: 'История', media: 'Медиа', annotations: 'Разметка' };
+const stageWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? 'этап' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'этапа' : 'этапов';
 
 export default async function AdminCircuitsPage({ searchParams }: {
   searchParams: Promise<{ page?: string; q?: string; country?: string; type?: string; status?: string; layout?: string; gap?: string }>;
@@ -55,8 +56,8 @@ export default async function AdminCircuitsPage({ searchParams }: {
         <td><Link href={`/admin/circuits/${encodeURIComponent(circuit.id)}`}><strong>{circuit.nameRu ?? circuit.officialName}</strong></Link><small><code>{circuit.id}</code>{circuit.nameRu ? ` · ${circuit.officialName}` : ''}</small></td>
         <td>{circuit.cityRu ?? '—'}<small>{circuit.countryRu ?? circuit.countryCode.toUpperCase()}</small></td>
         <td>{typeLabels[circuit.circuitType] ?? circuit.circuitType}</td>
-        <td>{circuit.firstSeason ? `${circuit.firstSeason}–${circuit.lastSeason}` : '—'}<small>{circuit.races} этапов</small></td>
-        <td>{circuit.layoutCount}<small>{circuit.verifiedLayouts} подтверждено{circuit.unresolvedLayouts ? ` · ${circuit.unresolvedLayouts} требуют решения` : ''}{circuit.unassignedRaces ? ` · ${circuit.unassignedRaces} этапов без конфигурации` : ''}</small></td>
+        <td>{circuit.firstSeason ? `${circuit.firstSeason}–${circuit.lastSeason}` : '—'}<small>{circuit.races} {stageWord(circuit.races)}</small></td>
+        <td>{circuit.layoutCount}<small>Проверено: {circuit.verifiedLayouts}{circuit.unresolvedLayouts ? ` · требуют решения: ${circuit.unresolvedLayouts}` : ''}{circuit.unassignedRaces ? ` · без конфигурации: ${circuit.unassignedRaces} ${stageWord(circuit.unassignedRaces)}` : ''}</small></td>
         <td><div className="admin-completeness"><strong>{circuit.completenessPercent}%</strong><i style={{ '--admin-progress': `${circuit.completenessPercent}%` } as CSSProperties} /></div><small>{circuit.missingAreas.length ? circuit.missingAreas.map((area) => gapLabels[area] ?? area).join(' · ') : 'Основные разделы заполнены'}</small></td>
         <td><span className={`admin-status is-${circuit.profileStatus ?? 'missing'}`}>{statusLabels[circuit.profileStatus ?? 'missing']}</span></td>
         <td><Link className="admin-row-action" href={`/admin/circuits/${encodeURIComponent(circuit.id)}`}>Редактировать →</Link></td>

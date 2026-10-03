@@ -6,6 +6,7 @@ import type { Map as MapLibreMap } from 'maplibre-gl';
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -313,6 +314,7 @@ const darkBasemapLayerIds = [
 
 function applyAtlasMapTheme(map: MapLibreMap, theme: AtlasTheme, basemap: Basemap) {
   const isLight = theme === 'light';
+  const useDarkRoute = isLight && basemap !== 'satellite';
   const paint = (layerId: string, property: Parameters<MapLibreMap['setPaintProperty']>[1], value: Parameters<MapLibreMap['setPaintProperty']>[2]) => {
     if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
   };
@@ -329,8 +331,8 @@ function applyAtlasMapTheme(map: MapLibreMap, theme: AtlasTheme, basemap: Basema
   paint('earth-dark-roads', 'line-opacity', isLight ? .3 : .2);
   paint('graticule', 'line-color', isLight ? '#4d7180' : '#9ec8dd');
   paint('graticule', 'line-opacity', isLight ? .22 : .18);
-  paint('season-route', 'line-color', isLight ? '#334b56' : '#f3f8fb');
-  paint('season-route', 'line-opacity', isLight ? .5 : .46);
+  paint('season-route', 'line-color', useDarkRoute ? '#334b56' : '#f3f8fb');
+  paint('season-route', 'line-opacity', useDarkRoute ? .65 : .46);
   paint('selected-track', 'line-color', isLight ? '#172128' : '#f6fbff');
   paint('circuit-order', 'text-color', isLight ? '#172128' : '#ffffff');
   paint('circuit-order', 'text-halo-color', isLight ? '#f7faf8' : '#06101a');
@@ -360,6 +362,15 @@ function applyAtlasMapTheme(map: MapLibreMap, theme: AtlasTheme, basemap: Basema
     'sky-horizon-blend': 0.28,
     'atmosphere-blend': 0.9,
   });
+}
+
+function applyAtlasBasemapVisibility(map: MapLibreMap, basemap: Basemap) {
+  darkBasemapLayerIds.forEach((layerId) => {
+    if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', basemap === 'dark' ? 'visible' : 'none');
+  });
+  if (map.getLayer('earth-satellite')) {
+    map.setLayoutProperty('earth-satellite', 'visibility', basemap === 'satellite' ? 'visible' : 'none');
+  }
 }
 
 function makeGraticule(): GeoJSON.FeatureCollection<GeoJSON.LineString> {
@@ -423,6 +434,7 @@ export function AtlasExperience() {
   const sectionNavigationLockRef = useRef(0);
   const mapRef = useRef<MapLibreMap | null>(null);
   const themeRef = useRef<AtlasTheme>(theme);
+  const basemapRef = useRef<Basemap>('dark');
   const circuitsRef = useRef<Circuit[]>(fallbackCircuits);
   const selectedSeasonRef = useRef(2026);
   const nextCircuitIdRef = useRef<string | null>(null);
@@ -442,7 +454,10 @@ export function AtlasExperience() {
   const [resultView, setResultView] = useState<ResultView>('race');
   const [mapLegendOpen, setMapLegendOpen] = useState(false);
 
-  useEffect(() => { themeRef.current = theme; }, [theme]);
+  useLayoutEffect(() => {
+    themeRef.current = theme;
+    basemapRef.current = basemap;
+  }, [basemap, theme]);
 
   const orderedCircuits = useMemo(() => [...circuits].sort((left, right) => left.order - right.order), [circuits]);
   const circuitGeoJson = useMemo(() => makeCircuitGeoJson(orderedCircuits), [orderedCircuits]);
@@ -629,16 +644,13 @@ export function AtlasExperience() {
     setBasemap(nextBasemap);
     if (!map?.getLayer('earth-dark') || !map.getLayer('earth-satellite')) return;
 
-    darkBasemapLayerIds.forEach((layerId) => {
-      if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', nextBasemap === 'dark' ? 'visible' : 'none');
-    });
-    map.setLayoutProperty('earth-satellite', 'visibility', nextBasemap === 'satellite' ? 'visible' : 'none');
+    applyAtlasBasemapVisibility(map, nextBasemap);
     applyAtlasMapTheme(map, theme, nextBasemap);
   }, [theme]);
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!mapReady || !map?.isStyleLoaded()) return;
+    if (!mapReady || !map) return;
     applyAtlasMapTheme(map, theme, basemap);
   }, [basemap, mapReady, theme]);
 
@@ -937,7 +949,8 @@ export function AtlasExperience() {
         const circuit = circuitsRef.current.find((item) => item.id === id);
         if (circuit) focusCircuit(circuit);
       });
-      applyAtlasMapTheme(map, themeRef.current, 'dark');
+      applyAtlasBasemapVisibility(map, basemapRef.current);
+      applyAtlasMapTheme(map, themeRef.current, basemapRef.current);
       setMapReady(true);
     });
 
@@ -960,8 +973,8 @@ export function AtlasExperience() {
             <span>становится искусством</span>
           </h1>
           <p>
-            Исследуйте мир Formula 1 — легендарные трассы, города, страны
-            и&nbsp;историю чемпионата на&nbsp;интерактивной карте
+            Исследуйте трассы и географию календаря Formula 1
+            на&nbsp;интерактивной карте
           </p>
           <a className="intro-action" href="#atlas" onClick={(event) => scrollToSection(event, 'atlas')}>
             Открыть атлас

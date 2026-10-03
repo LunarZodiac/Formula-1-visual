@@ -30,6 +30,7 @@ export default async function AdminTrackLayoutPage({ params, searchParams }: {
   return <main className="admin-shell"><section className="admin-edit-panel admin-layout-editor">
     <Link className="admin-back-link" href={`/admin/circuits/${encodeURIComponent(circuit.id)}`}>← Вернуться к трассе</Link>
     <header><div><span className="admin-kicker">Конфигурация трассы</span><h1>{displayName}</h1><p>{circuit.profile?.nameRu ?? circuit.officialName}</p></div>{layout ? <code>{layout.id}</code> : null}</header>
+    {layout?.hasGeometry ? <div className="admin-circuit-links"><Link href={`/admin/circuits/${encodeURIComponent(circuit.id)}/layouts/${encodeURIComponent(layout.id)}/annotations`}>Разметить сектора, повороты и DRS →</Link></div> : null}
     {state.saved === '1' ? <div className="admin-alert is-success">Конфигурация сохранена в PostgreSQL</div> : null}
     {state.geometrySaved === '1' ? <div className="admin-alert is-success">Контур сохранён в PostGIS и синхронизирован с публичной картой. Статус сброшен до «Кандидат» для повторной проверки</div> : null}
     {state.geometryError === '1' ? <div className="admin-alert is-error">Импорт отклонён. Повторите проверку GeoJSON и убедитесь, что у конфигурации указан источник и происхождение</div> : null}

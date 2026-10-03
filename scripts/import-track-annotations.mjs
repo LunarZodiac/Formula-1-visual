@@ -6,7 +6,10 @@ import { pathToFileURL } from 'node:url';
 
 const TYPES = new Map([
   ['turn', 'Point'], ['timing_line', 'Point'], ['drs_detection', 'Point'],
+  ['straight_mode_activation', 'Point'], ['straight_mode_low_grip_activation', 'Point'],
+  ['overtake_detection', 'Point'], ['overtake_activation', 'Point'],
   ['sector', 'LineString'], ['straight', 'LineString'], ['drs_zone', 'LineString'],
+  ['straight_mode_zone', 'LineString'],
 ]);
 
 function fail(message) { throw new Error(message); }
@@ -21,6 +24,7 @@ function validateGeometry(geometry, expected, index) {
   const coordinates = geometry.coordinates;
   if (expected === 'Point' && !validCoordinate(coordinates)) fail(`feature ${index}: некорректная точка`);
   if (expected === 'LineString' && (!Array.isArray(coordinates) || coordinates.length < 2 || coordinates.length > 10000 || !coordinates.every(validCoordinate))) fail(`feature ${index}: LineString должен содержать от 2 до 10 000 корректных координат`);
+  if (expected === 'LineString' && !coordinates.some(([longitude, latitude]) => longitude !== coordinates[0][0] || latitude !== coordinates[0][1])) fail(`feature ${index}: LineString имеет нулевую длину`);
   return geometry;
 }
 
@@ -40,8 +44,10 @@ export function validateTrackAnnotationPackage(input) {
     if (seen.has(p.id)) fail(`Дублирующийся ID: ${p.id}`); seen.add(p.id);
     if (p.labelRu == null && p.labelOriginal == null && p.sequence == null) fail(`feature ${index}: нужен labelRu, labelOriginal или sequence`);
     if (p.sequence != null && (!Number.isInteger(p.sequence) || p.sequence < 1 || p.sequence > 32767)) fail(`feature ${index}: некорректная sequence`);
+    if (p.calloutPoint != null && (!['turn', 'straight'].includes(p.annotationType) || !validCoordinate(p.calloutPoint))) fail(`feature ${index}: некорректная выносная подпись`);
     const from = year(p.validFromYear, 'validFromYear', index); const to = year(p.validToYear, 'validToYear', index);
     if (from !== null && to !== null && to < from) fail(`feature ${index}: validToYear раньше validFromYear`);
+    if (['straight_mode_zone', 'straight_mode_activation', 'straight_mode_low_grip_activation', 'overtake_detection', 'overtake_activation'].includes(p.annotationType) && (from === null || from < 2026)) fail(`feature ${index}: для режимов 2026+ нужен validFromYear не раньше 2026`);
     validateGeometry(feature.geometry, TYPES.get(p.annotationType), index);
     return { ...feature, properties: { ...p, validFromYear: from, validToYear: to } };
   });
@@ -55,6 +61,7 @@ export const summary = summarizeTrackAnnotationPackage;
 export async function applyTrackAnnotationPackage(data) {
   const pool = new pg.Pool({ max: 2, allowExitOnIdle: true, application_name: 'f1-track-annotation-import' }); const client = await pool.connect();
   const sourceId = `track-annotations-${createHash('sha256').update(data.sourceUrl).digest('hex').slice(0, 16)}`;
+  let imported = 0;
   try {
     await client.query('BEGIN');
     const layout = await client.query('SELECT id FROM atlas.track_layouts WHERE id=$1 AND circuit_id=$2 AND centerline IS NOT NULL FOR SHARE', [data.layoutId, data.circuitId]);
@@ -63,13 +70,19 @@ export async function applyTrackAnnotationPackage(data) {
     for (const feature of data.features) {
       const p = feature.properties;
       const existing = await client.query('SELECT layout_id,review_status FROM atlas.track_layout_annotations WHERE id=$1 FOR UPDATE', [p.id]);
+      if (existing.rows.length && data.preserveExisting === true) continue;
       if (existing.rows.length && existing.rows[0].layout_id !== data.layoutId) fail(`feature ${p.id}: ID уже принадлежит другой конфигурации`);
       if (existing.rows.length && existing.rows[0].review_status !== 'candidate') fail(`feature ${p.id}: пакет не может заменить уже проверенную или скрытую запись`);
       const proximity = await client.query(`WITH input AS (SELECT ST_SetSRID(ST_GeomFromGeoJSON($1),4326) AS geometry), points AS (SELECT (ST_DumpPoints(input.geometry)).geom AS point FROM input) SELECT round(max(ST_Distance(points.point::geography,ST_Force2D(layout.centerline)::geography)))::int AS distance FROM points CROSS JOIN atlas.track_layouts AS layout WHERE layout.id=$2`, [JSON.stringify(feature.geometry), data.layoutId]);
       if (Number(proximity.rows[0]?.distance ?? Infinity) > 2000) fail(`feature ${p.id}: геометрия дальше 2000 м от контура`);
-      await client.query(`INSERT INTO atlas.track_layout_annotations(id,layout_id,annotation_type,label_ru,label_original,sequence,description_ru,geometry,valid_from_year,valid_to_year,source_id,review_status) VALUES($1,$2,$3,$4,$5,$6,$7,ST_SetSRID(ST_GeomFromGeoJSON($8),4326)::geography,$9,$10,$11,'candidate') ON CONFLICT(id) DO UPDATE SET layout_id=EXCLUDED.layout_id,annotation_type=EXCLUDED.annotation_type,label_ru=EXCLUDED.label_ru,label_original=EXCLUDED.label_original,sequence=EXCLUDED.sequence,description_ru=EXCLUDED.description_ru,geometry=EXCLUDED.geometry,valid_from_year=EXCLUDED.valid_from_year,valid_to_year=EXCLUDED.valid_to_year,source_id=EXCLUDED.source_id,review_status='candidate',updated_at=now()`, [p.id, data.layoutId, p.annotationType, p.labelRu ?? null, p.labelOriginal ?? null, p.sequence ?? null, p.descriptionRu ?? null, JSON.stringify(feature.geometry), p.validFromYear, p.validToYear, sourceId]);
+      if (p.calloutPoint) {
+        const callout = await client.query(`SELECT ST_Distance(ST_SetSRID(ST_MakePoint($1,$2),4326)::geography,ST_SetSRID(ST_GeomFromGeoJSON($3),4326)::geography) AS distance_m`, [...p.calloutPoint, JSON.stringify(feature.geometry)]);
+        if (Number(callout.rows[0]?.distance_m ?? Infinity) > 1000) fail(`feature ${p.id}: выносная подпись дальше 1 км от элемента`);
+      }
+      await client.query(`INSERT INTO atlas.track_layout_annotations(id,layout_id,annotation_type,label_ru,label_original,sequence,description_ru,geometry,valid_from_year,valid_to_year,source_id,review_status,properties) VALUES($1,$2,$3,$4,$5,$6,$7,ST_SetSRID(ST_GeomFromGeoJSON($8),4326)::geography,$9,$10,$11,'candidate',$12::jsonb) ON CONFLICT(id) DO UPDATE SET layout_id=EXCLUDED.layout_id,annotation_type=EXCLUDED.annotation_type,label_ru=EXCLUDED.label_ru,label_original=EXCLUDED.label_original,sequence=EXCLUDED.sequence,description_ru=EXCLUDED.description_ru,geometry=EXCLUDED.geometry,valid_from_year=EXCLUDED.valid_from_year,valid_to_year=EXCLUDED.valid_to_year,source_id=EXCLUDED.source_id,review_status='candidate',properties=EXCLUDED.properties,updated_at=now()`, [p.id, data.layoutId, p.annotationType, p.labelRu ?? null, p.labelOriginal ?? null, p.sequence ?? null, p.descriptionRu ?? null, JSON.stringify(feature.geometry), p.validFromYear, p.validToYear, sourceId, JSON.stringify(p.calloutPoint ? { calloutPoint: p.calloutPoint, importedVia: 'candidate-package' } : { importedVia: 'candidate-package' })]);
+      imported += 1;
     }
-    await client.query('COMMIT'); return data.features.length;
+    await client.query('COMMIT'); return imported;
   } catch (error) { await client.query('ROLLBACK').catch(() => {}); throw error; } finally { client.release(); await pool.end(); }
 }
 

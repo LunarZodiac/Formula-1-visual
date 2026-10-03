@@ -9,13 +9,14 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import type { ResultGeography } from '../data/competitor-contract';
 import { addAtlasMapAttribution } from '../lib/map-attribution';
 import { useTheme, type AtlasTheme } from './theme-provider';
+import { russianCountNoun } from '../data/russian-count-noun';
 
 type GeographyMetric = 'wins' | 'podiums' | 'raceEntries' | 'points';
-const geographyMetrics: Array<{ key: GeographyMetric; label: string; unit: string }> = [
-  { key: 'wins', label: 'Победы', unit: 'побед' },
-  { key: 'podiums', label: 'Подиумы', unit: 'подиумов' },
-  { key: 'raceEntries', label: 'Этапы', unit: 'этапов' },
-  { key: 'points', label: 'Очки', unit: 'очков' },
+const geographyMetrics: Array<{ key: GeographyMetric; label: string; unit: readonly [string, string, string] }> = [
+  { key: 'wins', label: 'Победы', unit: ['победа', 'победы', 'побед'] },
+  { key: 'podiums', label: 'Подиумы', unit: ['подиум', 'подиума', 'подиумов'] },
+  { key: 'raceEntries', label: 'Этапы', unit: ['этап', 'этапа', 'этапов'] },
+  { key: 'points', label: 'Очки', unit: ['очко', 'очка', 'очков'] },
 ];
 
 function rankPoints(points: ResultGeography[], metric: GeographyMetric) {
@@ -222,7 +223,7 @@ export function DriverResultsMap({ points, color }: { points: ResultGeography[];
         {failed ? <p className="driver-results-atlas__error" role="status">Картографическая подложка временно недоступна</p> : null}
       </div>
       <aside className="driver-results-atlas__panel" aria-label="Результат на выбранной трассе">
-        <header><span>География карьеры</span><strong>{points.length}</strong><small>трасс в базе</small></header>
+        <header><span>География карьеры</span><strong>{points.length}</strong><small>{russianCountNoun(points.length, ['трасса', 'трассы', 'трасс'])} с результатами</small></header>
         {selected ? <article>
           <small>Выбранная трасса</small>
           <h3>{selected.name}</h3>
@@ -237,7 +238,7 @@ export function DriverResultsMap({ points, color }: { points: ResultGeography[];
         <div className="driver-results-atlas__ranking">
           <span>Рейтинг трасс · {activeMetric.label.toLocaleLowerCase('ru')}</span>
           {ranked.filter((point) => point[metric] > 0).slice(0, 8).map((point, index) => <button type="button" className={point.id === selected?.id ? 'is-active' : undefined} onClick={() => setSelectedId(point.id)} key={point.id}>
-            <small>{String(index + 1).padStart(2, '0')}</small><strong>{point.name}</strong><b>{point[metric]}<em>{activeMetric.unit}</em></b>
+            <small>{String(index + 1).padStart(2, '0')}</small><strong>{point.name}</strong><b>{point[metric]}<em>{russianCountNoun(point[metric], activeMetric.unit)}</em></b>
           </button>)}
         </div>
       </aside>

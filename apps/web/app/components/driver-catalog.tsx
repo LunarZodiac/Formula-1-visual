@@ -9,24 +9,14 @@ import { DriverNumberMark, resolveDriverNumber } from './driver-number-mark';
 import { Breadcrumbs } from './breadcrumbs';
 
 import type { DriverListItem } from '../data/competitor-contract';
+import { nationalityNames } from '../data/nationality-names';
+import { russianCountNoun } from '../data/russian-count-noun';
 export type { DriverCatalogItem } from '../data/competitor-contract';
 
 const teamColors: Record<string, string> = {
   alpine: '#f079b5', aston_martin: '#229971', audi: '#e21b2d', cadillac: '#c7a866',
   ferrari: '#ef1a2d', haas: '#b6bec5', mclaren: '#ff8700', mercedes: '#00d2be',
   rb: '#55c3ff', red_bull: '#3671c6', williams: '#64c4ff',
-};
-
-const nationalityNames: Record<string, string> = {
-  American: 'США', Argentine: 'Аргентина', Australian: 'Австралия', Austrian: 'Австрия', Belgian: 'Бельгия',
-  Brazilian: 'Бразилия', British: 'Великобритания', Canadian: 'Канада', Chilean: 'Чили', Chinese: 'Китай',
-  Colombian: 'Колумбия', Czech: 'Чехия', Danish: 'Дания', Dutch: 'Нидерланды', 'East German': 'ГДР',
-  Finnish: 'Финляндия', French: 'Франция', German: 'Германия', Hungarian: 'Венгрия', Indian: 'Индия',
-  Indonesian: 'Индонезия', Irish: 'Ирландия', Italian: 'Италия', Japanese: 'Япония',
-  Liechtensteiner: 'Лихтенштейн', Malaysian: 'Малайзия', Mexican: 'Мексика', Monegasque: 'Монако',
-  'New Zealander': 'Новая Зеландия', Polish: 'Польша', Portuguese: 'Португалия', Rhodesian: 'Родезия',
-  Russian: 'Россия', 'South African': 'ЮАР', Spanish: 'Испания', Swedish: 'Швеция', Swiss: 'Швейцария',
-  Thai: 'Таиланд', Uruguayan: 'Уругвай', Venezuelan: 'Венесуэла',
 };
 
 function driverColor(driver: DriverListItem) {
@@ -118,11 +108,11 @@ export function DriverCatalog({ season, afterRound, drivers, seasonSelected = fa
 
       <section className="driver-showcase-toolbar" aria-label="Фильтры пилотов">
         <div className={`driver-showcase-tabs is-${activeTab}`} aria-label="Раздел каталога"><button type="button" className={activeTab === 'all' ? 'is-active' : ''} onClick={() => navigateCatalog('all', '/drivers')}>Все пилоты</button><button type="button" className={activeTab === 'season' ? 'is-active' : ''} onClick={() => navigateCatalog('season', `/drivers?season=${season}`)}>Сезон {season}</button><button type="button" className={activeTab === 'teams' ? 'is-active' : ''} onClick={() => { setRequestedTab('teams'); setTeamMode(true); teamSelectRef.current?.focus(); }}>По командам</button></div>
-        <label className="driver-showcase-search"><span className="sr-only">Поиск</span><input type="search" value={query} onChange={(event) => { setQuery(event.target.value); setVisibleCount(48); }} placeholder="Поиск пилота…" /></label>
-        <label className="driver-showcase-select"><span className="sr-only">Команда</span><select ref={teamSelectRef} value={team} onChange={(event) => { setRequestedTab(null); setTeam(event.target.value); setTeamMode(event.target.value !== 'all'); setVisibleCount(48); }}><option value="all">Все команды</option>{teams.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
+        <label className="driver-showcase-search public-catalog-field"><span>Поиск</span><input type="search" value={query} onChange={(event) => { setQuery(event.target.value); setVisibleCount(48); }} placeholder="Поиск пилота…" /></label>
+        <label className="driver-showcase-select public-catalog-field"><span>Команда</span><select ref={teamSelectRef} value={team} onChange={(event) => { setRequestedTab(null); setTeam(event.target.value); setTeamMode(event.target.value !== 'all'); setVisibleCount(48); }}><option value="all">Все команды</option>{teams.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
         <button type="button" onClick={() => { setRequestedTab(null); setQuery(''); setTeam('all'); setTeamMode(false); setVisibleCount(48); }} disabled={!query && team === 'all' && !teamMode}>Сбросить</button>
       </section>
-      <div className="driver-showcase-count">Найдено пилотов: <strong>{filtered.length}</strong></div>
+      <output className="driver-showcase-count public-catalog-count">Найдено пилотов: <strong>{filtered.length}</strong></output>
 
       {featured ? (
         <>
@@ -134,7 +124,7 @@ export function DriverCatalog({ season, afterRound, drivers, seasonSelected = fa
             <DriverIdentity driver={featured} season={seasonSelected ? season : featured.latestSeason ?? season} featured />
             <div className="driver-featured-data">
               <h3>{featured.position === 1 ? `Лидер личного зачёта ${seasonSelected ? season : featured.latestSeason ?? season}` : featured.position === null ? `Участник сезона ${seasonSelected ? season : featured.latestSeason ?? season}` : `Позиция ${featured.position} в сезоне ${seasonSelected ? season : featured.latestSeason ?? season}`}</h3>
-              <p>{featured.points} очков и {featured.wins} {featured.wins === 1 ? 'победа' : featured.wins > 1 && featured.wins < 5 ? 'победы' : 'побед'} в текущем наборе результатов</p>
+              <p>{featured.points} {russianCountNoun(featured.points, ['очко', 'очка', 'очков'])} и {featured.wins} {russianCountNoun(featured.wins, ['победа', 'победы', 'побед'])} в сезоне {seasonSelected ? season : featured.latestSeason ?? season}</p>
               <DriverFacts driver={featured} />
               <b>Открыть профиль →</b>
             </div>

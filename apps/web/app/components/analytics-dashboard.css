@@ -8,8 +8,8 @@
     radial-gradient(circle at 80% 3%, #143237 0, transparent 25%), #050c10;
 }
 .av-page button,
-.av-page input,
-.av-page select {
+.av-page input:not(.public-catalog-control),
+.av-page select:not(.public-catalog-control) {
   font: inherit;
 }
 .av-hero,
@@ -253,7 +253,11 @@
   justify-content: center;
 }
 .av-controls > label span,
-.av-picker > label,
+.av-picker > label {
+  margin-bottom: 7px;
+  color: var(--atlas-text-muted);
+}
+.av-controls > .public-catalog-field > span { margin-bottom: 0; }
 .av-period > span,
 .av-toolbar > label {
   margin-bottom: 7px;
@@ -265,11 +269,10 @@
 }
 .av-controls select,
 .av-toolbar select {
-  border: 0;
   color: #f3f7f8;
-  background: transparent;
   font-weight: 700;
 }
+.av-toolbar select { border: 0; background: transparent; }
 .av-controls select:disabled {
   color: #596b70;
 }
@@ -305,11 +308,9 @@
   background: var(--driver);
 }
 .av-picker input {
-  min-height: 30px;
-  border: 0;
-  color: #fff;
-  background: transparent;
-  outline: 0;
+  margin-top: 7px;
+  width: 100%;
+  min-width: 0;
 }
 .av-picker aside {
   position: absolute;
@@ -989,8 +990,6 @@
 .av-method,
 .av-empty,
 .av-empty p { color: var(--atlas-text-muted); }
-.av-controls > label span,
-.av-picker > label,
 .av-period > span,
 .av-toolbar > label,
 .av-compare section > header small,

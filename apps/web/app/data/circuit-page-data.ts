@@ -58,13 +58,14 @@ export type CircuitPageData = {
       centerline: GeoJSON.Feature<GeoJSON.LineString>;
       annotations: Array<{
         id: string;
-        type: 'sector' | 'turn' | 'straight' | 'timing_line' | 'drs_zone' | 'drs_detection';
+        type: 'sector' | 'turn' | 'straight' | 'timing_line' | 'drs_zone' | 'drs_detection' | 'straight_mode_zone' | 'straight_mode_activation' | 'straight_mode_low_grip_activation' | 'overtake_detection' | 'overtake_activation';
         labelRu?: string;
         labelOriginal?: string;
         sequence?: number;
         descriptionRu?: string;
         validFromYear?: number;
         validToYear?: number;
+        calloutPoint?: [number, number];
         geometry: GeoJSON.Point | GeoJSON.LineString;
         source: { name: string; url?: string };
       }>;
