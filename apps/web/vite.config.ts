@@ -45,7 +45,6 @@ export default defineConfig(async () => {
         },
         config: {
           main: 'vinext/server/app-router-entry',
-          compatibility_flags: ['nodejs_compat'],
         },
       }),
     ],
