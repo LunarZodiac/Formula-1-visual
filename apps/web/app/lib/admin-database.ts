@@ -594,7 +594,6 @@ function apiConfiguration() {
     baseUrl: baseUrl.replace(/\/$/, ''),
   } : null;
 }
-
 export function isAdminDatabaseConfigured() {
   return isAdminSupabaseConfigured() || apiConfiguration() !== null;
 }

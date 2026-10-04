@@ -11,9 +11,9 @@ import {
   getAdminSchemaTables,
   getAdminSeasons,
   getAdminTravelRegistry,
-  isAdminDatabaseConfigured,
 } from '../../lib/admin-database';
 import { saveMapUiSettings } from '../actions';
+import { getDirectAdminDashboard, isAdminSupabaseConfigured } from '../../lib/supabase-admin';
 
 async function safeCount<T>(
   request: () => Promise<T>,
@@ -40,9 +40,9 @@ export default async function AdminOverviewPage({
 
   let dashboard: Awaited<ReturnType<typeof getAdminDashboard>> | null = null;
 
-  if (isAdminDatabaseConfigured()) {
+  if (isAdminSupabaseConfigured()) {
     try {
-      dashboard = await getAdminDashboard({ limit: 1 });
+      dashboard = await getDirectAdminDashboard({ limit: 1 });
     } catch (error) {
       console.error('Не удалось получить сводку Supabase', error);
     }
