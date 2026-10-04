@@ -1,5 +1,9 @@
 import { createHash } from 'node:crypto';
 import { env } from 'cloudflare:workers';
+import {
+  getDirectAdminDashboard,
+  isAdminSupabaseConfigured,
+} from './supabase-admin';
 
 export type AdminDriver = {
   id: string;
@@ -592,7 +596,7 @@ function apiConfiguration() {
 }
 
 export function isAdminDatabaseConfigured() {
-  return apiConfiguration() !== null;
+  return isAdminSupabaseConfigured() || apiConfiguration() !== null;
 }
 
 export async function getAdminMapUiSettings() {
@@ -661,10 +665,36 @@ export async function getAdminDashboard({
   filter?: 'unresolved-life-data' | 'missing-photo' | '';
   availablePhotoIds?: string[];
 } = {}) {
-  const search = new URLSearchParams({ limit: String(limit), page: String(page), q: query, filter });
-  if (availablePhotoIds.length) search.set('availablePhotoIds', availablePhotoIds.join(','));
-  const dashboard = await apiRequest<AdminDashboard>(`/drivers?${search}`);
-  if (!dashboard) throw new Error('Каталог пилотов не найден');
+  void availablePhotoIds;
+
+  if (isAdminSupabaseConfigured()) {
+    return getDirectAdminDashboard({
+      limit,
+      page,
+      query,
+      filter,
+    });
+  }
+
+  const search = new URLSearchParams({
+    limit: String(limit),
+    page: String(page),
+    q: query,
+    filter,
+  });
+
+  if (availablePhotoIds.length) {
+    search.set('availablePhotoIds', availablePhotoIds.join(','));
+  }
+
+  const dashboard = await apiRequest<AdminDashboard>(
+    `/drivers?${search}`,
+  );
+
+  if (!dashboard) {
+    throw new Error('Каталог пилотов не найден');
+  }
+
   return dashboard;
 }
 

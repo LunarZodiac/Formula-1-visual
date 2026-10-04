@@ -25,7 +25,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     try {
       dashboard = await getAdminDashboard({ limit: pageSize, page, query, filter: activeFilter, availablePhotoIds });
     } catch (error) {
-      console.error('Не удалось загрузить локальную базу для админки', error);
+      console.error('Не удалось загрузить данные пилотов из Supabase', error);
       databaseError = true;
     }
   }
@@ -71,8 +71,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
 
   return <main className="admin-shell">
     <header className="admin-header">
-      <div><span className="admin-kicker">География скорости</span><h1>Редакция атласа</h1><p>{dashboard ? `Локальная PostgreSQL · ${dashboard.summary.databaseDrivers} записей · ${catalogDriverCount} участников Гран-при` : `Экспортированный каталог · ${catalogDriverCount} пилотов`}</p></div>
-      <span className={`admin-connection-status ${dashboard ? 'is-online' : ''}`}>{dashboard ? 'PostgreSQL подключена' : 'Экспортированный каталог'}</span>
+      <div><span className="admin-kicker">География скорости</span><h1>Редакция атласа</h1><p>{dashboard ? `Supabase PostgreSQL · ${dashboard.summary.databaseDrivers} записей · ${catalogDriverCount} участников Гран-при` : `Экспортированный каталог · ${catalogDriverCount} пилотов`}</p></div>
+      <span className={`admin-connection-status ${dashboard ? 'is-online' : ''}`}>{dashboard ? 'Supabase подключена' : 'Экспортированный каталог'}</span>
     </header>
     <section className="admin-summary" aria-label="Состояние данных">
       <div><strong>{catalogDriverCount}</strong><span>пилотов в каталоге</span></div>
@@ -85,8 +85,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         <strong>{unresolvedLifeDataCount}</strong><span>запись требует решения</span><small>{activeFilter ? 'Показать весь каталог' : 'Показать запись'}</small>
       </Link>
     </section>
-    {!databaseConfigured ? <div className="admin-alert">Каталог доступен для просмотра. Чтобы включить редактирование, добавьте параметры PostgreSQL в apps/web/.dev.vars</div> : null}
-    {databaseError ? <div className="admin-alert is-error">Не удалось подключиться к PostgreSQL. Проверьте параметры базы в apps/web/.dev.vars и перезапустите сайт</div> : null}
+    {!databaseConfigured ? <div className="admin-alert">Подключение к Supabase для админки не настроено</div> : null}
+    {databaseError ? <div className="admin-alert is-error">Не удалось получить данные пилотов из Supabase</div> : null}
     {requested.savedDriver ? <div className="admin-alert is-success">Изменения пилота сохранены</div> : null}
     {requested.quickError ? <div className="admin-alert is-error">Не удалось сохранить строку. Проверьте поля и ссылку на источник</div> : null}
     {requested.syncError ? <div className="admin-alert is-error">База обновлена, но публичный каталог не синхронизирован</div> : null}
