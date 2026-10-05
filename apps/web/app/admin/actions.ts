@@ -280,7 +280,7 @@ export async function saveEvent(formData: FormData) {
   }
   revalidatePath('/admin/events'); revalidatePath(`/admin/events/${id}`);
   revalidatePath('/'); revalidatePath('/season'); revalidatePath('/search');
-  redirect(`/admin/events/${encodeURIComponent(id)}?saved=1${publicDataSynced ? '' : '&syncError=1'}`);
+  redirect(`/admin/events/${encodeURIComponent(id)}?saved=1${publicDataSynced === false ? '&syncError=1' : ''}`);
 }
 
 function nullableNumber(formData: FormData, name: string) {

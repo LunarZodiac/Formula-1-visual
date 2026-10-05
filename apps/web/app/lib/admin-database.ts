@@ -2,11 +2,22 @@ import { createHash } from 'node:crypto';
 import { env } from 'cloudflare:workers';
 import {
   getDirectAdminDashboard,
+  getDirectAdminEvent,
+  getDirectAdminEventEditorOptions,
+  getDirectAdminEventSessions,
   getDirectAdminEvents,
   getDirectAdminSeasons,
   isAdminSupabaseConfigured,
+  saveDirectAdminEvent,
   saveDirectAdminSeason,
 } from './supabase-admin';
+import {
+  deleteDirectAdminSessionResult,
+  getDirectAdminEventSession,
+  saveDirectAdminEventSession,
+  saveDirectAdminSessionResult,
+  saveDirectAdminSessionResults,
+} from './supabase-event-admin';
 
 export type AdminDriver = {
   id: string;
@@ -781,16 +792,28 @@ export async function getAdminEvents(filters: {
 }
 
 export function getAdminEvent(id: string) {
+  if (isAdminSupabaseConfigured()) {
+    return getDirectAdminEvent(id);
+  }
+
   return apiRequest<AdminEvent>(`/events/${encodeURIComponent(id)}`);
 }
 
 export async function getAdminEventEditorOptions() {
+  if (isAdminSupabaseConfigured()) {
+    return getDirectAdminEventEditorOptions();
+  }
+
   const result = await apiRequest<AdminEventEditorOptions>('/event-options');
   if (!result) throw new Error('Справочники этапов не найдены');
   return result;
 }
 
 export async function saveAdminEvent(input: AdminEventInput, create = false) {
+  if (isAdminSupabaseConfigured()) {
+    return saveDirectAdminEvent(input, create);
+  }
+
   const path = create ? '/events' : `/events/${encodeURIComponent(input.id)}`;
   const result = await apiRequest<{ id: string; seasonYear: number; publicDataSynced: boolean }>(path, {
     method: create ? 'POST' : 'PATCH', body: JSON.stringify(input),
@@ -800,16 +823,28 @@ export async function saveAdminEvent(input: AdminEventInput, create = false) {
 }
 
 export async function getAdminEventSessions(eventId: string) {
+  if (isAdminSupabaseConfigured()) {
+    return getDirectAdminEventSessions(eventId);
+  }
+
   const result = await apiRequest<{ rows: AdminEventSession[] }>(`/events/${encodeURIComponent(eventId)}/sessions`);
   if (!result) throw new Error('Этап не найден');
   return result.rows;
 }
 
 export async function getAdminEventSession(eventId: string, sessionId: string) {
+  if (isAdminSupabaseConfigured()) {
+    return getDirectAdminEventSession(eventId, sessionId);
+  }
+
   return apiRequest<AdminEventSessionBundle>(`/events/${encodeURIComponent(eventId)}/sessions/${encodeURIComponent(sessionId)}`);
 }
 
 export async function saveAdminEventSession(input: AdminEventSessionInput, create = false) {
+  if (isAdminSupabaseConfigured()) {
+    return saveDirectAdminEventSession(input, create);
+  }
+
   const result = await apiRequest<{ id: string; publicDataSynced: boolean }>(
     create ? `/events/${encodeURIComponent(input.raceId)}/sessions` : `/events/${encodeURIComponent(input.raceId)}/sessions/${encodeURIComponent(input.id)}`,
     { method: create ? 'POST' : 'PATCH', body: JSON.stringify(input) }, 120_000,
@@ -819,6 +854,10 @@ export async function saveAdminEventSession(input: AdminEventSessionInput, creat
 }
 
 export async function saveAdminSessionResult(input: AdminSessionResultInput) {
+  if (isAdminSupabaseConfigured()) {
+    return saveDirectAdminSessionResult(input);
+  }
+
   const result = await apiRequest<{ driverId: string; publicDataSynced: boolean }>(
     `/events/${encodeURIComponent(input.raceId)}/sessions/${encodeURIComponent(input.sessionId)}/results`,
     { method: 'POST', body: JSON.stringify(input) }, 120_000,
@@ -828,6 +867,10 @@ export async function saveAdminSessionResult(input: AdminSessionResultInput) {
 }
 
 export async function saveAdminSessionResults(input: { raceId: string; sessionId: string; rows: AdminSessionResultInput[] }) {
+  if (isAdminSupabaseConfigured()) {
+    return saveDirectAdminSessionResults(input);
+  }
+
   const result = await apiRequest<{ saved: number; publicDataSynced: boolean }>(
     `/events/${encodeURIComponent(input.raceId)}/sessions/${encodeURIComponent(input.sessionId)}/results`,
     { method: 'PUT', body: JSON.stringify({ rows: input.rows }) }, 120_000,
@@ -837,6 +880,10 @@ export async function saveAdminSessionResults(input: { raceId: string; sessionId
 }
 
 export async function deleteAdminSessionResult(raceId: string, sessionId: string, driverId: string) {
+  if (isAdminSupabaseConfigured()) {
+    return deleteDirectAdminSessionResult(raceId, sessionId, driverId);
+  }
+
   const result = await apiRequest<{ deleted: boolean; publicDataSynced: boolean }>(
     `/events/${encodeURIComponent(raceId)}/sessions/${encodeURIComponent(sessionId)}/results/${encodeURIComponent(driverId)}`,
     { method: 'DELETE' }, 120_000,

@@ -28,18 +28,23 @@ export default async function AdminEventPage({ params, searchParams }: {
   try { [event, options] = await Promise.all([create ? Promise.resolve(null) : getAdminEvent(id), getAdminEventEditorOptions()]); }
   catch (error) {
     console.error('Не удалось открыть этап', error);
-    return <main className="admin-shell"><div className="admin-alert is-error">Локальная база этапов недоступна</div></main>;
+    return <main className="admin-shell"><div className="admin-alert is-error">Не удалось загрузить данные этапа</div></main>;
   }
   if (!create && !event) notFound();
   const requestedSeason = Number.parseInt(state.season ?? '', 10);
   const defaultSeason = event?.seasonYear ?? (Number.isInteger(requestedSeason) ? requestedSeason : options.seasons[0] ?? 2026);
   const defaultCircuit = event?.circuitId ?? options.circuits[0]?.id ?? '';
-  const sessions = event ? await getAdminEventSessions(event.id) : [];
+  let sessions: Awaited<ReturnType<typeof getAdminEventSessions>> = [];
+  try { sessions = event ? await getAdminEventSessions(event.id) : []; }
+  catch (error) {
+    console.error('Не удалось загрузить сессии этапа', error);
+    return <main className="admin-shell"><div className="admin-alert is-error">Не удалось загрузить сессии этапа</div></main>;
+  }
   return <main className="admin-shell"><section className="admin-edit-panel admin-event-editor">
     <Link className="admin-back-link" href={`/admin/events${event ? `?season=${event.seasonYear}` : ''}`}>← Вернуться к этапам</Link>
     <header><div><span className="admin-kicker">Календарная запись</span><h1>{event?.name ?? 'Новый этап'}</h1><p>{event ? `${event.seasonYear} · этап ${event.round}` : 'Добавление этапа чемпионата'}</p></div>{event ? <code>{event.id}</code> : null}</header>
-    {state.saved === '1' ? <div className="admin-alert is-success">Этап сохранён и календарные данные обновлены</div> : null}
-    {state.syncError === '1' ? <div className="admin-alert">Этап сохранён в PostgreSQL, но публичный снимок сезона не обновился</div> : null}
+    {state.saved === '1' ? <div className="admin-alert is-success">Этап сохранён</div> : null}
+    {state.syncError === '1' ? <div className="admin-alert">Этап сохранён, но публичные данные пока не обновлены</div> : null}
     {state.error ? <div className="admin-alert is-error">Не удалось сохранить этап. Проверьте сезон, номер, трассу, конфигурацию и источник</div> : null}
     {event ? <section className="admin-event-summary"><div><span>Сессии</span><strong>{event.completedSessionCount}/{event.sessionCount}</strong></div><div><span>Результаты</span><strong>{event.resultCount}</strong></div><div><span>Победитель</span><strong>{event.winner?.name ?? 'Не определён'}</strong></div><div><span>Обновлено</span><strong>{new Intl.DateTimeFormat('ru-RU', { dateStyle: 'medium' }).format(new Date(event.updatedAt))}</strong></div></section> : null}
     <form action={saveEvent} className="admin-editor-form">

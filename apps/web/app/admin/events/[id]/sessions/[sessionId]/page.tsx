@@ -66,7 +66,12 @@ export default async function AdminEventSessionPage({ params, searchParams }: {
   if (!await getLoginSession()) redirect('/admin/login');
   if (!isAdminDatabaseConfigured()) redirect('/admin/overview');
   const [{ id, sessionId }, state] = await Promise.all([params, searchParams]);
-  const bundle = await getAdminEventSession(id, sessionId).catch(() => null);
+  let bundle: Awaited<ReturnType<typeof getAdminEventSession>>;
+  try { bundle = await getAdminEventSession(id, sessionId); }
+  catch (error) {
+    console.error('Не удалось загрузить сессию', error);
+    return <main className="admin-shell"><div className="admin-alert is-error">Не удалось загрузить данные сессии</div></main>;
+  }
   if (!bundle) notFound();
   const sourceUrl = bundle.session.sourceUrl ?? '';
   return <main className="admin-shell"><section className="admin-edit-panel admin-event-editor admin-session-editor">
@@ -76,7 +81,7 @@ export default async function AdminEventSessionPage({ params, searchParams }: {
     {state.resultSaved === '1' ? <div className="admin-alert is-success">Строка классификации сохранена</div> : null}
     {state.bulkSaved ? <div className="admin-alert is-success">Пакетно сохранено строк: {state.bulkSaved}</div> : null}
     {state.deleted === '1' ? <div className="admin-alert is-success">Ошибочная строка классификации удалена</div> : null}
-    {state.syncError === '1' ? <div className="admin-alert">Изменение сохранено в PostgreSQL, но публичный снимок сезона не обновился</div> : null}
+    {state.syncError === '1' ? <div className="admin-alert">Изменение сохранено, но публичные данные пока не обновлены</div> : null}
     {state.error ? <div className="admin-alert is-error">Не удалось сохранить данные. Проверьте обязательные поля и источник</div> : null}
     <form action={saveEventSession} className="admin-editor-form">
       <input type="hidden" name="create" value="0" /><input type="hidden" name="raceId" value={id} /><input type="hidden" name="id" value={sessionId} />
