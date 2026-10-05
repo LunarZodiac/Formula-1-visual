@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { env } from 'cloudflare:workers';
 import {
   getDirectAdminDashboard,
+  getDirectAdminEvents,
   getDirectAdminSeasons,
   isAdminSupabaseConfigured,
   saveDirectAdminSeason,
@@ -746,14 +747,36 @@ export async function saveAdminSeason(
   return result;
 }
 
-export async function getAdminEvents(filters: { page?: number; limit?: number; season?: number; query?: string; status?: string; circuit?: string } = {}) {
-  const search = new URLSearchParams({ page: String(filters.page ?? 1), limit: String(filters.limit ?? 30) });
+export async function getAdminEvents(filters: {
+  page?: number;
+  limit?: number;
+  season?: number;
+  query?: string;
+  status?: string;
+  circuit?: string;
+} = {}) {
+  if (isAdminSupabaseConfigured()) {
+    return getDirectAdminEvents(filters);
+  }
+
+  const search = new URLSearchParams({
+    page: String(filters.page ?? 1),
+    limit: String(filters.limit ?? 30),
+  });
+
   if (filters.season) search.set('season', String(filters.season));
   if (filters.query) search.set('q', filters.query);
   if (filters.status) search.set('status', filters.status);
   if (filters.circuit) search.set('circuit', filters.circuit);
-  const result = await apiRequest<AdminEventRegistry>(`/events?${search}`);
-  if (!result) throw new Error('Каталог этапов не найден');
+
+  const result = await apiRequest<AdminEventRegistry>(
+    `/events?${search}`,
+  );
+
+  if (!result) {
+    throw new Error('Каталог этапов не найден');
+  }
+
   return result;
 }
 

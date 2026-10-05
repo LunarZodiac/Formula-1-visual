@@ -20,7 +20,7 @@ export default async function AdminEventsPage({ searchParams }: {
   let databaseError = !isAdminDatabaseConfigured();
   if (!databaseError) {
     try { registry = await getAdminEvents({ page, season: Number.isInteger(season) ? season : undefined, query: state.q, status: state.status, circuit: state.circuit }); }
-    catch (error) { console.error('Не удалось загрузить этапы', error); databaseError = true; }
+    catch (error) { console.error('Не удалось загрузить этапы из Supabase', error); databaseError = true; }
   }
   const totalPages = Math.max(1, Math.ceil((registry?.filteredCount ?? 0) / (registry?.limit ?? 30)));
   const parameters = { season: state.season, q: state.q, status: state.status, circuit: state.circuit };
@@ -32,7 +32,7 @@ export default async function AdminEventsPage({ searchParams }: {
   const newEventHref = `/admin/events/new${state.season ? `?season=${encodeURIComponent(state.season)}` : ''}`;
   return <main className="admin-shell"><section className="admin-directory admin-event-directory">
     <header><div><span className="admin-kicker">Календарь и результаты</span><h1>Этапы</h1></div><div className="admin-directory-heading-actions"><p>{registry ? `${registry.filteredCount} этапов по текущим фильтрам` : 'Календарные записи чемпионата'}</p><Link className="admin-row-action" href={newEventHref}>Добавить этап</Link></div></header>
-    {databaseError ? <div className="admin-alert is-error">Локальная база этапов недоступна</div> : null}
+    {databaseError ? <div className="admin-alert is-error">Не удалось получить этапы из Supabase</div> : null}
     {registry ? <form className="admin-directory-search admin-event-filters" method="get">
       <label><span>Сезон</span><select name="season" defaultValue={state.season ?? ''}><option value="">Все сезоны</option>{registry.seasons.map((year) => <option key={year} value={year}>{year}</option>)}</select></label>
       <label><span>Название или ID</span><input name="q" defaultValue={state.q ?? ''} placeholder="Найти этап" /></label>

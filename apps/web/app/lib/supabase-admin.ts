@@ -318,3 +318,133 @@ export async function saveDirectAdminSeason(
     publicDataSynced: false,
   };
 }
+type AdminEventRow = {
+  id: string;
+  season_year: number;
+  round: number;
+  name: string;
+  race_date: string | null;
+  start_time_utc: string | null;
+  status: 'scheduled' | 'live' | 'completed' | 'cancelled' | 'postponed';
+  circuit_id: string;
+  circuit_name: string;
+  layout_id: string | null;
+  layout_name: string | null;
+  source_url: string | null;
+  updated_at: string;
+  session_count: number;
+  completed_session_count: number;
+  result_count: number;
+  winner_id: string | null;
+  winner_name: string | null;
+};
+
+type AdminEventCircuitRow = {
+  id: string;
+  name: string;
+  short_name: string | null;
+};
+
+export async function getDirectAdminEvents({
+  page = 1,
+  limit = 30,
+  season,
+  query = '',
+  status = '',
+  circuit = '',
+}: {
+  page?: number;
+  limit?: number;
+  season?: number;
+  query?: string;
+  status?: string;
+  circuit?: string;
+} = {}) {
+  const filters = new URLSearchParams();
+
+  if (season) {
+    filters.set('season_year', `eq.${season}`);
+  }
+
+  if (status) {
+    filters.set('status', `eq.${status}`);
+  }
+
+  if (circuit) {
+    filters.set('circuit_id', `eq.${circuit}`);
+  }
+
+  if (query) {
+    const safeQuery = query.replaceAll(',', ' ');
+    filters.set(
+      'or',
+      `(id.ilike.*${safeQuery}*,name.ilike.*${safeQuery}*,circuit_name.ilike.*${safeQuery}*)`,
+    );
+  }
+
+  const rowsQuery = new URLSearchParams(filters);
+  rowsQuery.set('select', '*');
+  rowsQuery.set('order', 'season_year.desc,round.asc');
+  rowsQuery.set('limit', String(limit));
+  rowsQuery.set('offset', String((page - 1) * limit));
+
+  const [rows, filteredCount, seasons, circuits] = await Promise.all([
+    adminSupabaseRequest<AdminEventRow[]>(
+      'admin_events',
+      `?${rowsQuery.toString()}`,
+    ),
+
+    adminSupabaseCount(
+      'admin_events',
+      `?${filters.toString()}`,
+    ),
+
+    adminSupabaseRequest<Array<{ year: number }>>(
+      'seasons',
+      '?select=year&order=year.desc',
+    ),
+
+    adminSupabaseRequest<AdminEventCircuitRow[]>(
+      'circuits',
+      '?select=id,name,short_name&order=name.asc',
+    ),
+  ]);
+
+  return {
+    rows: rows.map((row) => ({
+      id: row.id,
+      seasonYear: Number(row.season_year),
+      round: Number(row.round),
+      name: row.name,
+      raceDate: row.race_date,
+      startTimeUtc: row.start_time_utc,
+      status: row.status,
+      circuitId: row.circuit_id,
+      circuitName: row.circuit_name,
+      layoutId: row.layout_id,
+      layoutName: row.layout_name,
+      sourceUrl: row.source_url,
+      sessionCount: Number(row.session_count),
+      completedSessionCount: Number(row.completed_session_count),
+      resultCount: Number(row.result_count),
+      winner: row.winner_id
+        ? {
+            id: row.winner_id,
+            name: row.winner_name ?? row.winner_id,
+          }
+        : null,
+      updatedAt: row.updated_at,
+    })),
+
+    filteredCount,
+    page,
+    limit,
+
+    seasons: seasons.map((row) => Number(row.year)),
+
+    circuits: circuits.map((row) => ({
+      id: row.id,
+      name: row.short_name ?? row.name,
+    })),
+  };
+}
