@@ -32,7 +32,7 @@ export default async function AdminCircuitsPage({ searchParams }: {
   }
   return <main className="admin-shell"><section className="admin-directory admin-circuit-directory">
     <header><div><span className="admin-kicker">География чемпионата</span><h1>Трассы</h1></div><p>{registry ? `${registry.filteredCount} записей по текущим фильтрам` : 'Каталог трасс и их публичных профилей'}</p></header>
-    {databaseError ? <div className="admin-alert is-error">Локальная база недоступна. Проверьте настройки и перезапустите сайт</div> : null}
+    {databaseError ? <div className="admin-alert is-error">Не удалось загрузить каталог трасс. Проверьте подключение к базе данных</div> : null}
     {registry ? <section className="admin-summary admin-circuit-summary" aria-label="Заполненность каталога трасс">
       <div><strong>{registry.summary.circuits}</strong><span>Трасс в каталоге</span><small>Полный исторический список</small></div>
       <Link href="/admin/circuits?status=published"><strong>{registry.summary.publishedProfiles}</strong><span>Опубликовано</span><small>Публичные редакционные профили</small></Link>

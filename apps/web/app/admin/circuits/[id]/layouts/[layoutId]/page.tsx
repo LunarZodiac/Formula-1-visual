@@ -20,7 +20,7 @@ export default async function AdminTrackLayoutPage({ params, searchParams }: {
   try { circuit = await getAdminCircuit(circuitId, true); }
   catch (error) {
     console.error('Не удалось открыть конфигурацию', error);
-    return <main className="admin-shell"><div className="admin-alert is-error">Локальная база конфигураций недоступна</div></main>;
+    return <main className="admin-shell"><div className="admin-alert is-error">Не удалось загрузить конфигурацию из базы данных</div></main>;
   }
   if (!circuit) notFound();
   const create = layoutId === 'new';
@@ -32,9 +32,9 @@ export default async function AdminTrackLayoutPage({ params, searchParams }: {
     <header><div><span className="admin-kicker">Конфигурация трассы</span><h1>{displayName}</h1><p>{circuit.profile?.nameRu ?? circuit.officialName}</p></div>{layout ? <code>{layout.id}</code> : null}</header>
     {layout?.hasGeometry ? <div className="admin-circuit-links"><Link href={`/admin/circuits/${encodeURIComponent(circuit.id)}/layouts/${encodeURIComponent(layout.id)}/annotations`}>Разметить сектора, повороты и DRS →</Link></div> : null}
     {state.saved === '1' ? <div className="admin-alert is-success">Конфигурация сохранена в PostgreSQL</div> : null}
-    {state.geometrySaved === '1' ? <div className="admin-alert is-success">Контур сохранён в PostGIS и синхронизирован с публичной картой. Статус сброшен до «Кандидат» для повторной проверки</div> : null}
+    {state.geometrySaved === '1' ? <div className="admin-alert is-success">Контур сохранён в PostGIS{state.syncError === '1' ? '' : ' и синхронизирован с публичной картой'}. Статус сброшен до «Кандидат» для повторной проверки</div> : null}
     {state.geometryError === '1' ? <div className="admin-alert is-error">Импорт отклонён. Повторите проверку GeoJSON и убедитесь, что у конфигурации указан источник и происхождение</div> : null}
-    {state.syncError === '1' ? <div className="admin-alert">Конфигурация сохранена, но поисковый индекс не обновился</div> : null}
+    {state.syncError === '1' ? <div className="admin-alert">Изменения сохранены в базе, но публичные данные ещё не обновлены</div> : null}
     {state.error ? <div className="admin-alert is-error">Не удалось сохранить конфигурацию. Проверьте период, параметры, статус и источник</div> : null}
     <section className="admin-layout-geometry-section"><header><div><span className="admin-kicker">Геометрия</span><h2>Текущий контур</h2></div><span className={`admin-status ${layout?.hasGeometry ? 'is-published' : 'is-missing'}`}>{layout?.hasGeometry ? 'Контур загружен' : 'Нет контура'}</span></header><LayoutGeometryPreview geometry={layout?.centerlineGeoJson ?? null} /><p>Это фактическая линия из PostGIS. Новый импорт не публикуется автоматически: конфигурация возвращается в статус «Кандидат»{layout?.hasGeometry ? <> · <Link href={`/admin/circuits/${circuit.id}/layouts/${layout.id}/annotations`}>Открыть редактор секторов, поворотов и DRS →</Link></> : null}</p></section>
     {!create && layout ? <section className="admin-layout-geometry-section"><header><div><span className="admin-kicker">Проверяемый импорт</span><h2>{layout.hasGeometry ? 'Заменить GeoJSON' : 'Загрузить GeoJSON'}</h2></div></header><TrackGeometryImporter circuitId={circuit.id} layoutId={layout.id} longitude={circuit.longitude} latitude={circuit.latitude} existingGeometry={layout.centerlineGeoJson} /><p>При сохранении одна и та же нормализованная линия атомарно записывается в PostGIS и отдельный публичный реестр карт</p></section> : <div className="admin-alert">Сначала создайте конфигурацию-кандидат, затем откройте её карточку для загрузки GeoJSON</div>}

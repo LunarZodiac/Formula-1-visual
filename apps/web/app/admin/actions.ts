@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { clearAdminSession, createAdminSession, getAdminSession, verifyAdminCredentials } from '../lib/admin-auth';
-import { applyAdminTrackAnnotationImportPreview, createAdminTrackAnnotationImportPreview, getAdminTrackAnnotations } from '../lib/admin-database';
+import { applyAdminTrackAnnotationImportPreview, createAdminTrackAnnotationImportPreview, getAdminTrackAnnotationImportPreview, getAdminTrackAnnotations } from '../lib/admin-database';
 import { buildLegacyTrackAnnotationPackage } from './circuits/[id]/layouts/[layoutId]/annotations/legacy-track-markup';
 import { changeAdminTravelRouteLifecycle, deleteAdminArchivedTravelRoute } from '../lib/admin-database';
 import { createAdminTravelRouteGeometryPreview } from '../lib/admin-database';
@@ -415,11 +415,13 @@ export async function importTrackGeometry(formData: FormData) {
   const circuitId = String(formData.get('circuitId') ?? '').trim();
   const layoutId = String(formData.get('layoutId') ?? '').trim();
   if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(layoutId)) redirect('/admin/circuits?error=invalid-layout');
+  let publicDataSynced = true;
   try {
     const rawGeoJson = String(formData.get('geoJson') ?? '');
     if (!rawGeoJson || rawGeoJson.length > 1_800_000) throw new Error('Некорректный размер GeoJSON');
     if (formData.get('confirmed') !== 'yes') throw new Error('Импорт не подтверждён');
-    await importAdminTrackGeometry(circuitId, layoutId, JSON.parse(rawGeoJson));
+    const result = await importAdminTrackGeometry(circuitId, layoutId, JSON.parse(rawGeoJson));
+    publicDataSynced = result.publicDataSynced;
   } catch (error) {
     console.error('Не удалось импортировать контур', error);
     redirect(`/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}?geometryError=1`);
@@ -427,7 +429,7 @@ export async function importTrackGeometry(formData: FormData) {
   revalidatePath(`/admin/circuits/${circuitId}`);
   revalidatePath(`/admin/circuits/${circuitId}/layouts/${layoutId}`);
   revalidatePath('/'); revalidatePath('/circuits'); revalidatePath('/season');
-  redirect(`/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}?geometrySaved=1`);
+  redirect(`/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}?geometrySaved=1${publicDataSynced ? '' : '&syncError=1'}`);
 }
 
 export async function saveTrackAnnotation(formData:FormData){
@@ -552,7 +554,11 @@ export async function applyTrackAnnotationImport(formData: FormData) {
   const destination = `/admin/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`;
   try {
     if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(layoutId) || !/^[A-Za-z0-9-]+$/.test(token)) throw new Error('Некорректный предпросмотр');
-    const result = await applyAdminTrackAnnotationImportPreview(token);
+    const preview = await getAdminTrackAnnotationImportPreview(token);
+    if (!preview || preview.circuit.id !== circuitId || preview.layout.id !== layoutId) {
+      throw new Error('Предпросмотр относится к другой конфигурации или устарел');
+    }
+    const result = await applyAdminTrackAnnotationImportPreview(token, circuitId, layoutId);
     if (!result) throw new Error('Предпросмотр разметки не найден или устарел');
     if (result.circuitId !== circuitId || result.layoutId !== layoutId) throw new Error('Предпросмотр относится к другой конфигурации');
     revalidatePath(destination);

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../lib/admin-auth';
-import { getAdminCircuit, isAdminDatabaseConfigured } from '../../../lib/admin-database';
+import { getAdminCircuit, isAdminCircuitMediaConfigured, isAdminDatabaseConfigured } from '../../../lib/admin-database';
 import { saveCircuit } from '../../actions';
 import { CircuitCardImageForm } from './circuit-card-image-form';
 
@@ -19,7 +19,7 @@ export default async function AdminCircuitPage({ params, searchParams }: {
   try { circuit = await getAdminCircuit(id); }
   catch (error) {
     console.error('Не удалось открыть трассу', error);
-    return <main className="admin-shell"><div className="admin-alert is-error">Локальная база трасс недоступна</div></main>;
+    return <main className="admin-shell"><div className="admin-alert is-error">Не удалось загрузить трассу из базы данных</div></main>;
   }
   if (!circuit) notFound();
   const profile = circuit.profile;
@@ -30,7 +30,7 @@ export default async function AdminCircuitPage({ params, searchParams }: {
     <Link className="admin-back-link" href="/admin/circuits">← Вернуться к трассам</Link>
     <header><div><span className="admin-kicker">Редактор трассы</span><h1>{profile?.nameRu ?? circuit.officialName}</h1><p>Справочная запись и публичный профиль редактируются вместе, конфигурации показаны отдельно</p></div><code>{circuit.id}</code></header>
     {primaryLayoutForMarkup ? <nav className="admin-circuit-links" aria-label="Быстрый доступ к разметке"><Link href={`/admin/circuits/${encodeURIComponent(circuit.id)}/layouts/${encodeURIComponent(primaryLayoutForMarkup.id)}/annotations`}>Разметить конфигурацию «{primaryLayoutForMarkup.name}» →</Link></nav> : null}
-    {state.saved === '1' ? <div className="admin-alert is-success">{state.syncError === '1' ? 'Трасса сохранена в локальной базе данных' : 'Трасса сохранена в базе, публичные каталоги обновлены'}</div> : null}
+    {state.saved === '1' ? <div className="admin-alert is-success">{state.syncError === '1' ? 'Трасса сохранена в базе данных' : 'Трасса сохранена в базе, публичные каталоги обновлены'}</div> : null}
     {state.syncError === '1' ? <div className="admin-alert">Изменения сохранены в базе, но экспорт публичных данных завершился не полностью</div> : null}
     {state.error === 'card-image' ? <div className="admin-alert is-error">Не удалось сохранить изображение. Обновите предпросмотр и проверьте поля прав и источника</div> : state.error ? <div className="admin-alert is-error">Не удалось сохранить трассу. Проверьте обязательные поля, координаты, источник и условия публикации</div> : null}
     {state.cardImageSaved === '1' ? <div className="admin-alert is-success">Изображение карточки трассы сохранено{state.syncError === '1' ? ', но публичный каталог не удалось обновить' : ' и подключено к каталогу'}</div> : null}
@@ -71,7 +71,9 @@ export default async function AdminCircuitPage({ params, searchParams }: {
       </details>
       <div className="admin-form-actions"><span>Координаты и факты сохраняются только вместе с источником</span><button type="submit">Сохранить трассу</button></div>
     </form>
-    <CircuitCardImageForm circuitId={circuit.id} circuitName={profile?.nameRu ?? circuit.officialName} currentImage={circuit.cardImage} />
+    {isAdminCircuitMediaConfigured()
+      ? <CircuitCardImageForm circuitId={circuit.id} circuitName={profile?.nameRu ?? circuit.officialName} currentImage={circuit.cardImage} />
+      : <div className="admin-alert">Загрузка изображения карточки пока доступна через локальный обработчик{circuit.cardImage ? <>. <a href={circuit.cardImage.url} target="_blank" rel="noreferrer">Открыть текущее изображение ↗</a></> : null}</div>}
     <section className="admin-related-section"><header><div><span className="admin-kicker">Связанные сущности</span><h2>Конфигурации</h2><p>Параметры и периоды редактируются отдельно от трассы; геометрия пока защищена от изменения</p></div><Link className="admin-related-primary-action" href={`/admin/circuits/${encodeURIComponent(circuit.id)}/layouts/new`}>Добавить конфигурацию</Link></header>
       {circuit.layouts.length ? <div className="admin-table-wrap"><table><thead><tr><th>Конфигурация</th><th>Период</th><th>Параметры</th><th>Статус</th><th>Этапов</th><th>Источник</th><th>Действия</th></tr></thead><tbody>{circuit.layouts.map((layout) => <tr key={layout.id}><td><strong>{layout.name}</strong><small><code>{layout.id}</code></small></td><td>{layout.validFromYear ?? '…'}–{layout.validToYear ?? '…'}</td><td>{layout.lengthM ? `${(layout.lengthM / 1000).toLocaleString('ru-RU')} км` : '—'}{layout.turns ? ` · ${layout.turns} поворотов` : ''}</td><td>{reviewLabels[layout.reviewStatus] ?? layout.reviewStatus}<small>{layout.provenanceType}</small></td><td>{layout.raceCount}</td><td>{layout.sourceUrl ? <a href={layout.sourceUrl} target="_blank" rel="noreferrer">Открыть ↗</a> : '—'}</td><td><Link href={`/admin/circuits/${encodeURIComponent(circuit.id)}/layouts/${encodeURIComponent(layout.id)}`}>Конфигурация →</Link>{layout.hasGeometry ? <small><Link href={`/admin/circuits/${encodeURIComponent(circuit.id)}/layouts/${encodeURIComponent(layout.id)}/annotations`}>Разметка трассы →</Link></small> : <small>Сначала загрузите контур</small>}</td></tr>)}</tbody></table></div> : <p className="admin-directory-empty">Конфигурации ещё не добавлены</p>}
     </section>

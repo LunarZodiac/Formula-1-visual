@@ -27,6 +27,25 @@ import {
   saveDirectAdminConstructorEntry,
   saveDirectAdminConstructorLineage,
 } from './supabase-constructor-admin';
+import {
+  getDirectAdminCircuit,
+  getDirectAdminCircuitMediaOrder,
+  getDirectAdminCircuits,
+  importDirectAdminTrackGeometry,
+  inspectDirectAdminTrackGeometry,
+  saveDirectAdminCircuit,
+  saveDirectAdminTrackLayout,
+  updateDirectAdminCircuitMediaOrder,
+} from './supabase-circuit-admin';
+import {
+  applyDirectAdminTrackAnnotationImportPreview,
+  createDirectAdminTrackAnnotationImportPreview,
+  createDirectAdminTrackSectors,
+  deleteDirectAdminTrackAnnotation,
+  getDirectAdminTrackAnnotationImportPreview,
+  getDirectAdminTrackAnnotations,
+  saveDirectAdminTrackAnnotation,
+} from './supabase-track-annotation-admin';
 
 export type AdminDriver = {
   id: string;
@@ -625,6 +644,10 @@ export function isAdminConstructorMediaConfigured() {
   return apiConfiguration() !== null;
 }
 
+export function isAdminCircuitMediaConfigured() {
+  return apiConfiguration() !== null;
+}
+
 export async function getAdminMapUiSettings() {
   return (await apiRequest<{ detailedAttribution: boolean }>('/settings/map')) ?? { detailedAttribution: false };
 }
@@ -909,6 +932,7 @@ export async function getAdminCircuits(filters: {
   page?: number; limit?: number; query?: string; country?: string; type?: string;
   status?: string; layout?: string; gap?: string;
 } = {}) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminCircuits(filters);
   const search = new URLSearchParams({ page: String(filters.page ?? 1), limit: String(filters.limit ?? 30) });
   if (filters.query) search.set('q', filters.query);
   if (filters.country) search.set('country', filters.country);
@@ -1099,10 +1123,12 @@ export function getAdminTravelAccessAnchors(circuitId:string){return apiRequest<
 export function updateAdminTravelAccessAnchor(circuitId:string,anchorId:string,input:Record<string,unknown>){return apiRequest<{id:string;circuitId:string}>(`/travel/circuits/${encodeURIComponent(circuitId)}/access-anchors/${encodeURIComponent(anchorId)}`,{method:'PUT',body:JSON.stringify(input)});}
 
 export function getAdminCircuit(id: string, includeGeometry = false) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminCircuit(id, includeGeometry);
   return apiRequest<AdminCircuit>(`/circuits/${encodeURIComponent(id)}${includeGeometry ? '?includeGeometry=1' : ''}`);
 }
 
 export async function updateAdminCircuit(input: AdminCircuitInput) {
+  if (isAdminSupabaseConfigured()) return saveDirectAdminCircuit(input);
   const result = await apiRequest<{ id: string; publicDataSynced: boolean }>(`/circuits/${encodeURIComponent(input.id)}`, {
     method: 'PATCH', body: JSON.stringify(input),
   }, 120_000);
@@ -1143,6 +1169,7 @@ export function uploadAdminCircuitCardImage(input: AdminCircuitCardImageInput) {
 }
 
 export async function saveAdminTrackLayout(input: AdminTrackLayoutInput, create = false) {
+  if (isAdminSupabaseConfigured()) return saveDirectAdminTrackLayout(input, create);
   const path = create
     ? `/circuits/${encodeURIComponent(input.circuitId)}/layouts`
     : `/circuits/${encodeURIComponent(input.circuitId)}/layouts/${encodeURIComponent(input.id)}`;
@@ -1154,6 +1181,7 @@ export async function saveAdminTrackLayout(input: AdminTrackLayoutInput, create 
 }
 
 export async function inspectAdminTrackGeometry(circuitId: string, layoutId: string, geoJson: unknown) {
+  if (isAdminSupabaseConfigured()) return inspectDirectAdminTrackGeometry(circuitId, layoutId, geoJson);
   const result = await apiRequest<AdminTrackGeometryInspection>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/geometry`, {
     method: 'POST', body: JSON.stringify({ geoJson }),
   }, 35_000);
@@ -1162,6 +1190,7 @@ export async function inspectAdminTrackGeometry(circuitId: string, layoutId: str
 }
 
 export async function importAdminTrackGeometry(circuitId: string, layoutId: string, geoJson: unknown) {
+  if (isAdminSupabaseConfigured()) return importDirectAdminTrackGeometry(circuitId, layoutId, geoJson);
   const result = await apiRequest<{ circuitId: string; layoutId: string; preview: AdminTrackGeometryInspection; publicDataSynced: boolean }>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/geometry`, {
     method: 'PUT', body: JSON.stringify({ geoJson, confirmed: true }),
   }, 60_000);
@@ -1169,13 +1198,13 @@ export async function importAdminTrackGeometry(circuitId: string, layoutId: stri
   return result;
 }
 
-export function getAdminTrackAnnotations(circuitId:string,layoutId:string){return apiRequest<AdminTrackAnnotationRegistry>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`);}
-export function createAdminTrackSectorSegmentation(circuitId:string,layoutId:string,input:Record<string,unknown>){return apiRequest<{circuitId:string;layoutId:string;created:number}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/sectors`,{method:'POST',body:JSON.stringify(input)},60_000);}
-export function updateAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string,input:Record<string,unknown>){return apiRequest<{id:string;circuitId:string;layoutId:string;publicDataSynced:boolean}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'PUT',body:JSON.stringify(input)},120_000);}
-export function deleteAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string,revision:string){return apiRequest<{id:string;circuitId:string;layoutId:string;publicDataSynced:boolean}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'DELETE',body:JSON.stringify({revision})},120_000);}
-export function createAdminTrackAnnotationImportPreview(packageData:unknown){return apiRequest<AdminTrackAnnotationImportPreview>('/track-annotation-import-previews',{method:'POST',body:JSON.stringify(packageData)},60_000);}
-export function getAdminTrackAnnotationImportPreview(token:string){return apiRequest<AdminTrackAnnotationImportPreview>(`/track-annotation-import-previews/${encodeURIComponent(token)}`,{},35_000);}
-export function applyAdminTrackAnnotationImportPreview(token:string){return apiRequest<{imported:number;circuitId:string;layoutId:string}>(`/track-annotation-import-previews/${encodeURIComponent(token)}/apply`,{method:'POST',body:'{}'},120_000);}
+export function getAdminTrackAnnotations(circuitId:string,layoutId:string){if(isAdminSupabaseConfigured())return getDirectAdminTrackAnnotations(circuitId,layoutId);return apiRequest<AdminTrackAnnotationRegistry>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations`);}
+export function createAdminTrackSectorSegmentation(circuitId:string,layoutId:string,input:Record<string,unknown>){if(isAdminSupabaseConfigured())return createDirectAdminTrackSectors(circuitId,layoutId,input);return apiRequest<{circuitId:string;layoutId:string;created:number}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/sectors`,{method:'POST',body:JSON.stringify(input)},60_000);}
+export function updateAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string,input:Record<string,unknown>){if(isAdminSupabaseConfigured())return saveDirectAdminTrackAnnotation(circuitId,layoutId,annotationId,input);return apiRequest<{id:string;circuitId:string;layoutId:string;publicDataSynced:boolean}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'PUT',body:JSON.stringify(input)},120_000);}
+export function deleteAdminTrackAnnotation(circuitId:string,layoutId:string,annotationId:string,revision:string){if(isAdminSupabaseConfigured())return deleteDirectAdminTrackAnnotation(circuitId,layoutId,annotationId,revision);return apiRequest<{id:string;circuitId:string;layoutId:string;publicDataSynced:boolean}>(`/circuits/${encodeURIComponent(circuitId)}/layouts/${encodeURIComponent(layoutId)}/annotations/${encodeURIComponent(annotationId)}`,{method:'DELETE',body:JSON.stringify({revision})},120_000);}
+export function createAdminTrackAnnotationImportPreview(packageData:unknown){if(isAdminSupabaseConfigured())return createDirectAdminTrackAnnotationImportPreview(packageData);return apiRequest<AdminTrackAnnotationImportPreview>('/track-annotation-import-previews',{method:'POST',body:JSON.stringify(packageData)},60_000);}
+export function getAdminTrackAnnotationImportPreview(token:string){if(isAdminSupabaseConfigured())return getDirectAdminTrackAnnotationImportPreview(token);return apiRequest<AdminTrackAnnotationImportPreview>(`/track-annotation-import-previews/${encodeURIComponent(token)}`,{},35_000);}
+export function applyAdminTrackAnnotationImportPreview(token:string,circuitId:string,layoutId:string){if(isAdminSupabaseConfigured())return applyDirectAdminTrackAnnotationImportPreview(token,circuitId,layoutId);return apiRequest<{imported:number;circuitId:string;layoutId:string}>(`/track-annotation-import-previews/${encodeURIComponent(token)}/apply`,{method:'POST',body:'{}'},120_000);}
 
 export async function updateAdminDriver(input: AdminDriverInput) {
   const result = await apiRequest<{ fields: string[]; publicDataSynced: boolean }>(`/drivers/${encodeURIComponent(input.id)}`, {
@@ -1485,10 +1514,12 @@ export async function updateAdminMediaAsset(input: {
 }
 
 export function getAdminCircuitMediaOrder(circuitId: string) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminCircuitMediaOrder(circuitId);
   return apiRequest<AdminCircuitMediaOrder>(`/circuits/${encodeURIComponent(circuitId)}/media-order`);
 }
 
 export async function updateAdminCircuitMediaOrder(circuitId: string, section: 'history' | 'gallery', orderedIds: string[]) {
+  if (isAdminSupabaseConfigured()) return updateDirectAdminCircuitMediaOrder(circuitId, section, orderedIds);
   const result = await apiRequest<{ section: 'history' | 'gallery'; slug: string; publicDataSynced: boolean }>(`/circuits/${encodeURIComponent(circuitId)}/media-order`, {
     method: 'PATCH', body: JSON.stringify({ section, orderedIds }),
   }, 35_000);
