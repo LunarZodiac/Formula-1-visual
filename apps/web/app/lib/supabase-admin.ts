@@ -210,3 +210,31 @@ export async function getDirectAdminDashboard({
     filteredCount,
   };
 }
+type AdminSeasonRow = {
+  year: number;
+  status: 'planned' | 'active' | 'completed' | 'cancelled';
+  rounds_planned: number | null;
+  races_available: number;
+  source_id: string | null;
+  source_url: string | null;
+  updated_at: string;
+};
+
+export async function getDirectAdminSeasons() {
+  const rows = await adminSupabaseRequest<AdminSeasonRow[]>(
+    'admin_seasons',
+    '?select=*&order=year.desc',
+  );
+
+  return rows.map((row) => ({
+    year: Number(row.year),
+    status: row.status,
+    roundsPlanned: row.rounds_planned === null
+      ? null
+      : Number(row.rounds_planned),
+    racesAvailable: Number(row.races_available),
+    sourceId: row.source_id,
+    sourceUrl: row.source_url,
+    updatedAt: row.updated_at,
+  }));
+}

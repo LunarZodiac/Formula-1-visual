@@ -17,7 +17,7 @@ export default async function AdminSeasonsPage({ searchParams }: {
   let rows: Awaited<ReturnType<typeof getAdminSeasons>> = [];
   let databaseError = !isAdminDatabaseConfigured();
   if (!databaseError) {
-    try { rows = await getAdminSeasons(); } catch (error) { console.error('Не удалось загрузить сезоны', error); databaseError = true; }
+    try { rows = await getAdminSeasons(); } catch (error) { console.error('Не удалось загрузить сезоны из Supabase', error); databaseError = true; }
   }
   const query = state.q?.trim().slice(0, 4) ?? '';
   const status = state.status && state.status in statusLabels ? state.status : '';
@@ -28,7 +28,7 @@ export default async function AdminSeasonsPage({ searchParams }: {
 
   return <main className="admin-shell"><section className="admin-directory admin-season-directory">
     <header><div><span className="admin-kicker">Календарь чемпионата</span><h1>Сезоны</h1></div><p>{filteredRows.length} из {rows.length} сезонов · в публичный выбор попадают сезоны с календарём или подготовленным снимком</p></header>
-    {databaseError ? <div className="admin-alert is-error">Локальная база недоступна. Проверьте настройки и перезапустите сайт</div> : null}
+    {databaseError ? <div className="admin-alert is-error">Не удалось получить данные сезонов из Supabase</div> : null}
     {state.saved ? <div className="admin-alert is-success">Сезон {state.saved} сохранён</div> : null}
     {state.syncError === '1' ? <div className="admin-alert">Сезон сохранён в базе, но публичный список сезонов не обновился</div> : null}
     {state.error ? <div className="admin-alert is-error">Не удалось сохранить сезон {state.error}. Проверьте год, статус, число этапов и источник</div> : null}

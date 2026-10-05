@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { env } from 'cloudflare:workers';
 import {
   getDirectAdminDashboard,
+  getDirectAdminSeasons,
   isAdminSupabaseConfigured,
 } from './supabase-admin';
 
@@ -698,8 +699,16 @@ export async function getAdminDashboard({
 }
 
 export async function getAdminSeasons() {
+  if (isAdminSupabaseConfigured()) {
+    return getDirectAdminSeasons();
+  }
+
   const result = await apiRequest<{ rows: AdminSeason[] }>('/seasons');
-  if (!result) throw new Error('Сезоны не найдены');
+
+  if (!result) {
+    throw new Error('Сезоны не найдены');
+  }
+
   return result.rows;
 }
 
