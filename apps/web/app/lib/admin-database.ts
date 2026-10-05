@@ -4,6 +4,7 @@ import {
   getDirectAdminDashboard,
   getDirectAdminSeasons,
   isAdminSupabaseConfigured,
+  saveDirectAdminSeason,
 } from './supabase-admin';
 
 export type AdminDriver = {
@@ -712,11 +713,36 @@ export async function getAdminSeasons() {
   return result.rows;
 }
 
-export async function saveAdminSeason(input: { year: number; status: AdminSeason['status']; roundsPlanned: number | null; sourceUrl: string }, create = false) {
-  const result = await apiRequest<{ year: number; publicDataSynced: boolean }>(create ? '/seasons' : `/seasons/${input.year}`, {
-    method: create ? 'POST' : 'PATCH', body: JSON.stringify(input),
-  });
-  if (!result) throw new Error('Сезон не найден');
+export async function saveAdminSeason(
+  input: {
+    year: number;
+    status: AdminSeason['status'];
+    roundsPlanned: number | null;
+    sourceUrl: string;
+  },
+  create = false,
+) {
+  if (isAdminSupabaseConfigured()) {
+    return saveDirectAdminSeason(input, create);
+  }
+
+  const result = await apiRequest<{
+    year: number;
+    publicDataSynced: boolean;
+  }>(
+    create
+      ? '/seasons'
+      : `/seasons/${input.year}`,
+    {
+      method: create ? 'POST' : 'PATCH',
+      body: JSON.stringify(input),
+    },
+  );
+
+  if (!result) {
+    throw new Error('Сезон не найден');
+  }
+
   return result;
 }
 

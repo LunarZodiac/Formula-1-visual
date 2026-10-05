@@ -33,26 +33,27 @@ async function supabaseResponse(
   init: RequestInit = {},
 ) {
   const { url, secret } = configuration();
+  const method = (init.method ?? 'GET').toUpperCase();
+  const isRead = method === 'GET' || method === 'HEAD';
 
-  const response = await fetch(
-    `${url}/rest/v1/${table}${query}`,
-    {
-      ...init,
-      cache: 'no-store',
-      headers: {
-        apikey: secret,
-        'Accept-Profile': 'atlas',
-        ...init.headers,
-      },
+  const response = await fetch(`${url}/rest/v1/${table}${query}`, {
+    ...init,
+    cache: 'no-store',
+    headers: {
+      apikey: secret,
+      ...(isRead
+        ? { 'Accept-Profile': 'atlas' }
+        : { 'Content-Profile': 'atlas' }),
+      ...(init.body
+        ? { 'content-type': 'application/json' }
+        : {}),
+      ...init.headers,
     },
-  );
+  });
 
   if (!response.ok) {
     const details = await response.text();
-
-    throw new Error(
-      `Supabase Data API ${response.status}: ${details}`,
-    );
+    throw new Error(`Supabase Data API ${response.status}: ${details}`);
   }
 
   return response;
@@ -237,4 +238,83 @@ export async function getDirectAdminSeasons() {
     sourceUrl: row.source_url,
     updatedAt: row.updated_at,
   }));
+}
+type DirectAdminSeasonInput = {
+  year: number;
+  status: 'planned' | 'active' | 'completed' | 'cancelled';
+  roundsPlanned: number | null;
+  sourceUrl: string;
+};
+
+function adminSourceId(sourceUrl: string) {
+  let hash = 2166136261;
+
+  for (let index = 0; index < sourceUrl.length; index += 1) {
+    hash ^= sourceUrl.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  return `admin-${(hash >>> 0).toString(16).padStart(8, '0')}`;
+}
+
+export async function saveDirectAdminSeason(
+  input: DirectAdminSeasonInput,
+  create = false,
+) {
+  const sourceId = adminSourceId(input.sourceUrl);
+  const sourceHost = new URL(input.sourceUrl).hostname;
+
+  await supabaseResponse(
+    'data_sources',
+    '?on_conflict=id',
+    {
+      method: 'POST',
+      headers: {
+        Prefer: 'resolution=merge-duplicates',
+      },
+      body: JSON.stringify({
+        id: sourceId,
+        name: sourceHost,
+        url: input.sourceUrl,
+        retrieved_at: new Date().toISOString(),
+        notes: 'Источник сведений о сезоне',
+      }),
+    },
+  );
+
+  if (create) {
+    await supabaseResponse(
+      'seasons',
+      '',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          year: input.year,
+          status: input.status,
+          rounds_planned: input.roundsPlanned,
+          source_id: sourceId,
+          updated_at: new Date().toISOString(),
+        }),
+      },
+    );
+  } else {
+    await supabaseResponse(
+      'seasons',
+      `?year=eq.${input.year}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({
+          status: input.status,
+          rounds_planned: input.roundsPlanned,
+          source_id: sourceId,
+          updated_at: new Date().toISOString(),
+        }),
+      },
+    );
+  }
+
+  return {
+    year: input.year,
+    publicDataSynced: false,
+  };
 }
