@@ -18,6 +18,15 @@ import {
   saveDirectAdminSessionResult,
   saveDirectAdminSessionResults,
 } from './supabase-event-admin';
+import {
+  deleteDirectAdminConstructorLineage,
+  getDirectAdminConstructorEntries,
+  getDirectAdminConstructorEntry,
+  getDirectAdminConstructorDirectory,
+  getDirectAdminConstructorLineages,
+  saveDirectAdminConstructorEntry,
+  saveDirectAdminConstructorLineage,
+} from './supabase-constructor-admin';
 
 export type AdminDriver = {
   id: string;
@@ -610,6 +619,10 @@ function apiConfiguration() {
 }
 export function isAdminDatabaseConfigured() {
   return isAdminSupabaseConfigured() || apiConfiguration() !== null;
+}
+
+export function isAdminConstructorMediaConfigured() {
+  return apiConfiguration() !== null;
 }
 
 export async function getAdminMapUiSettings() {
@@ -1258,17 +1271,34 @@ export async function previewAdminDriverPhoto(input: AdminDriverPhotoPreviewInpu
 }
 
 export async function getAdminConstructorEntries(season: number, query = '') {
+  if (isAdminSupabaseConfigured()) return getDirectAdminConstructorEntries(season, query);
+
   const search = new URLSearchParams({ season: String(season), q: query });
   const result = await apiRequest<{ season: number; rows: AdminConstructorEntry[] }>(`/constructor-entries?${search}`);
   if (!result) throw new Error('Каталог команд не найден');
   return result;
 }
 
+export async function getAdminConstructorDirectory() {
+  if (isAdminSupabaseConfigured()) return getDirectAdminConstructorDirectory();
+  const { getAllTeamCatalog } = await import('../data/season-catalogs');
+  return getAllTeamCatalog().teams.map((team) => ({
+    id: team.id, name: team.name,
+    firstSeason: team.firstSeason, latestSeason: team.latestSeason,
+    seasonCount: team.seasonCount, aliases: team.aliases,
+    logoUrl: team.logoUrl, carImageUrl: team.carImageUrl,
+  }));
+}
+
 export function getAdminConstructorEntry(season: number, constructorId: string) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminConstructorEntry(season, constructorId);
+
   return apiRequest<AdminConstructorEntry>(`/constructor-entries/${season}/${encodeURIComponent(constructorId)}`);
 }
 
 export async function updateAdminConstructorEntry(input: AdminConstructorEntryInput) {
+  if (isAdminSupabaseConfigured()) return saveDirectAdminConstructorEntry(input);
+
   const result = await apiRequest<{ fields: string[]; publicDataSynced: boolean }>(`/constructor-entries/${input.season}/${encodeURIComponent(input.constructorId)}`, {
     method: 'PATCH', body: JSON.stringify(input),
   });
@@ -1277,6 +1307,8 @@ export async function updateAdminConstructorEntry(input: AdminConstructorEntryIn
 }
 
 export async function getAdminConstructorLineages(query = '', status = '') {
+  if (isAdminSupabaseConfigured()) return getDirectAdminConstructorLineages(query, status);
+
   const search = new URLSearchParams();
   if (query) search.set('q', query);
   if (status) search.set('status', status);
@@ -1286,14 +1318,20 @@ export async function getAdminConstructorLineages(query = '', status = '') {
 }
 
 export function createAdminConstructorLineage(input: AdminConstructorLineageInput) {
+  if (isAdminSupabaseConfigured()) return saveDirectAdminConstructorLineage(input, null);
+
   return apiRequest<{ id: number }>('/constructor-lineages', { method: 'POST', body: JSON.stringify(input) });
 }
 
 export function updateAdminConstructorLineage(id: number, input: AdminConstructorLineageInput) {
+  if (isAdminSupabaseConfigured()) return saveDirectAdminConstructorLineage(input, id);
+
   return apiRequest<{ id: number }>(`/constructor-lineages/${id}`, { method: 'PATCH', body: JSON.stringify(input) });
 }
 
 export function deleteAdminConstructorLineage(id: number) {
+  if (isAdminSupabaseConfigured()) return deleteDirectAdminConstructorLineage(id);
+
   return apiRequest<{ id: number }>(`/constructor-lineages/${id}`, { method: 'DELETE' });
 }
 
