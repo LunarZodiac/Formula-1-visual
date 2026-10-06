@@ -46,6 +46,7 @@ export function AdminDriverTable({ rows, databaseConfigured, returnTo }: {
           <form action={quickUpdateDriver} className="admin-quick-editor">
             <input type="hidden" name="id" value={driver.id} />
             <input type="hidden" name="returnTo" value={returnTo} />
+            <input type="hidden" name="initialValues" value={JSON.stringify({ nameRu: driver.nameRu, birthDate: driver.birthDate, birthPlaceRu: driver.birthPlaceRu, deathDate: driver.deathDate, heightCm: driver.heightCm, weightKg: driver.weightKg, sourceUrl: driver.sourceUrl })} />
             <label><span>Имя на русском</span><input name="nameRu" required defaultValue={driver.nameRu} /></label>
             <label><span>Место рождения</span><input name="birthPlaceRu" defaultValue={driver.birthPlaceRu ?? ''} placeholder="Город, страна" /></label>
             <label><span>Дата рождения</span><input name="birthDate" type="date" defaultValue={driver.birthDate ?? ''} /></label>

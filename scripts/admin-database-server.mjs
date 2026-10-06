@@ -19,6 +19,8 @@ import { buildOsrmRequestUrl, OsrmTransportError, requestOsrmJson, resolveOsrmBa
 import { planHistoryEraBlockOrder } from './lib/history-era-block-order.mjs';
 import { normalizeTrackCalloutPoint } from './lib/track-callout-point.mjs';
 import { applyTrackAnnotationPackage, summarizeTrackAnnotationPackage, validateTrackAnnotationPackage } from './import-track-annotations.mjs';
+import { deleteStorageObject, storageConfig, storageObjectUrl, storagePublicUrl, uploadStorageObject } from './lib/supabase-storage.mjs';
+import { isSupabaseDriverPhotoRegistered, saveSupabaseDriverPhoto } from './lib/supabase-admin-rpc.mjs';
 
 const host = '127.0.0.1';
 const port = Number(process.env.ADMIN_DATABASE_API_PORT ?? 3102);
@@ -201,7 +203,7 @@ function mapDriver(row) {
     permanentNumber: row.permanent_number === null ? null : Number(row.permanent_number),
     nationality: row.nationality === null ? null : String(row.nationality),
     driverSourceId: row.driver_source_id === null ? null : String(row.driver_source_id),
-    driverUpdatedAt: new Date(row.driver_updated_at).toISOString(),
+    driverUpdatedAt: String(row.driver_updated_at),
     nameRu: row.name_ru === null ? null : String(row.name_ru),
     birthDate: row.birth_date === null ? null : String(row.birth_date),
     birthPlaceRu: row.birth_place_ru === null ? null : String(row.birth_place_ru),
@@ -244,7 +246,8 @@ function mapDriver(row) {
 const driverSelect = `
   SELECT driver.id, driver.given_name, driver.family_name,
          driver.abbreviation, driver.permanent_number, driver.nationality,
-         driver.source_id AS driver_source_id, driver.updated_at AS driver_updated_at,
+         driver.source_id AS driver_source_id,
+         to_char(driver.updated_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS driver_updated_at,
          to_char(driver.date_of_birth, 'YYYY-MM-DD') AS birth_date,
          profile.name_ru, profile.birth_place_ru,
          to_char(profile.death_date, 'YYYY-MM-DD') AS death_date,
@@ -268,9 +271,10 @@ const driverSelect = `
            field_source.source_url, field_source.notes
     FROM atlas.driver_profile_field_sources AS field_source
     WHERE field_source.driver_id = driver.id AND field_source.field_name = 'name_ru'
-    ORDER BY CASE field_source.review_status
-      WHEN 'verified' THEN 1 WHEN 'reviewed' THEN 2 WHEN 'candidate' THEN 3 ELSE 4 END,
-      field_source.retrieved_at DESC
+    ORDER BY field_source.retrieved_at DESC,
+      CASE field_source.review_status
+        WHEN 'verified' THEN 1 WHEN 'reviewed' THEN 2 WHEN 'candidate' THEN 3 ELSE 4 END,
+      field_source.source_id
     LIMIT 1
   ) AS name_source ON true
   LEFT JOIN LATERAL (
@@ -3734,6 +3738,7 @@ function validateDriverInput(value, routeId) {
   };
   const input = {
     id: routeId,
+    expectedRevision: optionalText(value.expectedRevision),
     nameRu: optionalText(value.nameRu),
     birthDate: date('birthDate'),
     birthPlaceRu: optionalText(value.birthPlaceRu),
@@ -3744,6 +3749,7 @@ function validateDriverInput(value, routeId) {
     sourceUrl: sourceUrl.href,
   };
   if (!input.nameRu) throw new Error('Имя на русском обязательно');
+  if (!input.expectedRevision || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3,6}Z$/.test(input.expectedRevision)) throw new Error('Обновите страницу перед сохранением');
   if (input.birthDate && input.deathDate && input.deathDate < input.birthDate) throw new Error('Дата смерти раньше даты рождения');
   return input;
 }
@@ -3764,6 +3770,10 @@ async function saveDriver(rawInput, routeId) {
   let committed = false;
   try {
     await client.query('BEGIN');
+    const revision = await client.query(`SELECT to_char(updated_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS value
+      FROM atlas.drivers WHERE id = $1 FOR UPDATE`, [input.id]);
+    if (!revision.rows[0]) { await client.query('ROLLBACK'); return null; }
+    if (revision.rows[0].value !== input.expectedRevision) throw new Error('Профиль изменился. Обновите страницу перед сохранением');
     const currentResult = await client.query(driverSelect, [input.id]);
     if (!currentResult.rows[0]) {
       await client.query('ROLLBACK');
@@ -3791,8 +3801,8 @@ async function saveDriver(rawInput, routeId) {
         `, [input.id, field, sourceId, sourceUrl.href]);
       }
     }
-    if (fields.includes('birth_date')) {
-      await client.query('UPDATE atlas.drivers SET date_of_birth = $2::date, updated_at = now() WHERE id = $1', [input.id, input.birthDate]);
+    if (fields.length) {
+      await client.query('UPDATE atlas.drivers SET date_of_birth = $2::date WHERE id = $1', [input.id, input.birthDate]);
     }
     if (fields.some((field) => field !== 'birth_date')) {
       await client.query(`
@@ -3834,6 +3844,8 @@ function validateEditorialUrl(value) {
 
 function validateDriverEditorial(value, routeId) {
   if (!value || typeof value !== 'object' || !/^[A-Za-z0-9_-]+$/.test(routeId)) throw new Error('Некорректные редакционные данные');
+  const expectedRevision = optionalText(value.expectedRevision);
+  if (!expectedRevision || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3,6}Z$/.test(expectedRevision)) throw new Error('Обновите страницу перед сохранением');
   const sourceRows = (rows, kind) => {
     if (!Array.isArray(rows) || rows.length > 20) throw new Error(`Некорректный список ${kind}`);
     return rows.map((row, index) => {
@@ -3856,7 +3868,7 @@ function validateDriverEditorial(value, routeId) {
       return result;
     });
   };
-  return { nicknames: sourceRows(value.nicknames ?? [], 'прозвищ'), quotes: sourceRows(value.quotes ?? [], 'цитат') };
+  return { expectedRevision, nicknames: sourceRows(value.nicknames ?? [], 'прозвищ'), quotes: sourceRows(value.quotes ?? [], 'цитат') };
 }
 
 async function saveDriverEditorial(rawInput, routeId) {
@@ -3865,8 +3877,10 @@ async function saveDriverEditorial(rawInput, routeId) {
   let committed = false;
   try {
     await client.query('BEGIN');
-    const driver = await client.query('SELECT id FROM atlas.drivers WHERE id = $1', [routeId]);
+    const driver = await client.query(`SELECT to_char(updated_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS revision
+      FROM atlas.drivers WHERE id = $1 FOR UPDATE`, [routeId]);
     if (!driver.rows[0]) { await client.query('ROLLBACK'); return null; }
+    if (driver.rows[0].revision !== input.expectedRevision) throw new Error('Редакционные данные изменились. Обновите страницу перед сохранением');
     await client.query('DELETE FROM atlas.driver_nicknames WHERE driver_id = $1', [routeId]);
     await client.query('DELETE FROM atlas.driver_quotes WHERE driver_id = $1', [routeId]);
     for (const row of [...input.nicknames, ...input.quotes]) {
@@ -3885,6 +3899,7 @@ async function saveDriverEditorial(rawInput, routeId) {
       (driver_id, quote_ru, quote_original, attribution_ru, context_ru, quote_date, sort_order, source_id, source_url, review_status)
       VALUES ($1, $2, $3, $4, $5, $6::date, $7, $8, $9, 'reviewed')`,
     [routeId, row.quoteRu, row.quoteOriginal, row.attributionRu, row.contextRu, row.quoteDate, row.sortOrder, row.sourceId, row.sourceUrl]);
+    await client.query('UPDATE atlas.drivers SET updated_at = now() WHERE id = $1', [routeId]);
     await client.query('COMMIT');
     committed = true;
     let publicDataSynced = true;
@@ -3898,6 +3913,7 @@ async function saveDriverEditorial(rawInput, routeId) {
 }
 
 const driverPhotoPreviews = new Map();
+const driverPhotoSaves = new Map();
 const previewLifetimeMs = 15 * 60 * 1_000;
 const maximumCachedPreviews = 4;
 
@@ -3948,6 +3964,20 @@ function consumeDriverPhotoPreview(token, driverId, hash) {
 }
 
 async function saveDriverPhoto(buffer, rawMetadata, driverId) {
+  const previous = driverPhotoSaves.get(driverId) ?? Promise.resolve();
+  let unlock;
+  const current = new Promise((resolve) => { unlock = resolve; });
+  driverPhotoSaves.set(driverId, current);
+  await previous;
+  try {
+    return await saveDriverPhotoUnlocked(buffer, rawMetadata, driverId);
+  } finally {
+    unlock();
+    if (driverPhotoSaves.get(driverId) === current) driverPhotoSaves.delete(driverId);
+  }
+}
+
+async function saveDriverPhotoUnlocked(buffer, rawMetadata, driverId) {
   if (!/^[A-Za-z0-9_-]+$/.test(driverId)) throw new Error('Некорректный ID пилота');
   const metadata = rawMetadata;
   const format = imageFormat(buffer, metadata.mimeType);
@@ -3956,39 +3986,68 @@ async function saveDriverPhoto(buffer, rawMetadata, driverId) {
   if (!cachedPreview) throw new Error('Сначала создайте предпросмотр фотографии');
   const { sourceMetadata } = cachedPreview;
   const { variants: generatedVariants } = await processDriverPortrait(cachedPreview.preparedBuffer, metadata.crop);
-  const assetId = `driver-${driverId}-portrait-${hash.slice(0, 16)}`;
+  const uploadId = randomUUID();
+  const assetId = `driver-${driverId}-portrait-${uploadId}`;
   const sourceId = `media-${createHash('sha256').update(metadata.sourceUrl).digest('hex').slice(0, 16)}`;
-  const mediaDirectory = path.resolve('apps', 'web', 'public', 'media', 'drivers', driverId);
-  const originalUrl = `/media/drivers/${driverId}/original-${hash.slice(0, 16)}.${format.extension}`;
-  const processed = generatedVariants.map((variant) => ({
+  const { publicBucket, sourceBucket } = storageConfig();
+  const originalStoragePath = `drivers/${driverId}/${uploadId}/original.${format.extension}`;
+
+  const originalUrl = storageObjectUrl(sourceBucket, originalStoragePath);
+
+  const processed = generatedVariants.map((variant) => {
+    const storagePath = `drivers/${driverId}/${uploadId}/${variant.name}.webp`;
+    return {
       ...variant,
-      url: `/media/drivers/${driverId}/${variant.name}-${hash.slice(0, 16)}.webp`,
-  }));
+      storagePath,
+      url: storagePublicUrl(publicBucket, storagePath),
+    };
+  });
+
   const publicUrl = processed[0].url;
-  const outputDirectory = mediaDirectory;
-  await mkdir(outputDirectory, { recursive: true });
-  const outputs = [
-    { url: originalUrl, bytes: buffer },
-    ...processed.map((variant) => ({ url: variant.url, bytes: variant.bytes })),
+
+  const uploadJobs = [
+    { bucket: sourceBucket, storagePath: originalStoragePath, bytes: buffer,
+      contentType: format.mimeType, cacheControl: '3600', upsert: false },
+    ...processed.map((variant) => ({
+      bucket: publicBucket, storagePath: variant.storagePath, bytes: variant.bytes,
+      contentType: 'image/webp', upsert: false,
+    })),
   ];
-  const createdPaths = [];
-  for (const output of outputs) {
-    const outputPath = path.resolve('apps', 'web', 'public', output.url.replace(/^\/+/, ''));
-    let existed = true;
-    try { await access(outputPath); } catch { existed = false; }
-    await writeFile(outputPath, output.bytes);
-    if (!existed) createdPaths.push(outputPath);
+  const uploads = await Promise.allSettled(uploadJobs.map((job) => uploadStorageObject(job)));
+  const uploadedObjects = uploads.flatMap((result) => result.status === 'fulfilled' ? [result.value] : []);
+  const failedUpload = uploads.find((result) => result.status === 'rejected');
+  if (failedUpload) {
+    await Promise.allSettled(uploadedObjects.map(deleteStorageObject));
+    throw failedUpload.reason;
   }
 
-  const client = await pool.connect();
+  try {
+    await saveSupabaseDriverPhoto({
+      driverId, assetId, sourceId, sourceUrl: metadata.sourceUrl,
+      altTextRu: metadata.altTextRu, author: metadata.author, licence: metadata.licence,
+      url: publicUrl,
+      original: { url: originalUrl, mimeType: format.mimeType,
+        width: sourceMetadata.width, height: sourceMetadata.height, fileSize: buffer.length },
+      variants: processed.map((variant) => ({ name: variant.name, url: variant.url,
+        width: variant.width, height: variant.height, fileSize: variant.bytes.length })),
+    });
+  } catch (error) {
+    // The RPC may have committed before the connection failed. Keep the objects
+    // so a committed media row cannot point to deleted files.
+    const registered = await isSupabaseDriverPhotoRegistered(assetId).catch(() => false);
+    if (!registered) {
+      throw new Error('Статус сохранения фотографии в Supabase не подтверждён. Файлы сохранены для восстановления', { cause: error });
+    }
+  }
+
+  let client;
   let committed = false;
   try {
+    client = await pool.connect();
     await client.query('BEGIN');
-    const driver = await client.query('SELECT id FROM atlas.drivers WHERE id = $1', [driverId]);
+    const driver = await client.query('SELECT id FROM atlas.drivers WHERE id = $1 FOR UPDATE', [driverId]);
     if (!driver.rows[0]) {
-      await client.query('ROLLBACK');
-      await Promise.all(createdPaths.map((filePath) => unlink(filePath).catch(() => {})));
-      return null;
+      throw new Error('Пилот не найден в локальной базе');
     }
     await client.query(`
       INSERT INTO atlas.data_sources (id, name, url, licence, retrieved_at, notes)
@@ -4055,13 +4114,15 @@ async function saveDriverPhoto(buffer, rawMetadata, driverId) {
       variants: Object.fromEntries(processed.map((variant) => [variant.name, variant.url])),
     };
   } catch (error) {
-    if (!committed) {
-      await client.query('ROLLBACK').catch(() => {});
-      await Promise.all(createdPaths.map((filePath) => unlink(filePath).catch(() => {})));
-    }
-    throw error;
+    if (client && !committed) await client.query('ROLLBACK').catch(() => {});
+    console.error('Фотография сохранена в Supabase, но локальная копия не обновлена', error);
+    return {
+      url: publicUrl, publicDataSynced: false, format: 'image/webp',
+      backgroundRemoved: metadata.removeBackground,
+      variants: Object.fromEntries(processed.map((variant) => [variant.name, variant.url])),
+    };
   } finally {
-    client.release();
+    client?.release();
   }
 }
 

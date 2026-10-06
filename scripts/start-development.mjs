@@ -5,11 +5,13 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const web = resolve(root, 'apps', 'web');
 const databaseEnvironment = resolve(root, '.env.database.local');
+const mediaEnvironment = resolve(root, '.env.media.local');
 const adminEnvironment = resolve(web, '.dev.vars');
 
 const bridge = spawn(process.execPath, [
   '--watch',
   `--env-file=${databaseEnvironment}`,
+  `--env-file=${mediaEnvironment}`,
   `--env-file=${adminEnvironment}`,
   resolve(root, 'scripts', 'admin-database-server.mjs'),
 ], { cwd: root, stdio: 'inherit' });

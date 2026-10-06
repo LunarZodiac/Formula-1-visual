@@ -46,6 +46,11 @@ import {
   getDirectAdminTrackAnnotations,
   saveDirectAdminTrackAnnotation,
 } from './supabase-track-annotation-admin';
+import {
+  getDirectAdminDriver,
+  saveDirectAdminDriver,
+  saveDirectAdminDriverEditorial,
+} from './supabase-driver-admin';
 
 export type AdminDriver = {
   id: string;
@@ -85,7 +90,7 @@ export type AdminDriver = {
 
 export type AdminDriverInput = Pick<AdminDriver,
   'id' | 'nameRu' | 'birthDate' | 'birthPlaceRu' | 'deathDate' | 'heightCm' | 'weightKg' | 'biographyRu'
-> & { sourceUrl: string };
+> & { sourceUrl: string; expectedRevision: string };
 
 export type AdminDriverPhotoInput = {
   id: string;
@@ -648,6 +653,10 @@ export function isAdminCircuitMediaConfigured() {
   return apiConfiguration() !== null;
 }
 
+export function isAdminDriverMediaConfigured() {
+  return apiConfiguration() !== null;
+}
+
 export async function getAdminMapUiSettings() {
   return (await apiRequest<{ detailedAttribution: boolean }>('/settings/map')) ?? { detailedAttribution: false };
 }
@@ -698,6 +707,7 @@ async function apiRequest<T>(path: string, init?: RequestInit, timeoutMs = 4_000
 }
 
 export function getAdminDriver(id: string) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminDriver(id);
   return apiRequest<AdminDriver>(`/drivers/${encodeURIComponent(id)}`);
 }
 
@@ -1207,6 +1217,7 @@ export function getAdminTrackAnnotationImportPreview(token:string){if(isAdminSup
 export function applyAdminTrackAnnotationImportPreview(token:string,circuitId:string,layoutId:string){if(isAdminSupabaseConfigured())return applyDirectAdminTrackAnnotationImportPreview(token,circuitId,layoutId);return apiRequest<{imported:number;circuitId:string;layoutId:string}>(`/track-annotation-import-previews/${encodeURIComponent(token)}/apply`,{method:'POST',body:'{}'},120_000);}
 
 export async function updateAdminDriver(input: AdminDriverInput) {
+  if (isAdminSupabaseConfigured()) return saveDirectAdminDriver(input);
   const result = await apiRequest<{ fields: string[]; publicDataSynced: boolean }>(`/drivers/${encodeURIComponent(input.id)}`, {
     method: 'PATCH',
     body: JSON.stringify(input),
@@ -1217,9 +1228,11 @@ export async function updateAdminDriver(input: AdminDriverInput) {
 
 export async function updateAdminDriverEditorial(input: {
   id: string;
+  expectedRevision: string;
   nicknames: Array<{ nameRu: string; nameOriginal: string | null; contextRu: string | null; sourceUrl: string }>;
   quotes: Array<{ quoteRu: string; quoteOriginal: string | null; attributionRu: string; contextRu: string | null; quoteDate: string | null; sourceUrl: string }>;
 }) {
+  if (isAdminSupabaseConfigured()) return saveDirectAdminDriverEditorial(input);
   const result = await apiRequest<{ nicknames: number; quotes: number; publicDataSynced: boolean }>(`/drivers/${encodeURIComponent(input.id)}/editorial`, {
     method: 'PATCH', body: JSON.stringify(input),
   });

@@ -9,8 +9,9 @@ type Quote = { key: string; quoteRu: string; quoteOriginal: string; attributionR
 const emptyNickname = (): Nickname => ({ key: crypto.randomUUID(), nameRu: '', nameOriginal: '', contextRu: '', sourceUrl: '' });
 const emptyQuote = (): Quote => ({ key: crypto.randomUUID(), quoteRu: '', quoteOriginal: '', attributionRu: '', contextRu: '', quoteDate: '', sourceUrl: '' });
 
-export function DriverEditorialForm({ driverId, initialNicknames, initialQuotes }: {
+export function DriverEditorialForm({ driverId, expectedRevision, initialNicknames, initialQuotes }: {
   driverId: string;
+  expectedRevision: string;
   initialNicknames: Omit<Nickname, 'key'>[];
   initialQuotes: Omit<Quote, 'key'>[];
 }) {
@@ -26,6 +27,7 @@ export function DriverEditorialForm({ driverId, initialNicknames, initialQuotes 
 
   return <form action={updateDriverEditorial} className="admin-editor-form admin-driver-editorial-form">
     <input type="hidden" name="id" value={driverId} />
+    <input type="hidden" name="expectedRevision" value={expectedRevision} />
     <input type="hidden" name="editorialJson" value={payload} />
     <fieldset>
       <legend>Прозвища</legend>

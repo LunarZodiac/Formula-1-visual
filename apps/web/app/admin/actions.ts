@@ -589,6 +589,7 @@ export async function updateDriver(formData: FormData) {
 
     const input: AdminDriverInput = {
       id,
+      expectedRevision: String(formData.get('expectedRevision') ?? '').trim(),
       nameRu,
       birthDate,
       birthPlaceRu: optionalText(formData, 'birthPlaceRu'),
@@ -602,7 +603,7 @@ export async function updateDriver(formData: FormData) {
     publicDataSynced = result.publicDataSynced;
   } catch (error) {
     console.error('Не удалось сохранить профиль пилота', error);
-    redirect(`/admin/drivers/${encodeURIComponent(id)}?error=save`);
+    redirect(`/admin/drivers/${encodeURIComponent(id)}?error=${error instanceof Error && error.message.includes('Обновите страницу') ? 'conflict' : 'save'}`);
   }
 
   revalidatePath('/admin');
@@ -630,11 +631,11 @@ export async function updateDriverEditorial(formData: FormData) {
       attributionRu: clean(row.attributionRu) ?? '', contextRu: clean(row.contextRu),
       quoteDate: clean(row.quoteDate), sourceUrl: clean(row.sourceUrl) ?? '',
     }));
-    const result = await updateAdminDriverEditorial({ id, nicknames, quotes });
+    const result = await updateAdminDriverEditorial({ id, expectedRevision: String(formData.get('expectedRevision') ?? '').trim(), nicknames, quotes });
     publicDataSynced = result.publicDataSynced;
   } catch (error) {
     console.error('Не удалось сохранить прозвища и цитаты', error);
-    redirect(`/admin/drivers/${encodeURIComponent(id)}?error=editorial`);
+    redirect(`/admin/drivers/${encodeURIComponent(id)}?error=${error instanceof Error && error.message.includes('Обновите страницу') ? 'conflict' : 'editorial'}`);
   }
   revalidatePath(`/admin/drivers/${id}`);
   revalidatePath(`/drivers/${id}`);
@@ -663,6 +664,12 @@ export async function quickUpdateDriver(formData: FormData) {
   try {
     const current = await getAdminDriver(id);
     if (!current) throw new Error('Пилот не найден');
+    const initialValues = JSON.parse(String(formData.get('initialValues') ?? '{}')) as Record<string, unknown>;
+    for (const field of ['nameRu', 'birthDate', 'birthPlaceRu', 'deathDate', 'heightCm', 'weightKg'] as const) {
+      if (String(initialValues[field] ?? '') !== String(current[field] ?? '')) {
+        throw new Error('Профиль изменился. Обновите страницу перед сохранением');
+      }
+    }
     const nameRu = optionalText(formData, 'nameRu');
     if (!nameRu) throw new Error('Имя на русском обязательно');
     const birthDate = optionalDate(formData, 'birthDate');
@@ -673,6 +680,7 @@ export async function quickUpdateDriver(formData: FormData) {
     if (!['http:', 'https:'].includes(parsedSource.protocol) || parsedSource.username || parsedSource.password) throw new Error('Некорректная ссылка на источник');
     const result = await updateAdminDriver({
       id,
+      expectedRevision: current.driverUpdatedAt,
       nameRu,
       birthDate,
       birthPlaceRu: optionalText(formData, 'birthPlaceRu'),
