@@ -22,7 +22,7 @@ export default async function AdminHistoryPage() {
 
   return <main className="admin-shell"><section className="admin-directory">
     <header><div><span className="admin-kicker">Хронология чемпионата</span><h1>История</h1></div><p>{eras.length || 6} эпох · редакционные тексты, медиа и источники</p></header>
-    {databaseError ? <div className="admin-alert is-error">Локальная база истории недоступна</div> : null}
+    {databaseError ? <div className="admin-alert is-error">База данных истории недоступна</div> : null}
     {!databaseError && eras.length ? <div className="admin-table-wrap"><table><thead><tr><th>Эпоха</th><th>Годы</th><th>Статус</th><th>Блоки</th><th /></tr></thead><tbody>{eras.map((era) => <tr key={era.slug}>
       <td><strong>{era.titleRu}</strong><small><code>{era.slug}</code></small></td>
       <td>{era.yearsLabel}</td>

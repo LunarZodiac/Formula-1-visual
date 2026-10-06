@@ -1512,7 +1512,7 @@ export async function saveHistoryEraBlock(formData: FormData) {
     if (blockId !== null && (!Number.isInteger(blockId) || blockId <= 0)) throw new Error('Некорректный блок');
     const result = blockId === null
       ? await createAdminHistoryEraBlock(eraSlug, historyEraBlockInput(formData))
-      : await updateAdminHistoryEraBlock(blockId, historyEraBlockContentInput(formData));
+      : await updateAdminHistoryEraBlock(eraSlug, blockId, historyEraBlockContentInput(formData));
     if (!result) throw new Error('Блок эпохи не найден');
     revalidatePath('/admin/history'); revalidatePath(destination); revalidatePath('/history'); revalidatePath(`/history/${eraSlug}`);
     redirect(`${destination}?saved=block${result.publicDataSynced ? '' : '&syncError=1'}`);
@@ -1530,7 +1530,7 @@ export async function removeHistoryEraBlock(formData: FormData) {
   try {
     const blockId = Number(formData.get('blockId'));
     if (!/^(?:\d{4}-\d{4}|\d{4}-present)$/.test(eraSlug) || !Number.isInteger(blockId) || blockId <= 0) throw new Error('Некорректный блок');
-    const result = await deleteAdminHistoryEraBlock(blockId);
+    const result = await deleteAdminHistoryEraBlock(eraSlug, blockId);
     if (!result) throw new Error('Блок эпохи не найден');
     revalidatePath('/admin/history'); revalidatePath(destination); revalidatePath('/history'); revalidatePath(`/history/${eraSlug}`);
     redirect(`${destination}?deleted=1${result.publicDataSynced ? '' : '&syncError=1'}`);

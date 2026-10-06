@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../../lib/admin-auth';
 import { getAdminHistoryEra, getAdminMediaAsset, isAdminDatabaseConfigured } from '../../../../lib/admin-database';
+import { isAdminSupabaseConfigured } from '../../../../lib/supabase-admin';
+import { getDirectAdminHistoryMedia } from '../../../../lib/supabase-history-admin';
 import storyStyles from '../../../../history/[slug]/history-era.module.css';
 import styles from './preview.module.css';
 
@@ -32,7 +34,9 @@ export default async function AdminHistoryEraPreviewPage({ params }: PreviewProp
   const { era } = detail;
   const blocks = [...detail.blocks].sort((left, right) => left.sortOrder - right.sortOrder || left.id - right.id);
   const mediaIds = [...new Set(blocks.map((block) => block.mediaAssetId).filter((id): id is string => Boolean(id)))];
-  const mediaEntries = await Promise.all(mediaIds.map(async (id) => [id, await getAdminMediaAsset(id).catch(() => null)] as const));
+  const mediaEntries = await Promise.all(mediaIds.map(async (id) => [id,
+    await (isAdminSupabaseConfigured() ? getDirectAdminHistoryMedia(id) : getAdminMediaAsset(id)).catch(() => null),
+  ] as const));
   const mediaById = new Map(mediaEntries);
 
   return <main className={`history-era-page ${storyStyles.page} ${styles.preview}`}>

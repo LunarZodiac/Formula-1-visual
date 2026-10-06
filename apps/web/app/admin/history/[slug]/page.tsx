@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../lib/admin-auth';
 import { getAdminHistoryEra, isAdminDatabaseConfigured } from '../../../lib/admin-database';
+import { isAdminSupabaseConfigured } from '../../../lib/supabase-admin';
 import { removeHistoryEraBlock, saveHistoryEra, saveHistoryEraBlock } from '../../actions';
 import { HistoryEraBlockOrderControls } from './history-era-block-order-controls';
 
@@ -39,6 +40,7 @@ export default async function AdminHistoryEraPage({ params, searchParams }: {
   if (!detail) notFound();
   const { era, blocks } = detail;
   const orderedBlockIds = blocks.map((block) => block.id);
+  const isCloud = isAdminSupabaseConfigured();
 
   return <main className="admin-shell"><section className="admin-edit-panel">
     <Link className="admin-back-link" href="/admin/history">← Вернуться к эпохам</Link>
@@ -47,7 +49,9 @@ export default async function AdminHistoryEraPage({ params, searchParams }: {
     {state.saved === 'block' ? <div className="admin-alert is-success" role="status">Блок сохранён</div> : null}
     {state.saved === 'order' ? <div className="admin-alert is-success" role="status">Порядок блоков сохранён</div> : null}
     {state.deleted ? <div className="admin-alert is-success" role="status">Блок удалён</div> : null}
-    {state.syncError ? <div className="admin-alert is-error" role="alert">Запись сохранена в базе, но публичный экспорт не обновлён</div> : null}
+    {state.syncError ? <div className="admin-alert" role="status">{isCloud
+      ? 'Изменения сохранены в Supabase. Публичный каталог эпох обновится после отдельной публикации данных'
+      : 'Запись сохранена в базе, но локальный публичный экспорт не обновлён'}</div> : null}
     {state.error === 'order' ? <div className="admin-alert is-error" role="alert">Не удалось изменить порядок. Обновите страницу и повторите</div> : null}
     {state.error && state.error !== 'order' ? <div className="admin-alert is-error" role="alert">Не удалось сохранить изменения. Проверьте обязательные поля</div> : null}
 

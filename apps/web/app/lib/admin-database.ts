@@ -51,6 +51,14 @@ import {
   saveDirectAdminDriver,
   saveDirectAdminDriverEditorial,
 } from './supabase-driver-admin';
+import {
+  deleteDirectAdminHistoryBlock,
+  getDirectAdminHistoryEra,
+  getDirectAdminHistoryEras,
+  reorderDirectAdminHistoryBlocks,
+  saveDirectAdminHistoryBlock,
+  updateDirectAdminHistoryEra,
+} from './supabase-history-admin';
 
 export type AdminDriver = {
   id: string;
@@ -1384,38 +1392,45 @@ export function deleteAdminConstructorLineage(id: number) {
 }
 
 export async function getAdminHistoryEras() {
+  if (isAdminSupabaseConfigured()) return getDirectAdminHistoryEras();
   const result = await apiRequest<{ rows: AdminHistoryEraSummary[] }>('/history-eras');
   if (!result) throw new Error('Редакционный реестр эпох не найден');
   return result;
 }
 
 export function getAdminHistoryEra(slug: string) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminHistoryEra(slug);
   return apiRequest<AdminHistoryEraDetail>(`/history-eras/${encodeURIComponent(slug)}`);
 }
 
 export function updateAdminHistoryEra(slug: string, input: AdminHistoryEraInput) {
+  if (isAdminSupabaseConfigured()) return updateDirectAdminHistoryEra(slug, input);
   return apiRequest<{ slug: string; publicDataSynced: boolean }>(`/history-eras/${encodeURIComponent(slug)}`, {
     method: 'PATCH', body: JSON.stringify(input),
   });
 }
 
 export function createAdminHistoryEraBlock(eraSlug: string, input: AdminHistoryEraBlockInput) {
+  if (isAdminSupabaseConfigured()) return saveDirectAdminHistoryBlock(eraSlug, null, input);
   return apiRequest<{ id: number; publicDataSynced: boolean }>(`/history-eras/${encodeURIComponent(eraSlug)}/blocks`, {
     method: 'POST', body: JSON.stringify(input),
   });
 }
 
-export function updateAdminHistoryEraBlock(id: number, input: AdminHistoryEraBlockContentInput) {
+export function updateAdminHistoryEraBlock(eraSlug: string, id: number, input: AdminHistoryEraBlockContentInput) {
+  if (isAdminSupabaseConfigured()) return saveDirectAdminHistoryBlock(eraSlug, id, input);
   return apiRequest<{ id: number; publicDataSynced: boolean }>(`/history-era-blocks/${id}`, {
     method: 'PATCH', body: JSON.stringify(input),
   });
 }
 
-export function deleteAdminHistoryEraBlock(id: number) {
+export function deleteAdminHistoryEraBlock(eraSlug: string, id: number) {
+  if (isAdminSupabaseConfigured()) return deleteDirectAdminHistoryBlock(eraSlug, id);
   return apiRequest<{ id: number; publicDataSynced: boolean }>(`/history-era-blocks/${id}`, { method: 'DELETE' });
 }
 
 export function updateAdminHistoryEraBlockOrder(eraSlug: string, orderedIds: number[], expectedOrderedIds: number[]) {
+  if (isAdminSupabaseConfigured()) return reorderDirectAdminHistoryBlocks(eraSlug, orderedIds, expectedOrderedIds);
   return apiRequest<{ eraSlug: string; orderedIds: number[]; publicDataSynced: boolean }>(
     `/history-eras/${encodeURIComponent(eraSlug)}/blocks/order`,
     { method: 'PATCH', body: JSON.stringify({ orderedIds, expectedOrderedIds }) },
