@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../lib/admin-auth';
-import { getAdminDriver, isAdminDatabaseConfigured, isAdminDriverMediaConfigured } from '../../../lib/admin-database';
+import { getAdminDriver, isAdminDatabaseConfigured, isAdminLocalMediaConfigured } from '../../../lib/admin-database';
 import { isAdminSupabaseConfigured } from '../../../lib/supabase-admin';
 import { updateDriver } from '../../actions';
 import { DriverPhotoForm } from './driver-photo-form';
@@ -30,7 +30,7 @@ export default async function AdminDriverPage({
   const { id } = await params;
   const state = await searchParams;
   const isCloud = isAdminSupabaseConfigured();
-  const canUploadPhoto = isAdminDriverMediaConfigured();
+  const canUploadPhoto = await isAdminLocalMediaConfigured();
   if (!isAdminDatabaseConfigured()) {
     return <main className="admin-shell"><section className="admin-edit-panel">
       <Link className="admin-back-link" href="/admin">← Вернуться к пилотам</Link>

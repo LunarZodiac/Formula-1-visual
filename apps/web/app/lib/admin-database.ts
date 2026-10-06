@@ -653,8 +653,14 @@ export function isAdminCircuitMediaConfigured() {
   return apiConfiguration() !== null;
 }
 
-export function isAdminDriverMediaConfigured() {
-  return apiConfiguration() !== null;
+export async function isAdminLocalMediaConfigured() {
+  if (!apiConfiguration()) return false;
+  try {
+    const capability = await apiRequest<{ mediaStorageReady: boolean }>('/capabilities');
+    return capability?.mediaStorageReady === true;
+  } catch {
+    return false;
+  }
 }
 
 export async function getAdminMapUiSettings() {
@@ -1478,7 +1484,7 @@ async function gameLogoRequest(input: AdminGameLogoInput, preview: boolean) {
     const details = await response.json().catch(() => null) as { message?: string } | null;
     throw new Error(details?.message || `Не удалось обработать логотип игры: ${response.status}`);
   }
-  return response.json() as Promise<{ token?: string; imageDataUrl?: string; expiresInMinutes?: number; url?: string }>;
+  return response.json() as Promise<{ token?: string; imageDataUrl?: string; expiresInMinutes?: number; url?: string; publicDataSynced?: boolean }>;
 }
 
 export function previewAdminGameLogo(input: AdminGameLogoInput) {

@@ -20,7 +20,7 @@ import { planHistoryEraBlockOrder } from './lib/history-era-block-order.mjs';
 import { normalizeTrackCalloutPoint } from './lib/track-callout-point.mjs';
 import { applyTrackAnnotationPackage, summarizeTrackAnnotationPackage, validateTrackAnnotationPackage } from './import-track-annotations.mjs';
 import { deleteStorageObject, storageConfig, storageObjectUrl, storagePublicUrl, uploadStorageObject } from './lib/supabase-storage.mjs';
-import { isSupabaseDriverPhotoRegistered, saveSupabaseDriverPhoto } from './lib/supabase-admin-rpc.mjs';
+import { isSupabaseDriverPhotoRegistered, isSupabaseMediaRegistered, saveSupabaseDriverPhoto, saveSupabaseGameLogo, SupabaseRpcRejectedError } from './lib/supabase-admin-rpc.mjs';
 
 const host = '127.0.0.1';
 const port = Number(process.env.ADMIN_DATABASE_API_PORT ?? 3102);
@@ -4034,6 +4034,10 @@ async function saveDriverPhotoUnlocked(buffer, rawMetadata, driverId) {
   } catch (error) {
     // The RPC may have committed before the connection failed. Keep the objects
     // so a committed media row cannot point to deleted files.
+    if (error instanceof SupabaseRpcRejectedError) {
+      await Promise.allSettled(uploadedObjects.map(deleteStorageObject));
+      throw error;
+    }
     const registered = await isSupabaseDriverPhotoRegistered(assetId).catch(() => false);
     if (!registered) {
       throw new Error('Статус сохранения фотографии в Supabase не подтверждён. Файлы сохранены для восстановления', { cause: error });
@@ -4482,28 +4486,76 @@ function consumeGameLogoPreview(token, owner, hash) {
   return preview;
 }
 
+let gameLogoSaveTail = Promise.resolve();
+
 async function saveGameLogo(buffer, metadata, gameId) {
+  const previous = gameLogoSaveTail;
+  let unlock;
+  gameLogoSaveTail = new Promise((resolve) => { unlock = resolve; });
+  await previous;
+  try {
+    return await saveGameLogoUnlocked(buffer, metadata, gameId);
+  } finally {
+    unlock();
+  }
+}
+
+async function saveGameLogoUnlocked(buffer, metadata, gameId) {
   const id = validGameId(gameId);
   const format = imageFormat(buffer, metadata.mimeType);
   const hash = createHash('sha256').update(buffer).update(':game-logo').digest('hex');
   const cachedPreview = consumeGameLogoPreview(metadata.previewToken, id, hash);
   if (!cachedPreview) throw new Error('Сначала создайте предпросмотр изображения');
   const { variants } = await processConstructorLogo(cachedPreview.preparedBuffer, metadata.crop);
-  const baseUrl = `/media/games/${id}`;
-  const suffix = hash.slice(0, 16);
-  const originalUrl = `${baseUrl}/original-${suffix}.${format.extension}`;
-  const processed = variants.map((variant) => ({ ...variant, url: `${baseUrl}/${variant.name}-${suffix}.webp` }));
+  const uploadId = randomUUID();
+  const assetId = `game-${id}-logo-${uploadId}`;
+  const sourceId = `media-${createHash('sha256').update(metadata.sourceUrl).digest('hex').slice(0, 16)}`;
+  const { publicBucket, sourceBucket } = storageConfig();
+  const originalStoragePath = `games/${id}/${uploadId}/original.${format.extension}`;
+  const originalUrl = storageObjectUrl(sourceBucket, originalStoragePath);
+  const processed = variants.map((variant) => {
+    const storagePath = `games/${id}/${uploadId}/${variant.name}.webp`;
+    return { ...variant, storagePath, url: storagePublicUrl(publicBucket, storagePath) };
+  });
   const publicUrl = processed.find((variant) => variant.name === 'large')?.url ?? processed[0].url;
-  const outputs = [{ url: originalUrl, bytes: buffer }, ...processed.map((variant) => ({ url: variant.url, bytes: variant.bytes }))];
-  const createdPaths = [];
-  await mkdir(path.resolve('apps', 'web', 'public', baseUrl.replace(/^\/+/, '')), { recursive: true });
-  for (const output of outputs) {
-    const outputPath = path.resolve('apps', 'web', 'public', output.url.replace(/^\/+/, ''));
-    let existed = true;
-    try { await access(outputPath); } catch { existed = false; }
-    await writeFile(outputPath, output.bytes);
-    if (!existed) createdPaths.push(outputPath);
+  const uploadJobs = [
+    { bucket: sourceBucket, storagePath: originalStoragePath, bytes: buffer,
+      contentType: format.mimeType, cacheControl: '3600', upsert: false },
+    ...processed.map((variant) => ({
+      bucket: publicBucket, storagePath: variant.storagePath, bytes: variant.bytes,
+      contentType: 'image/webp', upsert: false,
+    })),
+  ];
+  const uploads = await Promise.allSettled(uploadJobs.map((job) => uploadStorageObject(job)));
+  const uploadedObjects = uploads.flatMap((result) => result.status === 'fulfilled' ? [result.value] : []);
+  const failedUpload = uploads.find((result) => result.status === 'rejected');
+  if (failedUpload) {
+    await Promise.allSettled(uploadedObjects.map(deleteStorageObject));
+    throw failedUpload.reason;
   }
+  try {
+    await saveSupabaseGameLogo({
+      gameId: id, assetId, sourceId, sourceUrl: metadata.sourceUrl,
+      altTextRu: metadata.altTextRu, author: metadata.author, licence: metadata.licence,
+      url: publicUrl,
+      original: { url: originalUrl, mimeType: format.mimeType,
+        width: cachedPreview.sourceMetadata.width, height: cachedPreview.sourceMetadata.height,
+        fileSize: buffer.length },
+      variants: processed.map((variant) => ({ name: variant.name, url: variant.url,
+        width: variant.width, height: variant.height, fileSize: variant.bytes.length })),
+    });
+  } catch (error) {
+    // The RPC can commit before a transport failure; do not delete the objects.
+    if (error instanceof SupabaseRpcRejectedError) {
+      await Promise.allSettled(uploadedObjects.map(deleteStorageObject));
+      throw error;
+    }
+    const registered = await isSupabaseMediaRegistered(assetId).catch(() => false);
+    if (!registered) {
+      throw new Error('Статус сохранения логотипа в Supabase не подтверждён. Файлы сохранены для восстановления', { cause: error });
+    }
+  }
+  let publicDataSynced = true;
   try {
     const current = JSON.parse(await readFile(gamesMediaPath, 'utf8'));
     const next = {
@@ -4513,14 +4565,15 @@ async function saveGameLogo(buffer, metadata, gameId) {
         altTextRu: metadata.altTextRu, author: metadata.author, licence: metadata.licence, sourceUrl: metadata.sourceUrl,
       } },
     };
-    const temporaryPath = `${gamesMediaPath}.tmp-${process.pid}`;
+    const temporaryPath = `${gamesMediaPath}.tmp-${process.pid}-${uploadId}`;
     await writeFile(temporaryPath, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
     await rename(temporaryPath, gamesMediaPath);
   } catch (error) {
-    await Promise.all(createdPaths.map((filePath) => unlink(filePath).catch(() => {})));
-    throw error;
+    publicDataSynced = false;
+    console.error('Логотип зарегистрирован в Supabase, но локальный каталог игр не обновлён', error);
   }
-  return { url: publicUrl, variants: Object.fromEntries(processed.map((variant) => [variant.name, variant.url])) };
+  return { url: publicUrl, publicDataSynced,
+    variants: Object.fromEntries(processed.map((variant) => [variant.name, variant.url])) };
 }
 
 async function getConstructorEntries(url) {
@@ -4873,6 +4926,9 @@ const server = createServer(async (request, response) => {
     const url = new URL(request.url ?? '/', `http://${host}:${port}`);
     if (request.method === 'GET' && url.pathname === '/health') return json(response, 200, { ok: true });
     if (!authorized(request)) return json(response, 401, { error: 'unauthorized' });
+    if (request.method === 'GET' && url.pathname === '/capabilities') {
+      return json(response, 200, { mediaStorageReady: Boolean(process.env.SUPABASE_URL?.trim() && process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()) });
+    }
     if (request.method === 'GET' && url.pathname === '/schema/tables') return json(response, 200, await getSchemaTables());
     if (request.method === 'GET' && url.pathname === '/settings/map') return json(response, 200, await getMapUiSettings());
     if (request.method === 'PATCH' && url.pathname === '/settings/map') return json(response, 200, await saveMapUiSettings(await requestBody(request)));

@@ -1,8 +1,15 @@
 import { storageConfig } from './supabase-storage.mjs';
 
-export async function saveSupabaseDriverPhoto(input) {
+export class SupabaseRpcRejectedError extends Error {
+  constructor(status, detail) {
+    super(`Supabase отклонил запись изображения: ${status} ${detail}`);
+    this.status = status;
+  }
+}
+
+async function saveSupabaseMedia(name, input) {
   const { supabaseUrl, serviceKey } = storageConfig();
-  const response = await fetch(`${supabaseUrl}/rest/v1/rpc/admin_save_driver_photo`, {
+  const response = await fetch(`${supabaseUrl}/rest/v1/rpc/${name}`, {
     method: 'POST',
     headers: {
       apikey: serviceKey,
@@ -14,12 +21,18 @@ export async function saveSupabaseDriverPhoto(input) {
   });
   if (!response.ok) {
     const detail = await response.text();
-    throw new Error(`Не удалось зарегистрировать фотографию в Supabase: ${response.status} ${detail}`);
+    if (response.status >= 400 && response.status < 500) {
+      throw new SupabaseRpcRejectedError(response.status, detail);
+    }
+    throw new Error(`Не удалось зарегистрировать изображение в Supabase: ${response.status} ${detail}`);
   }
   return response.json();
 }
 
-export async function isSupabaseDriverPhotoRegistered(assetId) {
+export const saveSupabaseDriverPhoto = (input) => saveSupabaseMedia('admin_save_driver_photo', input);
+export const saveSupabaseGameLogo = (input) => saveSupabaseMedia('admin_save_game_logo', input);
+
+export async function isSupabaseMediaRegistered(assetId) {
   const { supabaseUrl, serviceKey } = storageConfig();
   const query = new URLSearchParams({ select: 'id', id: `eq.${assetId}`, limit: '1' });
   const response = await fetch(`${supabaseUrl}/rest/v1/media_assets?${query}`, {
@@ -33,3 +46,5 @@ export async function isSupabaseDriverPhotoRegistered(assetId) {
   const rows = await response.json();
   return Array.isArray(rows) && rows.length > 0;
 }
+
+export const isSupabaseDriverPhotoRegistered = isSupabaseMediaRegistered;

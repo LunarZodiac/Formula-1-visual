@@ -844,17 +844,19 @@ export async function previewGameLogo(formData: FormData) {
 export async function uploadGameLogo(formData: FormData) {
   if (!await getAdminSession()) redirect('/admin/login');
   let gameId = '';
+  let publicDataSynced = true;
   try {
     const input = await gameLogoInput(formData, true);
     gameId = input.gameId;
-    await uploadAdminGameLogo(input);
+    const result = await uploadAdminGameLogo(input);
+    publicDataSynced = result.publicDataSynced !== false;
   } catch (error) {
     console.error('Не удалось загрузить логотип игры', error);
     redirect(`/admin/games?error=${encodeURIComponent(gameId || 'upload')}`);
   }
   revalidatePath('/admin/games');
   revalidatePath('/games');
-  redirect(`/admin/games?saved=${encodeURIComponent(gameId)}`);
+  redirect(`/admin/games?saved=${encodeURIComponent(gameId)}${publicDataSynced ? '' : '&syncError=1'}`);
 }
 
 export async function previewConstructorCar(formData: FormData) {

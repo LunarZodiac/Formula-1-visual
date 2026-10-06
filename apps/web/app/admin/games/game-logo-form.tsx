@@ -3,10 +3,13 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { previewGameLogo, uploadGameLogo } from '../actions';
+import type { AdminGameLogo } from '../../lib/supabase-game-admin';
 
 type GameId = 'outline' | 'map' | 'driver-geography' | 'calendar-optimizer';
 
-export function GameLogoForm({ gameId, title }: { gameId: GameId; title: string }) {
+export function GameLogoForm({ gameId, title, initialLogo, useCloudData }: {
+  gameId: GameId; title: string; initialLogo: AdminGameLogo | null; useCloudData: boolean;
+}) {
   const formRef = useRef<HTMLFormElement>(null);
   const [fileName, setFileName] = useState('');
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
@@ -14,10 +17,11 @@ export function GameLogoForm({ gameId, title }: { gameId: GameId; title: string 
   const [previewToken, setPreviewToken] = useState('');
   const [error, setError] = useState('');
   const [isPreviewing, startPreview] = useTransition();
-  const [currentImage, setCurrentImage] = useState<string | null>(null);
-  const [metadata, setMetadata] = useState({ altTextRu: `Логотип игры «${title}»`, author: '', licence: '', sourceUrl: '' });
+  const [currentImage, setCurrentImage] = useState<string | null>(initialLogo?.url ?? null);
+  const [metadata, setMetadata] = useState({ altTextRu: initialLogo?.altTextRu || `Логотип игры «${title}»`, author: initialLogo?.author ?? '', licence: initialLogo?.licence ?? '', sourceUrl: initialLogo?.sourceUrl ?? '' });
   useEffect(() => () => { if (sourcePreview) URL.revokeObjectURL(sourcePreview); }, [sourcePreview]);
   useEffect(() => {
+    if (useCloudData) return;
     fetch('/data/games-media.json', { cache: 'no-store' })
       .then((response) => response.ok ? response.json() : null)
       .then((value) => {
@@ -33,7 +37,7 @@ export function GameLogoForm({ gameId, title }: { gameId: GameId; title: string 
         }
       })
       .catch(() => {});
-  }, [gameId, title]);
+  }, [gameId, title, useCloudData]);
 
   function selectFile(file: File | null) {
     if (sourcePreview) URL.revokeObjectURL(sourcePreview);
