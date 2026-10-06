@@ -3588,11 +3588,23 @@ async function saveMediaAsset(rawInput, id) {
       verified_at = CASE WHEN $8 = 'verified' THEN coalesce(verified_at, now()) ELSE NULL END
       WHERE id = $1`, [id, usageRole, altTextRu, author, licence, sourceUrl, sourceId, rightsStatus, reviewStatus]);
     await client.query('COMMIT'); committed = true;
-    let publicDataSynced = true;
+    let publicDataSynced = false;
     try {
       const asset = current.rows[0];
-      if (asset.entity_type === 'driver') await syncDriverPublicData(client, asset.entity_id);
-      if (asset.entity_type === 'constructor' && asset.season_year) await syncConstructorPublicData(client, asset.entity_id, Number(asset.season_year));
+      if (asset.entity_type === 'driver') {
+        await syncDriverPublicData(client, asset.entity_id);
+        publicDataSynced = true;
+      } else if (asset.entity_type === 'constructor' && asset.season_year) {
+        await syncConstructorPublicData(client, asset.entity_id, Number(asset.season_year));
+        publicDataSynced = true;
+      } else if (asset.entity_type === 'circuit') {
+        const profile = await client.query(
+          'SELECT editorial_status FROM atlas.circuit_page_profiles WHERE circuit_id=$1',
+          [asset.entity_id],
+        );
+        await runCircuitExports(asset.entity_id, profile.rows[0]?.editorial_status ?? 'draft');
+        publicDataSynced = true;
+      }
     } catch (error) { publicDataSynced = false; console.error('Медиаматериал сохранён, но публичные данные не синхронизированы', error); }
     return { asset: await getMediaAsset(id), publicDataSynced };
   } catch (error) {

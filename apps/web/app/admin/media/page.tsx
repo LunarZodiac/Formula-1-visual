@@ -15,7 +15,14 @@ function entityHref(asset: AdminMediaAsset) {
   if (asset.entityType === 'driver') return `/admin/drivers/${encodeURIComponent(asset.entityId)}#photo`;
   if (asset.entityType === 'constructor' && asset.season) return `/admin/teams/${asset.season}/${encodeURIComponent(asset.entityId)}`;
   if (asset.entityType === 'circuit') return `/admin/circuits/${encodeURIComponent(asset.entityId)}/media`;
-  return `/admin/database/media_assets`;
+  if (asset.entityType === 'game') return '/admin/games';
+  if (asset.entityType === 'history_era') return `/admin/history/${encodeURIComponent(asset.entityId)}`;
+  return null;
+}
+
+function EntityLink({ asset }: { asset: AdminMediaAsset }) {
+  const href = entityHref(asset);
+  return href ? <Link href={href}>Связанная запись</Link> : null;
 }
 
 export default async function AdminMediaPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -37,7 +44,7 @@ export default async function AdminMediaPage({ searchParams }: { searchParams: P
   const totalPages = Math.max(1, Math.ceil((registry?.filteredCount ?? 0) / pageSize));
   return <main className="admin-shell admin-media-page">
     <header className="admin-section-header"><div><span className="admin-kicker">Единый реестр материалов</span><h1>Медиатека</h1><p>Изображения, источники, лицензии и состояние публикации</p></div>{registry ? <strong>{registry.summary.total.toLocaleString('ru-RU')} файлов</strong> : null}</header>
-    {!registry ? <div className="admin-alert is-error">Локальная база или медиареестр недоступны</div> : <>
+    {!registry ? <div className="admin-alert is-error">База данных или медиареестр недоступны</div> : <>
       <section className="admin-media-summary">
         <div><strong>{registry.summary.total}</strong><span>всего материалов</span></div>
         <Link className={filters.rights === 'unresolved' ? 'is-active' : ''} href={filters.rights === 'unresolved' ? '/admin/media' : '/admin/media?rights=unresolved'}><strong>{registry.summary.unresolved_rights}</strong><span>права не проверены</span></Link>
@@ -58,7 +65,7 @@ export default async function AdminMediaPage({ searchParams }: { searchParams: P
         <div className="admin-media-thumb">{asset.mediaType === 'image' ? <img src={asset.url} alt={asset.altTextRu ?? ''} loading="lazy" /> : <span>{asset.mediaType}</span>}</div>
         <div className="admin-media-main"><span>{entityLabels[asset.entityType] ?? asset.entityType} · {roleLabels[asset.usageRole] ?? asset.usageRole}</span><h2>{asset.altTextRu || asset.id}</h2><code>{asset.entityId}{asset.season ? ` · ${asset.season}` : ''}</code><p>{asset.author || 'Автор не указан'} · {asset.licence || 'Лицензия не указана'}</p></div>
         <div className="admin-media-state"><span className={`admin-status is-${asset.rightsStatus}`}>{rightsLabels[asset.rightsStatus] ?? asset.rightsStatus}</span><span className={`admin-status is-${asset.reviewStatus}`}>{reviewLabels[asset.reviewStatus] ?? asset.reviewStatus}</span><small>Производных файлов: {asset.derivativeCount}</small></div>
-        <div className="admin-media-actions"><Link className="is-primary" href={`/admin/media/${encodeURIComponent(asset.id)}`}>Редактировать</Link><Link href={entityHref(asset)}>Связанная запись</Link>{asset.sourceUrl ? <a href={asset.sourceUrl} target="_blank" rel="noreferrer">Источник ↗</a> : null}</div>
+        <div className="admin-media-actions"><Link className="is-primary" href={`/admin/media/${encodeURIComponent(asset.id)}`}>Редактировать</Link><EntityLink asset={asset} />{asset.sourceUrl ? <a href={asset.sourceUrl} target="_blank" rel="noreferrer">Источник ↗</a> : null}</div>
       </article>)}</section>
       {!registry.rows.length ? <p className="admin-directory-empty">По выбранным фильтрам материалов нет</p> : null}
       <AdminPagination basePath="/admin/media" page={page} totalPages={totalPages} parameters={{ q: filters.query, entityType: filters.entityType, usageRole: filters.usageRole, season: filters.season, rights: filters.rights, review: filters.review }} label="Страницы медиатеки" />

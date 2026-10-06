@@ -1016,10 +1016,11 @@ export async function updateMediaAsset(formData: FormData) {
   try {
     const usageRole = String(formData.get('usageRole') ?? '').trim();
     if (!/^[a-z][a-z0-9_]*$/.test(usageRole)) throw new Error('Некорректное назначение');
-    const sourceUrl = optionalText(formData, 'sourceUrl') ?? '';
+    let sourceUrl = optionalText(formData, 'sourceUrl') ?? '';
     if (sourceUrl) {
       const parsed = new URL(sourceUrl);
       if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password) throw new Error('Некорректный источник');
+      sourceUrl = parsed.href;
     }
     const result = await updateAdminMediaAsset({
       id, usageRole, sourceUrl,

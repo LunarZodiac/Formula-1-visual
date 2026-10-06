@@ -59,6 +59,11 @@ import {
   saveDirectAdminHistoryBlock,
   updateDirectAdminHistoryEra,
 } from './supabase-history-admin';
+import {
+  getDirectAdminMediaAsset,
+  getDirectAdminMediaRegistry,
+  updateDirectAdminMediaAsset,
+} from './supabase-media-admin';
 
 export type AdminDriver = {
   id: string;
@@ -1520,6 +1525,7 @@ export async function getAdminMediaRegistry(filters: {
   page?: number; limit?: number; query?: string; entityType?: string; usageRole?: string;
   season?: number | null; rights?: string; review?: string;
 } = {}) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminMediaRegistry(filters);
   const search = new URLSearchParams({ page: String(filters.page ?? 1), limit: String(filters.limit ?? 40) });
   if (filters.query) search.set('q', filters.query);
   if (filters.entityType) search.set('entityType', filters.entityType);
@@ -1533,6 +1539,7 @@ export async function getAdminMediaRegistry(filters: {
 }
 
 export function getAdminMediaAsset(id: string) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminMediaAsset(id);
   return apiRequest<AdminMediaAssetDetail>(`/media-assets/${encodeURIComponent(id)}`);
 }
 
@@ -1540,6 +1547,7 @@ export async function updateAdminMediaAsset(input: {
   id: string; usageRole: string; altTextRu: string; author: string; licence: string;
   sourceUrl: string; rightsStatus: string; reviewStatus: string;
 }) {
+  if (isAdminSupabaseConfigured()) return updateDirectAdminMediaAsset(input);
   const result = await apiRequest<{ asset: AdminMediaAssetDetail; publicDataSynced: boolean }>(`/media-assets/${encodeURIComponent(input.id)}`, {
     method: 'PATCH', body: JSON.stringify(input),
   });

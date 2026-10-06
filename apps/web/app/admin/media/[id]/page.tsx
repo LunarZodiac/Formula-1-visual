@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../lib/admin-auth';
 import { getAdminMediaAsset, isAdminDatabaseConfigured } from '../../../lib/admin-database';
+import { isAdminSupabaseConfigured } from '../../../lib/supabase-admin';
 import { updateMediaAsset } from '../../actions';
 
 function formatBytes(value: number | null) {
@@ -23,14 +24,16 @@ export default async function AdminMediaAssetPage({ params, searchParams }: {
   try { asset = await getAdminMediaAsset(id); }
   catch (error) {
     console.error('Не удалось открыть медиаматериал', error);
-    return <main className="admin-shell"><div className="admin-alert is-error">Локальная база или медиареестр недоступны</div></main>;
+    return <main className="admin-shell"><div className="admin-alert is-error">База данных или медиареестр недоступны</div></main>;
   }
   if (!asset) notFound();
   return <main className="admin-shell"><section className="admin-edit-panel admin-media-editor">
     <Link className="admin-back-link" href="/admin/media">← Вернуться в медиатеку</Link>
     <header><div><span className="admin-kicker">Редактирование материала</span><h1>{asset.altTextRu || asset.id}</h1><p>{asset.entityType} · {asset.entityId}{asset.season ? ` · сезон ${asset.season}` : ''}</p></div><code>{asset.id}</code></header>
     {state.saved === '1' ? <div className="admin-alert is-success">Метаданные и статусы сохранены</div> : null}
-    {state.syncError === '1' ? <div className="admin-alert">Запись сохранена, но публичные данные не синхронизированы</div> : null}
+    {state.syncError === '1' ? <div className="admin-alert">{isAdminSupabaseConfigured()
+      ? 'Изменения сохранены в Supabase. Публичные каталоги обновятся после отдельной публикации данных'
+      : 'Запись сохранена, но локальные публичные данные не синхронизированы'}</div> : null}
     {state.error ? <div className="admin-alert is-error">Не удалось сохранить материал. Для статусов «Проверено» и «Опубликовано» обязательны подтверждённые права, источник, автор, лицензия и описание</div> : null}
     <div className="admin-media-editor-preview">{asset.mediaType === 'image' ? <img src={asset.url} alt={asset.altTextRu ?? ''} /> : <a href={asset.url} target="_blank" rel="noreferrer">Открыть файл</a>}<div><span>Основной адрес</span><code>{asset.url}</code><span>Сущность</span><strong>{asset.entityType} · {asset.entityId}</strong><span>Сезон</span><strong>{asset.season ?? 'Без привязки'}</strong><span>Исходная запись</span><strong>{asset.dataSourceName || asset.sourceId || 'Не указана'}</strong></div></div>
     <form action={updateMediaAsset} className="admin-editor-form">
