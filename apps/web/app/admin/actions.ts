@@ -1428,10 +1428,14 @@ export async function saveTravelCategoryIcon(formData: FormData) {
   const id = String(formData.get('id') ?? '').trim();
   const icon = String(formData.get('icon') ?? '').trim();
   if (!/^[a-z][a-z0-9_-]+$/.test(id)) redirect('/admin/travel?error=category');
-  try { await updateAdminTravelCategoryIcon(id, icon); }
+  let localMirrorSynced = true;
+  try {
+    const result = await updateAdminTravelCategoryIcon(id, icon);
+    localMirrorSynced = result.localMirrorSynced !== false;
+  }
   catch (error) { console.error('Не удалось обновить значок', error); redirect('/admin/travel?error=category'); }
   revalidatePath('/admin/travel');
-  redirect(`/admin/travel?categorySaved=${encodeURIComponent(id)}`);
+  redirect(`/admin/travel?categorySaved=${encodeURIComponent(id)}&categoryPublicPending=1${localMirrorSynced ? '' : '&categorySyncError=1'}`);
 }
 
 export async function uploadTravelCategoryIcon(formData: FormData) {
@@ -1442,10 +1446,14 @@ export async function uploadTravelCategoryIcon(formData: FormData) {
   if (file.size > 2 * 1024 * 1024 || !['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
     redirect('/admin/travel?error=category-file');
   }
-  try { await uploadAdminTravelCategoryIcon(id, file.name, file.type, await file.arrayBuffer()); }
+  let localMirrorSynced = true;
+  try {
+    const result = await uploadAdminTravelCategoryIcon(id, file.name, file.type, await file.arrayBuffer());
+    localMirrorSynced = result.localMirrorSynced !== false;
+  }
   catch (error) { console.error('Не удалось загрузить файл значка', error); redirect('/admin/travel?error=category-file'); }
   revalidatePath('/admin/travel');
-  redirect(`/admin/travel?categorySaved=${encodeURIComponent(id)}`);
+  redirect(`/admin/travel?categorySaved=${encodeURIComponent(id)}&categoryPublicPending=1${localMirrorSynced ? '' : '&categorySyncError=1'}`);
 }
 
 function historyEraDestination(slug: string) {

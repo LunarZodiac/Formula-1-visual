@@ -7,7 +7,7 @@ export class SupabaseRpcRejectedError extends Error {
   }
 }
 
-async function saveSupabaseMedia(name, input) {
+async function callSupabaseAdminRpc(name, body) {
   const { supabaseUrl, serviceKey } = storageConfig();
   const response = await fetch(`${supabaseUrl}/rest/v1/rpc/${name}`, {
     method: 'POST',
@@ -17,7 +17,7 @@ async function saveSupabaseMedia(name, input) {
       'Content-Profile': 'atlas',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ p_input: input }),
+    body: JSON.stringify(body),
   });
   if (!response.ok) {
     const detail = await response.text();
@@ -29,8 +29,25 @@ async function saveSupabaseMedia(name, input) {
   return response.json();
 }
 
+async function saveSupabaseMedia(name, input) {
+  return callSupabaseAdminRpc(name, { p_input: input });
+}
+
 export const saveSupabaseDriverPhoto = (input) => saveSupabaseMedia('admin_save_driver_photo', input);
 export const saveSupabaseGameLogo = (input) => saveSupabaseMedia('admin_save_game_logo', input);
+export const saveSupabaseTravelCategoryIcon = (id, icon) =>
+  callSupabaseAdminRpc('admin_save_travel_category_icon', { p_id: id, p_icon: icon });
+
+export async function isSupabaseTravelCategoryIconRegistered(id, icon) {
+  const { supabaseUrl, serviceKey } = storageConfig();
+  const query = new URLSearchParams({ select: 'icon', id: `eq.${id}`, limit: '1' });
+  const response = await fetch(`${supabaseUrl}/rest/v1/poi_categories?${query}`, {
+    headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Accept-Profile': 'atlas' },
+  });
+  if (!response.ok) throw new Error(`Не удалось проверить значок категории: ${response.status}`);
+  const rows = await response.json();
+  return rows[0]?.icon === icon;
+}
 
 export async function isSupabaseMediaRegistered(assetId) {
   const { supabaseUrl, serviceKey } = storageConfig();

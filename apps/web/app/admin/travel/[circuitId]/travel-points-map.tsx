@@ -15,6 +15,7 @@ const iconGlyphs: Record<string, string> = {
   hotel: 'H', hostel: 'h', 'guest-house': '⌂', apartment: 'A', camping: '△', helmet: 'M', museum: 'M', landmark: '◆', architecture: 'A', nature: 'N', viewpoint: '◉', family: 'F',
   restaurant: 'R', cafe: 'C', supermarket: 'S', pharmacy: '+', hospital: '+', information: 'i', gate: 'G', grandstand: 'G', flag: 'F',
 };
+const isImageIcon = (icon: string) => icon.startsWith('/') || icon.startsWith('https://');
 const mapStyle: maplibregl.StyleSpecification = {
   version: 8,
   sources: { streets: { type: 'vector', url: 'https://tiles.openfreemap.org/planet', attribution: '&copy; OpenStreetMap contributors &copy; OpenFreeMap' } },
@@ -33,8 +34,8 @@ function pointCollection(points: MapPoint[]): GeoJSON.FeatureCollection<GeoJSON.
       ...point,
       colour: roleColours[point.role] ?? '#9fb1bd',
       glyph: iconGlyphs[point.categoryIcon] ?? point.categoryIcon.slice(0, 1).toUpperCase(),
-      iconKey: point.categoryIcon.startsWith('/') ? `category-${point.categoryId}` : '',
-      customIconUrl: point.categoryIcon.startsWith('/') ? point.categoryIcon : '',
+      iconKey: isImageIcon(point.categoryIcon) ? `category-${point.categoryId}` : '',
+      customIconUrl: isImageIcon(point.categoryIcon) ? point.categoryIcon : '',
     },
   })) };
 }
@@ -42,6 +43,7 @@ function pointCollection(points: MapPoint[]): GeoJSON.FeatureCollection<GeoJSON.
 function loadImage(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const element = new Image();
+    if (url.startsWith('https://')) element.crossOrigin = 'anonymous';
     element.onload = () => resolve(element);
     element.onerror = () => reject(new Error(`Не удалось загрузить значок ${url}`));
     element.src = url;
@@ -64,7 +66,7 @@ export function TravelPointsMap({ circuit, mapPoints }: Pick<AdminTravelPointReg
     map.on('load', async () => {
       map.addSource('travel-points', { type: 'geojson', data: pointCollection(mapPoints), cluster: true, clusterRadius: 38, clusterMaxZoom: 12 });
       const customIcons = new Map(mapPoints
-        .filter((point) => point.categoryIcon.startsWith('/'))
+        .filter((point) => isImageIcon(point.categoryIcon))
         .map((point) => [`category-${point.categoryId}`, point.categoryIcon]));
       await Promise.all([...customIcons].map(async ([key, url]) => {
         try {

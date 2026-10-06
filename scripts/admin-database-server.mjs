@@ -20,7 +20,7 @@ import { planHistoryEraBlockOrder } from './lib/history-era-block-order.mjs';
 import { normalizeTrackCalloutPoint } from './lib/track-callout-point.mjs';
 import { applyTrackAnnotationPackage, summarizeTrackAnnotationPackage, validateTrackAnnotationPackage } from './import-track-annotations.mjs';
 import { deleteStorageObject, storageConfig, storageObjectUrl, storagePublicUrl, uploadStorageObject } from './lib/supabase-storage.mjs';
-import { isSupabaseDriverPhotoRegistered, isSupabaseMediaRegistered, saveSupabaseDriverPhoto, saveSupabaseGameLogo, SupabaseRpcRejectedError } from './lib/supabase-admin-rpc.mjs';
+import { isSupabaseDriverPhotoRegistered, isSupabaseMediaRegistered, isSupabaseTravelCategoryIconRegistered, saveSupabaseDriverPhoto, saveSupabaseGameLogo, saveSupabaseTravelCategoryIcon, SupabaseRpcRejectedError } from './lib/supabase-admin-rpc.mjs';
 
 const host = '127.0.0.1';
 const port = Number(process.env.ADMIN_DATABASE_API_PORT ?? 3102);
@@ -1872,13 +1872,32 @@ async function saveTravelCategoryIconFile(categoryId, buffer, request) {
   const category = await pool.query('SELECT id FROM atlas.poi_categories WHERE id=$1', [categoryId]);
   if (!category.rows.length) return null;
   const bytes = await processTravelCategoryIcon(buffer);
-  const hash = createHash('sha256').update(buffer).digest('hex').slice(0, 16);
-  const relativeUrl = `/media/travel/category-icons/${categoryId}-${hash}.webp`;
-  const outputPath = path.resolve(repositoryRoot, 'apps', 'web', 'public', relativeUrl.replace(/^\/+/, ''));
-  await mkdir(path.dirname(outputPath), { recursive: true });
-  await writeFile(outputPath, bytes);
-  await pool.query('UPDATE atlas.poi_categories SET icon=$2 WHERE id=$1', [categoryId, relativeUrl]);
-  return { id: categoryId, icon: relativeUrl };
+  const { publicBucket } = storageConfig();
+  const storagePath = `travel/category-icons/${categoryId}/${randomUUID()}.webp`;
+  const iconUrl = storagePublicUrl(publicBucket, storagePath);
+  const uploaded = await uploadStorageObject({
+    bucket: publicBucket, storagePath, bytes, contentType: 'image/webp', upsert: false,
+  });
+  try {
+    await saveSupabaseTravelCategoryIcon(categoryId, iconUrl);
+  } catch (error) {
+    if (error instanceof SupabaseRpcRejectedError) {
+      await deleteStorageObject(uploaded).catch(() => {});
+      throw error;
+    }
+    const registered = await isSupabaseTravelCategoryIconRegistered(categoryId, iconUrl).catch(() => false);
+    if (!registered) {
+      throw new Error('Статус сохранения значка в Supabase не подтверждён. Файл сохранён для восстановления', { cause: error });
+    }
+  }
+  let localMirrorSynced = true;
+  try {
+    await pool.query('UPDATE atlas.poi_categories SET icon=$2 WHERE id=$1', [categoryId, iconUrl]);
+  } catch (error) {
+    localMirrorSynced = false;
+    console.error('Значок категории сохранён в Supabase, но локальная база не обновлена', error);
+  }
+  return { id: categoryId, icon: iconUrl, localMirrorSynced };
 }
 
 function travelPointPhoto(row) {

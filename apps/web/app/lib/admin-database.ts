@@ -64,6 +64,10 @@ import {
   getDirectAdminMediaRegistry,
   updateDirectAdminMediaAsset,
 } from './supabase-media-admin';
+import {
+  getDirectAdminTravelRegistry,
+  updateDirectAdminTravelCategoryIcon,
+} from './supabase-travel-admin';
 
 export type AdminDriver = {
   id: string;
@@ -666,14 +670,23 @@ export function isAdminCircuitMediaConfigured() {
   return apiConfiguration() !== null;
 }
 
-export async function isAdminLocalMediaConfigured() {
-  if (!apiConfiguration()) return false;
+export async function getAdminLocalCapabilities() {
+  if (!apiConfiguration()) return null;
   try {
     const capability = await apiRequest<{ mediaStorageReady: boolean }>('/capabilities');
-    return capability?.mediaStorageReady === true;
+    return capability ?? null;
   } catch {
-    return false;
+    return null;
   }
+}
+
+export async function isAdminLocalMediaConfigured() {
+  const capability = await getAdminLocalCapabilities();
+  return capability?.mediaStorageReady === true;
+}
+
+export async function isAdminLocalApiAvailable() {
+  return Boolean(await getAdminLocalCapabilities());
 }
 
 export async function getAdminMapUiSettings() {
@@ -975,6 +988,7 @@ export async function getAdminCircuits(filters: {
 }
 
 export async function getAdminTravelRegistry(filters: { page?: number; limit?: number; query?: string } = {}) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminTravelRegistry(filters);
   const search = new URLSearchParams({ page: String(filters.page ?? 1), limit: String(filters.limit ?? 30) });
   if (filters.query) search.set('q', filters.query);
   const result = await apiRequest<AdminTravelRegistry>(`/travel?${search}`);
@@ -1029,11 +1043,25 @@ export async function getAdminTravelPoints(circuitId: string, filters: {
 }
 
 export async function updateAdminTravelCategoryIcon(id: string, icon: string) {
+  if (isAdminSupabaseConfigured()) {
+    const saved = await updateDirectAdminTravelCategoryIcon(id, icon);
+    if (await isAdminLocalApiAvailable()) {
+      try {
+        await apiRequest(`/travel/categories/${encodeURIComponent(id)}`, {
+          method: 'PATCH', body: JSON.stringify({ icon }),
+        });
+      } catch (error) {
+        console.error('Значок сохранён в Supabase, но локальная база не обновлена', error);
+        return { ...saved, localMirrorSynced: false };
+      }
+    }
+    return { ...saved, localMirrorSynced: true };
+  }
   const result = await apiRequest<{ id: string; name: string; icon: string }>(`/travel/categories/${encodeURIComponent(id)}`, {
     method: 'PATCH', body: JSON.stringify({ icon }),
   });
   if (!result) throw new Error('Категория не найдена');
-  return result;
+  return { ...result, localMirrorSynced: true };
 }
 
 export async function uploadAdminTravelCategoryIcon(id: string, fileName: string, mimeType: string, bytes: ArrayBuffer) {
@@ -1048,7 +1076,7 @@ export async function uploadAdminTravelCategoryIcon(id: string, fileName: string
     const details = await response.json().catch(() => null) as { message?: string } | null;
     throw new Error(details?.message || `Не удалось загрузить значок: ${response.status}`);
   }
-  return response.json() as Promise<{ id: string; icon: string }>;
+  return response.json() as Promise<{ id: string; icon: string; localMirrorSynced?: boolean }>;
 }
 
 export function getAdminTravelPoint(circuitId: string, pointId: string) {
