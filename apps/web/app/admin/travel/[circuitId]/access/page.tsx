@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { saveTravelAccessAnchor } from '../../../actions';
 import { getAdminSession } from '../../../../lib/admin-auth';
 import { getAdminTravelAccessAnchors, isAdminDatabaseConfigured } from '../../../../lib/admin-database';
+import { isAdminSupabaseConfigured } from '../../../../lib/supabase-admin';
 import { TravelModuleNav } from '../travel-module-nav';
 
 const kindLabels: Record<string, string> = {
@@ -50,7 +51,7 @@ export default async function AdminTravelAccessPage({ params, searchParams }: {
     console.error(`Не удалось загрузить точки доступа трассы ${circuitId}`, error);
     return <main className="admin-shell"><section className="admin-directory">
       <Link className="admin-back-link" href={`/admin/travel/${encodeURIComponent(circuitId)}`}>← Вернуться к точкам</Link>
-      <div className="admin-alert is-error">Локальная база точек доступа временно недоступна. Проверьте локальный сервер и повторите попытку</div>
+      <div className="admin-alert is-error">База точек доступа временно недоступна. Повторите попытку позже</div>
     </section></main>;
   }
   if (!registry) notFound();
@@ -62,15 +63,16 @@ export default async function AdminTravelAccessPage({ params, searchParams }: {
   return <main className="admin-shell"><section className="admin-directory admin-travel-subdirectory">
     <Link className="admin-back-link" href={`/admin/travel/${encodeURIComponent(circuitId)}`}>← Вернуться к точкам</Link>
     <header><div><span className="admin-kicker">Ручной реестр доступа</span><h1>{registry.circuit.name}</h1><p>{registry.rows.length} точек и кандидатов</p></div></header>
-    <TravelModuleNav circuitId={circuitId} active="access" />
+    <TravelModuleNav circuitId={circuitId} active="access" availableSections={isAdminSupabaseConfigured() ? ['points', 'access'] : undefined} />
 
     {state.saved ? <div className="admin-alert is-success">Точка доступа сохранена: {state.saved}</div> : null}
-    {state.error ? <div className="admin-alert is-error">Не удалось сохранить точку доступа. Проверьте обязательные поля, период и требования проверки</div> : null}
+    {state.error === 'conflict' ? <div className="admin-alert is-error">Точку доступа изменили после открытия страницы. Проверьте новые данные и сохраните ещё раз</div> : state.error ? <div className="admin-alert is-error">Не удалось сохранить точку доступа. Проверьте обязательные поля, период и требования проверки</div> : null}
     {state.edit && !selected ? <div className="admin-alert is-error">Запись для редактирования не найдена</div> : null}
 
     <form action={saveTravelAccessAnchor} className="admin-editor-form">
       <input type="hidden" name="circuitId" value={circuitId} />
       <input type="hidden" name="editing" value={selected ? 'yes' : 'no'} />
+      <input type="hidden" name="expectedRevision" value={selected?.revision ?? ''} />
       <fieldset><legend>{selected ? 'Редактировать точку доступа' : 'Добавить точку доступа'}</legend><div className="admin-form-grid">
         <label className="is-wide"><span>ID записи</span><input name="id" defaultValue={selected?.id ?? defaultId} readOnly={Boolean(selected)} required pattern="[A-Za-z0-9_-]+" /><small>Стабильный системный ID латиницей</small></label>
         <label className="is-wide"><span>Туристическая точка</span><select name="poiId" defaultValue={selected?.poiId ?? ''} required><option value="" disabled>Выберите точку</option>{registry.pointOptions.map((point) => <option key={point.id} value={point.id}>{point.name} · {point.categoryName} · {statusLabels[point.reviewStatus] ?? point.reviewStatus}</option>)}</select>{!registry.pointOptions.length ? <small>Сначала добавьте туристическую точку для этой трассы</small> : null}</label>

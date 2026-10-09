@@ -68,9 +68,11 @@ import {
   applyDirectAdminTravelPointOsmTranslations,
   getDirectAdminTravelPoint,
   getDirectAdminTravelPoints,
+  getDirectAdminTravelAccessAnchors,
   getDirectAdminTravelRegistry,
   updateDirectAdminTravelPoint,
   updateDirectAdminTravelPointsBulk,
+  updateDirectAdminTravelAccessAnchor,
   updateDirectAdminTravelCategoryIcon,
 } from './supabase-travel-admin';
 
@@ -539,7 +541,7 @@ export type AdminTravelAccessAnchorRegistry = {
     id: string; poiId: string; poiName: string; accessKind: string; travelModes: string[];
     eventScope: string; validFromYear: number | null; validToYear: number | null;
     verificationStatus: string; confidence: number; sourceUrl: string | null;
-    evidenceNoteRu: string | null; verifiedAt: string | null;
+    evidenceNoteRu: string | null; verifiedAt: string | null; revision?: string;
   }>;
   pointOptions: Array<{ id: string; name: string; categoryName: string; reviewStatus: string }>;
 };
@@ -1187,8 +1189,8 @@ export function applyAdminTravelRouteGenerationPreview(token:string,circuitId:st
 export function createAdminTravelRouteTailPreview(circuitId:string,routeId:string){return apiRequest<AdminTravelRouteTailPreview>(`/travel/circuits/${encodeURIComponent(circuitId)}/routes/${encodeURIComponent(routeId)}/tail-previews`,{method:'POST',body:'{}'},120_000);}
 export function getAdminTravelRouteTailPreview(token:string){return apiRequest<AdminTravelRouteTailPreview>(`/travel/route-tail-previews/${encodeURIComponent(token)}`);}
 export function applyAdminTravelRouteTailPreview(token:string,circuitId:string,routeId:string){return apiRequest<{circuitId:string;routeId:string;publicDataSynced:boolean}>(`/travel/route-tail-previews/${encodeURIComponent(token)}/apply`,{method:'POST',body:JSON.stringify({circuitId,routeId})},120_000);}
-export function getAdminTravelAccessAnchors(circuitId:string){return apiRequest<AdminTravelAccessAnchorRegistry>(`/travel/circuits/${encodeURIComponent(circuitId)}/access-anchors`);}
-export function updateAdminTravelAccessAnchor(circuitId:string,anchorId:string,input:Record<string,unknown>){return apiRequest<{id:string;circuitId:string}>(`/travel/circuits/${encodeURIComponent(circuitId)}/access-anchors/${encodeURIComponent(anchorId)}`,{method:'PUT',body:JSON.stringify(input)});}
+export function getAdminTravelAccessAnchors(circuitId:string){if(isAdminSupabaseConfigured())return getDirectAdminTravelAccessAnchors(circuitId);return apiRequest<AdminTravelAccessAnchorRegistry>(`/travel/circuits/${encodeURIComponent(circuitId)}/access-anchors`);}
+export function updateAdminTravelAccessAnchor(circuitId:string,anchorId:string,input:Record<string,unknown>){if(isAdminSupabaseConfigured())return updateDirectAdminTravelAccessAnchor(circuitId,anchorId,input);return apiRequest<{id:string;circuitId:string}>(`/travel/circuits/${encodeURIComponent(circuitId)}/access-anchors/${encodeURIComponent(anchorId)}`,{method:'PUT',body:JSON.stringify(input)});}
 
 export function getAdminCircuit(id: string, includeGeometry = false) {
   if (isAdminSupabaseConfigured()) return getDirectAdminCircuit(id, includeGeometry);

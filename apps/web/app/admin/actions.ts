@@ -1343,7 +1343,13 @@ export async function saveTravelAccessAnchor(formData: FormData) {
   const destination = `/admin/travel/${encodeURIComponent(circuitId)}/access`;
   try {
     if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(anchorId)) throw new Error('Некорректный ID точки доступа');
+    const rawSourceUrl = optionalText(formData, 'sourceUrl');
+    const sourceUrl = rawSourceUrl ? new URL(rawSourceUrl) : null;
+    if (sourceUrl && (!['http:', 'https:'].includes(sourceUrl.protocol) || sourceUrl.username || sourceUrl.password)) {
+      throw new Error('Некорректный URL источника');
+    }
     await updateAdminTravelAccessAnchor(circuitId, anchorId, {
+      expectedRevision: String(formData.get('expectedRevision') ?? ''),
       poiId: String(formData.get('poiId') ?? '').trim(),
       accessKind: String(formData.get('accessKind') ?? ''),
       travelModes: formData.getAll('travelModes').map(String),
@@ -1352,7 +1358,7 @@ export async function saveTravelAccessAnchor(formData: FormData) {
       validToYear: optionalText(formData, 'validToYear'),
       verificationStatus: String(formData.get('verificationStatus') ?? ''),
       confidence: Number(formData.get('confidence')),
-      sourceUrl: optionalText(formData, 'sourceUrl'),
+      sourceUrl: sourceUrl?.href ?? null,
       evidenceNoteRu: optionalText(formData, 'evidenceNoteRu'),
     });
     revalidatePath(destination);
@@ -1362,7 +1368,7 @@ export async function saveTravelAccessAnchor(formData: FormData) {
     if (error && typeof error === 'object' && 'digest' in error) throw error;
     console.error('Не удалось сохранить точку доступа', error);
     const editQuery = formData.get('editing') === 'yes' ? `&edit=${encodeURIComponent(anchorId)}` : '';
-    redirect(`${destination}?error=save${editQuery}`);
+    redirect(`${destination}?error=${error instanceof Error && error.message.includes('Точка доступа изменена') ? 'conflict' : 'save'}${editQuery}`);
   }
 }
 

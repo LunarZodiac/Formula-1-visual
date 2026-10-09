@@ -53,7 +53,7 @@ export default async function AdminCircuitTravelPage({ params, searchParams }: {
   return <main className="admin-shell"><section className="admin-directory admin-travel-points-directory">
     <Link className="admin-back-link" href="/admin/travel">← Вернуться к трассам</Link>
     <header><div><span className="admin-kicker">Туристический слой</span><h1>{registry.circuit.name}</h1><p>{registry.filteredCount} точек по текущему фильтру</p></div>{canImport ? <div className="admin-directory-header-actions"><Link href="/admin/travel/import">Импортировать из OpenStreetMap</Link></div> : null}</header>
-    <TravelModuleNav circuitId={circuitId} active="points" availableSections={isAdminSupabaseConfigured() ? ['points'] : undefined} />
+    <TravelModuleNav circuitId={circuitId} active="points" availableSections={isAdminSupabaseConfigured() ? ['points', 'access'] : undefined} />
     <form id="travel-point-column-filters" method="get" />
     <TravelPointsMap circuit={registry.circuit} mapPoints={registry.mapPoints} />
     {registry.mapPointsTruncated ? <div className="admin-alert">На карте показаны первые {registry.mapPointLimit.toLocaleString('ru-RU')} точек. Сузьте фильтры, чтобы отобразить нужный набор; таблица и общее количество остаются точными</div> : null}
