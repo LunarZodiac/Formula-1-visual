@@ -35,6 +35,7 @@ async function saveSupabaseMedia(name, input) {
 
 export const saveSupabaseDriverPhoto = (input) => saveSupabaseMedia('admin_save_driver_photo', input);
 export const saveSupabaseGameLogo = (input) => saveSupabaseMedia('admin_save_game_logo', input);
+export const saveSupabaseTravelPointPhoto = (input) => saveSupabaseMedia('admin_save_travel_point_photo', input);
 export const saveSupabaseTravelCategoryIcon = (id, icon) =>
   callSupabaseAdminRpc('admin_save_travel_category_icon', { p_id: id, p_icon: icon });
 

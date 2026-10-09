@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../../../lib/admin-auth';
-import { getAdminTravelPoint, isAdminDatabaseConfigured } from '../../../../../lib/admin-database';
-import { isAdminSupabaseConfigured } from '../../../../../lib/supabase-admin';
+import { getAdminTravelPoint, isAdminDatabaseConfigured, isAdminLocalMediaConfigured } from '../../../../../lib/admin-database';
 import { saveTravelPoint } from '../../../../actions';
 import { TravelPointPhotoForm } from './travel-point-photo-form';
 
@@ -10,7 +9,7 @@ const groupLabels: Record<string, string> = { transport: 'Транспорт', s
 
 export default async function AdminTravelPointPage({ params, searchParams }: {
   params: Promise<{ circuitId: string; pointId: string }>;
-  searchParams: Promise<{ saved?: string; photoSaved?: string; syncError?: string; error?: string }>;
+  searchParams: Promise<{ saved?: string; photoSaved?: string; syncError?: string; localMirrorError?: string; error?: string }>;
 }) {
   if (!await getAdminSession()) redirect('/admin/login');
   if (!isAdminDatabaseConfigured()) redirect('/admin/overview');
@@ -18,11 +17,13 @@ export default async function AdminTravelPointPage({ params, searchParams }: {
   const detail = await getAdminTravelPoint(circuitId, pointId).catch(() => null);
   if (!detail) notFound();
   const { point, categories } = detail;
+  const canUploadPhoto = await isAdminLocalMediaConfigured();
   return <main className="admin-shell"><section className="admin-edit-panel admin-travel-point-editor">
     <Link className="admin-back-link" href={`/admin/travel/${encodeURIComponent(circuitId)}`}>← Вернуться к точкам</Link>
     <header><div><span className="admin-kicker">Туристическая точка · {point.circuitName}</span><h1>{point.nameRu ?? point.name}</h1></div><code>{point.id}</code></header>
     {state.saved === '1' ? <div className="admin-alert is-success">{state.syncError === '1' ? 'Точка сохранена в базе. Публичный слой обновится после отдельной публикации данных' : 'Точка сохранена, публичные данные обновлены'}</div> : null}
-    {state.photoSaved === '1' ? <div className="admin-alert is-success">{state.syncError === '1' ? 'Фотография сохранена в медиатеке' : 'Фотография сохранена, публичные данные обновлены'}</div> : null}
+    {state.photoSaved === '1' ? <div className="admin-alert is-success">Фотография сохранена в Supabase Storage и медиатеке. Публичный слой обновится после отдельной публикации данных</div> : null}
+    {state.localMirrorError === '1' ? <div className="admin-alert">Фотография сохранена в Supabase, но локальная копия базы не обновилась</div> : null}
     {state.error === 'photo' ? <div className="admin-alert is-error">Не удалось загрузить фотографию. Проверьте файл, источник и сведения о правах</div> : state.error === 'conflict' ? <div className="admin-alert is-error">Точку уже изменили после открытия страницы. Проверьте новые данные и сохраните ещё раз</div> : state.error ? <div className="admin-alert is-error">Не удалось сохранить. Проверьте поля и координаты</div> : null}
     <form action={saveTravelPoint} className="admin-editor-form">
       <input type="hidden" name="circuitId" value={circuitId} /><input type="hidden" name="id" value={point.id} /><input type="hidden" name="expectedRevision" value={point.revision ?? ''} />
@@ -53,8 +54,8 @@ export default async function AdminTravelPointPage({ params, searchParams }: {
       </div></fieldset>
       <div className="admin-form-actions"><span>{point.sourceUrl ? <a href={point.sourceUrl} target="_blank" rel="noreferrer">Источник: {point.sourceName ?? 'открыть'} ↗</a> : 'Источник не привязан'}</span><button type="submit">Сохранить точку</button></div>
     </form>
-    {isAdminSupabaseConfigured()
-      ? <div className="admin-alert">Загрузка фотографии для туристической точки пока доступна только в локальном редакторе</div>
-      : <TravelPointPhotoForm circuitId={circuitId} pointId={point.id} pointName={point.nameRu ?? point.name} currentPhoto={point.photo} />}
+    {canUploadPhoto
+      ? <TravelPointPhotoForm circuitId={circuitId} pointId={point.id} pointName={point.nameRu ?? point.name} currentPhoto={point.photo} />
+      : <div className="admin-alert">Для загрузки фотографии запустите локальный сервер обработки изображений с доступом к Supabase Storage</div>}
   </section></main>;
 }

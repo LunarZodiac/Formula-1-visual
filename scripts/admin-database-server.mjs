@@ -20,7 +20,7 @@ import { planHistoryEraBlockOrder } from './lib/history-era-block-order.mjs';
 import { normalizeTrackCalloutPoint } from './lib/track-callout-point.mjs';
 import { applyTrackAnnotationPackage, summarizeTrackAnnotationPackage, validateTrackAnnotationPackage } from './import-track-annotations.mjs';
 import { deleteStorageObject, storageConfig, storageObjectUrl, storagePublicUrl, uploadStorageObject } from './lib/supabase-storage.mjs';
-import { isSupabaseDriverPhotoRegistered, isSupabaseMediaRegistered, isSupabaseTravelCategoryIconRegistered, saveSupabaseDriverPhoto, saveSupabaseGameLogo, saveSupabaseTravelCategoryIcon, SupabaseRpcRejectedError } from './lib/supabase-admin-rpc.mjs';
+import { isSupabaseDriverPhotoRegistered, isSupabaseMediaRegistered, isSupabaseTravelCategoryIconRegistered, saveSupabaseDriverPhoto, saveSupabaseGameLogo, saveSupabaseTravelCategoryIcon, saveSupabaseTravelPointPhoto, SupabaseRpcRejectedError } from './lib/supabase-admin-rpc.mjs';
 
 const host = '127.0.0.1';
 const port = Number(process.env.ADMIN_DATABASE_API_PORT ?? 3102);
@@ -2196,7 +2196,23 @@ async function createTravelPointPhotoPreview(buffer, metadata, circuitId, pointI
     expiresInMinutes: previewLifetimeMs / 60_000 };
 }
 
+const travelPointPhotoSaves = new Map();
+
 async function saveTravelPointPhoto(buffer, metadata, circuitId, pointId) {
+  const previous = travelPointPhotoSaves.get(pointId) ?? Promise.resolve();
+  let unlock;
+  const current = new Promise((resolve) => { unlock = resolve; });
+  travelPointPhotoSaves.set(pointId, current);
+  await previous;
+  try {
+    return await saveTravelPointPhotoUnlocked(buffer, metadata, circuitId, pointId);
+  } finally {
+    unlock();
+    if (travelPointPhotoSaves.get(pointId) === current) travelPointPhotoSaves.delete(pointId);
+  }
+}
+
+async function saveTravelPointPhotoUnlocked(buffer, metadata, circuitId, pointId) {
   if (!/^[A-Za-z0-9_-]+$/.test(circuitId) || !/^[A-Za-z0-9_-]+$/.test(pointId)) {
     throw new Error('Некорректный ID туристической точки');
   }
@@ -2206,42 +2222,67 @@ async function saveTravelPointPhoto(buffer, metadata, circuitId, pointId) {
   if (!cachedPreview) throw new Error('Сначала создайте предпросмотр фотографии');
   const { sourceMetadata } = cachedPreview;
   const { variants } = await processTravelPointPhoto(cachedPreview.preparedBuffer, metadata.crop);
-  const assetId = `travel-point-${pointId}-${hash.slice(0, 16)}`;
+  const uploadId = randomUUID();
+  const assetId = `travel-point-${pointId}-${uploadId}`;
   const sourceId = `media-${createHash('sha256').update(metadata.sourceUrl).digest('hex').slice(0, 16)}`;
-  const originalUrl = `/media/travel/points/${pointId}/original-${hash.slice(0, 16)}.${format.extension}`;
+  const { publicBucket, sourceBucket } = storageConfig();
+  const originalStoragePath = `travel/points/${pointId}/${uploadId}/original.${format.extension}`;
+  const originalUrl = storageObjectUrl(sourceBucket, originalStoragePath);
   const processed = variants.map((variant) => ({
     ...variant,
-    url: `/media/travel/points/${pointId}/${variant.name}-${hash.slice(0, 16)}.webp`,
+    storagePath: `travel/points/${pointId}/${uploadId}/${variant.name}.webp`,
+    url: storagePublicUrl(publicBucket, `travel/points/${pointId}/${uploadId}/${variant.name}.webp`),
   }));
-  await mkdir(path.resolve('apps', 'web', 'public', 'media', 'travel', 'points', pointId), { recursive: true });
-  const outputs = [{ url: originalUrl, bytes: buffer }, ...processed.map((variant) => ({ url: variant.url, bytes: variant.bytes }))];
-  const createdPaths = [];
-  for (const output of outputs) {
-    const outputPath = path.resolve('apps', 'web', 'public', output.url.replace(/^\/+/, ''));
-    let existed = true;
-    try { await access(outputPath); } catch { existed = false; }
-    await writeFile(outputPath, output.bytes);
-    if (!existed) createdPaths.push(outputPath);
+  const publicUrl = processed.find((variant) => variant.name === '1280w')?.url ?? processed[0].url;
+  const uploadJobs = [
+    { bucket: sourceBucket, storagePath: originalStoragePath, bytes: buffer,
+      contentType: format.mimeType, cacheControl: '3600', upsert: false },
+    ...processed.map((variant) => ({ bucket: publicBucket, storagePath: variant.storagePath,
+      bytes: variant.bytes, contentType: 'image/webp', upsert: false })),
+  ];
+  const uploads = await Promise.allSettled(uploadJobs.map((job) => uploadStorageObject(job)));
+  const uploadedObjects = uploads.flatMap((result) => result.status === 'fulfilled' ? [result.value] : []);
+  const failedUpload = uploads.find((result) => result.status === 'rejected');
+  if (failedUpload) {
+    await Promise.allSettled(uploadedObjects.map(deleteStorageObject));
+    throw failedUpload.reason;
   }
-  const client = await pool.connect();
-  let committed = false;
   try {
+    await saveSupabaseTravelPointPhoto({
+      circuitId, pointId, assetId, sourceId, sourceUrl: metadata.sourceUrl,
+      altTextRu: metadata.altTextRu, author: metadata.author, licence: metadata.licence,
+      url: publicUrl,
+      original: { url: originalUrl, mimeType: format.mimeType,
+        width: sourceMetadata.width, height: sourceMetadata.height, fileSize: buffer.length },
+      variants: processed.map((variant) => ({ name: variant.name, url: variant.url,
+        width: variant.width, height: variant.height, fileSize: variant.bytes.length })),
+    });
+  } catch (error) {
+    if (error instanceof SupabaseRpcRejectedError) {
+      await Promise.allSettled(uploadedObjects.map(deleteStorageObject));
+      throw error;
+    }
+    const registered = await isSupabaseMediaRegistered(assetId).catch(() => false);
+    if (!registered) {
+      throw new Error('Статус сохранения фотографии в Supabase не подтверждён. Файлы сохранены для восстановления', { cause: error });
+    }
+  }
+  let client;
+  let committed = false;
+  let localMirrorSynced = true;
+  try {
+    client = await pool.connect();
     await client.query('BEGIN');
     const point = await client.query(`SELECT poi.id FROM atlas.tourism_pois AS poi
       JOIN atlas.circuit_travel_pois AS link ON link.poi_id=poi.id
-      WHERE link.circuit_id=$1 AND poi.id=$2`, [circuitId, pointId]);
-    if (!point.rows.length) {
-      await client.query('ROLLBACK');
-      await Promise.all(createdPaths.map((item) => unlink(item).catch(() => {})));
-      return null;
-    }
+      WHERE link.circuit_id=$1 AND poi.id=$2 FOR UPDATE OF poi, link`, [circuitId, pointId]);
+    if (!point.rows.length) throw new Error('Точка не найдена в локальной копии базы');
     await client.query(`INSERT INTO atlas.data_sources (id,name,url,licence,retrieved_at,notes)
       VALUES ($1,$2,$3,$4,now(),'Источник фотографии туристической точки') ON CONFLICT (id) DO UPDATE SET
       name=EXCLUDED.name,url=EXCLUDED.url,licence=EXCLUDED.licence,retrieved_at=EXCLUDED.retrieved_at,notes=EXCLUDED.notes`,
     [sourceId, new URL(metadata.sourceUrl).hostname, metadata.sourceUrl, metadata.licence]);
     await client.query(`UPDATE atlas.media_assets SET is_primary=false
       WHERE entity_type='tourism_poi' AND entity_id=$1 AND media_type='image' AND is_primary`, [pointId]);
-    const publicUrl = processed.find((variant) => variant.name === '1280w')?.url ?? processed[0].url;
     await client.query(`INSERT INTO atlas.media_assets
       (id,entity_type,entity_id,media_type,url,alt_text_ru,author,licence,source_url,is_primary,usage_role,
        source_id,provenance_type,rights_status,review_status,verified_at,usage_scope)
@@ -2262,18 +2303,13 @@ async function saveTravelPointPhoto(buffer, metadata, circuitId, pointId) {
     [`${assetId}-${variant.name}`, assetId, variant.name, variant.url, variant.width, variant.height, variant.bytes.length]);
     await client.query('COMMIT');
     committed = true;
-    let publicDataSynced = true;
-    try { await runCircuitExports(circuitId, 'published'); }
-    catch (error) { publicDataSynced = false; console.error('Фотография точки сохранена, но read-model не обновлён', error); }
-    return { id: assetId, url: publicUrl, circuitId, pointId, publicDataSynced,
-      variants: Object.fromEntries(processed.map((variant) => [variant.name, variant.url])) };
   } catch (error) {
-    if (!committed) {
-      await client.query('ROLLBACK').catch(() => {});
-      await Promise.all(createdPaths.map((item) => unlink(item).catch(() => {})));
-    }
-    throw error;
-  } finally { client.release(); }
+    if (client && !committed) await client.query('ROLLBACK').catch(() => {});
+    localMirrorSynced = false;
+    console.error('Фотография сохранена в Supabase, но локальная копия не обновлена', error);
+  } finally { client?.release(); }
+  return { id: assetId, url: publicUrl, circuitId, pointId, publicDataSynced: false, localMirrorSynced,
+    variants: Object.fromEntries(processed.map((variant) => [variant.name, variant.url])) };
 }
 
 async function getTravelZones(circuitId) {

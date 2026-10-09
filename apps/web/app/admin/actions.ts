@@ -1247,7 +1247,7 @@ export async function uploadTravelPointPhoto(formData: FormData) {
   try {
     const result = await uploadAdminTravelPointPhoto(await travelPointPhotoInput(formData, true));
     revalidatePath('/admin/media'); revalidatePath('/admin/travel'); revalidatePath(`/admin/travel/${circuitId}`); revalidatePath(destination);
-    redirect(`${destination}?photoSaved=1${result.publicDataSynced ? '' : '&syncError=1'}#photo-upload`);
+    redirect(`${destination}?photoSaved=1${result.publicDataSynced ? '' : '&syncError=1'}${result.localMirrorSynced === false ? '&localMirrorError=1' : ''}#photo-upload`);
   } catch (error) {
     if (error && typeof error === 'object' && 'digest' in error) throw error;
     console.error('Не удалось загрузить фотографию туристической точки', error);

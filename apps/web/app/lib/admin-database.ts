@@ -1128,7 +1128,6 @@ export async function applyAdminTravelPointOsmTranslations(circuitId: string) {
 }
 
 async function travelPointPhotoRequest(input: AdminTravelPointPhotoInput, preview: boolean) {
-  if (isAdminSupabaseConfigured()) throw new Error('Загрузка фотографий туристических точек в Supabase пока не подключена');
   const config = apiConfiguration();
   if (!config) throw new Error('Локальный API базы данных для админки не настроен');
   const metadata = Buffer.from(JSON.stringify(preview ? {
@@ -1149,7 +1148,8 @@ async function travelPointPhotoRequest(input: AdminTravelPointPhotoInput, previe
     throw new Error(details?.message || `Не удалось загрузить фотографию: ${response.status}`);
   }
   return response.json() as Promise<{ token?: string; imageDataUrl?: string; expiresInMinutes?: number;
-    id?: string; url?: string; circuitId?: string; pointId?: string; publicDataSynced?: boolean; variants?: Record<string, string> }>;
+    id?: string; url?: string; circuitId?: string; pointId?: string; publicDataSynced?: boolean;
+    localMirrorSynced?: boolean; variants?: Record<string, string> }>;
 }
 
 export function previewAdminTravelPointPhoto(input: AdminTravelPointPhotoInput) {
