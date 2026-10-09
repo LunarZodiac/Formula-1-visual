@@ -65,7 +65,12 @@ import {
   updateDirectAdminMediaAsset,
 } from './supabase-media-admin';
 import {
+  applyDirectAdminTravelPointOsmTranslations,
+  getDirectAdminTravelPoint,
+  getDirectAdminTravelPoints,
   getDirectAdminTravelRegistry,
+  updateDirectAdminTravelPoint,
+  updateDirectAdminTravelPointsBulk,
   updateDirectAdminTravelCategoryIcon,
 } from './supabase-travel-admin';
 
@@ -479,7 +484,7 @@ export type AdminTravelImportPreview = {
 };
 
 export type AdminTravelPoint = {
-  id: string; circuitId: string; circuitName: string; categoryId: string; categoryName: string;
+  id: string; circuitId: string; circuitName: string; categoryId: string; categoryName: string; revision?: string;
   role: 'transport' | 'stay' | 'explore' | 'essential' | 'circuit';
   name: string; nameRu: string | null; descriptionRu: string | null;
   latitude: number; longitude: number; address: string | null; websiteUrl: string | null;
@@ -501,7 +506,7 @@ export type AdminTravelPointRegistry = {
 
 export type AdminTravelPointInput = Pick<AdminTravelPoint,
   'id' | 'circuitId' | 'categoryId' | 'role' | 'name' | 'nameRu' | 'descriptionRu' | 'latitude' | 'longitude'
-  | 'address' | 'websiteUrl' | 'openingHours' | 'importance' | 'reviewStatus' | 'priority' | 'isFeatured' | 'editorialNoteRu'>;
+  | 'address' | 'websiteUrl' | 'openingHours' | 'importance' | 'reviewStatus' | 'priority' | 'isFeatured' | 'editorialNoteRu'> & { expectedRevision?: string };
 
 export type AdminTravelPointPhotoInput = {
   circuitId: string; pointId: string; fileName: string; mimeType: string; bytes: ArrayBuffer;
@@ -1026,6 +1031,7 @@ export async function getAdminTravelPoints(circuitId: string, filters: {
   photo?: string; featured?: string; translation?: string; distanceMin?: string; distanceMax?: string;
   importanceMin?: string; importanceMax?: string;
 } = {}) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminTravelPoints(circuitId, filters);
   const search = new URLSearchParams({ page: String(filters.page ?? 1), limit: String(filters.limit ?? 30) });
   if (filters.query) search.set('q', filters.query);
   if (filters.status) search.set('status', filters.status);
@@ -1080,12 +1086,14 @@ export async function uploadAdminTravelCategoryIcon(id: string, fileName: string
 }
 
 export function getAdminTravelPoint(circuitId: string, pointId: string) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminTravelPoint(circuitId, pointId);
   return apiRequest<{ point: AdminTravelPoint; categories: Array<{ id: string; name: string; groupId: string }> }>(
     `/travel/circuits/${encodeURIComponent(circuitId)}/points/${encodeURIComponent(pointId)}`,
   );
 }
 
 export async function updateAdminTravelPoint(input: AdminTravelPointInput) {
+  if (isAdminSupabaseConfigured()) return updateDirectAdminTravelPoint(input);
   const result = await apiRequest<{ id: string; circuitId: string; publicDataSynced: boolean }>(
     `/travel/circuits/${encodeURIComponent(input.circuitId)}/points/${encodeURIComponent(input.id)}`,
     { method: 'PATCH', body: JSON.stringify(input) }, 35_000,
@@ -1100,6 +1108,7 @@ export async function updateAdminTravelPointsBulk(input: {
   reviewStatus?: 'candidate' | 'reviewed' | 'published' | 'hidden';
   isFeatured?: boolean;
 }) {
+  if (isAdminSupabaseConfigured()) return updateDirectAdminTravelPointsBulk(input);
   const result = await apiRequest<{ circuitId: string; updated: number; publicDataSynced: boolean }>(
     `/travel/circuits/${encodeURIComponent(input.circuitId)}/points-bulk`,
     { method: 'PATCH', body: JSON.stringify(input) }, 60_000,
@@ -1109,6 +1118,7 @@ export async function updateAdminTravelPointsBulk(input: {
 }
 
 export async function applyAdminTravelPointOsmTranslations(circuitId: string) {
+  if (isAdminSupabaseConfigured()) return applyDirectAdminTravelPointOsmTranslations(circuitId);
   const result = await apiRequest<{ circuitId: string; updated: number; publicDataSynced: boolean }>(
     `/travel/circuits/${encodeURIComponent(circuitId)}/translations/osm`,
     { method: 'POST' }, 60_000,
@@ -1118,6 +1128,7 @@ export async function applyAdminTravelPointOsmTranslations(circuitId: string) {
 }
 
 async function travelPointPhotoRequest(input: AdminTravelPointPhotoInput, preview: boolean) {
+  if (isAdminSupabaseConfigured()) throw new Error('Загрузка фотографий туристических точек в Supabase пока не подключена');
   const config = apiConfiguration();
   if (!config) throw new Error('Локальный API базы данных для админки не настроен');
   const metadata = Buffer.from(JSON.stringify(preview ? {

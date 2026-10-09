@@ -1129,6 +1129,7 @@ export async function saveTravelPoint(formData: FormData) {
     if (!name) throw new Error('Исходное название обязательно');
     const result = await updateAdminTravelPoint({
       id, circuitId, name, nameRu: optionalText(formData, 'nameRu'), descriptionRu: optionalText(formData, 'descriptionRu'),
+      expectedRevision: String(formData.get('expectedRevision') ?? ''),
       categoryId: String(formData.get('categoryId') ?? ''), role: String(formData.get('role') ?? '') as 'transport' | 'stay' | 'explore' | 'essential' | 'circuit',
       latitude: coordinate('latitude', -90, 90), longitude: coordinate('longitude', -180, 180),
       address: optionalText(formData, 'address'), websiteUrl: optionalText(formData, 'websiteUrl'), openingHours: optionalText(formData, 'openingHours'),
@@ -1139,7 +1140,7 @@ export async function saveTravelPoint(formData: FormData) {
     publicDataSynced = result.publicDataSynced;
   } catch (error) {
     console.error('Не удалось сохранить туристическую точку', error);
-    redirect(`${destination}?error=save`);
+    redirect(`${destination}?error=${error instanceof Error && error.message.includes('Точка была изменена') ? 'conflict' : 'save'}`);
   }
   revalidatePath('/admin/travel'); revalidatePath(`/admin/travel/${circuitId}`); revalidatePath(destination);
   redirect(`${destination}?saved=1${publicDataSynced ? '' : '&syncError=1'}`);

@@ -2,7 +2,8 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../lib/admin-auth';
-import { getAdminTravelPoints, isAdminDatabaseConfigured } from '../../../lib/admin-database';
+import { getAdminTravelPoints, isAdminDatabaseConfigured, isAdminLocalApiAvailable } from '../../../lib/admin-database';
+import { isAdminSupabaseConfigured } from '../../../lib/supabase-admin';
 import { AdminPagination } from '../../admin-pagination';
 import { TravelPointsMap } from './travel-points-map';
 import { TravelModuleNav } from './travel-module-nav';
@@ -23,6 +24,7 @@ export default async function AdminCircuitTravelPage({ params, searchParams }: {
   if (!await getAdminSession()) redirect('/admin/login');
   if (!isAdminDatabaseConfigured()) redirect('/admin/overview');
   const [{ circuitId }, state] = await Promise.all([params, searchParams]);
+  const canImport = !isAdminSupabaseConfigured() && await isAdminLocalApiAvailable();
   const page = Math.max(1, Number.parseInt(state.page ?? '1', 10) || 1);
   let registry: Awaited<ReturnType<typeof getAdminTravelPoints>> = null;
   try {
@@ -33,7 +35,7 @@ export default async function AdminCircuitTravelPage({ params, searchParams }: {
     });
   } catch (error) {
     console.error(`Не удалось загрузить туристические точки трассы ${circuitId}`, error);
-    return <main className="admin-shell"><section className="admin-directory"><Link className="admin-back-link" href="/admin/travel">← Вернуться к трассам</Link><div className="admin-alert is-error">Локальная база туристических точек временно недоступна. Проверьте локальный сервер и повторите попытку</div></section></main>;
+    return <main className="admin-shell"><section className="admin-directory"><Link className="admin-back-link" href="/admin/travel">← Вернуться к трассам</Link><div className="admin-alert is-error">База туристических точек временно недоступна. Повторите попытку позже</div></section></main>;
   }
   if (!registry) notFound();
   const totalPages = Math.max(1, Math.ceil(registry.filteredCount / registry.limit));
@@ -50,17 +52,17 @@ export default async function AdminCircuitTravelPage({ params, searchParams }: {
   const returnTo = `/admin/travel/${encodeURIComponent(circuitId)}${returnSearch.size ? `?${returnSearch}` : ''}`;
   return <main className="admin-shell"><section className="admin-directory admin-travel-points-directory">
     <Link className="admin-back-link" href="/admin/travel">← Вернуться к трассам</Link>
-    <header><div><span className="admin-kicker">Туристический слой</span><h1>{registry.circuit.name}</h1><p>{registry.filteredCount} точек по текущему фильтру</p></div><div className="admin-directory-header-actions"><Link href="/admin/travel/import">Импортировать из OpenStreetMap</Link></div></header>
-    <TravelModuleNav circuitId={circuitId} active="points" />
+    <header><div><span className="admin-kicker">Туристический слой</span><h1>{registry.circuit.name}</h1><p>{registry.filteredCount} точек по текущему фильтру</p></div>{canImport ? <div className="admin-directory-header-actions"><Link href="/admin/travel/import">Импортировать из OpenStreetMap</Link></div> : null}</header>
+    <TravelModuleNav circuitId={circuitId} active="points" availableSections={isAdminSupabaseConfigured() ? ['points'] : undefined} />
     <form id="travel-point-column-filters" method="get" />
     <TravelPointsMap circuit={registry.circuit} mapPoints={registry.mapPoints} />
     {registry.mapPointsTruncated ? <div className="admin-alert">На карте показаны первые {registry.mapPointLimit.toLocaleString('ru-RU')} точек. Сузьте фильтры, чтобы отобразить нужный набор; таблица и общее количество остаются точными</div> : null}
     {state.bulkUpdated ? <div className="admin-alert">Обновлено точек: {state.bulkUpdated}</div> : null}
     {state.bulkError ? <div className="admin-alert is-error">Не удалось выполнить пакетное действие. Проверьте выбор и повторите попытку</div> : null}
-    {state.syncError ? <div className="admin-alert is-error">Изменения сохранены, но публичные данные не удалось обновить</div> : null}
+    {state.syncError ? <div className="admin-alert">Изменения сохранены в базе. Публичный туристический слой обновится после отдельной публикации данных</div> : null}
     {state.translated !== undefined ? <div className="admin-alert is-success">Русские названия из OpenStreetMap применены: {state.translated}</div> : null}
     {state.translationError ? <div className="admin-alert is-error">Не удалось применить русские названия из OpenStreetMap</div> : null}
-    {state.translationSyncError ? <div className="admin-alert">Названия сохранены в базе, но публичные данные не удалось обновить</div> : null}
+    {state.translationSyncError ? <div className="admin-alert">Названия сохранены в базе. Публичный туристический слой обновится после отдельной публикации данных</div> : null}
     <form action={updateTravelPointsBulk}>
       <input type="hidden" name="circuitId" value={circuitId} />
       <input type="hidden" name="returnTo" value={returnTo} />
