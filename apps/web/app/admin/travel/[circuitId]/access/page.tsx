@@ -63,7 +63,7 @@ export default async function AdminTravelAccessPage({ params, searchParams }: {
   return <main className="admin-shell"><section className="admin-directory admin-travel-subdirectory">
     <Link className="admin-back-link" href={`/admin/travel/${encodeURIComponent(circuitId)}`}>← Вернуться к точкам</Link>
     <header><div><span className="admin-kicker">Ручной реестр доступа</span><h1>{registry.circuit.name}</h1><p>{registry.rows.length} точек и кандидатов</p></div></header>
-    <TravelModuleNav circuitId={circuitId} active="access" availableSections={isAdminSupabaseConfigured() ? ['points', 'access'] : undefined} />
+    <TravelModuleNav circuitId={circuitId} active="access" availableSections={isAdminSupabaseConfigured() ? ['points', 'access', 'zones'] : undefined} />
 
     {state.saved ? <div className="admin-alert is-success">Точка доступа сохранена: {state.saved}</div> : null}
     {state.error === 'conflict' ? <div className="admin-alert is-error">Точку доступа изменили после открытия страницы. Проверьте новые данные и сохраните ещё раз</div> : state.error ? <div className="admin-alert is-error">Не удалось сохранить точку доступа. Проверьте обязательные поля, период и требования проверки</div> : null}

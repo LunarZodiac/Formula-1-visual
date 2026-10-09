@@ -2331,15 +2331,21 @@ async function getTravelZones(circuitId) {
 }
 
 async function getTravelZone(circuitId, zoneId) {
-  const [zoneResult, pointsResult] = await Promise.all([
-    pool.query(`SELECT zone.*,ST_AsGeoJSON(zone.geometry::geometry) AS geometry_geojson,
+  const client = await pool.connect();
+  let zoneResult; let pointsResult; let newCircuitExists = false;
+  try {
+    await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
+    zoneResult = await client.query(`SELECT zone.*,ST_AsGeoJSON(zone.geometry::geometry) AS geometry_geojson,
         presentation.sort_order,presentation.character_ru,presentation.travel_time_ru,presentation.tone,
-        source.name AS source_name,source.url AS source_url
+        source.name AS source_name,source.url AS source_url,
+        md5(to_jsonb(zone)::text || '|' || coalesce(to_jsonb(presentation)::text,'') || '|' || coalesce((
+          SELECT jsonb_agg(to_jsonb(link) ORDER BY link.sort_order,link.poi_id)::text
+          FROM atlas.travel_zone_pois link WHERE link.zone_id=zone.id),'')) AS revision
       FROM atlas.travel_zones AS zone
       LEFT JOIN atlas.circuit_travel_zone_presentations AS presentation ON presentation.zone_id=zone.id
       LEFT JOIN atlas.data_sources AS source ON source.id=zone.source_id
-      WHERE zone.circuit_id=$1 AND zone.id=$2`, [circuitId, zoneId]),
-    pool.query(`SELECT poi.id,coalesce(poi.name_ru,poi.name) AS name,category.name_ru AS category_name,
+      WHERE zone.circuit_id=$1 AND zone.id=$2`, [circuitId, zoneId]);
+    pointsResult = await client.query(`SELECT poi.id,coalesce(poi.name_ru,poi.name) AS name,category.name_ru AS category_name,
         existing.zone_id IS NOT NULL AS selected,coalesce(existing.is_example,false) AS is_example,
         coalesce(existing.sort_order,0)::int AS sort_order
       FROM atlas.circuit_travel_pois AS circuit_link
@@ -2347,15 +2353,21 @@ async function getTravelZone(circuitId, zoneId) {
       JOIN atlas.poi_categories AS category ON category.id=poi.category_id
       LEFT JOIN atlas.travel_zone_pois AS existing ON existing.poi_id=poi.id AND existing.zone_id=$2
       WHERE circuit_link.circuit_id=$1 AND category.group_id='stay' AND poi.review_status<>'hidden'
-      ORDER BY existing.zone_id IS NOT NULL DESC,existing.sort_order,poi.importance DESC,lower(coalesce(poi.name_ru,poi.name))`, [circuitId, zoneId]),
-  ]);
+      ORDER BY existing.zone_id IS NOT NULL DESC,existing.sort_order,poi.importance DESC,lower(coalesce(poi.name_ru,poi.name))`, [circuitId, zoneId]);
+    if (!zoneResult.rows.length && zoneId === 'new') {
+      newCircuitExists = Boolean((await client.query('SELECT 1 FROM atlas.circuits WHERE id=$1', [circuitId])).rows.length);
+    }
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally { client.release(); }
   if (!zoneResult.rows.length && zoneId === 'new') {
-    const circuit = await pool.query('SELECT id FROM atlas.circuits WHERE id=$1', [circuitId]);
-    if (!circuit.rows.length) return null;
+    if (!newCircuitExists) return null;
     return { zone: { id: '', circuitId, zoneType: 'accommodation', name: '', nameRu: '', descriptionRu: null,
       geometryGeoJson: null, priority: 50, priceBand: null, bestFor: [], advantagesRu: [], disadvantagesRu: [],
       eventOnly: false, reviewStatus: 'candidate', sortOrder: 0, characterRu: 'Район проживания', travelTimeRu: 'Уточняется',
-      tone: '#F2C14E', sourceName: null, sourceUrl: null },
+      tone: '#F2C14E', sourceName: null, sourceUrl: null, revision: null },
       points: pointsResult.rows.map((point) => ({ id: String(point.id), name: String(point.name), categoryName: String(point.category_name),
         selected: false, isExample: false, sortOrder: 0 })) };
   }
@@ -2367,7 +2379,7 @@ async function getTravelZone(circuitId, zoneId) {
     advantagesRu: row.advantages_ru ?? [], disadvantagesRu: row.disadvantages_ru ?? [], eventOnly: Boolean(row.event_only),
     reviewStatus: String(row.review_status), sortOrder: row.sort_order === null ? 0 : Number(row.sort_order),
     characterRu: row.character_ru ?? '', travelTimeRu: row.travel_time_ru ?? '', tone: row.tone ?? '#F2C14E',
-    sourceName: row.source_name, sourceUrl: row.source_url },
+    sourceName: row.source_name, sourceUrl: row.source_url, revision: row.revision },
     points: pointsResult.rows.map((point) => ({ id: String(point.id), name: String(point.name), categoryName: String(point.category_name),
       selected: Boolean(point.selected), isExample: Boolean(point.is_example), sortOrder: Number(point.sort_order) })) };
 }
@@ -2396,9 +2408,27 @@ async function saveTravelZone(rawInput, circuitId, zoneId) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    if (geometry) {
+      const checked = await client.query(`SELECT NOT ST_IsEmpty(shape) AND ST_IsValid(shape)
+        AND ST_XMin(shape) >= -180 AND ST_XMax(shape) <= 180
+        AND ST_YMin(shape) >= -90 AND ST_YMax(shape) <= 90 AS valid
+        FROM (SELECT ST_GeomFromGeoJSON($1) AS shape) candidate`, [JSON.stringify(geometry)]);
+      if (!checked.rows[0]?.valid) throw new Error('Граница района должна быть непустым корректным полигоном с допустимыми координатами');
+    }
     const circuit = await client.query('SELECT id FROM atlas.circuits WHERE id=$1', [circuitId]); if (!circuit.rows.length) { await client.query('ROLLBACK'); return null; }
-    const existingZone = await client.query('SELECT circuit_id FROM atlas.travel_zones WHERE id=$1', [zoneId]);
+    await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))', [zoneId]);
+    const existingZone = await client.query(`SELECT zone.circuit_id,
+      md5(to_jsonb(zone)::text || '|' || coalesce(to_jsonb(presentation)::text,'') || '|' || coalesce((
+        SELECT jsonb_agg(to_jsonb(link) ORDER BY link.sort_order,link.poi_id)::text
+        FROM atlas.travel_zone_pois link WHERE link.zone_id=zone.id),'')) AS revision
+      FROM atlas.travel_zones zone
+      LEFT JOIN atlas.circuit_travel_zone_presentations presentation ON presentation.zone_id=zone.id
+      WHERE zone.id=$1 FOR UPDATE OF zone`, [zoneId]);
     if (existingZone.rows.length && existingZone.rows[0].circuit_id !== circuitId) throw new Error('ID района уже принадлежит другой трассе');
+    if (existingZone.rows.length && existingZone.rows[0].revision !== rawInput?.expectedRevision)
+      throw new Error('Район изменён после открытия страницы. Обновите страницу');
+    if (!existingZone.rows.length && rawInput?.expectedRevision)
+      throw new Error('Район больше не существует');
     await client.query(`INSERT INTO atlas.data_sources(id,name,url,retrieved_at,notes) VALUES($1,$2,$3,now(),'Источник района проживания')
       ON CONFLICT(id) DO UPDATE SET name=EXCLUDED.name,url=EXCLUDED.url,retrieved_at=now()`, [sourceId, sourceUrl.hostname, sourceUrl.href]);
     await client.query(`INSERT INTO atlas.travel_zones(id,circuit_id,zone_type,name,name_ru,description_ru,geometry,priority,price_band,best_for,advantages_ru,disadvantages_ru,event_only,source_id,review_status)

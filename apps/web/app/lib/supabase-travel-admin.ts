@@ -1,4 +1,4 @@
-import type { AdminTravelAccessAnchorRegistry, AdminTravelPoint, AdminTravelPointInput, AdminTravelPointRegistry, AdminTravelRegistry } from './admin-database';
+import type { AdminTravelAccessAnchorRegistry, AdminTravelPoint, AdminTravelPointInput, AdminTravelPointRegistry, AdminTravelRegistry, AdminTravelZoneDetail, AdminTravelZoneRegistry } from './admin-database';
 import { adminSupabaseRpc } from './supabase-admin';
 
 export function getDirectAdminTravelRegistry(filters: {
@@ -80,5 +80,21 @@ export function updateDirectAdminTravelAccessAnchor(circuitId: string, anchorId:
 }> {
   return adminSupabaseRpc('admin_save_travel_access_anchor', {
     p_circuit_id: circuitId, p_anchor_id: anchorId, p_input: input,
+  });
+}
+
+export function getDirectAdminTravelZones(circuitId: string): Promise<AdminTravelZoneRegistry | null> {
+  return adminSupabaseRpc('admin_travel_zones', { p_circuit_id: circuitId });
+}
+
+export function getDirectAdminTravelZone(circuitId: string, zoneId: string): Promise<AdminTravelZoneDetail | null> {
+  return adminSupabaseRpc('admin_travel_zone', { p_circuit_id: circuitId, p_zone_id: zoneId });
+}
+
+export function updateDirectAdminTravelZone(circuitId: string, zoneId: string, input: Record<string, unknown>): Promise<{
+  id: string; circuitId: string; publicDataSynced: boolean;
+}> {
+  return adminSupabaseRpc('admin_save_travel_zone', {
+    p_circuit_id: circuitId, p_zone_id: zoneId, p_input: input,
   });
 }

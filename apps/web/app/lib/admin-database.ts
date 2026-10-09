@@ -70,10 +70,13 @@ import {
   getDirectAdminTravelPoints,
   getDirectAdminTravelAccessAnchors,
   getDirectAdminTravelRegistry,
+  getDirectAdminTravelZone,
+  getDirectAdminTravelZones,
   updateDirectAdminTravelPoint,
   updateDirectAdminTravelPointsBulk,
   updateDirectAdminTravelAccessAnchor,
   updateDirectAdminTravelCategoryIcon,
+  updateDirectAdminTravelZone,
 } from './supabase-travel-admin';
 
 export type AdminDriver = {
@@ -526,7 +529,7 @@ export type AdminTravelZoneDetail = {
   zone: { id: string; circuitId: string; zoneType: string; name: string; nameRu: string; descriptionRu: string | null;
     geometryGeoJson: string | null; priority: number; priceBand: number | null; bestFor: string[]; advantagesRu: string[];
     disadvantagesRu: string[]; eventOnly: boolean; reviewStatus: string; sortOrder: number; characterRu: string;
-    travelTimeRu: string; tone: string; sourceName: string | null; sourceUrl: string | null };
+    travelTimeRu: string; tone: string; sourceName: string | null; sourceUrl: string | null; revision?: string | null };
   points: Array<{ id: string; name: string; categoryName: string; selected: boolean; isExample: boolean; sortOrder: number }>;
 };
 
@@ -1163,14 +1166,17 @@ export function uploadAdminTravelPointPhoto(input: AdminTravelPointPhotoInput) {
 }
 
 export function getAdminTravelZones(circuitId: string) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminTravelZones(circuitId);
   return apiRequest<AdminTravelZoneRegistry>(`/travel/circuits/${encodeURIComponent(circuitId)}/zones`);
 }
 
 export function getAdminTravelZone(circuitId: string, zoneId: string) {
+  if (isAdminSupabaseConfigured()) return getDirectAdminTravelZone(circuitId, zoneId);
   return apiRequest<AdminTravelZoneDetail>(`/travel/circuits/${encodeURIComponent(circuitId)}/zones/${encodeURIComponent(zoneId)}`);
 }
 
 export function updateAdminTravelZone(circuitId: string, zoneId: string, input: Record<string, unknown>) {
+  if (isAdminSupabaseConfigured()) return updateDirectAdminTravelZone(circuitId, zoneId, input);
   return apiRequest<{ id: string; circuitId: string; publicDataSynced: boolean }>(
     `/travel/circuits/${encodeURIComponent(circuitId)}/zones/${encodeURIComponent(zoneId)}`,
     { method: 'PUT', body: JSON.stringify(input) }, 120_000,

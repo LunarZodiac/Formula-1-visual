@@ -1260,6 +1260,10 @@ export async function saveTravelZone(formData: FormData) {
   const circuitId = String(formData.get('circuitId') ?? '').trim(); const zoneId = String(formData.get('zoneId') ?? '').trim();
   const destination = `/admin/travel/${encodeURIComponent(circuitId)}/zones/${encodeURIComponent(zoneId)}`;
   try {
+    const source = new URL(String(formData.get('sourceUrl') ?? '').trim());
+    if (!['http:', 'https:'].includes(source.protocol) || source.username || source.password || !source.hostname) {
+      throw new Error('Некорректный источник района');
+    }
     const lines = (name: string) => String(formData.get(name) ?? '').split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
     const selectedPoints = formData.getAll('selectedPoint').map(String);
     const result = await updateAdminTravelZone(circuitId, zoneId, {
@@ -1269,14 +1273,16 @@ export async function saveTravelZone(formData: FormData) {
       bestFor: lines('bestFor'), advantagesRu: lines('advantagesRu'), disadvantagesRu: lines('disadvantagesRu'),
       eventOnly: formData.get('eventOnly') === 'yes', reviewStatus: String(formData.get('reviewStatus') ?? ''),
       sortOrder: Number(formData.get('sortOrder')), characterRu: optionalText(formData,'characterRu'), travelTimeRu: optionalText(formData,'travelTimeRu'),
-      tone: String(formData.get('tone') ?? '#F2C14E'), sourceUrl: String(formData.get('sourceUrl') ?? ''),
+      tone: String(formData.get('tone') ?? '#F2C14E'), sourceUrl: source.href,
+      expectedRevision: optionalText(formData, 'expectedRevision'),
       selectedPoints, examplePoints: formData.getAll('examplePoint').map(String).filter((id) => selectedPoints.includes(id)),
     });
     revalidatePath('/admin/travel'); revalidatePath(`/admin/travel/${circuitId}`); revalidatePath(`/admin/travel/${circuitId}/zones`); revalidatePath(destination);
     redirect(`${destination}?saved=1${result?.publicDataSynced === false ? '&syncError=1' : ''}`);
   } catch (error) {
     if (error && typeof error === 'object' && 'digest' in error) throw error;
-    console.error('Не удалось сохранить район проживания',error); redirect(`${destination}?error=save`);
+    console.error('Не удалось сохранить район проживания',error);
+    redirect(`${destination}?error=${error instanceof Error && /изменён после открытия|больше не существует/.test(error.message) ? 'conflict' : 'save'}`);
   }
 }
 

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getAdminSession } from '../../../../lib/admin-auth';
 import { getAdminTravelZones, isAdminDatabaseConfigured } from '../../../../lib/admin-database';
+import { isAdminSupabaseConfigured } from '../../../../lib/supabase-admin';
 import { TravelModuleNav } from '../travel-module-nav';
 
 const typeLabels: Record<string,string> = { accommodation:'Размещение',parking:'Парковка',park_and_ride:'P+R',access:'Доступ',restricted:'Ограничение',walking:'Пешеходная',travel_time:'Время в пути' };
@@ -18,7 +19,7 @@ export default async function AdminTravelZonesPage({ params, searchParams }: {
   try { registry = await getAdminTravelZones(circuitId); }
   catch (error) {
     console.error(`Не удалось загрузить районы трассы ${circuitId}`, error);
-    return <main className="admin-shell"><section className="admin-directory"><Link className="admin-back-link" href={`/admin/travel/${encodeURIComponent(circuitId)}`}>← Вернуться к точкам</Link><div className="admin-alert is-error">Локальная база районов временно недоступна. Проверьте локальный сервер и повторите попытку</div></section></main>;
+    return <main className="admin-shell"><section className="admin-directory"><Link className="admin-back-link" href={`/admin/travel/${encodeURIComponent(circuitId)}`}>← Вернуться к точкам</Link><div className="admin-alert is-error">База районов временно недоступна. Повторите попытку позже</div></section></main>;
   }
   if (!registry) notFound();
   const query = state.q?.trim().slice(0, 120).toLocaleLowerCase('ru-RU') ?? '';
@@ -34,7 +35,7 @@ export default async function AdminTravelZonesPage({ params, searchParams }: {
   return <main className="admin-shell"><section className="admin-directory admin-travel-subdirectory">
     <Link className="admin-back-link" href={`/admin/travel/${encodeURIComponent(circuitId)}`}>← Вернуться к точкам</Link>
     <header><div><span className="admin-kicker">Районы и зоны</span><h1>{registry.circuit.name}</h1><p>{rows.length} из {registry.rows.length} зон по текущему фильтру</p></div><div className="admin-directory-header-actions"><Link href={`/admin/travel/${encodeURIComponent(circuitId)}/zones/new`}>Добавить район</Link></div></header>
-    <TravelModuleNav circuitId={circuitId} active="zones" />
+    <TravelModuleNav circuitId={circuitId} active="zones" availableSections={isAdminSupabaseConfigured() ? ['points', 'access', 'zones'] : undefined} />
     <form className="admin-directory-search admin-travel-directory-filters" method="get"><label><span>Название или ID</span><input name="q" defaultValue={state.q ?? ''} placeholder="Найти район" /></label><label><span>Тип</span><select name="type" defaultValue={type}><option value="">Все типы</option>{Object.entries(typeLabels).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label><label><span>Граница</span><select name="geometry" defaultValue={geometry}><option value="">Любое состояние</option><option value="yes">Есть</option><option value="no">Не задана</option></select></label><label><span>Статус</span><select name="status" defaultValue={status}><option value="">Все статусы</option>{Object.entries(statusLabels).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label><button type="submit">Применить</button><Link href={`/admin/travel/${encodeURIComponent(circuitId)}/zones`}>Сбросить</Link></form>
     <div className="admin-table-wrap"><table><thead><tr><th>Район</th><th>Тип</th><th>Граница</th><th>Объекты</th><th>Приоритет</th><th>Статус</th><th><span className="sr-only">Действие</span></th></tr></thead><tbody>
       {rows.map((zone) => <tr key={zone.id}><td><strong>{zone.nameRu}</strong><small><code>{zone.id}</code></small></td><td>{typeLabels[zone.zoneType] ?? zone.zoneType}</td>

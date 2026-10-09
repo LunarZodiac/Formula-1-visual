@@ -9,13 +9,20 @@ const lines = (values: string[]) => values.join('\n');
 
 export default async function AdminTravelZonePage({ params,searchParams }: { params: Promise<{ circuitId:string;zoneId:string }>; searchParams: Promise<{ saved?:string;syncError?:string;error?:string }> }) {
   if (!await getAdminSession()) redirect('/admin/login'); if (!isAdminDatabaseConfigured()) redirect('/admin/overview');
-  const [{ circuitId,zoneId },state] = await Promise.all([params,searchParams]); const detail = await getAdminTravelZone(circuitId,zoneId).catch(() => null); if (!detail) notFound(); const { zone,points }=detail;
+  const [{ circuitId,zoneId },state] = await Promise.all([params,searchParams]);
+  let detail: Awaited<ReturnType<typeof getAdminTravelZone>> = null;
+  try { detail = await getAdminTravelZone(circuitId,zoneId); }
+  catch (error) {
+    console.error(`Не удалось загрузить район ${zoneId} трассы ${circuitId}`, error);
+    return <main className="admin-shell"><section className="admin-edit-panel"><Link className="admin-back-link" href={`/admin/travel/${encodeURIComponent(circuitId)}/zones`}>← Вернуться к районам</Link><div className="admin-alert is-error">База районов временно недоступна. Повторите попытку позже</div></section></main>;
+  }
+  if (!detail) notFound(); const { zone,points }=detail;
   return <main className="admin-shell"><section className="admin-edit-panel admin-travel-zone-editor">
     <Link className="admin-back-link" href={`/admin/travel/${encodeURIComponent(circuitId)}/zones`}>← Вернуться к районам</Link>
     <header><div><span className="admin-kicker">Район проживания</span><h1>{zone.nameRu || 'Новый район'}</h1></div>{zone.id?<code>{zone.id}</code>:null}</header>
     {state.saved==='1'?<div className="admin-alert is-success">{state.syncError==='1'?'Район сохранён в базе':'Район сохранён, публичные данные обновлены'}</div>:null}
-    {state.error?<div className="admin-alert is-error">Не удалось сохранить район. Проверьте границу, источник и обязательные поля</div>:null}
-    <form action={saveTravelZone} className="admin-editor-form"><input type="hidden" name="circuitId" value={circuitId}/>{zone.id?<input type="hidden" name="zoneId" value={zone.id}/>:null}
+    {state.error==='conflict'?<div className="admin-alert is-error">Район изменили после открытия страницы. Проверьте новые данные и сохраните ещё раз</div>:state.error?<div className="admin-alert is-error">Не удалось сохранить район. Проверьте границу, источник и обязательные поля</div>:null}
+    <form action={saveTravelZone} className="admin-editor-form"><input type="hidden" name="circuitId" value={circuitId}/><input type="hidden" name="expectedRevision" value={zone.revision ?? ''}/>{zone.id?<input type="hidden" name="zoneId" value={zone.id}/>:null}
       <fieldset><legend>Карточка района</legend><div className="admin-form-grid">
         {!zone.id?<label className="is-wide"><span>ID района</span><input name="zoneId" defaultValue={`${circuitId}-stay-`} pattern="[A-Za-z0-9_-]+" required/><small>Стабильный системный ID, например spa-stay-malmedy</small></label>:null}
         <label><span>Исходное название</span><input name="name" defaultValue={zone.name} required/></label><label><span>Название на русском</span><input name="nameRu" defaultValue={zone.nameRu} required/></label>
