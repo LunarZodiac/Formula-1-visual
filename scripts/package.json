@@ -20,6 +20,7 @@
     "test:spa-travel-cultural": "node --test tests/spa-travel-cultural-review.test.mjs",
     "test:media": "node --test tests/driver-image-processing.test.mjs",
     "test:jolpica": "node --test tests/jolpica-snapshot.test.mjs",
+    "test:jolpica:repeat": "node --test tests/jolpica-repeat-import.test.mjs",
     "test:formula1-qualifying": "node --test tests/formula1-qualifying-import.test.mjs",
     "import:formula1-qualifying": "node formula1-qualifying-import.mjs",
     "export:search-index": "node --env-file=../.env.database.local export-search-index.mjs",

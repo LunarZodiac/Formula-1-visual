@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { env } from 'cloudflare:workers';
+import { queueSeasonSync } from './season-sync-workflow';
 import {
   getDirectAdminDashboard,
   getDirectAdminEvent,
@@ -720,11 +721,14 @@ export type AdminSeasonSyncResult = {
 };
 
 export async function syncAdminSeasonFromJolpica(season: number) {
+  if (isAdminSupabaseConfigured()) {
+    return { status: 'queued' as const, ...await queueSeasonSync(season) };
+  }
   const result = await apiRequest<AdminSeasonSyncResult>('/data-sync/jolpica', {
     method: 'POST', body: JSON.stringify({ season }),
   }, 2 * 60 * 60 * 1000);
   if (!result) throw new Error('Не удалось обновить сезон через Jolpica');
-  return result;
+  return { status: 'complete' as const, ...result };
 }
 
 async function apiRequest<T>(path: string, init?: RequestInit, timeoutMs = 4_000): Promise<T | null> {

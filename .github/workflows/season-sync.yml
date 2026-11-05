@@ -1,0 +1,108 @@
+name: Import Jolpica season
+run-name: Jolpica season ${{ inputs.season }} · ${{ inputs.request_id }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      season:
+        description: Formula 1 season year
+        required: true
+        type: string
+      request_id:
+        description: Admin request identifier
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jolpica-season-sync
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PGHOST: ${{ secrets.SUPABASE_PGHOST }}
+      PGPORT: ${{ secrets.SUPABASE_PGPORT }}
+      PGDATABASE: ${{ secrets.SUPABASE_PGDATABASE }}
+      PGUSER: ${{ secrets.SUPABASE_PGUSER }}
+      PGPASSWORD: ${{ secrets.SUPABASE_PGPASSWORD }}
+      PGSSLMODE: require
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate input and database configuration
+        env:
+          SYNC_SEASON: ${{ inputs.season }}
+          SYNC_REQUEST_ID: ${{ inputs.request_id }}
+        run: |
+          [[ "$SYNC_SEASON" =~ ^[0-9]{4}$ ]] || { echo 'Invalid season'; exit 1; }
+          [[ "$SYNC_REQUEST_ID" =~ ^[0-9a-f-]{36}$ ]] || { echo 'Invalid request ID'; exit 1; }
+          for variable in PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD; do
+            [[ -n "${!variable}" ]] || { echo "Missing $variable"; exit 1; }
+          done
+      - name: Install data tool dependencies
+        run: pnpm --dir scripts install --frozen-lockfile
+      - name: Install web dependencies and verify base build
+        run: |
+          pnpm --dir apps/web install --frozen-lockfile
+          pnpm --dir apps/web build
+      - name: Fetch, audit and import full season
+        env:
+          SYNC_SEASON: ${{ inputs.season }}
+        run: node scripts/sync-active-season.mjs --season="$SYNC_SEASON" --apply
+      - name: Retain Jolpica source snapshot and checksum
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jolpica-${{ inputs.season }}-${{ inputs.request_id }}
+          path: tmp/jolpica-api-snapshots/${{ inputs.season }}/
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Verify generated web build
+        run: pnpm --dir apps/web build
+      - name: Publish verified snapshots
+        env:
+          SYNC_SEASON: ${{ inputs.season }}
+        run: |
+          git add -- apps/web/public/data/f1 apps/web/app/data/catalogs apps/web/public/data/search-index.json
+          if git diff --cached --quiet; then
+            echo 'No public snapshot changes'
+            exit 0
+          fi
+          git diff --cached --check
+          git config user.name 'f1-atlas-season-sync'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "Update season ${SYNC_SEASON} from Jolpica"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Publication attempt ${attempt} failed"
+            sleep 5
+          done
+          echo 'Publication failed after three attempts'
+          exit 1
+      - name: Preserve generated files if publication failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unpublished-season-${{ inputs.season }}-${{ inputs.request_id }}
+          path: |
+            apps/web/public/data/f1/
+            apps/web/app/data/catalogs/
+            apps/web/public/data/search-index.json
+          if-no-files-found: warn
+          retention-days: 90

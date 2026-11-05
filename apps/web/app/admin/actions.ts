@@ -96,9 +96,14 @@ export async function syncSeasonFromJolpica(formData: FormData) {
   const currentYear = new Date().getUTCFullYear();
   if (!Number.isInteger(season) || season < 1950 || season > currentYear + 1) redirect('/admin/seasons?syncFailed=invalid-season');
   let snapshotFileName = '';
+  let queuedRequestId = '';
   try {
     const result = await syncAdminSeasonFromJolpica(season);
-    snapshotFileName = result.snapshot.fileName;
+    if (result.status === 'queued') {
+      queuedRequestId = result.requestId;
+    } else {
+      snapshotFileName = result.snapshot.fileName;
+    }
   } catch (error) {
     console.error(`Не удалось обновить сезон ${season} через Jolpica`, error);
     const message = error instanceof Error ? error.message : String(error);
@@ -109,6 +114,7 @@ export async function syncSeasonFromJolpica(formData: FormData) {
   revalidatePath('/admin/events');
   revalidatePath('/drivers');
   revalidatePath('/teams');
+  if (queuedRequestId) redirect(`/admin/seasons?syncQueued=${season}&requestId=${encodeURIComponent(queuedRequestId)}`);
   redirect(`/admin/seasons?synced=${season}&snapshot=${encodeURIComponent(snapshotFileName)}`);
 }
 

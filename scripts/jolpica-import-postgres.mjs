@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import pg from "pg";
+import { pathToFileURL } from "node:url";
 import { loadSeasonData, readSeason, saveSeasonSnapshot } from "./jolpica-preview.mjs";
 
 const { Client } = pg;
@@ -82,7 +83,7 @@ async function upsertExternalId(client, entityType, entityId, externalId = entit
   );
 }
 
-async function importCatalogs(client, season, data) {
+export async function importCatalogs(client, season, data) {
   for (const driver of data.drivers) {
     await client.query(
       `INSERT INTO atlas.drivers
@@ -97,7 +98,8 @@ async function importCatalogs(client, season, data) {
          date_of_birth = COALESCE(EXCLUDED.date_of_birth, atlas.drivers.date_of_birth),
          nationality = COALESCE(EXCLUDED.nationality, atlas.drivers.nationality),
          source_id = EXCLUDED.source_id,
-         updated_at = now()`,
+         updated_at = now()
+       WHERE atlas.drivers.source_id = 'jolpica'`,
       [
         driver.driverId,
         driver.givenName,
@@ -121,7 +123,8 @@ async function importCatalogs(client, season, data) {
          name = EXCLUDED.name,
          nationality = COALESCE(EXCLUDED.nationality, atlas.constructors.nationality),
          source_id = EXCLUDED.source_id,
-         updated_at = now()`,
+         updated_at = now()
+       WHERE atlas.constructors.source_id = 'jolpica'`,
       [constructor.constructorId, constructor.name, constructor.nationality || null],
     );
     await upsertExternalId(client, "constructor", constructor.constructorId);
@@ -130,18 +133,23 @@ async function importCatalogs(client, season, data) {
       `INSERT INTO atlas.constructor_entries
          (season_year, constructor_id, display_name)
        VALUES ($1, $2, $3)
-       ON CONFLICT (season_year, constructor_id) DO UPDATE SET
-         display_name = EXCLUDED.display_name
+       ON CONFLICT (season_year, constructor_id) DO NOTHING
        RETURNING id`,
       [season, constructor.constructorId, constructor.name],
     );
-    entryIds.set(constructor.constructorId, entryResult.rows[0].id);
+    const entryId = entryResult.rows[0]?.id ?? (await client.query(
+      `SELECT id FROM atlas.constructor_entries
+       WHERE season_year = $1 AND constructor_id = $2`,
+      [season, constructor.constructorId],
+    )).rows[0]?.id;
+    if (!entryId) throw new Error(`Не найдена запись команды ${constructor.constructorId} в сезоне ${season}`);
+    entryIds.set(constructor.constructorId, entryId);
   }
 
   return entryIds;
 }
 
-async function importSchedule(client, season, data) {
+export async function importSchedule(client, season, data) {
   const resultRounds = new Set(data.results.map((race) => Number(race.round)));
 
   for (const race of data.schedule) {
@@ -167,7 +175,8 @@ async function importSchedule(client, season, data) {
          country_code = EXCLUDED.country_code,
          location = EXCLUDED.location,
          source_id = EXCLUDED.source_id,
-         updated_at = now()`,
+         updated_at = now()
+       WHERE atlas.circuits.source_id = 'jolpica'`,
       [
         circuit.circuitId,
         circuit.circuitName,
@@ -194,7 +203,8 @@ async function importSchedule(client, season, data) {
          start_time_utc = EXCLUDED.start_time_utc,
          status = EXCLUDED.status,
          source_id = EXCLUDED.source_id,
-         updated_at = now()`,
+         updated_at = now()
+       WHERE atlas.races.source_id = 'jolpica'`,
       [
         raceId(season, round),
         season,
@@ -213,7 +223,7 @@ function sessionRows(race, childName) {
   return Array.isArray(race[childName]) ? race[childName] : [];
 }
 
-async function importSessions(client, season, races, type, childName, entryIds) {
+export async function importSessions(client, season, races, type, childName, entryIds) {
   for (const race of races) {
     const round = Number(race.round);
     const currentSessionId = sessionId(season, round, type);
@@ -226,17 +236,7 @@ async function importSessions(client, season, races, type, childName, entryIds) 
         ? `${race.date}T${race.time ?? "00:00:00Z"}`
         : null;
 
-    if (type === "race") {
-      // Снимок API считается главным только для созданных им непроверенных строк.
-      // Manually reviewed historical entries must survive a refresh.
-      await client.query(
-        `DELETE FROM atlas.driver_event_entries
-         WHERE race_id = $1 AND source_id = 'jolpica' AND review_status = 'imported'`,
-        [raceId(season, round)],
-      );
-    }
-
-    await client.query(
+    const sessionWrite = await client.query(
       `INSERT INTO atlas.sessions
          (id, race_id, session_type, name, starts_at, status, source_id, updated_at)
        VALUES ($1, $2, $3, $4, $5, 'completed', 'jolpica', now())
@@ -245,7 +245,9 @@ async function importSessions(client, season, races, type, childName, entryIds) 
          starts_at = COALESCE(EXCLUDED.starts_at, atlas.sessions.starts_at),
          status = EXCLUDED.status,
          source_id = EXCLUDED.source_id,
-         updated_at = now()`,
+         updated_at = now()
+       WHERE atlas.sessions.source_id = 'jolpica'
+       RETURNING id`,
       [
         currentSessionId,
         raceId(season, round),
@@ -255,7 +257,20 @@ async function importSessions(client, season, races, type, childName, entryIds) 
       ],
     );
 
-    await client.query("DELETE FROM atlas.session_results WHERE session_id = $1", [
+    // A session explicitly edited in the admin has a different source.
+    if (sessionWrite.rowCount === 0) continue;
+
+    if (type === "race") {
+      // Refresh only imported roster entries after confirming session ownership.
+      await client.query(
+        `DELETE FROM atlas.driver_event_entries
+         WHERE race_id = $1 AND source_id = 'jolpica' AND review_status = 'imported'`,
+        [raceId(season, round)],
+      );
+    }
+
+    // A reviewed result has its own source and must survive a Jolpica refresh.
+    await client.query("DELETE FROM atlas.session_results WHERE session_id = $1 AND source_id = 'jolpica'", [
       currentSessionId,
     ]);
 
@@ -282,7 +297,7 @@ async function importSessions(client, season, races, type, childName, entryIds) 
          VALUES (
            $1, $2, $3, $4, $5, $6, $7, $8, $9,
            $10, $11, $12, $13, $14, $15, $16::jsonb, 'jolpica'
-         )`,
+         ) ON CONFLICT (session_id, driver_id) DO NOTHING`,
         [
           currentSessionId,
           position,
@@ -349,6 +364,10 @@ async function reconcileJolpicaSeason(client, season, data) {
      WHERE session.race_id = race.id AND race.season_year = $1
        AND session.source_id = 'jolpica'
        AND session.session_type IN ('race', 'qualifying', 'sprint')
+       AND NOT EXISTS (
+         SELECT 1 FROM atlas.session_results AS result
+         WHERE result.session_id = session.id AND result.source_id IS DISTINCT FROM 'jolpica'
+       )
        AND NOT (session.id = ANY($2::text[]))`,
     [season, expectedSessionIds],
   );
@@ -406,6 +425,23 @@ async function importStandings(client, season, data, entryIds) {
   }
 }
 
+export async function upsertSeason(client, season, roundsPlanned) {
+  const currentYear = new Date().getUTCFullYear();
+  const seasonStatus = season < currentYear ? "completed" : season === currentYear ? "active" : "planned";
+  await client.query(
+      `INSERT INTO atlas.seasons
+         (year, status, rounds_planned, source_id, updated_at)
+       VALUES ($1, $2, $3, 'jolpica', now())
+       ON CONFLICT (year) DO UPDATE SET
+         status = EXCLUDED.status,
+         rounds_planned = EXCLUDED.rounds_planned,
+         source_id = EXCLUDED.source_id,
+         updated_at = now()
+       WHERE atlas.seasons.source_id = 'jolpica'`,
+      [season, seasonStatus, roundsPlanned],
+  );
+}
+
 async function importSeason(client, season, data) {
   await client.query("BEGIN");
   try {
@@ -416,19 +452,7 @@ async function importSeason(client, season, data) {
        ON CONFLICT (id) DO UPDATE SET retrieved_at = now()`,
     );
 
-    const currentYear = new Date().getUTCFullYear();
-    const seasonStatus = season < currentYear ? "completed" : season === currentYear ? "active" : "planned";
-    await client.query(
-      `INSERT INTO atlas.seasons
-         (year, status, rounds_planned, source_id, updated_at)
-       VALUES ($1, $2, $3, 'jolpica', now())
-       ON CONFLICT (year) DO UPDATE SET
-         status = EXCLUDED.status,
-         rounds_planned = EXCLUDED.rounds_planned,
-         source_id = EXCLUDED.source_id,
-         updated_at = now()`,
-      [season, seasonStatus, data.schedule.length],
-    );
+    await upsertSeason(client, season, data.schedule.length);
 
     const entryIds = await importCatalogs(client, season, data);
     await importSchedule(client, season, data);
@@ -451,7 +475,7 @@ async function importSeason(client, season, data) {
   }
 }
 
-try {
+async function main() {
   const argv = process.argv.slice(2);
   const season = readSeason(argv);
   assertApplyFlag(argv);
@@ -482,7 +506,11 @@ try {
   } finally {
     await client.end();
   }
-} catch (error) {
-  console.error(`\nОшибка: ${error instanceof Error ? error.message : String(error)}`);
-  process.exitCode = 1;
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(`\nОшибка: ${error instanceof Error ? error.message : String(error)}`);
+    process.exitCode = 1;
+  });
 }

@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getAdminSession } from '../../lib/admin-auth';
 import { getAdminSeasons, isAdminDatabaseConfigured } from '../../lib/admin-database';
+import { isAdminSupabaseConfigured } from '../../lib/supabase-admin';
+import { isSeasonSyncWorkflowConfigured } from '../../lib/season-sync-workflow';
 import { AdminPagination } from '../admin-pagination';
 import { saveSeason, syncSeasonFromJolpica } from '../actions';
 
@@ -9,10 +11,12 @@ const pageSize = 25;
 const statusLabels = { planned: 'Запланирован', active: 'Идёт сейчас', completed: 'Завершён', cancelled: 'Отменён' } as const;
 
 export default async function AdminSeasonsPage({ searchParams }: {
-  searchParams: Promise<{ page?: string; q?: string; status?: string; saved?: string; syncError?: string; error?: string; synced?: string; snapshot?: string; syncFailed?: string; syncMessage?: string }>;
+  searchParams: Promise<{ page?: string; q?: string; status?: string; saved?: string; syncError?: string; error?: string; synced?: string; snapshot?: string; syncFailed?: string; syncMessage?: string; syncQueued?: string; requestId?: string }>;
 }) {
   if (!await getAdminSession()) redirect('/admin/login');
   const state = await searchParams;
+  const cloudMode = isAdminSupabaseConfigured();
+  const cloudSyncReady = !cloudMode || isSeasonSyncWorkflowConfigured();
   const requestedPage = Number.parseInt(state.page ?? '1', 10);
   let rows: Awaited<ReturnType<typeof getAdminSeasons>> = [];
   let databaseError = !isAdminDatabaseConfigured();
@@ -33,12 +37,14 @@ export default async function AdminSeasonsPage({ searchParams }: {
     {state.syncError === '1' ? <div className="admin-alert">Сезон сохранён в базе, но публичный список сезонов не обновился</div> : null}
     {state.error ? <div className="admin-alert is-error">Не удалось сохранить сезон {state.error}. Проверьте год, статус, число этапов и источник</div> : null}
     {state.synced ? <div className="admin-alert is-success">Сезон {state.synced} обновлён: API → исходный JSON → PostgreSQL → публичные каталоги{state.snapshot ? <small>Снимок: {state.snapshot}</small> : null}</div> : null}
-    {state.syncFailed ? <div className="admin-alert is-error">Обновление сезона {state.syncFailed === 'invalid-season' ? '' : state.syncFailed} не завершилось в интерфейсе. Проверьте журнал локального сервера и дождитесь окончания текущего процесса перед повторным запуском: исходный снимок или запись в БД могли уже сохраниться{state.syncMessage ? <small>{state.syncMessage}</small> : null}</div> : null}
+    {state.syncQueued ? <div className="admin-alert is-success">Импорт сезона {state.syncQueued} поставлен в очередь. Завершение и публикацию проверьте в <a href="https://github.com/LunarZodiac/Formula-1-visual/actions/workflows/season-sync.yml" target="_blank" rel="noreferrer">GitHub Actions</a>{state.requestId ? <small>Номер запроса: {state.requestId}</small> : null}</div> : null}
+    {state.syncFailed ? <div className="admin-alert is-error">Не удалось {cloudMode ? 'запустить' : 'завершить'} обновление сезона {state.syncFailed === 'invalid-season' ? '' : state.syncFailed}{state.syncMessage ? <small>{state.syncMessage}</small> : null}</div> : null}
+    {!cloudSyncReady ? <div className="admin-alert is-error">Удалённый импорт сезонов пока не настроен: серверу нужен секрет GITHUB_SEASON_SYNC_TOKEN</div> : null}
 
     <form action={syncSeasonFromJolpica} className="admin-season-sync">
-      <div><span className="admin-kicker">Автоматическое обновление</span><strong>Получить свежие данные Jolpica</strong><p>Сначала сохраняется исходный JSON с контрольной суммой, затем выполняются транзакционный импорт, аудит и обновление публичных файлов</p></div>
+      <div><span className="admin-kicker">Автоматическое обновление</span><strong>Получить свежие данные Jolpica</strong><p>{cloudMode ? 'Импорт запускается в GitHub Actions: исходный JSON, транзакционная запись в Supabase, аудит и публикация файлов сайта. Выполнение может занять несколько минут' : 'Сначала сохраняется исходный JSON с контрольной суммой, затем выполняются транзакционный импорт, аудит и обновление публичных файлов'}</p></div>
       <label><span>Сезон</span><input name="season" type="number" min="1950" max={new Date().getUTCFullYear() + 1} defaultValue={new Date().getUTCFullYear()} required /></label>
-      <button type="submit">Получить и обновить</button>
+      <button type="submit" disabled={!cloudSyncReady}>Получить и обновить</button>
     </form>
 
     <form action={saveSeason} className="admin-season-create admin-editor-form">
