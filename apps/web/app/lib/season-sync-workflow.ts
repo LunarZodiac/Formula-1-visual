@@ -34,7 +34,7 @@ export async function queueSeasonSync(season: number) {
     body: JSON.stringify({ ref: 'main', inputs: { season: String(season), request_id: requestId } }),
   });
 
-  if (response.status !== 204) {
+  if (response.status !== 200 && response.status !== 204) {
     throw new Error(`GitHub не принял запуск импорта (HTTP ${response.status})`);
   }
   return { season, requestId };
