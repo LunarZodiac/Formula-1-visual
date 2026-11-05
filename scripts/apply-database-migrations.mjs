@@ -34,6 +34,20 @@ async function ensureMigrationLog(client) {
       applied_at timestamptz NOT NULL DEFAULT now()
     )
   `);
+  // The migration runner connects as the table owner; browser roles never need this log.
+  await client.query('ALTER TABLE public.atlas_schema_migrations ENABLE ROW LEVEL SECURITY');
+  await client.query('REVOKE ALL ON TABLE public.atlas_schema_migrations FROM PUBLIC');
+  const roles = await client.query(
+    "SELECT rolname FROM pg_roles WHERE rolname = ANY($1::text[])",
+    [['anon', 'authenticated']],
+  );
+  for (const { rolname } of roles.rows) {
+    if (rolname === 'anon') {
+      await client.query('REVOKE ALL ON TABLE public.atlas_schema_migrations FROM anon');
+    } else if (rolname === 'authenticated') {
+      await client.query('REVOKE ALL ON TABLE public.atlas_schema_migrations FROM authenticated');
+    }
+  }
 }
 
 async function baselineExistingSchema(client, migrationFiles) {

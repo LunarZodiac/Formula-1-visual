@@ -14,6 +14,7 @@ CREATE INDEX travel_route_access_anchors_anchor_idx
 CREATE OR REPLACE FUNCTION atlas.enforce_travel_route_access_anchor_circuit()
 RETURNS trigger
 LANGUAGE plpgsql
+SET search_path = ''
 AS $$
 DECLARE
     route_circuit_id text;
@@ -57,6 +58,7 @@ $$;
 CREATE OR REPLACE FUNCTION atlas.enforce_travel_route_anchor_after_route_circuit_change()
 RETURNS trigger
 LANGUAGE plpgsql
+SET search_path = ''
 AS $$
 BEGIN
     IF NEW.circuit_id IS DISTINCT FROM OLD.circuit_id
@@ -86,6 +88,7 @@ $$;
 CREATE OR REPLACE FUNCTION atlas.enforce_travel_route_anchor_after_anchor_circuit_change()
 RETURNS trigger
 LANGUAGE plpgsql
+SET search_path = ''
 AS $$
 BEGIN
     IF NEW.circuit_id IS DISTINCT FROM OLD.circuit_id
