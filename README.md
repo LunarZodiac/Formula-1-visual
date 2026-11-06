@@ -67,7 +67,7 @@
 
 Перед первым использованием настройте:
 
-1. В GitHub Actions репозитория — секреты `SUPABASE_PGHOST`, `SUPABASE_PGPORT`, `SUPABASE_PGDATABASE`, `SUPABASE_PGUSER`, `SUPABASE_PGPASSWORD` для подключения к production Supabase PostgreSQL. Доступ runner к этому адресу и возможность записи в `main` должны быть проверены отдельно.
+1. В GitHub Actions репозитория — секреты `SUPABASE_PGHOST`, `SUPABASE_PGPORT`, `SUPABASE_PGDATABASE`, `SUPABASE_PGUSER`, `SUPABASE_PGPASSWORD` для подключения к production Supabase PostgreSQL. Для runner используйте **Session pooler** (IPv4, порт 5432). В Supabase Dashboard → Database Settings → SSL Configuration скачайте сертификат CA и сохраните его PEM-содержимое целиком, включая строки `BEGIN CERTIFICATE` и `END CERTIFICATE`, в шестой секрет `SUPABASE_PG_CA_CERT`. Workflow добавляет CA в доверенные сертификаты Node.js и проверяет имя хоста; проверку TLS отключать нельзя. Доступ runner к pooler и возможность записи в `main` должны быть проверены отдельно.
 2. В Cloudflare Worker — секрет `GITHUB_SEASON_SYNC_TOKEN`: токен только для этого репозитория с разрешением GitHub Actions **write**. Он нужен только серверу для запуска workflow; браузеру токен не передаётся. После добавления секрета кнопка станет доступна.
 3. Один тестовый запуск через админку: дождаться завершения Actions, проверить результаты аудита, новый коммит и успешный деплой Cloudflare. Если импорт БД завершился, а публикация файлов не удалась, устранить причину в Actions и повторно запустить задачу для того же сезона; обновление должно заново собрать снимки из текущей БД.
 
