@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-22T01:34:23.664Z",
+  "generatedAt": "2026-11-06T09:14:50.069Z",
   "items": [
     {
       "id": "circuit:adelaide",
@@ -437,7 +437,7 @@
       "title": "Лусаил",
       "subtitle": "Лусаил · Катар",
       "tokens": [
-        "Losail International Circuit",
+        "Lusail International Circuit",
         "Лусаил",
         "Лусаил",
         "Катар"
@@ -1155,7 +1155,7 @@
       "subtitle": "Лусаил",
       "tokens": [
         "Losail International Circuit",
-        "Losail International Circuit",
+        "Lusail International Circuit",
         "Лусаил"
       ],
       "href": null
@@ -1389,18 +1389,6 @@
       "href": null
     },
     {
-      "id": "layout:us-long-beach-1982",
-      "type": "layout",
-      "title": "Конфигурация 1982 года",
-      "subtitle": "Лонг-Бич · 1982–1982",
-      "tokens": [
-        "Конфигурация 1982 года",
-        "Long Beach",
-        "Лонг-Бич"
-      ],
-      "href": null
-    },
-    {
       "id": "layout:us-detroit-1982",
       "type": "layout",
       "title": "Конфигурация 1982 года",
@@ -1413,14 +1401,14 @@
       "href": null
     },
     {
-      "id": "layout:us-detroit-1983",
+      "id": "layout:us-long-beach-1982",
       "type": "layout",
-      "title": "Конфигурация 1983–1988 годов",
-      "subtitle": "Детройт · 1983–1988",
+      "title": "Конфигурация 1982 года",
+      "subtitle": "Лонг-Бич · 1982–1982",
       "tokens": [
-        "Конфигурация 1983–1988 годов",
-        "Detroit Street Circuit",
-        "Детройт"
+        "Конфигурация 1982 года",
+        "Long Beach",
+        "Лонг-Бич"
       ],
       "href": null
     },
@@ -1433,6 +1421,18 @@
         "Конфигурация 1983 года",
         "Long Beach",
         "Лонг-Бич"
+      ],
+      "href": null
+    },
+    {
+      "id": "layout:us-detroit-1983",
+      "type": "layout",
+      "title": "Конфигурация 1983–1988 годов",
+      "subtitle": "Детройт · 1983–1988",
+      "tokens": [
+        "Конфигурация 1983–1988 годов",
+        "Detroit Street Circuit",
+        "Детройт"
       ],
       "href": null
     },
@@ -1641,6 +1641,18 @@
       "href": null
     },
     {
+      "id": "layout:it-1953",
+      "type": "layout",
+      "title": "Основная конфигурация",
+      "subtitle": "Имола",
+      "tokens": [
+        "Основная конфигурация",
+        "Autodromo Enzo e Dino Ferrari",
+        "Имола"
+      ],
+      "href": null
+    },
+    {
       "id": "layout:au-adelaide-1985",
       "type": "layout",
       "title": "Основная конфигурация",
@@ -1805,18 +1817,6 @@
         "Основная конфигурация",
         "Autódromo do Estoril",
         "Эшторил"
-      ],
-      "href": null
-    },
-    {
-      "id": "layout:it-1953",
-      "type": "layout",
-      "title": "Основная конфигурация",
-      "subtitle": "Имола",
-      "tokens": [
-        "Основная конфигурация",
-        "Autodromo Enzo e Dino Ferrari",
-        "Имола"
       ],
       "href": null
     },
@@ -21429,11 +21429,13 @@
       "id": "driver:ryo_hirakawa",
       "type": "driver",
       "title": "Ryo Hirakawa",
-      "subtitle": "",
+      "subtitle": "HIR · Japanese",
       "tokens": [
-        "Ryo Hirakawa"
+        "Ryo Hirakawa",
+        "HIR",
+        "Japanese"
       ],
-      "href": null
+      "href": "/drivers/ryo_hirakawa"
     },
     {
       "id": "driver:hirt",
@@ -23209,6 +23211,16 @@
       "tokens": [
         "Chet Miller",
         "American"
+      ],
+      "href": null
+    },
+    {
+      "id": "driver:gabriele_mini",
+      "type": "driver",
+      "title": "Gabriele Mini",
+      "subtitle": "",
+      "tokens": [
+        "Gabriele Mini"
       ],
       "href": null
     },
@@ -25383,6 +25395,16 @@
       "href": null
     },
     {
+      "id": "driver:freddie_slater",
+      "type": "driver",
+      "title": "Freddie Slater",
+      "subtitle": "",
+      "tokens": [
+        "Freddie Slater"
+      ],
+      "href": null
+    },
+    {
       "id": "driver:slotemaker",
       "type": "driver",
       "title": "Rob Slotemaker",
@@ -26033,6 +26055,16 @@
         "Jarno Trulli",
         "TRU",
         "Italian"
+      ],
+      "href": null
+    },
+    {
+      "id": "driver:nikola_tsolov",
+      "type": "driver",
+      "title": "Nikola Tsolov",
+      "subtitle": "",
+      "tokens": [
+        "Nikola Tsolov"
       ],
       "href": null
     },
@@ -28157,6 +28189,17 @@
       "href": null
     },
     {
+      "id": "team:lotus_f1",
+      "type": "team",
+      "title": "Lotus F1",
+      "subtitle": "British",
+      "tokens": [
+        "Lotus F1",
+        "British"
+      ],
+      "href": null
+    },
+    {
       "id": "team:lotus-borgward",
       "type": "team",
       "title": "Lotus-Borgward",
@@ -28218,17 +28261,6 @@
       "subtitle": "British",
       "tokens": [
         "Lotus-Pratt &amp; Whitney",
-        "British"
-      ],
-      "href": null
-    },
-    {
-      "id": "team:lotus_f1",
-      "type": "team",
-      "title": "Lotus F1",
-      "subtitle": "British",
-      "tokens": [
-        "Lotus F1",
         "British"
       ],
       "href": null

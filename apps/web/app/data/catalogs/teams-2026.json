@@ -1,15 +1,15 @@
 {
   "schemaVersion": 2,
   "season": 2026,
-  "generatedAt": "2026-10-04T04:25:59.682Z",
+  "generatedAt": "2026-11-06T09:14:46.261Z",
   "teams": [
     {
       "id": "mercedes",
       "name": "Mercedes",
       "nationality": "German",
       "position": 1,
-      "points": 503,
-      "wins": 10,
+      "points": 630,
+      "wins": 12,
       "engineName": null,
       "color": null,
       "logoUrl": "/assets/f1/teams/2026/logos/04_mercedes_2026.png",
@@ -18,13 +18,13 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 14,
+          "afterRound": 19,
           "status": "active",
           "isFinal": false,
           "name": "Mercedes",
           "position": 1,
-          "points": 503,
-          "wins": 10
+          "points": 630,
+          "wins": 12
         },
         {
           "season": 2025,
@@ -188,28 +188,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 355,
-        "wins": 141,
-        "podiums": 329,
-        "points": 8595.64,
+        "raceEntries": 360,
+        "wins": 143,
+        "podiums": 334,
+        "points": 8717.64,
         "circuits": 41,
         "countries": 31,
         "winningCircuits": 37,
         "firstSeason": 1954,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "seasonRaceStatistics": {
-        "raceEntries": 14,
-        "wins": 10,
-        "podiums": 19,
-        "points": 443,
-        "circuits": 14,
-        "countries": 13,
-        "winningCircuits": 10,
+        "raceEntries": 19,
+        "wins": 12,
+        "podiums": 24,
+        "points": 565,
+        "circuits": 19,
+        "countries": 17,
+        "winningCircuits": 12,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "resultGeography": [
         {
@@ -378,6 +378,21 @@
           "points": 417
         },
         {
+          "id": "americas",
+          "name": "Трасса Америк",
+          "slug": "circuit-of-the-americas",
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -97.6411,
+            30.1328
+          ],
+          "raceEntries": 14,
+          "wins": 6,
+          "podiums": 13,
+          "points": 357
+        },
+        {
           "id": "interlagos",
           "name": "Интерлагос",
           "slug": "interlagos",
@@ -438,21 +453,6 @@
           "points": 371
         },
         {
-          "id": "americas",
-          "name": "Трасса Америк",
-          "slug": "circuit-of-the-americas",
-          "isPublished": false,
-          "countryCode": "us",
-          "coordinates": [
-            -97.6411,
-            30.1328
-          ],
-          "raceEntries": 13,
-          "wins": 5,
-          "podiums": 12,
-          "points": 328
-        },
-        {
           "id": "marina_bay",
           "name": "Марина-Бей",
           "slug": "marina-bay",
@@ -462,25 +462,10 @@
             103.864,
             1.2914
           ],
-          "raceEntries": 14,
+          "raceEntries": 15,
           "wins": 5,
-          "podiums": 8,
-          "points": 297
-        },
-        {
-          "id": "rodriguez",
-          "name": "Эрманос Родригес",
-          "slug": "hermanos-rodriguez",
-          "isPublished": false,
-          "countryCode": "mx",
-          "coordinates": [
-            -99.0907,
-            19.4042
-          ],
-          "raceEntries": 10,
-          "wins": 3,
-          "podiums": 10,
-          "points": 280
+          "podiums": 9,
+          "points": 314
         },
         {
           "id": "baku",
@@ -492,10 +477,25 @@
             49.8533,
             40.3725
           ],
-          "raceEntries": 9,
+          "raceEntries": 10,
+          "wins": 4,
+          "podiums": 9,
+          "points": 253
+        },
+        {
+          "id": "rodriguez",
+          "name": "Эрманос Родригес",
+          "slug": "hermanos-rodriguez",
+          "isPublished": false,
+          "countryCode": "mx",
+          "coordinates": [
+            -99.0907,
+            19.4042
+          ],
+          "raceEntries": 11,
           "wins": 3,
-          "podiums": 8,
-          "points": 218
+          "podiums": 11,
+          "points": 303
         },
         {
           "id": "hockenheimring",
@@ -582,10 +582,10 @@
             101.738,
             2.76083
           ],
-          "raceEntries": 8,
+          "raceEntries": 9,
           "wins": 1,
-          "podiums": 8,
-          "points": 164
+          "podiums": 9,
+          "points": 182
         },
         {
           "id": "zandvoort",
@@ -897,18 +897,18 @@
           "nameRu": "Андреа Кими Антонелли",
           "code": "ANT",
           "position": 1,
-          "points": 292,
-          "raceEntries": 14,
-          "teamPoints": 266
+          "points": 380,
+          "raceEntries": 19,
+          "teamPoints": 349
         },
         {
           "id": "russell",
           "nameRu": "Джордж Расселл",
           "code": "RUS",
-          "position": 2,
-          "points": 211,
-          "raceEntries": 14,
-          "teamPoints": 177
+          "position": 4,
+          "points": 250,
+          "raceEntries": 19,
+          "teamPoints": 216
         }
       ],
       "driverCount": 2
@@ -918,7 +918,7 @@
       "name": "Ferrari",
       "nationality": "Italian",
       "position": 2,
-      "points": 358,
+      "points": 504,
       "wins": 2,
       "engineName": null,
       "color": null,
@@ -928,12 +928,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 14,
+          "afterRound": 19,
           "status": "active",
           "isFinal": false,
           "name": "Ferrari",
           "position": 2,
-          "points": 358,
+          "points": 504,
           "wins": 2
         },
         {
@@ -1618,28 +1618,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 1138,
+        "raceEntries": 1143,
         "wins": 250,
-        "podiums": 844,
-        "points": 11722.94,
+        "podiums": 848,
+        "points": 11855.94,
         "circuits": 77,
         "countries": 34,
         "winningCircuits": 47,
         "firstSeason": 1950,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "seasonRaceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 2,
-        "podiums": 9,
-        "points": 310,
-        "circuits": 14,
-        "countries": 13,
+        "podiums": 13,
+        "points": 443,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 2,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "resultGeography": [
         {
@@ -1892,10 +1892,10 @@
             101.738,
             2.76083
           ],
-          "raceEntries": 19,
+          "raceEntries": 20,
           "wins": 7,
-          "podiums": 13,
-          "points": 237
+          "podiums": 14,
+          "points": 264
         },
         {
           "id": "indianapolis",
@@ -1967,10 +1967,10 @@
             103.864,
             1.2914
           ],
-          "raceEntries": 16,
+          "raceEntries": 17,
           "wins": 4,
-          "podiums": 11,
-          "points": 332
+          "podiums": 12,
+          "points": 358
         },
         {
           "id": "zolder",
@@ -2027,10 +2027,10 @@
             -99.0907,
             19.4042
           ],
-          "raceEntries": 24,
+          "raceEntries": 25,
           "wins": 3,
-          "podiums": 15,
-          "points": 283
+          "podiums": 16,
+          "points": 313
         },
         {
           "id": "istanbul",
@@ -2087,10 +2087,10 @@
             -97.6411,
             30.1328
           ],
-          "raceEntries": 13,
+          "raceEntries": 14,
           "wins": 2,
-          "podiums": 10,
-          "points": 273
+          "podiums": 11,
+          "points": 303
         },
         {
           "id": "brands_hatch",
@@ -2387,10 +2387,10 @@
             49.8533,
             40.3725
           ],
-          "raceEntries": 9,
+          "raceEntries": 10,
           "wins": 0,
           "podiums": 5,
-          "points": 163
+          "points": 183
         },
         {
           "id": "jeddah",
@@ -2867,28 +2867,967 @@
           "nameRu": "Льюис Хэмилтон",
           "code": "HAM",
           "position": 3,
-          "points": 191,
-          "raceEntries": 14,
-          "teamPoints": 171
+          "points": 259,
+          "raceEntries": 19,
+          "teamPoints": 232
         },
         {
           "id": "leclerc",
           "nameRu": "Шарль Леклер",
           "code": "LEC",
           "position": 5,
-          "points": 167,
-          "raceEntries": 14,
-          "teamPoints": 139
+          "points": 245,
+          "raceEntries": 19,
+          "teamPoints": 211
         }
       ],
       "driverCount": 2
     },
     {
+      "id": "red_bull",
+      "name": "Red Bull",
+      "nationality": "Austrian",
+      "position": 3,
+      "points": 382,
+      "wins": 3,
+      "engineName": null,
+      "color": null,
+      "logoUrl": "/assets/f1/teams/2026/logos/03_red_bull_racing_2026.png",
+      "carModel": null,
+      "carImageUrl": "/assets/f1/teams/2026/cars/cars2026/2026redbullracingcarright.avif",
+      "seasonHistory": [
+        {
+          "season": 2026,
+          "afterRound": 19,
+          "status": "active",
+          "isFinal": false,
+          "name": "Red Bull",
+          "position": 3,
+          "points": 382,
+          "wins": 3
+        },
+        {
+          "season": 2025,
+          "afterRound": 24,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 3,
+          "points": 451,
+          "wins": 8
+        },
+        {
+          "season": 2024,
+          "afterRound": 24,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 3,
+          "points": 589,
+          "wins": 9
+        },
+        {
+          "season": 2023,
+          "afterRound": 22,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 1,
+          "points": 860,
+          "wins": 21
+        },
+        {
+          "season": 2022,
+          "afterRound": 22,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 1,
+          "points": 759,
+          "wins": 17
+        },
+        {
+          "season": 2021,
+          "afterRound": 22,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 2,
+          "points": 585.5,
+          "wins": 11
+        },
+        {
+          "season": 2020,
+          "afterRound": 17,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 2,
+          "points": 319,
+          "wins": 2
+        },
+        {
+          "season": 2019,
+          "afterRound": 21,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 3,
+          "points": 417,
+          "wins": 3
+        },
+        {
+          "season": 2018,
+          "afterRound": 21,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 3,
+          "points": 419,
+          "wins": 4
+        },
+        {
+          "season": 2017,
+          "afterRound": 20,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 3,
+          "points": 368,
+          "wins": 3
+        },
+        {
+          "season": 2016,
+          "afterRound": 21,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 2,
+          "points": 468,
+          "wins": 2
+        },
+        {
+          "season": 2015,
+          "afterRound": 19,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 4,
+          "points": 187,
+          "wins": 0
+        },
+        {
+          "season": 2014,
+          "afterRound": 19,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 2,
+          "points": 405,
+          "wins": 3
+        },
+        {
+          "season": 2013,
+          "afterRound": 19,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 1,
+          "points": 596,
+          "wins": 13
+        },
+        {
+          "season": 2012,
+          "afterRound": 20,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 1,
+          "points": 460,
+          "wins": 7
+        },
+        {
+          "season": 2011,
+          "afterRound": 19,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 1,
+          "points": 650,
+          "wins": 12
+        },
+        {
+          "season": 2010,
+          "afterRound": 19,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 1,
+          "points": 498,
+          "wins": 9
+        },
+        {
+          "season": 2009,
+          "afterRound": 17,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 2,
+          "points": 153.5,
+          "wins": 6
+        },
+        {
+          "season": 2008,
+          "afterRound": 18,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 7,
+          "points": 29,
+          "wins": 0
+        },
+        {
+          "season": 2007,
+          "afterRound": 17,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 5,
+          "points": 24,
+          "wins": 0
+        },
+        {
+          "season": 2006,
+          "afterRound": 18,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 7,
+          "points": 16,
+          "wins": 0
+        },
+        {
+          "season": 2005,
+          "afterRound": 19,
+          "status": "completed",
+          "isFinal": true,
+          "name": "Red Bull",
+          "position": 7,
+          "points": 34,
+          "wins": 0
+        }
+      ],
+      "raceStatistics": {
+        "raceEntries": 437,
+        "wins": 133,
+        "podiums": 310,
+        "points": 8445,
+        "circuits": 39,
+        "countries": 29,
+        "winningCircuits": 32,
+        "firstSeason": 2005,
+        "lastSeason": 2026,
+        "throughRound": 19
+      },
+      "seasonRaceStatistics": {
+        "raceEntries": 19,
+        "wins": 3,
+        "podiums": 13,
+        "points": 362,
+        "circuits": 19,
+        "countries": 17,
+        "winningCircuits": 3,
+        "firstSeason": 2026,
+        "lastSeason": 2026,
+        "throughRound": 19
+      },
+      "resultGeography": [
+        {
+          "id": "suzuka",
+          "name": "Сузука",
+          "slug": "suzuka",
+          "isPublished": false,
+          "countryCode": "jp",
+          "coordinates": [
+            136.541,
+            34.8431
+          ],
+          "raceEntries": 18,
+          "wins": 8,
+          "podiums": 18,
+          "points": 420
+        },
+        {
+          "id": "yas_marina",
+          "name": "Яс-Марина",
+          "slug": "yas-marina",
+          "isPublished": false,
+          "countryCode": "ae",
+          "coordinates": [
+            54.6031,
+            24.4672
+          ],
+          "raceEntries": 17,
+          "wins": 8,
+          "podiums": 14,
+          "points": 417
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "countryCode": "mc",
+          "coordinates": [
+            7.42056,
+            43.7347
+          ],
+          "raceEntries": 21,
+          "wins": 7,
+          "podiums": 16,
+          "points": 432
+        },
+        {
+          "id": "interlagos",
+          "name": "Интерлагос",
+          "slug": "interlagos",
+          "isPublished": false,
+          "countryCode": "br",
+          "coordinates": [
+            -46.6997,
+            -23.7036
+          ],
+          "raceEntries": 20,
+          "wins": 7,
+          "podiums": 14,
+          "points": 395
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "countryCode": "be",
+          "coordinates": [
+            5.97139,
+            50.4372
+          ],
+          "raceEntries": 21,
+          "wins": 6,
+          "podiums": 17,
+          "points": 412.5
+        },
+        {
+          "id": "catalunya",
+          "name": "Барселона-Каталунья",
+          "slug": "barcelona-catalunya",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            2.26111,
+            41.57
+          ],
+          "raceEntries": 22,
+          "wins": 6,
+          "podiums": 15,
+          "points": 444
+        },
+        {
+          "id": "sepang",
+          "name": "Сепанг",
+          "slug": "sepang",
+          "isPublished": false,
+          "countryCode": "my",
+          "coordinates": [
+            101.738,
+            2.76083
+          ],
+          "raceEntries": 14,
+          "wins": 6,
+          "podiums": 11,
+          "points": 278.5
+        },
+        {
+          "id": "rodriguez",
+          "name": "Эрманос Родригес",
+          "slug": "hermanos-rodriguez",
+          "isPublished": false,
+          "countryCode": "mx",
+          "coordinates": [
+            -99.0907,
+            19.4042
+          ],
+          "raceEntries": 11,
+          "wins": 6,
+          "podiums": 10,
+          "points": 272
+        },
+        {
+          "id": "marina_bay",
+          "name": "Марина-Бей",
+          "slug": "marina-bay",
+          "isPublished": false,
+          "countryCode": "sg",
+          "coordinates": [
+            103.864,
+            1.2914
+          ],
+          "raceEntries": 17,
+          "wins": 5,
+          "podiums": 17,
+          "points": 390
+        },
+        {
+          "id": "silverstone",
+          "name": "Сильверстоун",
+          "slug": "silverstone",
+          "isPublished": false,
+          "countryCode": "gb",
+          "coordinates": [
+            -1.01694,
+            52.0786
+          ],
+          "raceEntries": 23,
+          "wins": 5,
+          "podiums": 15,
+          "points": 411
+        },
+        {
+          "id": "americas",
+          "name": "Трасса Америк",
+          "slug": "circuit-of-the-americas",
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -97.6411,
+            30.1328
+          ],
+          "raceEntries": 14,
+          "wins": 5,
+          "podiums": 14,
+          "points": 339
+        },
+        {
+          "id": "villeneuve",
+          "name": "Жиль Вильнёв",
+          "slug": "gilles-villeneuve",
+          "isPublished": false,
+          "countryCode": "ca",
+          "coordinates": [
+            -73.5228,
+            45.5
+          ],
+          "raceEntries": 19,
+          "wins": 5,
+          "podiums": 13,
+          "points": 363
+        },
+        {
+          "id": "red_bull_ring",
+          "name": "Ред Булл Ринг",
+          "slug": "red-bull-ring",
+          "isPublished": false,
+          "countryCode": "at",
+          "coordinates": [
+            14.7647,
+            47.2197
+          ],
+          "raceEntries": 15,
+          "wins": 5,
+          "podiums": 11,
+          "points": 305
+        },
+        {
+          "id": "baku",
+          "name": "Баку",
+          "slug": "baku",
+          "isPublished": false,
+          "countryCode": "az",
+          "coordinates": [
+            49.8533,
+            40.3725
+          ],
+          "raceEntries": 10,
+          "wins": 5,
+          "podiums": 9,
+          "points": 235
+        },
+        {
+          "id": "monza",
+          "name": "Монца",
+          "slug": "monza",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            9.28111,
+            45.6156
+          ],
+          "raceEntries": 22,
+          "wins": 5,
+          "podiums": 8,
+          "points": 300
+        },
+        {
+          "id": "hungaroring",
+          "name": "Хунгароринг",
+          "slug": "hungaroring",
+          "isPublished": false,
+          "countryCode": "hu",
+          "coordinates": [
+            19.2486,
+            47.5789
+          ],
+          "raceEntries": 22,
+          "wins": 4,
+          "podiums": 15,
+          "points": 409
+        },
+        {
+          "id": "bahrain",
+          "name": "Бахрейн",
+          "slug": "bahrain",
+          "isPublished": true,
+          "countryCode": "bh",
+          "coordinates": [
+            50.5106,
+            26.0325
+          ],
+          "raceEntries": 21,
+          "wins": 4,
+          "podiums": 10,
+          "points": 337
+        },
+        {
+          "id": "imola",
+          "name": "Имола",
+          "slug": "imola",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            11.7167,
+            44.3439
+          ],
+          "raceEntries": 7,
+          "wins": 4,
+          "podiums": 5,
+          "points": 125
+        },
+        {
+          "id": "shanghai",
+          "name": "Шанхай",
+          "slug": "shanghai",
+          "isPublished": false,
+          "countryCode": "cn",
+          "coordinates": [
+            121.22,
+            31.3389
+          ],
+          "raceEntries": 18,
+          "wins": 3,
+          "podiums": 9,
+          "points": 292
+        },
+        {
+          "id": "jeddah",
+          "name": "Джидда",
+          "slug": "jeddah",
+          "isPublished": false,
+          "countryCode": "sa",
+          "coordinates": [
+            39.1044,
+            21.6319
+          ],
+          "raceEntries": 5,
+          "wins": 3,
+          "podiums": 7,
+          "points": 160
+        },
+        {
+          "id": "yeongam",
+          "name": "Йонам",
+          "slug": "yeongam",
+          "isPublished": false,
+          "countryCode": "kr",
+          "coordinates": [
+            126.417,
+            34.7333
+          ],
+          "raceEntries": 4,
+          "wins": 3,
+          "podiums": 5,
+          "points": 108
+        },
+        {
+          "id": "zandvoort",
+          "name": "Зандворт",
+          "slug": "zandvoort",
+          "isPublished": false,
+          "countryCode": "nl",
+          "coordinates": [
+            4.54092,
+            52.3888
+          ],
+          "raceEntries": 6,
+          "wins": 3,
+          "podiums": 5,
+          "points": 154
+        },
+        {
+          "id": "buddh",
+          "name": "Будда",
+          "slug": "buddh",
+          "isPublished": false,
+          "countryCode": "in",
+          "coordinates": [
+            77.5331,
+            28.3487
+          ],
+          "raceEntries": 3,
+          "wins": 3,
+          "podiums": 4,
+          "points": 102
+        },
+        {
+          "id": "losail",
+          "name": "Лусаил",
+          "slug": "losail",
+          "isPublished": false,
+          "countryCode": "qa",
+          "coordinates": [
+            51.4542,
+            25.49
+          ],
+          "raceEntries": 4,
+          "wins": 3,
+          "podiums": 4,
+          "points": 109
+        },
+        {
+          "id": "albert_park",
+          "name": "Альберт-Парк",
+          "slug": "albert-park",
+          "isPublished": false,
+          "countryCode": "au",
+          "coordinates": [
+            144.968,
+            -37.8497
+          ],
+          "raceEntries": 20,
+          "wins": 2,
+          "podiums": 7,
+          "points": 253
+        },
+        {
+          "id": "nurburgring",
+          "name": "Нюрбургринг",
+          "slug": "nurburgring",
+          "isPublished": false,
+          "countryCode": "de",
+          "coordinates": [
+            6.9475,
+            50.3356
+          ],
+          "raceEntries": 7,
+          "wins": 2,
+          "podiums": 6,
+          "points": 110
+        },
+        {
+          "id": "miami",
+          "name": "Майами",
+          "slug": "miami",
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -80.2389,
+            25.9581
+          ],
+          "raceEntries": 5,
+          "wins": 2,
+          "podiums": 4,
+          "points": 135
+        },
+        {
+          "id": "ricard",
+          "name": "Поль-Рикар",
+          "slug": "ricard",
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            5.79167,
+            43.2506
+          ],
+          "raceEntries": 4,
+          "wins": 2,
+          "podiums": 4,
+          "points": 121
+        },
+        {
+          "id": "valencia",
+          "name": "Валенсия",
+          "slug": "valencia",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -0.331667,
+            39.4589
+          ],
+          "raceEntries": 5,
+          "wins": 2,
+          "podiums": 3,
+          "points": 77
+        },
+        {
+          "id": "vegas",
+          "name": "Лас-Вегас",
+          "slug": "las-vegas",
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -115.173,
+            36.1147
+          ],
+          "raceEntries": 3,
+          "wins": 2,
+          "podiums": 3,
+          "points": 76
+        },
+        {
+          "id": "istanbul",
+          "name": "Истанбул-Парк",
+          "slug": "istanbul",
+          "isPublished": false,
+          "countryCode": "tr",
+          "coordinates": [
+            29.405,
+            40.9517
+          ],
+          "raceEntries": 9,
+          "wins": 1,
+          "podiums": 7,
+          "points": 124
+        },
+        {
+          "id": "hockenheimring",
+          "name": "Хоккенхаймринг",
+          "slug": "hockenheimring",
+          "isPublished": false,
+          "countryCode": "de",
+          "coordinates": [
+            8.56583,
+            49.3278
+          ],
+          "raceEntries": 9,
+          "wins": 1,
+          "podiums": 4,
+          "points": 131
+        },
+        {
+          "id": "portimao",
+          "name": "Алгарве",
+          "slug": "portimao",
+          "isPublished": false,
+          "countryCode": "pt",
+          "coordinates": [
+            -8.6267,
+            37.227
+          ],
+          "raceEntries": 2,
+          "wins": 0,
+          "podiums": 2,
+          "points": 45
+        },
+        {
+          "id": "sochi",
+          "name": "Сочи Автодром",
+          "slug": "sochi",
+          "isPublished": false,
+          "countryCode": "ru",
+          "coordinates": [
+            39.9578,
+            43.4057
+          ],
+          "raceEntries": 8,
+          "wins": 0,
+          "podiums": 2,
+          "points": 109
+        },
+        {
+          "id": "madring",
+          "name": "Мадринг",
+          "slug": "madring",
+          "isPublished": false,
+          "countryCode": "es",
+          "coordinates": [
+            -3.61528,
+            40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 26
+        },
+        {
+          "id": "mugello",
+          "name": "Муджелло",
+          "slug": "mugello",
+          "isPublished": false,
+          "countryCode": "it",
+          "coordinates": [
+            11.3719,
+            43.9975
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 1,
+          "points": 15
+        },
+        {
+          "id": "fuji",
+          "name": "Фудзи",
+          "slug": "fuji",
+          "isPublished": false,
+          "countryCode": "jp",
+          "coordinates": [
+            138.927,
+            35.3717
+          ],
+          "raceEntries": 2,
+          "wins": 0,
+          "podiums": 0,
+          "points": 6
+        },
+        {
+          "id": "indianapolis",
+          "name": "Индианаполис",
+          "slug": "indianapolis",
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -86.2347,
+            39.795
+          ],
+          "raceEntries": 3,
+          "wins": 0,
+          "podiums": 0,
+          "points": 4
+        },
+        {
+          "id": "magny_cours",
+          "name": "Маньи-Кур",
+          "slug": "magny-cours",
+          "isPublished": false,
+          "countryCode": "fr",
+          "coordinates": [
+            3.16361,
+            46.8642
+          ],
+          "raceEntries": 4,
+          "wins": 0,
+          "podiums": 0,
+          "points": 3
+        }
+      ],
+      "sourceIds": [
+        "jolpica",
+        "jolpica-csv-2026-08-01"
+      ],
+      "careerTitles": 6,
+      "successfulCircuits": [
+        {
+          "id": "suzuka",
+          "name": "Сузука",
+          "slug": "suzuka",
+          "isPublished": false,
+          "wins": 8
+        },
+        {
+          "id": "yas_marina",
+          "name": "Яс-Марина",
+          "slug": "yas-marina",
+          "isPublished": false,
+          "wins": 8
+        },
+        {
+          "id": "monaco",
+          "name": "Монако",
+          "slug": "monaco",
+          "isPublished": false,
+          "wins": 7
+        },
+        {
+          "id": "interlagos",
+          "name": "Интерлагос",
+          "slug": "interlagos",
+          "isPublished": false,
+          "wins": 7
+        },
+        {
+          "id": "spa",
+          "name": "Спа-Франкоршам",
+          "slug": "spa",
+          "isPublished": true,
+          "wins": 6
+        },
+        {
+          "id": "catalunya",
+          "name": "Барселона-Каталунья",
+          "slug": "barcelona-catalunya",
+          "isPublished": false,
+          "wins": 6
+        },
+        {
+          "id": "sepang",
+          "name": "Сепанг",
+          "slug": "sepang",
+          "isPublished": false,
+          "wins": 6
+        },
+        {
+          "id": "rodriguez",
+          "name": "Эрманос Родригес",
+          "slug": "hermanos-rodriguez",
+          "isPublished": false,
+          "wins": 6
+        }
+      ],
+      "drivers": [
+        {
+          "id": "hadjar",
+          "nameRu": "Исак Хаджар",
+          "code": "HAD",
+          "position": 8,
+          "points": 107,
+          "raceEntries": 16,
+          "teamPoints": 107
+        },
+        {
+          "id": "lawson",
+          "nameRu": "Лиам Лоусон",
+          "code": "LAW",
+          "position": 9,
+          "points": 83,
+          "raceEntries": 3,
+          "teamPoints": 14
+        },
+        {
+          "id": "max_verstappen",
+          "nameRu": "Макс Ферстаппен",
+          "code": "VER",
+          "position": 2,
+          "points": 261,
+          "raceEntries": 19,
+          "teamPoints": 241
+        }
+      ],
+      "driverCount": 3
+    },
+    {
       "id": "mclaren",
       "name": "McLaren",
       "nationality": "British",
-      "position": 3,
-      "points": 306,
+      "position": 4,
+      "points": 365,
       "wins": 2,
       "engineName": null,
       "color": null,
@@ -2898,12 +3837,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 14,
+          "afterRound": 19,
           "status": "active",
           "isFinal": false,
           "name": "McLaren",
-          "position": 3,
-          "points": 306,
+          "position": 4,
+          "points": 365,
           "wins": 2
         },
         {
@@ -3448,28 +4387,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 966,
+        "raceEntries": 971,
         "wins": 201,
         "podiums": 549,
-        "points": 8050.5,
+        "points": 8108.5,
         "circuits": 62,
         "countries": 32,
         "winningCircuits": 49,
         "firstSeason": 1968,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "seasonRaceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 2,
         "podiums": 7,
-        "points": 253,
-        "circuits": 14,
-        "countries": 13,
+        "points": 311,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 2,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "resultGeography": [
         {
@@ -3797,10 +4736,10 @@
             -99.0907,
             19.4042
           ],
-          "raceEntries": 17,
+          "raceEntries": 18,
           "wins": 3,
           "podiums": 8,
-          "points": 128
+          "points": 138
         },
         {
           "id": "mosport",
@@ -3857,10 +4796,10 @@
             101.738,
             2.76083
           ],
-          "raceEntries": 19,
+          "raceEntries": 20,
           "wins": 2,
           "podiums": 9,
-          "points": 145
+          "points": 155
         },
         {
           "id": "marina_bay",
@@ -3872,10 +4811,10 @@
             103.864,
             1.2914
           ],
-          "raceEntries": 16,
+          "raceEntries": 17,
           "wins": 2,
           "podiums": 8,
-          "points": 224
+          "points": 246
         },
         {
           "id": "yas_marina",
@@ -4082,10 +5021,10 @@
             -97.6411,
             30.1328
           ],
-          "raceEntries": 13,
+          "raceEntries": 14,
           "wins": 1,
           "podiums": 3,
-          "points": 166
+          "points": 182
         },
         {
           "id": "jarama",
@@ -4142,7 +5081,7 @@
             49.8533,
             40.3725
           ],
-          "raceEntries": 9,
+          "raceEntries": 10,
           "wins": 1,
           "podiums": 1,
           "points": 84
@@ -4471,968 +5410,29 @@
           "id": "norris",
           "nameRu": "Ландо Норрис",
           "code": "NOR",
-          "position": 4,
-          "points": 186,
-          "raceEntries": 14,
-          "teamPoints": 154
+          "position": 6,
+          "points": 221,
+          "raceEntries": 19,
+          "teamPoints": 188
         },
         {
           "id": "piastri",
           "nameRu": "Оскар Пиастри",
           "code": "PIA",
           "position": 7,
-          "points": 120,
-          "raceEntries": 14,
-          "teamPoints": 99
+          "points": 144,
+          "raceEntries": 19,
+          "teamPoints": 123
         }
       ],
       "driverCount": 2
-    },
-    {
-      "id": "red_bull",
-      "name": "Red Bull",
-      "nationality": "Austrian",
-      "position": 4,
-      "points": 230,
-      "wins": 0,
-      "engineName": null,
-      "color": null,
-      "logoUrl": "/assets/f1/teams/2026/logos/03_red_bull_racing_2026.png",
-      "carModel": null,
-      "carImageUrl": "/assets/f1/teams/2026/cars/cars2026/2026redbullracingcarright.avif",
-      "seasonHistory": [
-        {
-          "season": 2026,
-          "afterRound": 14,
-          "status": "active",
-          "isFinal": false,
-          "name": "Red Bull",
-          "position": 4,
-          "points": 230,
-          "wins": 0
-        },
-        {
-          "season": 2025,
-          "afterRound": 24,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 3,
-          "points": 451,
-          "wins": 8
-        },
-        {
-          "season": 2024,
-          "afterRound": 24,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 3,
-          "points": 589,
-          "wins": 9
-        },
-        {
-          "season": 2023,
-          "afterRound": 22,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 1,
-          "points": 860,
-          "wins": 21
-        },
-        {
-          "season": 2022,
-          "afterRound": 22,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 1,
-          "points": 759,
-          "wins": 17
-        },
-        {
-          "season": 2021,
-          "afterRound": 22,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 2,
-          "points": 585.5,
-          "wins": 11
-        },
-        {
-          "season": 2020,
-          "afterRound": 17,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 2,
-          "points": 319,
-          "wins": 2
-        },
-        {
-          "season": 2019,
-          "afterRound": 21,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 3,
-          "points": 417,
-          "wins": 3
-        },
-        {
-          "season": 2018,
-          "afterRound": 21,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 3,
-          "points": 419,
-          "wins": 4
-        },
-        {
-          "season": 2017,
-          "afterRound": 20,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 3,
-          "points": 368,
-          "wins": 3
-        },
-        {
-          "season": 2016,
-          "afterRound": 21,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 2,
-          "points": 468,
-          "wins": 2
-        },
-        {
-          "season": 2015,
-          "afterRound": 19,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 4,
-          "points": 187,
-          "wins": 0
-        },
-        {
-          "season": 2014,
-          "afterRound": 19,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 2,
-          "points": 405,
-          "wins": 3
-        },
-        {
-          "season": 2013,
-          "afterRound": 19,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 1,
-          "points": 596,
-          "wins": 13
-        },
-        {
-          "season": 2012,
-          "afterRound": 20,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 1,
-          "points": 460,
-          "wins": 7
-        },
-        {
-          "season": 2011,
-          "afterRound": 19,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 1,
-          "points": 650,
-          "wins": 12
-        },
-        {
-          "season": 2010,
-          "afterRound": 19,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 1,
-          "points": 498,
-          "wins": 9
-        },
-        {
-          "season": 2009,
-          "afterRound": 17,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 2,
-          "points": 153.5,
-          "wins": 6
-        },
-        {
-          "season": 2008,
-          "afterRound": 18,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 7,
-          "points": 29,
-          "wins": 0
-        },
-        {
-          "season": 2007,
-          "afterRound": 17,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 5,
-          "points": 24,
-          "wins": 0
-        },
-        {
-          "season": 2006,
-          "afterRound": 18,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 7,
-          "points": 16,
-          "wins": 0
-        },
-        {
-          "season": 2005,
-          "afterRound": 19,
-          "status": "completed",
-          "isFinal": true,
-          "name": "Red Bull",
-          "position": 7,
-          "points": 34,
-          "wins": 0
-        }
-      ],
-      "raceStatistics": {
-        "raceEntries": 432,
-        "wins": 130,
-        "podiums": 304,
-        "points": 8301,
-        "circuits": 39,
-        "countries": 29,
-        "winningCircuits": 32,
-        "firstSeason": 2005,
-        "lastSeason": 2026,
-        "throughRound": 14
-      },
-      "seasonRaceStatistics": {
-        "raceEntries": 14,
-        "wins": 0,
-        "podiums": 7,
-        "points": 218,
-        "circuits": 14,
-        "countries": 13,
-        "winningCircuits": 0,
-        "firstSeason": 2026,
-        "lastSeason": 2026,
-        "throughRound": 14
-      },
-      "resultGeography": [
-        {
-          "id": "suzuka",
-          "name": "Сузука",
-          "slug": "suzuka",
-          "isPublished": false,
-          "countryCode": "jp",
-          "coordinates": [
-            136.541,
-            34.8431
-          ],
-          "raceEntries": 18,
-          "wins": 8,
-          "podiums": 18,
-          "points": 420
-        },
-        {
-          "id": "yas_marina",
-          "name": "Яс-Марина",
-          "slug": "yas-marina",
-          "isPublished": false,
-          "countryCode": "ae",
-          "coordinates": [
-            54.6031,
-            24.4672
-          ],
-          "raceEntries": 17,
-          "wins": 8,
-          "podiums": 14,
-          "points": 417
-        },
-        {
-          "id": "monaco",
-          "name": "Монако",
-          "slug": "monaco",
-          "isPublished": false,
-          "countryCode": "mc",
-          "coordinates": [
-            7.42056,
-            43.7347
-          ],
-          "raceEntries": 21,
-          "wins": 7,
-          "podiums": 16,
-          "points": 432
-        },
-        {
-          "id": "interlagos",
-          "name": "Интерлагос",
-          "slug": "interlagos",
-          "isPublished": false,
-          "countryCode": "br",
-          "coordinates": [
-            -46.6997,
-            -23.7036
-          ],
-          "raceEntries": 20,
-          "wins": 7,
-          "podiums": 14,
-          "points": 395
-        },
-        {
-          "id": "spa",
-          "name": "Спа-Франкоршам",
-          "slug": "spa",
-          "isPublished": true,
-          "countryCode": "be",
-          "coordinates": [
-            5.97139,
-            50.4372
-          ],
-          "raceEntries": 21,
-          "wins": 6,
-          "podiums": 17,
-          "points": 412.5
-        },
-        {
-          "id": "catalunya",
-          "name": "Барселона-Каталунья",
-          "slug": "barcelona-catalunya",
-          "isPublished": false,
-          "countryCode": "es",
-          "coordinates": [
-            2.26111,
-            41.57
-          ],
-          "raceEntries": 22,
-          "wins": 6,
-          "podiums": 15,
-          "points": 444
-        },
-        {
-          "id": "silverstone",
-          "name": "Сильверстоун",
-          "slug": "silverstone",
-          "isPublished": false,
-          "countryCode": "gb",
-          "coordinates": [
-            -1.01694,
-            52.0786
-          ],
-          "raceEntries": 23,
-          "wins": 5,
-          "podiums": 15,
-          "points": 411
-        },
-        {
-          "id": "americas",
-          "name": "Трасса Америк",
-          "slug": "circuit-of-the-americas",
-          "isPublished": false,
-          "countryCode": "us",
-          "coordinates": [
-            -97.6411,
-            30.1328
-          ],
-          "raceEntries": 13,
-          "wins": 5,
-          "podiums": 13,
-          "points": 316
-        },
-        {
-          "id": "villeneuve",
-          "name": "Жиль Вильнёв",
-          "slug": "gilles-villeneuve",
-          "isPublished": false,
-          "countryCode": "ca",
-          "coordinates": [
-            -73.5228,
-            45.5
-          ],
-          "raceEntries": 19,
-          "wins": 5,
-          "podiums": 13,
-          "points": 363
-        },
-        {
-          "id": "red_bull_ring",
-          "name": "Ред Булл Ринг",
-          "slug": "red-bull-ring",
-          "isPublished": false,
-          "countryCode": "at",
-          "coordinates": [
-            14.7647,
-            47.2197
-          ],
-          "raceEntries": 15,
-          "wins": 5,
-          "podiums": 11,
-          "points": 305
-        },
-        {
-          "id": "sepang",
-          "name": "Сепанг",
-          "slug": "sepang",
-          "isPublished": false,
-          "countryCode": "my",
-          "coordinates": [
-            101.738,
-            2.76083
-          ],
-          "raceEntries": 13,
-          "wins": 5,
-          "podiums": 10,
-          "points": 243.5
-        },
-        {
-          "id": "rodriguez",
-          "name": "Эрманос Родригес",
-          "slug": "hermanos-rodriguez",
-          "isPublished": false,
-          "countryCode": "mx",
-          "coordinates": [
-            -99.0907,
-            19.4042
-          ],
-          "raceEntries": 10,
-          "wins": 5,
-          "podiums": 9,
-          "points": 245
-        },
-        {
-          "id": "monza",
-          "name": "Монца",
-          "slug": "monza",
-          "isPublished": false,
-          "countryCode": "it",
-          "coordinates": [
-            9.28111,
-            45.6156
-          ],
-          "raceEntries": 22,
-          "wins": 5,
-          "podiums": 8,
-          "points": 300
-        },
-        {
-          "id": "baku",
-          "name": "Баку",
-          "slug": "baku",
-          "isPublished": false,
-          "countryCode": "az",
-          "coordinates": [
-            49.8533,
-            40.3725
-          ],
-          "raceEntries": 9,
-          "wins": 5,
-          "podiums": 7,
-          "points": 202
-        },
-        {
-          "id": "marina_bay",
-          "name": "Марина-Бей",
-          "slug": "marina-bay",
-          "isPublished": false,
-          "countryCode": "sg",
-          "coordinates": [
-            103.864,
-            1.2914
-          ],
-          "raceEntries": 16,
-          "wins": 4,
-          "podiums": 16,
-          "points": 364
-        },
-        {
-          "id": "hungaroring",
-          "name": "Хунгароринг",
-          "slug": "hungaroring",
-          "isPublished": false,
-          "countryCode": "hu",
-          "coordinates": [
-            19.2486,
-            47.5789
-          ],
-          "raceEntries": 22,
-          "wins": 4,
-          "podiums": 15,
-          "points": 409
-        },
-        {
-          "id": "bahrain",
-          "name": "Бахрейн",
-          "slug": "bahrain",
-          "isPublished": true,
-          "countryCode": "bh",
-          "coordinates": [
-            50.5106,
-            26.0325
-          ],
-          "raceEntries": 21,
-          "wins": 4,
-          "podiums": 10,
-          "points": 337
-        },
-        {
-          "id": "imola",
-          "name": "Имола",
-          "slug": "imola",
-          "isPublished": false,
-          "countryCode": "it",
-          "coordinates": [
-            11.7167,
-            44.3439
-          ],
-          "raceEntries": 7,
-          "wins": 4,
-          "podiums": 5,
-          "points": 125
-        },
-        {
-          "id": "shanghai",
-          "name": "Шанхай",
-          "slug": "shanghai",
-          "isPublished": false,
-          "countryCode": "cn",
-          "coordinates": [
-            121.22,
-            31.3389
-          ],
-          "raceEntries": 18,
-          "wins": 3,
-          "podiums": 9,
-          "points": 292
-        },
-        {
-          "id": "jeddah",
-          "name": "Джидда",
-          "slug": "jeddah",
-          "isPublished": false,
-          "countryCode": "sa",
-          "coordinates": [
-            39.1044,
-            21.6319
-          ],
-          "raceEntries": 5,
-          "wins": 3,
-          "podiums": 7,
-          "points": 160
-        },
-        {
-          "id": "yeongam",
-          "name": "Йонам",
-          "slug": "yeongam",
-          "isPublished": false,
-          "countryCode": "kr",
-          "coordinates": [
-            126.417,
-            34.7333
-          ],
-          "raceEntries": 4,
-          "wins": 3,
-          "podiums": 5,
-          "points": 108
-        },
-        {
-          "id": "zandvoort",
-          "name": "Зандворт",
-          "slug": "zandvoort",
-          "isPublished": false,
-          "countryCode": "nl",
-          "coordinates": [
-            4.54092,
-            52.3888
-          ],
-          "raceEntries": 6,
-          "wins": 3,
-          "podiums": 5,
-          "points": 154
-        },
-        {
-          "id": "buddh",
-          "name": "Будда",
-          "slug": "buddh",
-          "isPublished": false,
-          "countryCode": "in",
-          "coordinates": [
-            77.5331,
-            28.3487
-          ],
-          "raceEntries": 3,
-          "wins": 3,
-          "podiums": 4,
-          "points": 102
-        },
-        {
-          "id": "losail",
-          "name": "Лусаил",
-          "slug": "losail",
-          "isPublished": false,
-          "countryCode": "qa",
-          "coordinates": [
-            51.4542,
-            25.49
-          ],
-          "raceEntries": 4,
-          "wins": 3,
-          "podiums": 4,
-          "points": 109
-        },
-        {
-          "id": "albert_park",
-          "name": "Альберт-Парк",
-          "slug": "albert-park",
-          "isPublished": false,
-          "countryCode": "au",
-          "coordinates": [
-            144.968,
-            -37.8497
-          ],
-          "raceEntries": 20,
-          "wins": 2,
-          "podiums": 7,
-          "points": 253
-        },
-        {
-          "id": "nurburgring",
-          "name": "Нюрбургринг",
-          "slug": "nurburgring",
-          "isPublished": false,
-          "countryCode": "de",
-          "coordinates": [
-            6.9475,
-            50.3356
-          ],
-          "raceEntries": 7,
-          "wins": 2,
-          "podiums": 6,
-          "points": 110
-        },
-        {
-          "id": "miami",
-          "name": "Майами",
-          "slug": "miami",
-          "isPublished": false,
-          "countryCode": "us",
-          "coordinates": [
-            -80.2389,
-            25.9581
-          ],
-          "raceEntries": 5,
-          "wins": 2,
-          "podiums": 4,
-          "points": 135
-        },
-        {
-          "id": "ricard",
-          "name": "Поль-Рикар",
-          "slug": "ricard",
-          "isPublished": false,
-          "countryCode": "fr",
-          "coordinates": [
-            5.79167,
-            43.2506
-          ],
-          "raceEntries": 4,
-          "wins": 2,
-          "podiums": 4,
-          "points": 121
-        },
-        {
-          "id": "valencia",
-          "name": "Валенсия",
-          "slug": "valencia",
-          "isPublished": false,
-          "countryCode": "es",
-          "coordinates": [
-            -0.331667,
-            39.4589
-          ],
-          "raceEntries": 5,
-          "wins": 2,
-          "podiums": 3,
-          "points": 77
-        },
-        {
-          "id": "vegas",
-          "name": "Лас-Вегас",
-          "slug": "las-vegas",
-          "isPublished": false,
-          "countryCode": "us",
-          "coordinates": [
-            -115.173,
-            36.1147
-          ],
-          "raceEntries": 3,
-          "wins": 2,
-          "podiums": 3,
-          "points": 76
-        },
-        {
-          "id": "istanbul",
-          "name": "Истанбул-Парк",
-          "slug": "istanbul",
-          "isPublished": false,
-          "countryCode": "tr",
-          "coordinates": [
-            29.405,
-            40.9517
-          ],
-          "raceEntries": 9,
-          "wins": 1,
-          "podiums": 7,
-          "points": 124
-        },
-        {
-          "id": "hockenheimring",
-          "name": "Хоккенхаймринг",
-          "slug": "hockenheimring",
-          "isPublished": false,
-          "countryCode": "de",
-          "coordinates": [
-            8.56583,
-            49.3278
-          ],
-          "raceEntries": 9,
-          "wins": 1,
-          "podiums": 4,
-          "points": 131
-        },
-        {
-          "id": "portimao",
-          "name": "Алгарве",
-          "slug": "portimao",
-          "isPublished": false,
-          "countryCode": "pt",
-          "coordinates": [
-            -8.6267,
-            37.227
-          ],
-          "raceEntries": 2,
-          "wins": 0,
-          "podiums": 2,
-          "points": 45
-        },
-        {
-          "id": "sochi",
-          "name": "Сочи Автодром",
-          "slug": "sochi",
-          "isPublished": false,
-          "countryCode": "ru",
-          "coordinates": [
-            39.9578,
-            43.4057
-          ],
-          "raceEntries": 8,
-          "wins": 0,
-          "podiums": 2,
-          "points": 109
-        },
-        {
-          "id": "madring",
-          "name": "Мадринг",
-          "slug": "madring",
-          "isPublished": false,
-          "countryCode": "es",
-          "coordinates": [
-            -3.61528,
-            40.46528
-          ],
-          "raceEntries": 1,
-          "wins": 0,
-          "podiums": 1,
-          "points": 26
-        },
-        {
-          "id": "mugello",
-          "name": "Муджелло",
-          "slug": "mugello",
-          "isPublished": false,
-          "countryCode": "it",
-          "coordinates": [
-            11.3719,
-            43.9975
-          ],
-          "raceEntries": 1,
-          "wins": 0,
-          "podiums": 1,
-          "points": 15
-        },
-        {
-          "id": "fuji",
-          "name": "Фудзи",
-          "slug": "fuji",
-          "isPublished": false,
-          "countryCode": "jp",
-          "coordinates": [
-            138.927,
-            35.3717
-          ],
-          "raceEntries": 2,
-          "wins": 0,
-          "podiums": 0,
-          "points": 6
-        },
-        {
-          "id": "indianapolis",
-          "name": "Индианаполис",
-          "slug": "indianapolis",
-          "isPublished": false,
-          "countryCode": "us",
-          "coordinates": [
-            -86.2347,
-            39.795
-          ],
-          "raceEntries": 3,
-          "wins": 0,
-          "podiums": 0,
-          "points": 4
-        },
-        {
-          "id": "magny_cours",
-          "name": "Маньи-Кур",
-          "slug": "magny-cours",
-          "isPublished": false,
-          "countryCode": "fr",
-          "coordinates": [
-            3.16361,
-            46.8642
-          ],
-          "raceEntries": 4,
-          "wins": 0,
-          "podiums": 0,
-          "points": 3
-        }
-      ],
-      "sourceIds": [
-        "jolpica",
-        "jolpica-csv-2026-08-01"
-      ],
-      "careerTitles": 6,
-      "successfulCircuits": [
-        {
-          "id": "suzuka",
-          "name": "Сузука",
-          "slug": "suzuka",
-          "isPublished": false,
-          "wins": 8
-        },
-        {
-          "id": "yas_marina",
-          "name": "Яс-Марина",
-          "slug": "yas-marina",
-          "isPublished": false,
-          "wins": 8
-        },
-        {
-          "id": "monaco",
-          "name": "Монако",
-          "slug": "monaco",
-          "isPublished": false,
-          "wins": 7
-        },
-        {
-          "id": "interlagos",
-          "name": "Интерлагос",
-          "slug": "interlagos",
-          "isPublished": false,
-          "wins": 7
-        },
-        {
-          "id": "spa",
-          "name": "Спа-Франкоршам",
-          "slug": "spa",
-          "isPublished": true,
-          "wins": 6
-        },
-        {
-          "id": "catalunya",
-          "name": "Барселона-Каталунья",
-          "slug": "barcelona-catalunya",
-          "isPublished": false,
-          "wins": 6
-        },
-        {
-          "id": "silverstone",
-          "name": "Сильверстоун",
-          "slug": "silverstone",
-          "isPublished": false,
-          "wins": 5
-        },
-        {
-          "id": "americas",
-          "name": "Трасса Америк",
-          "slug": "circuit-of-the-americas",
-          "isPublished": false,
-          "wins": 5
-        }
-      ],
-      "drivers": [
-        {
-          "id": "hadjar",
-          "nameRu": "Исак Хаджар",
-          "code": "HAD",
-          "position": 8,
-          "points": 71,
-          "raceEntries": 11,
-          "teamPoints": 71
-        },
-        {
-          "id": "lawson",
-          "nameRu": "Лиам Лоусон",
-          "code": "LAW",
-          "position": 9,
-          "points": 59,
-          "raceEntries": 3,
-          "teamPoints": 14
-        },
-        {
-          "id": "max_verstappen",
-          "nameRu": "Макс Ферстаппен",
-          "code": "VER",
-          "position": 6,
-          "points": 145,
-          "raceEntries": 14,
-          "teamPoints": 133
-        }
-      ],
-      "driverCount": 3
     },
     {
       "id": "rb",
       "name": "RB F1 Team",
       "nationality": "Italian",
       "position": 5,
-      "points": 77,
+      "points": 108,
       "wins": 0,
       "engineName": null,
       "color": null,
@@ -5442,12 +5442,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 14,
+          "afterRound": 19,
           "status": "active",
           "isFinal": false,
           "name": "RB F1 Team",
           "position": 5,
-          "points": 77,
+          "points": 108,
           "wins": 0
         },
         {
@@ -5472,28 +5472,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 62,
+        "raceEntries": 67,
         "wins": 0,
         "podiums": 1,
-        "points": 201,
-        "circuits": 25,
-        "countries": 21,
+        "points": 228,
+        "circuits": 26,
+        "countries": 22,
         "winningCircuits": 0,
         "firstSeason": 2024,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "seasonRaceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 0,
         "podiums": 0,
-        "points": 73,
-        "circuits": 14,
-        "countries": 13,
+        "points": 100,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "resultGeography": [
         {
@@ -5536,10 +5536,10 @@
             -97.6411,
             30.1328
           ],
-          "raceEntries": 2,
+          "raceEntries": 3,
           "wins": 0,
           "podiums": 0,
-          "points": 2
+          "points": 4
         },
         {
           "id": "bahrain",
@@ -5566,10 +5566,10 @@
             49.8533,
             40.3725
           ],
-          "raceEntries": 2,
+          "raceEntries": 3,
           "wins": 0,
           "podiums": 0,
-          "points": 11
+          "points": 17
         },
         {
           "id": "catalunya",
@@ -5686,10 +5686,10 @@
             103.864,
             1.2914
           ],
-          "raceEntries": 2,
+          "raceEntries": 3,
           "wins": 0,
           "podiums": 0,
-          "points": 0
+          "points": 6
         },
         {
           "id": "miami",
@@ -5761,10 +5761,25 @@
             -99.0907,
             19.4042
           ],
-          "raceEntries": 2,
+          "raceEntries": 3,
           "wins": 0,
           "podiums": 0,
-          "points": 0
+          "points": 6
+        },
+        {
+          "id": "sepang",
+          "name": "Сепанг",
+          "slug": "sepang",
+          "isPublished": false,
+          "countryCode": "my",
+          "coordinates": [
+            101.738,
+            2.76083
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 7
         },
         {
           "id": "shanghai",
@@ -5884,18 +5899,18 @@
           "nameRu": "Арвид Линдблад",
           "code": "LIN",
           "position": 11,
-          "points": 31,
-          "raceEntries": 14,
-          "teamPoints": 30
+          "points": 38,
+          "raceEntries": 19,
+          "teamPoints": 37
         },
         {
           "id": "lawson",
           "nameRu": "Лиам Лоусон",
           "code": "LAW",
           "position": 9,
-          "points": 59,
-          "raceEntries": 11,
-          "teamPoints": 42
+          "points": 83,
+          "raceEntries": 16,
+          "teamPoints": 62
         },
         {
           "id": "tsunoda",
@@ -5914,7 +5929,7 @@
       "name": "Alpine F1 Team",
       "nationality": "French",
       "position": 6,
-      "points": 68,
+      "points": 69,
       "wins": 0,
       "engineName": null,
       "color": null,
@@ -5924,12 +5939,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 14,
+          "afterRound": 19,
           "status": "active",
           "isFinal": false,
           "name": "Alpine F1 Team",
           "position": 6,
-          "points": 68,
+          "points": 69,
           "wins": 0
         },
         {
@@ -5984,28 +5999,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 128,
+        "raceEntries": 133,
         "wins": 1,
         "podiums": 6,
-        "points": 584,
-        "circuits": 29,
-        "countries": 25,
+        "points": 585,
+        "circuits": 30,
+        "countries": 26,
         "winningCircuits": 1,
         "firstSeason": 2021,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "seasonRaceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 0,
         "podiums": 0,
-        "points": 66,
-        "circuits": 14,
-        "countries": 13,
+        "points": 67,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "resultGeography": [
         {
@@ -6108,10 +6123,10 @@
             -97.6411,
             30.1328
           ],
-          "raceEntries": 5,
+          "raceEntries": 6,
           "wins": 0,
           "podiums": 0,
-          "points": 14
+          "points": 15
         },
         {
           "id": "bahrain",
@@ -6138,7 +6153,7 @@
             49.8533,
             40.3725
           ],
-          "raceEntries": 5,
+          "raceEntries": 6,
           "wins": 0,
           "podiums": 0,
           "points": 15
@@ -6228,7 +6243,7 @@
             103.864,
             1.2914
           ],
-          "raceEntries": 4,
+          "raceEntries": 5,
           "wins": 0,
           "podiums": 0,
           "points": 8
@@ -6318,10 +6333,25 @@
             -99.0907,
             19.4042
           ],
-          "raceEntries": 5,
+          "raceEntries": 6,
           "wins": 0,
           "podiums": 0,
           "points": 8
+        },
+        {
+          "id": "sepang",
+          "name": "Сепанг",
+          "slug": "sepang",
+          "isPublished": false,
+          "countryCode": "my",
+          "coordinates": [
+            101.738,
+            2.76083
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
         },
         {
           "id": "shanghai",
@@ -6465,7 +6495,7 @@
           "code": "COL",
           "position": 12,
           "points": 27,
-          "raceEntries": 14,
+          "raceEntries": 19,
           "teamPoints": 27
         },
         {
@@ -6473,9 +6503,9 @@
           "nameRu": "Пьер Гасли",
           "code": "GAS",
           "position": 10,
-          "points": 41,
-          "raceEntries": 14,
-          "teamPoints": 39
+          "points": 42,
+          "raceEntries": 19,
+          "teamPoints": 40
         }
       ],
       "driverCount": 2
@@ -6485,7 +6515,7 @@
       "name": "Haas F1 Team",
       "nationality": "American",
       "position": 7,
-      "points": 21,
+      "points": 31,
       "wins": 0,
       "engineName": null,
       "color": null,
@@ -6495,12 +6525,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 14,
+          "afterRound": 19,
           "status": "active",
           "isFinal": false,
           "name": "Haas F1 Team",
           "position": 7,
-          "points": 21,
+          "points": 31,
           "wins": 0
         },
         {
@@ -6605,28 +6635,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 228,
+        "raceEntries": 233,
         "wins": 0,
         "podiums": 0,
-        "points": 386,
+        "points": 393,
         "circuits": 33,
         "countries": 27,
         "winningCircuits": 0,
         "firstSeason": 2016,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "seasonRaceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 0,
         "podiums": 0,
-        "points": 20,
-        "circuits": 14,
-        "countries": 13,
+        "points": 27,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "resultGeography": [
         {
@@ -6654,7 +6684,7 @@
             -97.6411,
             30.1328
           ],
-          "raceEntries": 9,
+          "raceEntries": 10,
           "wins": 0,
           "podiums": 0,
           "points": 9
@@ -6684,10 +6714,10 @@
             49.8533,
             40.3725
           ],
-          "raceEntries": 9,
+          "raceEntries": 10,
           "wins": 0,
           "podiums": 0,
-          "points": 7
+          "points": 13
         },
         {
           "id": "catalunya",
@@ -6834,7 +6864,7 @@
             103.864,
             1.2914
           ],
-          "raceEntries": 8,
+          "raceEntries": 9,
           "wins": 0,
           "podiums": 0,
           "points": 7
@@ -6969,10 +6999,10 @@
             -99.0907,
             19.4042
           ],
-          "raceEntries": 9,
+          "raceEntries": 10,
           "wins": 0,
           "podiums": 0,
-          "points": 26
+          "points": 27
         },
         {
           "id": "sepang",
@@ -6984,7 +7014,7 @@
             101.738,
             2.76083
           ],
-          "raceEntries": 2,
+          "raceEntries": 3,
           "wins": 0,
           "podiums": 0,
           "points": 0
@@ -7137,28 +7167,37 @@
           "nameRu": "Оливер Берман",
           "code": "BEA",
           "position": 13,
-          "points": 18,
-          "raceEntries": 14,
-          "teamPoints": 17
+          "points": 23,
+          "raceEntries": 19,
+          "teamPoints": 19
         },
         {
           "id": "ocon",
           "nameRu": "Эстебан Окон",
           "code": "OCO",
-          "position": 18,
-          "points": 3,
-          "raceEntries": 14,
-          "teamPoints": 3
+          "position": 16,
+          "points": 7,
+          "raceEntries": 18,
+          "teamPoints": 7
+        },
+        {
+          "id": "ryo_hirakawa",
+          "nameRu": "Рё Хиракауа",
+          "code": "HIR",
+          "position": 21,
+          "points": 1,
+          "raceEntries": 1,
+          "teamPoints": 1
         }
       ],
-      "driverCount": 2
+      "driverCount": 3
     },
     {
       "id": "audi",
       "name": "Audi",
       "nationality": "German",
       "position": 8,
-      "points": 17,
+      "points": 27,
       "wins": 0,
       "engineName": null,
       "color": null,
@@ -7168,38 +7207,38 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 14,
+          "afterRound": 19,
           "status": "active",
           "isFinal": false,
           "name": "Audi",
           "position": 8,
-          "points": 17,
+          "points": 27,
           "wins": 0
         }
       ],
       "raceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 0,
         "podiums": 0,
-        "points": 17,
-        "circuits": 14,
-        "countries": 13,
+        "points": 25,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "seasonRaceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 0,
         "podiums": 0,
-        "points": 17,
-        "circuits": 14,
-        "countries": 13,
+        "points": 25,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "resultGeography": [
         {
@@ -7216,6 +7255,36 @@
           "wins": 0,
           "podiums": 0,
           "points": 2
+        },
+        {
+          "id": "americas",
+          "name": "Трасса Америк",
+          "slug": "circuit-of-the-americas",
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -97.6411,
+            30.1328
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "baku",
+          "name": "Баку",
+          "slug": "baku",
+          "isPublished": false,
+          "countryCode": "az",
+          "coordinates": [
+            49.8533,
+            40.3725
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
         },
         {
           "id": "catalunya",
@@ -7261,6 +7330,21 @@
           "wins": 0,
           "podiums": 0,
           "points": 1
+        },
+        {
+          "id": "marina_bay",
+          "name": "Марина-Бей",
+          "slug": "marina-bay",
+          "isPublished": false,
+          "countryCode": "sg",
+          "coordinates": [
+            103.864,
+            1.2914
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 4
         },
         {
           "id": "miami",
@@ -7316,6 +7400,36 @@
           "coordinates": [
             14.7647,
             47.2197
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "rodriguez",
+          "name": "Эрманос Родригес",
+          "slug": "hermanos-rodriguez",
+          "isPublished": false,
+          "countryCode": "mx",
+          "coordinates": [
+            -99.0907,
+            19.4042
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 4
+        },
+        {
+          "id": "sepang",
+          "name": "Сепанг",
+          "slug": "sepang",
+          "isPublished": false,
+          "countryCode": "my",
+          "coordinates": [
+            101.738,
+            2.76083
           ],
           "raceEntries": 1,
           "wins": 0,
@@ -7424,18 +7538,18 @@
           "nameRu": "Габриэл Бортолето",
           "code": "BOR",
           "position": 14,
-          "points": 10,
-          "raceEntries": 14,
-          "teamPoints": 10
+          "points": 14,
+          "raceEntries": 19,
+          "teamPoints": 14
         },
         {
           "id": "hulkenberg",
           "nameRu": "Нико Хюлькенберг",
           "code": "HUL",
           "position": 15,
-          "points": 7,
-          "raceEntries": 14,
-          "teamPoints": 7
+          "points": 13,
+          "raceEntries": 19,
+          "teamPoints": 11
         }
       ],
       "driverCount": 2
@@ -7445,7 +7559,7 @@
       "name": "Williams",
       "nationality": "British",
       "position": 9,
-      "points": 11,
+      "points": 12,
       "wins": 0,
       "engineName": null,
       "color": null,
@@ -7455,12 +7569,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 14,
+          "afterRound": 19,
           "status": "active",
           "isFinal": false,
           "name": "Williams",
           "position": 9,
-          "points": 11,
+          "points": 12,
           "wins": 0
         },
         {
@@ -7955,28 +8069,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 879,
+        "raceEntries": 884,
         "wins": 114,
         "podiums": 316,
-        "points": 3776,
+        "points": 3777,
         "circuits": 59,
         "countries": 32,
         "winningCircuits": 33,
         "firstSeason": 1975,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "seasonRaceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 0,
         "podiums": 0,
-        "points": 11,
-        "circuits": 14,
-        "countries": 13,
+        "points": 12,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "resultGeography": [
         {
@@ -8244,7 +8358,7 @@
             -99.0907,
             19.4042
           ],
-          "raceEntries": 17,
+          "raceEntries": 18,
           "wins": 3,
           "podiums": 8,
           "points": 99
@@ -8364,7 +8478,7 @@
             101.738,
             2.76083
           ],
-          "raceEntries": 19,
+          "raceEntries": 20,
           "wins": 1,
           "podiums": 4,
           "points": 90.5
@@ -8484,10 +8598,10 @@
             49.8533,
             40.3725
           ],
-          "raceEntries": 9,
+          "raceEntries": 10,
           "wins": 0,
           "podiums": 2,
-          "points": 53
+          "points": 54
         },
         {
           "id": "donington",
@@ -8574,7 +8688,7 @@
             103.864,
             1.2914
           ],
-          "raceEntries": 16,
+          "raceEntries": 17,
           "wins": 0,
           "podiums": 1,
           "points": 43
@@ -8604,7 +8718,7 @@
             -97.6411,
             30.1328
           ],
-          "raceEntries": 13,
+          "raceEntries": 14,
           "wins": 0,
           "podiums": 0,
           "points": 41
@@ -8933,19 +9047,19 @@
           "id": "albon",
           "nameRu": "Алекс Албон",
           "code": "ALB",
-          "position": 17,
+          "position": 19,
           "points": 5,
-          "raceEntries": 14,
+          "raceEntries": 19,
           "teamPoints": 5
         },
         {
           "id": "sainz",
           "nameRu": "Карлос Сайнс",
           "code": "SAI",
-          "position": 16,
-          "points": 6,
-          "raceEntries": 14,
-          "teamPoints": 6
+          "position": 18,
+          "points": 7,
+          "raceEntries": 19,
+          "teamPoints": 7
         }
       ],
       "driverCount": 2
@@ -8955,7 +9069,7 @@
       "name": "Aston Martin",
       "nationality": "British",
       "position": 10,
-      "points": 3,
+      "points": 7,
       "wins": 0,
       "engineName": null,
       "color": null,
@@ -8965,12 +9079,12 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 14,
+          "afterRound": 19,
           "status": "active",
           "isFinal": false,
           "name": "Aston Martin",
           "position": 10,
-          "points": 3,
+          "points": 7,
           "wins": 0
         },
         {
@@ -9025,28 +9139,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 134,
+        "raceEntries": 139,
         "wins": 0,
         "podiums": 9,
-        "points": 575,
-        "circuits": 31,
-        "countries": 25,
+        "points": 579,
+        "circuits": 32,
+        "countries": 26,
         "winningCircuits": 0,
         "firstSeason": 1959,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "seasonRaceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 0,
         "podiums": 0,
-        "points": 3,
-        "circuits": 14,
-        "countries": 13,
+        "points": 7,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "resultGeography": [
         {
@@ -9089,7 +9203,7 @@
             49.8533,
             40.3725
           ],
-          "raceEntries": 5,
+          "raceEntries": 6,
           "wins": 0,
           "podiums": 1,
           "points": 52
@@ -9209,7 +9323,7 @@
             -97.6411,
             30.1328
           ],
-          "raceEntries": 5,
+          "raceEntries": 6,
           "wins": 0,
           "podiums": 0,
           "points": 12
@@ -9314,7 +9428,7 @@
             103.864,
             1.2914
           ],
-          "raceEntries": 4,
+          "raceEntries": 5,
           "wins": 0,
           "podiums": 0,
           "points": 22
@@ -9404,10 +9518,25 @@
             -99.0907,
             19.4042
           ],
-          "raceEntries": 5,
+          "raceEntries": 6,
           "wins": 0,
           "podiums": 0,
           "points": 6
+        },
+        {
+          "id": "sepang",
+          "name": "Сепанг",
+          "slug": "sepang",
+          "isPublished": false,
+          "countryCode": "my",
+          "coordinates": [
+            101.738,
+            2.76083
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 4
         },
         {
           "id": "shanghai",
@@ -9526,18 +9655,18 @@
           "id": "alonso",
           "nameRu": "Фернандо Алонсо",
           "code": "ALO",
-          "position": 19,
-          "points": 3,
-          "raceEntries": 14,
-          "teamPoints": 3
+          "position": 17,
+          "points": 7,
+          "raceEntries": 19,
+          "teamPoints": 7
         },
         {
           "id": "stroll",
           "nameRu": "Лэнс Стролл",
           "code": "STR",
-          "position": 21,
+          "position": 22,
           "points": 0,
-          "raceEntries": 14,
+          "raceEntries": 19,
           "teamPoints": 0
         }
       ],
@@ -9558,7 +9687,7 @@
       "seasonHistory": [
         {
           "season": 2026,
-          "afterRound": 14,
+          "afterRound": 19,
           "status": "active",
           "isFinal": false,
           "name": "Cadillac F1 Team",
@@ -9568,28 +9697,28 @@
         }
       ],
       "raceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 0,
         "podiums": 0,
         "points": 0,
-        "circuits": 14,
-        "countries": 13,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "seasonRaceStatistics": {
-        "raceEntries": 14,
+        "raceEntries": 19,
         "wins": 0,
         "podiums": 0,
         "points": 0,
-        "circuits": 14,
-        "countries": 13,
+        "circuits": 19,
+        "countries": 17,
         "winningCircuits": 0,
         "firstSeason": 2026,
         "lastSeason": 2026,
-        "throughRound": 14
+        "throughRound": 19
       },
       "resultGeography": [
         {
@@ -9601,6 +9730,36 @@
           "coordinates": [
             144.968,
             -37.8497
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "americas",
+          "name": "Трасса Америк",
+          "slug": "circuit-of-the-americas",
+          "isPublished": false,
+          "countryCode": "us",
+          "coordinates": [
+            -97.6411,
+            30.1328
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "baku",
+          "name": "Баку",
+          "slug": "baku",
+          "isPublished": false,
+          "countryCode": "az",
+          "coordinates": [
+            49.8533,
+            40.3725
           ],
           "raceEntries": 1,
           "wins": 0,
@@ -9646,6 +9805,21 @@
           "coordinates": [
             -3.61528,
             40.46528
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "marina_bay",
+          "name": "Марина-Бей",
+          "slug": "marina-bay",
+          "isPublished": false,
+          "countryCode": "sg",
+          "coordinates": [
+            103.864,
+            1.2914
           ],
           "raceEntries": 1,
           "wins": 0,
@@ -9706,6 +9880,36 @@
           "coordinates": [
             14.7647,
             47.2197
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "rodriguez",
+          "name": "Эрманос Родригес",
+          "slug": "hermanos-rodriguez",
+          "isPublished": false,
+          "countryCode": "mx",
+          "coordinates": [
+            -99.0907,
+            19.4042
+          ],
+          "raceEntries": 1,
+          "wins": 0,
+          "podiums": 0,
+          "points": 0
+        },
+        {
+          "id": "sepang",
+          "name": "Сепанг",
+          "slug": "sepang",
+          "isPublished": false,
+          "countryCode": "my",
+          "coordinates": [
+            101.738,
+            2.76083
           ],
           "raceEntries": 1,
           "wins": 0,
@@ -9813,18 +10017,18 @@
           "id": "bottas",
           "nameRu": "Валттери Боттас",
           "code": "BOT",
-          "position": 22,
+          "position": 23,
           "points": 0,
-          "raceEntries": 14,
+          "raceEntries": 19,
           "teamPoints": 0
         },
         {
           "id": "perez",
           "nameRu": "Серхио Перес",
           "code": "PER",
-          "position": 23,
+          "position": 24,
           "points": 0,
-          "raceEntries": 14,
+          "raceEntries": 19,
           "teamPoints": 0
         }
       ],
@@ -9832,7 +10036,7 @@
     }
   ],
   "seasonStatus": "active",
-  "afterRound": 14,
+  "afterRound": 19,
   "sources": [
     {
       "id": "formula1-1951-french-race-result",
@@ -9860,7 +10064,7 @@
       "name": "Jolpica F1",
       "url": "https://api.jolpi.ca/ergast/f1/",
       "licence": "Jolpica Terms of Use",
-      "retrievedAt": "2026-09-13T20:26:21.136Z"
+      "retrievedAt": "2026-11-06T09:11:12.201Z"
     },
     {
       "id": "jolpica-csv-2026-08-01",
